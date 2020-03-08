@@ -23,7 +23,7 @@ public class ClarificationRequest {
     private String content;
 
     @Enumerated(EnumType.STRING)
-    private Status status = Status.CLOSED;
+    private Status status = Status.OPEN;
 
     public ClarificationRequest() {
     }
