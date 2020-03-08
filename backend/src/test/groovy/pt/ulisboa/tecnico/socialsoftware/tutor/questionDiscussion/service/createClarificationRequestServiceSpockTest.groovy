@@ -170,7 +170,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         def questionAnswerResult = questionAnswerRepository.findAll().get(0)
 
         when:
-        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), CLARIFICATION_CONTENT)
+        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), questionAnswerResult.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
 
         then: "the returned data are correct"
         def result = clarificationRequestRepository.findAll().get(0)
@@ -178,6 +178,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         result.content == CLARIFICATION_CONTENT
         result.status == ClarificationRequest.Status.OPEN
         result.getQuestionAnswer() == questionAnswerResult
+        result.getUser() == questionAnswerResult.getQuizAnswer().getUser()
 
     }
 
@@ -193,7 +194,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         def questionAnswerResult = questionAnswerRepository.findAll().get(0)
 
         when:
-        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), CLARIFICATION_CONTENT)
+        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), questionAnswerResult.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
 
         then: "the returned data are correct"
         def result = clarificationRequestRepository.findAll().get(0)
@@ -201,6 +202,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         result.content == CLARIFICATION_CONTENT
         result.status == ClarificationRequest.Status.OPEN
         result.getQuestionAnswer() == questionAnswerResult
+        result.getUser() == questionAnswerResult.getQuizAnswer().getUser()
     }
 
     def "clarification request is empty"() {

@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 
@@ -19,6 +20,10 @@ public class ClarificationRequest {
     @JoinColumn(name = "question_answer_id")
     private QuestionAnswer questionAnswer;
 
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Column(columnDefinition = "TEXT")
     private String content;
 
@@ -28,8 +33,9 @@ public class ClarificationRequest {
     public ClarificationRequest() {
     }
 
-    public ClarificationRequest(QuestionAnswer questionAnswer, String content) {
+    public ClarificationRequest(QuestionAnswer questionAnswer, User user, String content) {
         this.questionAnswer = questionAnswer;
+        this.user = user;
         questionAnswer.setClarificationRequest(this);
         this.content = content;
     }
@@ -51,4 +57,8 @@ public class ClarificationRequest {
     public Status getStatus() { return status; }
 
     public void setStatus(Status status) { this.status = status; }
+
+    public User getUser() { return user; }
+
+    public void setUser(User user) { this.user = user; }
 }

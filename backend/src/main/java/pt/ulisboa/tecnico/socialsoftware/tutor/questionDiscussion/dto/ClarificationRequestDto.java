@@ -9,6 +9,8 @@ public class ClarificationRequestDto implements Serializable {
     private Integer id;
     private String content;
     private QuestionAnswerDto questionAnswerDto;
+    private String name;
+    private String username;
     private String status;
 
     public ClarificationRequestDto() {
@@ -18,6 +20,8 @@ public class ClarificationRequestDto implements Serializable {
         this.id = clarificationRequest.getId();
         this.content = clarificationRequest.getContent();
         this.questionAnswerDto = new QuestionAnswerDto(clarificationRequest.getQuestionAnswer());
+        this.name = clarificationRequest.getUser().getName();
+        this.username = clarificationRequest.getUser().getUsername();
         this.status = clarificationRequest.getStatus().name();
     }
 
@@ -38,4 +42,12 @@ public class ClarificationRequestDto implements Serializable {
     public String getStatus() { return status; }
 
     public void setStatus(String status) { this.status = status; }
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
+
+    public String getUsername() { return username; }
+
+    public void setUsername(String username) { this.username = username; }
 }
