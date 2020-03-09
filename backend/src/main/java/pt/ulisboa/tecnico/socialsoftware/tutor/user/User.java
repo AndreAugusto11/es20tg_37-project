@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
+
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
     @Id
@@ -28,7 +30,7 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-    
+
     @Column(unique=true)
     private String username;
 
@@ -56,6 +58,9 @@ public class User implements UserDetails {
 
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
+
+    @OneToMany
+    private Set<QuestionSuggestion> questionSuggestion = new HashSet<>();
 
     public User() {
     }
@@ -444,5 +449,17 @@ public class User implements UserDetails {
         }
 
         return result;
+    }
+
+    public void addQuestionSuggestion(QuestionSuggestion questionSuggestion) {
+        this.questionSuggestion.add(questionSuggestion);
+    }
+
+    public Integer getNumberOfSuggestions(){
+        return this.questionSuggestion.size();
+    }
+
+    public Set<QuestionSuggestion> getQuestionsSuggestion() {
+        return questionSuggestion;
     }
 }

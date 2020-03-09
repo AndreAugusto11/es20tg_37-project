@@ -55,7 +55,10 @@ public enum ErrorMessage {
 
 
     ACCESS_DENIED("You do not have permission to view this resource"),
-    CANNOT_OPEN_FILE("Cannot open file");
+    CANNOT_OPEN_FILE("Cannot open file"),
+
+    USER_IS_TEACHER("This operation is invalid to users of the type teacher"),
+    INVALID_NULL_ARGUMENTS("One of the arguments given is null");
 
     public final String label;
 

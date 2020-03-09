@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 
 import javax.persistence.*;
 
@@ -10,12 +11,17 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String url;
+
     private Integer width;
 
     @OneToOne
     @JoinColumn(name="question_id")
     private Question question;
+
+    @OneToOne
+    private QuestionSuggestion questionSuggestion;
 
     public Image() {}
 
@@ -64,5 +70,13 @@ public class Image {
                 ", url='" + url + '\'' +
                 ", width=" + width +
                 '}';
+    }
+
+    public void setQuestionSuggestion(QuestionSuggestion questionSuggestion) {
+        this.questionSuggestion = questionSuggestion;
+    }
+
+    public QuestionSuggestion getQuestionSuggestion(){
+        return this.questionSuggestion;
     }
 }
