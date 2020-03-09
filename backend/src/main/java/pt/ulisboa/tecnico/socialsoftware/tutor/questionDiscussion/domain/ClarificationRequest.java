@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
@@ -20,6 +21,10 @@ public class ClarificationRequest {
     @JoinColumn(name = "question_answer_id")
     private QuestionAnswer questionAnswer;
 
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
+
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -33,8 +38,9 @@ public class ClarificationRequest {
     public ClarificationRequest() {
     }
 
-    public ClarificationRequest(QuestionAnswer questionAnswer, User user, String content) {
+    public ClarificationRequest(QuestionAnswer questionAnswer, Question question, User user, String content) {
         this.questionAnswer = questionAnswer;
+        this.question = question;
         this.user = user;
         questionAnswer.setClarificationRequest(this);
         this.content = content;
@@ -49,6 +55,10 @@ public class ClarificationRequest {
     public QuestionAnswer getQuestionAnswer() { return questionAnswer; }
 
     public void setQuestionAnswer(QuestionAnswer questionAnswer) { this.questionAnswer = questionAnswer; }
+
+    public Question getQuestion() { return question; }
+
+    public void setQuestion(Question question) { this.question = question; }
 
     public String getContent() { return content; }
 

@@ -168,7 +168,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         def questionAnswerResult = questionAnswerRepository.findAll().get(0)
 
         when:
-        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), questionAnswerResult.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
+        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), questionAnswerResult.getQuizQuestion().getQuestion().getId(), questionAnswerResult.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
 
         then: "the returned data are correct"
         def result = clarificationRequestRepository.findAll().get(0)
@@ -192,7 +192,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         def questionAnswerResult = questionAnswerRepository.findAll().get(0)
 
         when:
-        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), questionAnswerResult.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
+        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), questionAnswerResult.getQuizQuestion().getQuestion().getId(), questionAnswerResult.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
 
         then: "the returned data are correct"
         def result = clarificationRequestRepository.findAll().get(0)
@@ -220,7 +220,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         userRepository.save(user2)
 
         when:
-        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), user2.getId(), CLARIFICATION_CONTENT)
+        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), questionAnswerResult.getQuizQuestion().getQuestion().getId(), user2.getId(), CLARIFICATION_CONTENT)
 
         then: "exception is thrown"
         def error = thrown(TutorException)
@@ -244,7 +244,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         QuestionDiscussionService questionDiscussionService() {
             return new QuestionDiscussionService()
         }
-        
+
     }
 
 }
