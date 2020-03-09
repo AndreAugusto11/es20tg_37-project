@@ -4,9 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
@@ -31,6 +30,8 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_ANSWER_MISMATCH_USER
+
 @DataJpaTest
 class createClarificationRequestServiceSpockTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
@@ -48,9 +49,6 @@ class createClarificationRequestServiceSpockTest extends Specification {
 
     @Autowired
     QuestionDiscussionService  questionDiscussionService
-
-    @Autowired
-    AnswerService answerService
 
     @Autowired
     UserRepository userRepository
@@ -205,6 +203,30 @@ class createClarificationRequestServiceSpockTest extends Specification {
         result.getUser() == questionAnswerResult.getQuizAnswer().getUser()
     }
 
+    def "create clarification request to answered question, but user is diff"() {
+        given: "a question answered"
+        questionAnswer = new QuestionAnswer()
+        quizAnswer.addQuestionAnswer(questionAnswer)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        questionAnswer.setTimeTaken(TIME_TAKEN)
+        questionAnswer.setSequence(SEQUENCE)
+        questionAnswer.setQuizQuestion(quizQuestion)
+        questionAnswerRepository.save(questionAnswer)
+        def questionAnswerResult = questionAnswerRepository.findAll().get(0)
+        and: "a user which didn't answered"
+        def user2 = new User('name2', "username2", 2, User.Role.STUDENT)
+        user2.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(user2)
+        userRepository.save(user2)
+
+        when:
+        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), user2.getId(), CLARIFICATION_CONTENT)
+
+        then: "exception is thrown"
+        def error = thrown(TutorException)
+        error.errorMessage == QUESTION_ANSWER_MISMATCH_USER
+    }
+
     def "clarification request is empty"() {
         // an exception is thrown
         expect: false
@@ -222,17 +244,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         QuestionDiscussionService questionDiscussionService() {
             return new QuestionDiscussionService()
         }
-
-        @Bean
-        AnswerService answerService() {
-            return new AnswerService()
-        }
-
-        @Bean
-        AnswersXmlImport answersXmlImport() {
-            return new AnswersXmlImport()
-        }
-
+        
     }
 
 }
