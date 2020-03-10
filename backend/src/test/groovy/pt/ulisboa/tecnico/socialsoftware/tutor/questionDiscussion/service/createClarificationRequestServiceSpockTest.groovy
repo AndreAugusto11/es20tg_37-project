@@ -27,6 +27,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.time.LocalDateTime
 
@@ -225,6 +226,33 @@ class createClarificationRequestServiceSpockTest extends Specification {
         then: "exception is thrown"
         def error = thrown(TutorException)
         error.errorMessage == QUESTION_ANSWER_MISMATCH_USER
+    }
+
+    @Unroll
+    def "invalid arguments: questionAnswer=#questionAnswerResult | question=#question | user=#user | content=#content || errorMessage=#errorMessage "() {
+        given: "a question answer"
+        questionAnswer = new QuestionAnswer()
+        quizAnswer.addQuestionAnswer(questionAnswer)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        questionAnswer.setTimeTaken(TIME_TAKEN)
+        questionAnswer.setSequence(SEQUENCE)
+        questionAnswer.setQuizQuestion(quizQuestion)
+        questionAnswerRepository.save(questionAnswer)
+        def questionAnswerResult = questionAnswerRepository.findAll().get(0)
+
+        when:
+        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), questionAnswerResult.getQuizQuestion().getQuestion().getId(), questionAnswerResult.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
+
+        then:
+        def error = thrown(TutorException)
+        error.errorMessage == errorMessage
+
+        where:
+        questionAnswer       | question   | user        | content               || errorMessage
+        null                 | question   | user        | CLARIFICATION_CONTENT || COURSE_TYPE_NOT_DEFINED
+        questionAnswerResult | null       | user        | CLARIFICATION_CONTENT || COURSE_NAME_IS_EMPTY
+        questionAnswerResult | question   | null        | CLARIFICATION_CONTENT || COURSE_EXECUTION_ACRONYM_IS_EMPTY
+        questionAnswerResult | question   | user        | null                  || COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY
     }
 
     def "clarification request is empty"() {

@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 
 import javax.persistence.*;
 
@@ -16,6 +17,10 @@ public class Image {
     @OneToOne
     @JoinColumn(name="question_id")
     private Question question;
+
+    @OneToOne
+    @JoinColumn(name="clarification_request_id")
+    private ClarificationRequest clarificationRequest;
 
     public Image() {}
 
@@ -55,6 +60,12 @@ public class Image {
 
     public void setWidth(Integer width) {
         this.width = width;
+    }
+
+    public ClarificationRequest getClarificationRequest() { return clarificationRequest; }
+
+    public void setClarificationRequest(ClarificationRequest clarificationRequest) {
+        this.clarificationRequest = clarificationRequest;
     }
 
     @Override

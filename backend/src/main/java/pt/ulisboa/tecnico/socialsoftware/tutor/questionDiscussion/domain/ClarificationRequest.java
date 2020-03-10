@@ -1,10 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "clarification_requests")
@@ -31,6 +35,9 @@ public class ClarificationRequest {
 
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "clarification_request")
+    private Image image;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.OPEN;
@@ -71,4 +78,8 @@ public class ClarificationRequest {
     public User getUser() { return user; }
 
     public void setUser(User user) { this.user = user; }
+
+    public Image getImage() { return image; }
+
+    public void setImage(Image image) { this.image = image; }
 }
