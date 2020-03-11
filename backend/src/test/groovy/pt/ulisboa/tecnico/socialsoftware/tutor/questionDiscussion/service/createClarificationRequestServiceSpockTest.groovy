@@ -49,7 +49,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
     public static final LocalDateTime ANSWER_DATE = LocalDateTime.now()
 
     @Autowired
-    QuestionDiscussionService  questionDiscussionService
+    QuestionDiscussionService questionDiscussionService
 
     @Autowired
     UserRepository userRepository
