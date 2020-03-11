@@ -36,7 +36,7 @@ public class ClarificationRequest {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "clarification_request")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "clarificationRequest")
     private Image image;
 
     @Enumerated(EnumType.STRING)
