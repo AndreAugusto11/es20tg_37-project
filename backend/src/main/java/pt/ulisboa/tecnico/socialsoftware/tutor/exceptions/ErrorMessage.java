@@ -14,6 +14,10 @@ public enum ErrorMessage {
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with name %d"),
     TOURNAMENT_NOT_FOUND("Tournament not found with id %d"),
 
+    TOURNAMENT_NOT_OPEN("Tournament with id %d not open"),
+    TOURNAMENT_NOT_STUDENT("Tournament only allows students to enroll"),
+    TOURNAMENT_STUDENT_ALREADY_ENROLLED("Tournament already enrolled student with id %d"),
+
     COURSE_NOT_FOUND("Course not found with name %s"),
     COURSE_NAME_IS_EMPTY("The course name is empty"),
     COURSE_TYPE_NOT_DEFINED("The course type is not defined"),
