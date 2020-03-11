@@ -31,7 +31,7 @@ import spock.lang.Unroll
 
 import java.time.LocalDateTime
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_ANSWER_MISMATCH_USER
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class createClarificationRequestServiceSpockTest extends Specification {
@@ -166,18 +166,17 @@ class createClarificationRequestServiceSpockTest extends Specification {
         questionAnswer.setSequence(SEQUENCE)
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
-        def questionAnswerResult = questionAnswerRepository.findAll().get(0)
 
         when:
-        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), questionAnswerResult.getQuizQuestion().getQuestion().getId(), questionAnswerResult.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
+        questionDiscussionService.createClarificationRequest(questionAnswer.getId(), questionAnswer.getQuizQuestion().getQuestion().getId(), questionAnswer.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
 
         then: "the returned data are correct"
         def result = clarificationRequestRepository.findAll().get(0)
         result.id != null
         result.content == CLARIFICATION_CONTENT
         result.status == ClarificationRequest.Status.OPEN
-        result.getQuestionAnswer() == questionAnswerResult
-        result.getUser() == questionAnswerResult.getQuizAnswer().getUser()
+        result.getQuestionAnswer() == questionAnswer
+        result.getUser() == questionAnswer.getQuizAnswer().getUser()
 
     }
 
@@ -190,18 +189,17 @@ class createClarificationRequestServiceSpockTest extends Specification {
         questionAnswer.setSequence(SEQUENCE)
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
-        def questionAnswerResult = questionAnswerRepository.findAll().get(0)
 
         when:
-        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), questionAnswerResult.getQuizQuestion().getQuestion().getId(), questionAnswerResult.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
+        questionDiscussionService.createClarificationRequest(questionAnswer.getId(), questionAnswer.getQuizQuestion().getQuestion().getId(), questionAnswer.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
 
         then: "the returned data are correct"
         def result = clarificationRequestRepository.findAll().get(0)
         result.id != null
         result.content == CLARIFICATION_CONTENT
         result.status == ClarificationRequest.Status.OPEN
-        result.getQuestionAnswer() == questionAnswerResult
-        result.getUser() == questionAnswerResult.getQuizAnswer().getUser()
+        result.getQuestionAnswer() == questionAnswer
+        result.getUser() == questionAnswer.getQuizAnswer().getUser()
     }
 
     def "create clarification request to answered question, but user is diff"() {
@@ -213,23 +211,49 @@ class createClarificationRequestServiceSpockTest extends Specification {
         questionAnswer.setSequence(SEQUENCE)
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
-        def questionAnswerResult = questionAnswerRepository.findAll().get(0)
-        and: "a user which didn't answered"
-        def user2 = new User('name2', "username2", 2, User.Role.STUDENT)
-        user2.getCourseExecutions().add(courseExecution)
-        courseExecution.getUsers().add(user2)
-        userRepository.save(user2)
+        and: "a user which didn't answered to this question"
+        def diffUser = new User('name2', "username2", 2, User.Role.STUDENT)
+        diffUser.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(diffUser)
+        userRepository.save(diffUser)
 
         when:
-        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), questionAnswerResult.getQuizQuestion().getQuestion().getId(), user2.getId(), CLARIFICATION_CONTENT)
+        questionDiscussionService.createClarificationRequest(questionAnswer.getId(), questionAnswer.getQuizQuestion().getQuestion().getId(), diffUser.getId(), CLARIFICATION_CONTENT)
 
         then: "exception is thrown"
         def error = thrown(TutorException)
         error.errorMessage == QUESTION_ANSWER_MISMATCH_USER
     }
 
+    def "create clarification request to answered question, but question is diff"() {
+        given: "a question answered"
+        questionAnswer = new QuestionAnswer()
+        quizAnswer.addQuestionAnswer(questionAnswer)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        questionAnswer.setTimeTaken(TIME_TAKEN)
+        questionAnswer.setSequence(SEQUENCE)
+        questionAnswer.setQuizQuestion(quizQuestion)
+        questionAnswerRepository.save(questionAnswer)
+        and: "a different question to the one answered"
+        def diffQuestion = new Question()
+        diffQuestion.setCourse(course)
+        course.addQuestion(diffQuestion)
+        diffQuestion.setKey(2)
+        diffQuestion.setTitle(QUESTION_TITLE)
+        diffQuestion.setContent(QUESTION_CONTENT)
+        diffQuestion.setStatus(Question.Status.AVAILABLE)
+        questionRepository.save(diffQuestion)
+
+        when:
+        questionDiscussionService.createClarificationRequest(questionAnswer.getId(), diffQuestion.getId(), questionAnswer.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
+
+        then: "exception is thrown"
+        def error = thrown(TutorException)
+        error.errorMessage == QUESTION_ANSWER_MISMATCH_QUESTION
+    }
+
     /* @Unroll
-    def "invalid arguments: questionAnswer=#questionAnswerResult | question=#question | user=#user | content=#content || errorMessage=#errorMessage "() {
+    def "invalid arguments: questionAnswerId=#questionAnswerId | questionId=#questionId | userId=#userId | content=#content || errorMessage=#errorMessage "() {
         given: "a question answer"
         questionAnswer = new QuestionAnswer()
         quizAnswer.addQuestionAnswer(questionAnswer)
@@ -238,21 +262,20 @@ class createClarificationRequestServiceSpockTest extends Specification {
         questionAnswer.setSequence(SEQUENCE)
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
-        def questionAnswerResult = questionAnswerRepository.findAll().get(0)
 
         when:
-        questionDiscussionService.createClarificationRequest(questionAnswerResult.getId(), questionAnswerResult.getQuizQuestion().getQuestion().getId(), questionAnswerResult.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
+        questionDiscussionService.createClarificationRequest(questionAnswerId, questionId, userId, content)
 
         then:
         def error = thrown(TutorException)
         error.errorMessage == errorMessage
 
         where:
-        questionAnswer       | question   | user        | content               || errorMessage
-        null                 | question   | user        | CLARIFICATION_CONTENT || COURSE_TYPE_NOT_DEFINED
-        questionAnswerResult | null       | user        | CLARIFICATION_CONTENT || COURSE_NAME_IS_EMPTY
-        questionAnswerResult | question   | null        | CLARIFICATION_CONTENT || COURSE_EXECUTION_ACRONYM_IS_EMPTY
-        questionAnswerResult | question   | user        | null                  || COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY
+        questionAnswerId      | questionId        | userId             | content               || errorMessage
+        null                  | 1                 | 1                  | CLARIFICATION_CONTENT || QUESTION_ANSWER_NOT_FOUND
+        1                     | null              | 1                  | CLARIFICATION_CONTENT || COURSE_NAME_IS_EMPTY
+        1                     | 1                 | null               | CLARIFICATION_CONTENT || COURSE_EXECUTION_ACRONYM_IS_EMPTY
+        1                     | 1                 | 1                  | null                  || COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY
     } */
 
     def "clarification request is empty"() {
