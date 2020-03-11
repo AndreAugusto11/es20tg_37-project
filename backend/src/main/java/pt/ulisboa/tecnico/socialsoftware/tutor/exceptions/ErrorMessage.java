@@ -12,11 +12,22 @@ public enum ErrorMessage {
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with name %d"),
+    
     TOURNAMENT_NOT_FOUND("Tournament not found with id %d"),
-
     TOURNAMENT_NOT_OPEN("Tournament with id %d not open"),
     TOURNAMENT_NOT_STUDENT("Tournament only allows students to enroll"),
     TOURNAMENT_STUDENT_ALREADY_ENROLLED("Tournament already enrolled student with id %d"),
+
+    TOURNAMENT_NULL_USER("User is null"),
+    TOURNAMENT_NULL_TOPIC("Topic is null in Tournament Creation"),
+    TOURNAMENT_NULL_NUM_QUESTS("Number of Questions is null in Tournament Creation"),
+    TOURNAMENT_NULL_STARTTIME("Start Time is null in Tournament Creation"),
+    TOURNAMENT_NULL_ENDTIME("End Time is null in Tournament Creation"),
+    TOURNAMENT_NON_STUDENT_USER("User is not in a Student (id %d) in Tournament Creation"),
+    TOURNAMENT_INVALID_NUM_QUESTS("Number of Questions is a non-positive number in Tournament Creation"),
+    TOURNAMENT_INVALID_STARTTIME("Start Time is out-of-format or not a valid TimeStamp in Tournament Creation"),
+    TOURNAMENT_INVALID_ENDTIME("End Time is out-of-format or not a valid TimeStamp in Tournament Creation"),
+    TOURNAMENT_INVALID_TIMEFRAME("The specified TimeFrame in Tournament Creation is not valid."),
 
     COURSE_NOT_FOUND("Course not found with name %s"),
     COURSE_NAME_IS_EMPTY("The course name is empty"),

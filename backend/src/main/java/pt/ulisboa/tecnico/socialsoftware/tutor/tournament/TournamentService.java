@@ -17,11 +17,12 @@ public class TournamentService
 {
 	@Autowired
 	private TournamentRepository tournamentRepository;
+	
+	public TournamentDto createTournament(User student, TopicDto topic, int num_of_questions, LocalDateTime startTime, LocalDateTime endTime)
+	{}
 
-	public void createTournament()
-	{
-
-	}
+	public TournamentDto createTournament(User student, TopicDto[] topics, int num_of_questions, LocalDateTime startTime, LocalDateTime endTime)
+	{}
 
 	public TournamentDto findTournamentByKey(Integer key){
 		return tournamentRepository.findByKey(key).map(TournamentDto::new)
