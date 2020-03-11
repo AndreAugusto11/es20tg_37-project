@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
@@ -19,6 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
@@ -36,7 +38,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 @DataJpaTest
 class createClarificationRequestServiceSpockTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
-    public static final String CLARIFICATION_CONTENT = "Test"
+    public static final String CLARIFICATION_CONTENT = "clarification request content"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     public static final Integer TIME_TAKEN = 1234
@@ -86,11 +88,8 @@ class createClarificationRequestServiceSpockTest extends Specification {
     def courseExecution
     def question
     def quizQuestion
-    def optionOk
-    def optionKO
     def option
     def quizAnswer
-    def date
     def quiz
     def questionAnswer
 
@@ -139,36 +138,32 @@ class createClarificationRequestServiceSpockTest extends Specification {
         quiz.setVersion(VERSION)
         quizRepository.save(quiz)
 
-        quizQuestion = new QuizQuestion()
-        quizQuestion.setSequence(SEQUENCE)
-        quizQuestion.setQuiz(quiz)
-        quizQuestion.setQuestion(question)
+        quizQuestion = new QuizQuestion(quiz, question, SEQUENCE)
         quiz.addQuizQuestion(quizQuestion)
         quizQuestionRepository.save(quizQuestion)
 
-        quizAnswer = new QuizAnswer()
-        quizAnswer.setQuiz(quiz)
-        quizAnswer.setUser(user)
+        quizAnswer = new QuizAnswer(user, quiz)
         quizAnswer.setAnswerDate(ANSWER_DATE)
         quizAnswer.setCompleted(true)
         quizAnswerRepository.save(quizAnswer)
     }
 
     def "create clarification request to answered question"() {
-        // clarification request is created
-        // status is open
-        given: "a question answered"
-        questionAnswer = new QuestionAnswer()
+        given: "a question answer answered"
+        questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
         quizAnswer.addQuestionAnswer(questionAnswer)
-        questionAnswer.setQuizAnswer(quizAnswer)
-        questionAnswer.setTimeTaken(TIME_TAKEN)
-        questionAnswer.setOption(option)
-        questionAnswer.setSequence(SEQUENCE)
-        questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
+        and: "a clarification request dto"
+        def clarificationRequestDto = new ClarificationRequestDto()
+        clarificationRequestDto.setContent(CLARIFICATION_CONTENT)
+        clarificationRequestDto.setName(user.getName())
+        clarificationRequestDto.setUsername(user.getUsername())
+        def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
+        clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
+        // por o status???
 
         when:
-        questionDiscussionService.createClarificationRequest(questionAnswer.getId(), questionAnswer.getQuizQuestion().getQuestion().getId(), questionAnswer.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
+        questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
 
         then: "the returned data are correct"
         def result = clarificationRequestRepository.findAll().get(0)
@@ -181,17 +176,21 @@ class createClarificationRequestServiceSpockTest extends Specification {
     }
 
     def "create clarification request to non answered question"() {
-        given: "a question answered"
-        questionAnswer = new QuestionAnswer()
+        given: "a question answer not answered"
+        questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, null, SEQUENCE)
         quizAnswer.addQuestionAnswer(questionAnswer)
-        questionAnswer.setQuizAnswer(quizAnswer)
-        questionAnswer.setTimeTaken(TIME_TAKEN)
-        questionAnswer.setSequence(SEQUENCE)
-        questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
+        and: "a clarification request dto"
+        def clarificationRequestDto = new ClarificationRequestDto()
+        clarificationRequestDto.setContent(CLARIFICATION_CONTENT)
+        clarificationRequestDto.setName(user.getName())
+        clarificationRequestDto.setUsername(user.getUsername())
+        def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
+        clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
+        // por o status???
 
         when:
-        questionDiscussionService.createClarificationRequest(questionAnswer.getId(), questionAnswer.getQuizQuestion().getQuestion().getId(), questionAnswer.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
+        questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
 
         then: "the returned data are correct"
         def result = clarificationRequestRepository.findAll().get(0)
@@ -203,29 +202,32 @@ class createClarificationRequestServiceSpockTest extends Specification {
     }
 
     def "create clarification request to answered question, but user is diff"() {
-        given: "a question answered"
-        questionAnswer = new QuestionAnswer()
+        given: "a question answer answered"
+        questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
         quizAnswer.addQuestionAnswer(questionAnswer)
-        questionAnswer.setQuizAnswer(quizAnswer)
-        questionAnswer.setTimeTaken(TIME_TAKEN)
-        questionAnswer.setSequence(SEQUENCE)
-        questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
-        and: "a user which didn't answered to this question"
+        and: "a user which didn't answer to this question"
         def diffUser = new User('name2', "username2", 2, User.Role.STUDENT)
         diffUser.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(diffUser)
         userRepository.save(diffUser)
+        and: "a clarification request dto"
+        def clarificationRequestDto = new ClarificationRequestDto()
+        clarificationRequestDto.setContent(CLARIFICATION_CONTENT)
+        clarificationRequestDto.setName(diffUser.getName())
+        clarificationRequestDto.setUsername(diffUser.getUsername())
+        def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
+        clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
 
         when:
-        questionDiscussionService.createClarificationRequest(questionAnswer.getId(), questionAnswer.getQuizQuestion().getQuestion().getId(), diffUser.getId(), CLARIFICATION_CONTENT)
+        questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
 
         then: "exception is thrown"
         def error = thrown(TutorException)
         error.errorMessage == QUESTION_ANSWER_MISMATCH_USER
     }
 
-    def "create clarification request to answered question, but question is diff"() {
+    /* def "create clarification request to answered question, but question is diff"() {
         given: "a question answered"
         questionAnswer = new QuestionAnswer()
         quizAnswer.addQuestionAnswer(questionAnswer)
@@ -243,6 +245,13 @@ class createClarificationRequestServiceSpockTest extends Specification {
         diffQuestion.setContent(QUESTION_CONTENT)
         diffQuestion.setStatus(Question.Status.AVAILABLE)
         questionRepository.save(diffQuestion)
+        and: "a clarification request dto"
+        def clarificationRequestDto = new ClarificationRequestDto()
+        clarificationRequestDto.setContent(CLARIFICATION_CONTENT)
+        clarificationRequestDto.setName(diffUser.getName())
+        clarificationRequestDto.setUsername(diffUser.getUsername())
+        def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
+        clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
 
         when:
         questionDiscussionService.createClarificationRequest(questionAnswer.getId(), diffQuestion.getId(), questionAnswer.getQuizAnswer().getUser().getId(), CLARIFICATION_CONTENT)
@@ -250,7 +259,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         then: "exception is thrown"
         def error = thrown(TutorException)
         error.errorMessage == QUESTION_ANSWER_MISMATCH_QUESTION
-    }
+    } */
 
     /* @Unroll
     def "invalid arguments: questionAnswerId=#questionAnswerId | questionId=#questionId | userId=#userId | content=#content || errorMessage=#errorMessage "() {

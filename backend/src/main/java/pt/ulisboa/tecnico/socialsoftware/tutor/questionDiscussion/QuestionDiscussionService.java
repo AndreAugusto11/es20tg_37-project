@@ -42,14 +42,22 @@ public class QuestionDiscussionService {
     EntityManager entityManager;
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public ClarificationRequestDto createClarificationRequest(Integer questionAnswerId, Integer questionId, Integer userId, String content) {
+    public ClarificationRequestDto createClarificationRequest(Integer questionAnswerId, ClarificationRequestDto clarificationRequestDto) {
         QuestionAnswer questionAnswer = questionAnswerRepository.findById(questionAnswerId)
                 .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswerId));
 
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
+        Question question = questionRepository
+                .findById(clarificationRequestDto.getQuestionAnswer().getQuestion().getId())
+                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND,
+                        clarificationRequestDto.getQuestionAnswer().getQuestion().getId()));
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        User user = userRepository.findByUsername(clarificationRequestDto.getUsername());
+
+        if (user == null) {
+            throw new TutorException(USER_NOT_FOUND, clarificationRequestDto.getUsername());
+        }
+
+        String content = clarificationRequestDto.getContent();
 
         if (user != questionAnswer.getQuizAnswer().getUser()) {
             throw new TutorException(QUESTION_ANSWER_MISMATCH_USER);
