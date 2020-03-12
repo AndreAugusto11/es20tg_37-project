@@ -28,6 +28,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -83,15 +84,21 @@ class createClarificationRequestServiceSpockTest extends Specification {
     @Autowired
     ClarificationRequestRepository clarificationRequestRepository
 
+    @Shared
     def user
     def course
     def courseExecution
+    @Shared
     def question
     def quizQuestion
     def option
     def quizAnswer
     def quiz
     def questionAnswer
+    @Shared
+    def questionAnswerId
+    @Shared
+    def username
 
     def setup() {
 
@@ -165,7 +172,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         when:
         questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
 
-        then: "the returned data are correct"
+        then: "the correct clarification request is inside the repository"
         def result = clarificationRequestRepository.findAll().get(0)
         result.id != null
         result.content == CLARIFICATION_CONTENT
@@ -192,7 +199,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         when:
         questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
 
-        then: "the returned data are correct"
+        then: "the correct clarification request is inside the repository"
         def result = clarificationRequestRepository.findAll().get(0)
         result.id != null
         result.content == CLARIFICATION_CONTENT
@@ -261,31 +268,35 @@ class createClarificationRequestServiceSpockTest extends Specification {
         error.errorMessage == QUESTION_ANSWER_MISMATCH_QUESTION
     } */
 
-    /* @Unroll
-    def "invalid arguments: questionAnswerId=#questionAnswerId | questionId=#questionId | userId=#userId | content=#content || errorMessage=#errorMessage "() {
+    @Unroll
+    def "invalid arguments: questionAnswerId=#questionAnswerIdInput | username=#usernameInput | content=#content || errorMessage=#errorMessage "() {
         given: "a question answer"
-        questionAnswer = new QuestionAnswer()
+        questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
         quizAnswer.addQuestionAnswer(questionAnswer)
-        questionAnswer.setQuizAnswer(quizAnswer)
-        questionAnswer.setTimeTaken(TIME_TAKEN)
-        questionAnswer.setSequence(SEQUENCE)
-        questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
+        and: "a clarification request dto"
+        def clarificationRequestDto = new ClarificationRequestDto()
+        clarificationRequestDto.setContent(content)
+        clarificationRequestDto.setName(user.getName())
+        clarificationRequestDto.setUsername(usernameInput)
+        def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
+        clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
+        questionAnswerId = questionAnswer.getId()
+        username = user.getUsername()
 
         when:
-        questionDiscussionService.createClarificationRequest(questionAnswerId, questionId, userId, content)
+        questionDiscussionService.createClarificationRequest(questionAnswerIdInput, clarificationRequestDto)
 
         then:
         def error = thrown(TutorException)
         error.errorMessage == errorMessage
 
         where:
-        questionAnswerId      | questionId        | userId             | content               || errorMessage
-        null                  | 1                 | 1                  | CLARIFICATION_CONTENT || QUESTION_ANSWER_NOT_FOUND
-        1                     | null              | 1                  | CLARIFICATION_CONTENT || COURSE_NAME_IS_EMPTY
-        1                     | 1                 | null               | CLARIFICATION_CONTENT || COURSE_EXECUTION_ACRONYM_IS_EMPTY
-        1                     | 1                 | 1                  | null                  || COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY
-    } */
+        questionAnswerIdInput  | usernameInput | content                || errorMessage
+        null                   | username      | CLARIFICATION_CONTENT  || QUESTION_ANSWER_NOT_FOUND
+        questionAnswerId       | null          | CLARIFICATION_CONTENT  || COURSE_EXECUTION_ACRONYM_IS_EMPTY
+        questionAnswerId       | username      | null                   || COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY
+    }
 
     def "clarification request is empty"() {
         // an exception is thrown
