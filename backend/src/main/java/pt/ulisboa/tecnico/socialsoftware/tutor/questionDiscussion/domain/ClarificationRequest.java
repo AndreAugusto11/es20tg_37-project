@@ -60,6 +60,8 @@ public class ClarificationRequest {
         this.question = question;
         this.user = user;
         questionAnswer.setClarificationRequest(this);
+        question.addClarificationRequest(this);
+        user.addClarificationRequest(this);
         this.content = content;
     }
 
@@ -93,9 +95,7 @@ public class ClarificationRequest {
 
     public void setImage(Image image) { this.image = image; }
 
-    public Set<ClarificationRequestAnswer> getClarificationRequestAnswer() {
-        return clarificationRequestAnswer;
-    }
+    public Set<ClarificationRequestAnswer> getClarificationRequestAnswer() { return clarificationRequestAnswer; }
 
     public void addClarificationRequestAnswer(ClarificationRequestAnswer clarificationRequestAnswer) {
         this.clarificationRequestAnswer.add(clarificationRequestAnswer);

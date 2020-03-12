@@ -182,6 +182,10 @@ class createClarificationRequestServiceSpockTest extends Specification {
         result.getQuestionAnswer() == questionAnswer
         result.getQuestion() == questionAnswer.getQuizQuestion().getQuestion()
         result.getUser() == questionAnswer.getQuizAnswer().getUser()
+        and: "is associated correctly"
+        questionAnswer.getClarificationRequest() == result
+        question.getClarificationRequest().contains(result)
+        user.getClarificationRequests().contains(result)
 
     }
 
@@ -213,6 +217,10 @@ class createClarificationRequestServiceSpockTest extends Specification {
         result.getQuestionAnswer() == questionAnswer
         result.getQuestion() == questionAnswer.getQuizQuestion().getQuestion()
         result.getUser() == questionAnswer.getQuizAnswer().getUser()
+        and: "is associated correctly"
+        questionAnswer.getClarificationRequest() == result
+        question.getClarificationRequest().contains(result)
+        user.getClarificationRequests().contains(result)
     }
 
     def "create clarification request to answered question with image"() {
@@ -252,6 +260,10 @@ class createClarificationRequestServiceSpockTest extends Specification {
         result.getImage().getId() != null
         result.getImage().getUrl() == URL
         result.getImage().getWidth() == 20
+        and: "is associated correctly"
+        questionAnswer.getClarificationRequest() == result
+        question.getClarificationRequest().contains(result)
+        user.getClarificationRequests().contains(result)
 
     }
 
