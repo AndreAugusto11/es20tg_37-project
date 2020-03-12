@@ -54,16 +54,10 @@ public class QuestionSuggestionService {
         if(user.getRole() != User.Role.STUDENT){
             throw new TutorException(USER_IS_TEACHER, userId);
         }
-            if(user.getCourseExecutions().stream().noneMatch(courseExecution -> courseExecution.getCourse().getId()
-                    == course.getId())){
-                throw new TutorException(USER_NOT_IN_COURSE, userId);
-            }
 
-
-        if (questionSuggestionDto.getKey() == null) {
-            int maxQuestionNumber = questionSuggestionRepository.getMaxQuestionNumber() != null ?
-                    questionSuggestionRepository.getMaxQuestionNumber() : 0;
-            questionSuggestionDto.setKey(maxQuestionNumber + 1);
+        if(user.getCourseExecutions().stream().noneMatch(courseExecution -> courseExecution.getCourse().getId()
+                == course.getId())){
+            throw new TutorException(USER_NOT_IN_COURSE, userId);
         }
 
         QuestionSuggestion questionSuggestion = new QuestionSuggestion(user, course, questionSuggestionDto);

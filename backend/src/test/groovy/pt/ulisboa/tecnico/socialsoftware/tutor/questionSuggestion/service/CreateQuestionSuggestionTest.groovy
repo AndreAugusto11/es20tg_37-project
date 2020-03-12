@@ -90,13 +90,13 @@ class CreateQuestionSuggestionTest extends Specification {
         userRepository.save(user3)
 
         questionDto1 = new QuestionDto();
-        questionDto1.setKey(1);
         questionDto1.setContent("content")
+        questionDto1.setKey(1)
         questionDto1.setStatus(Question.Status.DISABLED.name())
 
         questionDto2 = new QuestionDto();
-        questionDto2.setKey(2);
         questionDto2.setContent("content")
+        questionDto2.setKey(2)
         questionDto2.setStatus(Question.Status.DISABLED.name())
     }
 
@@ -105,7 +105,6 @@ class CreateQuestionSuggestionTest extends Specification {
 
         def questionSuggestionDto = new QuestionSuggestionDto()
         questionSuggestionDto.setQuestionDto(questionDto1)
-        questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE1)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
@@ -123,7 +122,6 @@ class CreateQuestionSuggestionTest extends Specification {
 
         def result = questionSuggestionRepository.findAll().get(0)
         result.getId() != null
-        result.getKey() == 1
         result.getStatus() == QuestionSuggestion.Status.PENDING
         result.getTitle() == SUGGESTION_TITLE1
         result.getContent() == SUGGESTION_CONTENT
@@ -141,7 +139,6 @@ class CreateQuestionSuggestionTest extends Specification {
         given: "SuggestionQuestionDto"
         def questionSuggestionDto = new QuestionSuggestionDto()
         questionSuggestionDto.setQuestionDto(questionDto1)
-        questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
@@ -170,7 +167,6 @@ class CreateQuestionSuggestionTest extends Specification {
         then: "the correct suggestion is inside the repository"
         def result = questionSuggestionRepository.findAll().get(0)
         result.getId() != null
-        result.getKey() == 1
         result.getStatus() == QuestionSuggestion.Status.PENDING
         result.getTitle() == SUGGESTION_TITLE
         result.getContent() == SUGGESTION_CONTENT
@@ -184,7 +180,6 @@ class CreateQuestionSuggestionTest extends Specification {
         given: "SuggestionQuestionDto"
         def questionSuggestionDto = new QuestionSuggestionDto()
         questionSuggestionDto.setQuestionDto(questionDto1)
-        questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
@@ -198,7 +193,6 @@ class CreateQuestionSuggestionTest extends Specification {
 
         def questionSuggestionDto2 = new QuestionSuggestionDto()
         questionSuggestionDto2.setQuestionDto(questionDto2)
-        questionSuggestionDto2.setKey(2)
         questionSuggestionDto2.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto2.setContent(SUGGESTION_CONTENT)
         questionSuggestionDto2.setStatus(QuestionSuggestion.Status.PENDING.name())
@@ -211,14 +205,12 @@ class CreateQuestionSuggestionTest extends Specification {
 
         when: 'are created two questions'
         questionSuggestionService.createSuggestionQuestion(user1.getId(), course1.getId(), questionSuggestionDto)
-        questionSuggestionDto.setKey(null)
         questionSuggestionService.createSuggestionQuestion(user2.getId(), course1.getId(), questionSuggestionDto2)
 
         then: "the two suggestions are created with the correct numbers"
         questionSuggestionRepository.count() == 2L
         def resultOne = questionSuggestionRepository.findAll().get(0)
         def resultTwo = questionSuggestionRepository.findAll().get(1)
-        resultOne.getKey() + resultTwo.getKey() == 3
         resultOne.getUser().getQuestionsSuggestion().size()==1
         resultOne.getUser().getQuestionsSuggestion().contains(resultOne)
         resultTwo.getUser().getQuestionsSuggestion().size()==1
@@ -232,7 +224,6 @@ class CreateQuestionSuggestionTest extends Specification {
         given: "SuggestionQuestionDto"
         def questionSuggestionDto = new QuestionSuggestionDto()
         questionSuggestionDto.setQuestionDto(questionDto1)
-        questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
@@ -245,7 +236,6 @@ class CreateQuestionSuggestionTest extends Specification {
 
         def questionSuggestionDto2 = new QuestionSuggestionDto()
         questionSuggestionDto2.setQuestionDto(questionDto2)
-        questionSuggestionDto2.setKey(2)
         questionSuggestionDto2.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto2.setContent(SUGGESTION_CONTENT)
         questionSuggestionDto2.setStatus(QuestionSuggestion.Status.PENDING.name())
@@ -264,7 +254,6 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionRepository.count() == 2L
         def resultOne = questionSuggestionRepository.findAll().get(0)
         def resultTwo = questionSuggestionRepository.findAll().get(1)
-        resultOne.getKey() + resultTwo.getKey() == 3
         resultOne.getUser().getQuestionsSuggestion().size()==2
         resultOne.getUser().getQuestionsSuggestion().contains(resultOne)
         resultTwo.getUser().getQuestionsSuggestion().contains(resultOne)
@@ -276,7 +265,6 @@ class CreateQuestionSuggestionTest extends Specification {
         given: "SuggestionQuestionDto"
         def questionSuggestionDto = new QuestionSuggestionDto()
         questionSuggestionDto.setQuestionDto(questionDto1)
-        questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
@@ -293,7 +281,6 @@ class CreateQuestionSuggestionTest extends Specification {
         given: "SuggestionQuestionDto"
         def questionSuggestionDto = new QuestionSuggestionDto()
         questionSuggestionDto.setQuestionDto(questionDto1)
-        questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
@@ -310,7 +297,6 @@ class CreateQuestionSuggestionTest extends Specification {
         given: "SuggestionQuestionDto"
         def questionSuggestionDto = new QuestionSuggestionDto()
         questionSuggestionDto.setQuestionDto(questionDto1)
-        questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
@@ -340,7 +326,6 @@ class CreateQuestionSuggestionTest extends Specification {
 
         def questionSuggestionDto = new QuestionSuggestionDto()
         questionSuggestionDto.setQuestionDto(questionDto1)
-        questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
@@ -358,7 +343,6 @@ class CreateQuestionSuggestionTest extends Specification {
 
         def questionSuggestionDto = new QuestionSuggestionDto()
         questionSuggestionDto.setQuestionDto(questionDto1)
-        questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())

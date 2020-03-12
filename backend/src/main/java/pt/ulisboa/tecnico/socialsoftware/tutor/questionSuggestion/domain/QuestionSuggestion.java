@@ -24,17 +24,17 @@ public class QuestionSuggestion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true, nullable = false)
-    private Integer key;
-
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
+
+    @Enumerated(EnumType.STRING)
+    private QuestionSuggestion.Status status = Status.PENDING;
 
     @OneToOne
     private Question question;
 
-    @Enumerated(EnumType.STRING)
-    private QuestionSuggestion.Status status = Status.PENDING;
+    @OneToOne
+    private Justification justification;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -47,29 +47,15 @@ public class QuestionSuggestion {
 
         this.question = new Question(course, questionSuggestionDto.getQuestionDto());
 
-        this.key = questionSuggestionDto.getKey();
-
         this.user = user;
         user.addQuestionSuggestion(this);
 
         this.status = Status.PENDING;
     }
 
-    public Integer getId() {
-        return id;
-    }
+    public Integer getId() { return id; }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getKey() {
-        return key;
-    }
-
-    public void setKey(Integer key) {
-        this.key = key;
-    }
+    public void setId(Integer id) { this.id = id; }
 
     public String getTitle(){ return question.getTitle(); }
 
@@ -104,6 +90,10 @@ public class QuestionSuggestion {
     public Course getCourse(){ return question.getCourse(); }
 
     public void setCourse(Course course){ this.question.setCourse(course); }
+
+    public Justification getJustification() { return justification; }
+
+    public void setJustification(Justification justification) { this.justification = justification; }
 
     public void addOption(Option option){ question.addOption(option); }
 }

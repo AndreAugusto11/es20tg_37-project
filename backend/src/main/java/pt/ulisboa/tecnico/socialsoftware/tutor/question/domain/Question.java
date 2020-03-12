@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
@@ -52,6 +53,9 @@ public class Question {
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
     private Image image;
+
+    @OneToOne
+    private QuestionSuggestion questionSuggestion;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;

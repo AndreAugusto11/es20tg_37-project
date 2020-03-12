@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.QuestionSuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.QuestionSuggestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.JustificationRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSuggestionService
@@ -28,13 +29,13 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.US
 class CreateJustificationTest extends Specification {
 
     @Autowired
-    QuestionSuggestionService questionSuggestionService
-
-    @Autowired
     CourseExecutionRepository courseExecutionRepository
 
     @Autowired
     CourseRepository courseRepository
+
+    @Autowired
+    JustificationRepository justificationRepository
 
     @Autowired
     QuestionSuggestionRepository questionSuggestionRepository
@@ -44,21 +45,22 @@ class CreateJustificationTest extends Specification {
 
     def question
     def questionSuggestion
+    def justification
 
     def setup() {
     }
 
-    def "Create a justification"() {
+    def "Create a justification without an image"() {
         // The justification is created
         expect: false
     }
 
-    def "Create a justification with no content"() {
-        // An exception is thrown
+    def "Create a justification with an image"() {
+        // The justification is created with an image
         expect: false
     }
 
-    def "Create justification given user that does not exist"() {
+    def "Create a justification with no content"() {
         // An exception is thrown
         expect: false
     }

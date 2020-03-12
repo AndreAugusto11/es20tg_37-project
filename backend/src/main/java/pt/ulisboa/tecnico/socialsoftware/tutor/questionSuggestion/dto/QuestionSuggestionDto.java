@@ -10,7 +10,6 @@ import java.util.List;
 public class QuestionSuggestionDto {
 
     private Integer id;
-    private Integer key;
     private QuestionDto questionDto;
     private String status;
     private String creationDate = null;
@@ -20,9 +19,7 @@ public class QuestionSuggestionDto {
 
     public QuestionSuggestionDto(QuestionSuggestion questionSuggestion) {
         this.id = questionSuggestion.getId();
-        this.key = questionSuggestion.getKey();
         this.questionDto = new QuestionDto(questionSuggestion.getQuestion());
-
     }
 
     public Integer getId() {
@@ -31,14 +28,6 @@ public class QuestionSuggestionDto {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getKey() {
-        return key;
-    }
-
-    public void setKey(Integer key) {
-        this.key = key;
     }
 
     public String getTitle(){ return questionDto.getTitle(); }
@@ -55,7 +44,7 @@ public class QuestionSuggestionDto {
 
     public ImageDto getImage(){ return questionDto.getImage(); }
 
-    public void setImage(ImageDto image){ this.questionDto.setImage(image);}
+    public void setImage(ImageDto image){ this.questionDto.setImage(image); }
 
     public List<OptionDto> getOptions(){ return questionDto.getOptions(); }
 

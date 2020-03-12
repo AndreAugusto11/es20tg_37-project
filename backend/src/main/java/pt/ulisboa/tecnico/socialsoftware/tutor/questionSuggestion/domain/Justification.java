@@ -30,7 +30,7 @@ public class Justification {
     private User user;
 
     // Check if cascade is right
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "justification")
     private Image image;
 
     public Justification() {

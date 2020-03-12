@@ -63,6 +63,11 @@ class RejectQuestionSuggestionTest extends Specification {
         expect: false
     }
 
+    def "Teacher rejects suggestion without justification"() {
+        // An exception is thrown
+        expect: false
+    }
+
     @TestConfiguration
     static class QuestionSuggestionServiceImplTestContextConfiguration {
 
