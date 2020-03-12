@@ -46,6 +46,10 @@ public class ClarificationRequest {
     }
 
     public ClarificationRequest(QuestionAnswer questionAnswer, Question question, User user, String content) {
+        if (content == null || content.trim().isEmpty()) {
+            throw new TutorException(CLARIFICATION_REQUEST_IS_EMPTY);
+        }
+
         this.questionAnswer = questionAnswer;
         this.question = question;
         this.user = user;

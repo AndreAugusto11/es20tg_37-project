@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
@@ -50,6 +51,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
     public static final String OPTION_CONTENT = "optionId content"
     public static final Integer SEQUENCE = 0
     public static final LocalDateTime ANSWER_DATE = LocalDateTime.now()
+    public static final String URL = 'URL'
 
     @Autowired
     QuestionDiscussionService  questionDiscussionService
@@ -94,11 +96,8 @@ class createClarificationRequestServiceSpockTest extends Specification {
     def option
     def quizAnswer
     def quiz
+    @Shared
     def questionAnswer
-    @Shared
-    def questionAnswerId
-    @Shared
-    def username
 
     def setup() {
 
@@ -178,6 +177,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         result.content == CLARIFICATION_CONTENT
         result.status == ClarificationRequest.Status.OPEN
         result.getQuestionAnswer() == questionAnswer
+        result.getQuestion() == questionAnswer.getQuizQuestion().getQuestion()
         result.getUser() == questionAnswer.getQuizAnswer().getUser()
 
     }
@@ -205,7 +205,44 @@ class createClarificationRequestServiceSpockTest extends Specification {
         result.content == CLARIFICATION_CONTENT
         result.status == ClarificationRequest.Status.OPEN
         result.getQuestionAnswer() == questionAnswer
+        result.getQuestion() == questionAnswer.getQuizQuestion().getQuestion()
         result.getUser() == questionAnswer.getQuizAnswer().getUser()
+    }
+
+    def "create clarification request to answered question with image"() {
+        given: "a question answer answered"
+        questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
+        quizAnswer.addQuestionAnswer(questionAnswer)
+        questionAnswerRepository.save(questionAnswer)
+        and: "a clarification request dto"
+        def clarificationRequestDto = new ClarificationRequestDto()
+        clarificationRequestDto.setContent(CLARIFICATION_CONTENT)
+        clarificationRequestDto.setName(user.getName())
+        clarificationRequestDto.setUsername(user.getUsername())
+        def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
+        clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
+        // por o status???
+        and: "an image"
+        def image = new ImageDto()
+        image.setUrl(URL)
+        image.setWidth(20)
+        clarificationRequestDto.setImage(image)
+
+        when:
+        questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
+
+        then: "the correct clarification request is inside the repository"
+        def result = clarificationRequestRepository.findAll().get(0)
+        result.id != null
+        result.content == CLARIFICATION_CONTENT
+        result.status == ClarificationRequest.Status.OPEN
+        result.getQuestionAnswer() == questionAnswer
+        result.getQuestion() == questionAnswer.getQuizQuestion().getQuestion()
+        result.getUser() == questionAnswer.getQuizAnswer().getUser()
+        result.getImage().getId() != null
+        result.getImage().getUrl() == URL
+        result.getImage().getWidth() == 20
+
     }
 
     def "create clarification request to answered question, but user is diff"() {
@@ -269,7 +306,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
     } */
 
     @Unroll
-    def "invalid arguments: questionAnswerId=#questionAnswerIdInput | username=#usernameInput | content=#content || errorMessage=#errorMessage "() {
+    def "invalid arguments: questionAnswerId=#questionAnswerId | username=#username | content=#content || errorMessage=#errorMessage "() {
         given: "a question answer"
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
         quizAnswer.addQuestionAnswer(questionAnswer)
@@ -278,34 +315,23 @@ class createClarificationRequestServiceSpockTest extends Specification {
         def clarificationRequestDto = new ClarificationRequestDto()
         clarificationRequestDto.setContent(content)
         clarificationRequestDto.setName(user.getName())
-        clarificationRequestDto.setUsername(usernameInput)
+        clarificationRequestDto.setUsername(username)
         def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
         clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
-        questionAnswerId = questionAnswer.getId()
-        username = user.getUsername()
 
         when:
-        questionDiscussionService.createClarificationRequest(questionAnswerIdInput, clarificationRequestDto)
+        questionDiscussionService.createClarificationRequest(questionAnswerId, clarificationRequestDto)
 
         then:
         def error = thrown(TutorException)
         error.errorMessage == errorMessage
 
         where:
-        questionAnswerIdInput  | usernameInput | content                || errorMessage
-        null                   | username      | CLARIFICATION_CONTENT  || QUESTION_ANSWER_NOT_FOUND
-        questionAnswerId       | null          | CLARIFICATION_CONTENT  || COURSE_EXECUTION_ACRONYM_IS_EMPTY
-        questionAnswerId       | username      | null                   || COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY
-    }
-
-    def "clarification request is empty"() {
-        // an exception is thrown
-        expect: false
-    }
-
-    def "clarification request is blank"() {
-        // an exception is thrown
-        expect: false
+        questionAnswerId        | username            | content                || errorMessage
+        null                    | user.getUsername()  | CLARIFICATION_CONTENT  || QUESTION_ANSWER_NOT_FOUND
+        questionAnswer.getId()  | null                | CLARIFICATION_CONTENT  || COURSE_EXECUTION_ACRONYM_IS_EMPTY
+        questionAnswer.getId()  | user.getUsername()  | null                   || CLARIFICATION_REQUEST_IS_EMPTY
+        questionAnswer.getId()  | user.getUsername()  | "     "                || CLARIFICATION_REQUEST_IS_EMPTY
     }
 
     @TestConfiguration

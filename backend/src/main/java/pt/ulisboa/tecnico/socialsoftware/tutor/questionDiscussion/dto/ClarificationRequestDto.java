@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ public class ClarificationRequestDto implements Serializable {
     private String name;
     private String username;
     private String status;
+    private ImageDto image;
 
     public ClarificationRequestDto() {
     }
@@ -23,6 +25,9 @@ public class ClarificationRequestDto implements Serializable {
         this.name = clarificationRequest.getUser().getName();
         this.username = clarificationRequest.getUser().getUsername();
         this.status = clarificationRequest.getStatus().name();
+
+        if (clarificationRequest.getImage() != null)
+            this.image = new ImageDto(clarificationRequest.getImage());
     }
 
     public Integer getId() { return id; }
@@ -50,4 +55,8 @@ public class ClarificationRequestDto implements Serializable {
     public String getUsername() { return username; }
 
     public void setUsername(String username) { this.username = username; }
+
+    public ImageDto getImage() { return image; }
+
+    public void setImage(ImageDto image) { this.image = image; }
 }

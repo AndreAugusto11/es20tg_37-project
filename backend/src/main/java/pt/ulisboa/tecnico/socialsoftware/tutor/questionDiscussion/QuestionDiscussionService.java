@@ -58,7 +58,6 @@ public class QuestionDiscussionService {
                         clarificationRequestDto.getQuestionAnswer().getQuestion().getId()));
 
         User user = userRepository.findByUsername(clarificationRequestDto.getUsername());
-
         if (user == null) {
             throw new TutorException(USER_NOT_FOUND_USERNAME, clarificationRequestDto.getUsername());
         }
@@ -66,15 +65,19 @@ public class QuestionDiscussionService {
         String content = clarificationRequestDto.getContent();
 
         if (user != questionAnswer.getQuizAnswer().getUser()) {
-            throw new TutorException(QUESTION_ANSWER_MISMATCH_USER);
+            throw new TutorException(QUESTION_ANSWER_MISMATCH_USER, String.valueOf(questionAnswer.getId()), user.getUsername());
         }
 
         if (question != questionAnswer.getQuizQuestion().getQuestion()) {
-            throw new TutorException(QUESTION_ANSWER_MISMATCH_QUESTION);
+            throw new TutorException(QUESTION_ANSWER_MISMATCH_QUESTION, String.valueOf(questionAnswer.getId()), String.valueOf(question.getId()));
         }
 
-        // Content pode ser null !!!!
         ClarificationRequest clarificationRequest = new ClarificationRequest(questionAnswer, question, user, content);
+        if (clarificationRequestDto.getImage() != null) {
+            Image img = new Image(clarificationRequestDto.getImage());
+            clarificationRequest.setImage(img);
+            img.setClarificationRequest(clarificationRequest);
+        }
 
         entityManager.persist(clarificationRequest);
         return new ClarificationRequestDto(clarificationRequest);
@@ -104,26 +107,5 @@ public class QuestionDiscussionService {
 
         entityManager.persist(clarificationRequestAnswer);
         return new ClarificationRequestAnswerDto(clarificationRequestAnswer);
-    }
-
-    @Retryable(
-        value = { SQLException.class },
-        backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void uploadImage(Integer clarificationRequestId, String type) {
-        ClarificationRequest clarificationRequest = clarificationRequestRepository.findById(clarificationRequestId)
-                .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_NOT_FOUND, clarificationRequestId));
-
-        Image image = clarificationRequest.getImage();
-
-        if (image == null) {
-            image = new Image();
-
-            clarificationRequest.setImage(image);
-
-            entityManager.persist(image);
-        }
-
-        // clarificationRequest.getImage().setUrl(clarificationRequest.getKey() + "." + type);
     }
 }

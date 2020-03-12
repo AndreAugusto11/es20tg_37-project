@@ -58,6 +58,7 @@ public enum ErrorMessage {
 
     QUESTION_ANSWER_MISMATCH_USER("Question answer %s is not assigned to student %s"),
     QUESTION_ANSWER_MISMATCH_QUESTION("Question answer %s is not assigned to question %s"),
+    CLARIFICATION_REQUEST_IS_EMPTY("The clarification request content is empty"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file");
