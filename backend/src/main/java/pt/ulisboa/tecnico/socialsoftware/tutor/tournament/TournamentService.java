@@ -1,18 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
+import java.util.*;
+import java.util.function.*;
 import java.time.LocalDateTime;
-import java.util.function.Predicate;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -31,14 +32,15 @@ public class TournamentService
 		return new TournamentDto(new Tournament(user));
 	}
 
-	public TournamentDto createTournament(User student, TopicDto topic, int num_of_questions, LocalDateTime startTime, LocalDateTime endTime)
+	public TournamentDto createTournament(User student, Set<Topic> topics, int num_of_questions, LocalDateTime startTime, LocalDateTime endTime)
 	{
-		return null;
+		Tournament tournament = new Tournament(student, topics, num_of_questions, startTime, endTime);
+		return new TournamentDto(tournament);
 	}
 
-	public TournamentDto createTournament(User student, TopicDto[] topics, int num_of_questions, LocalDateTime startTime, LocalDateTime endTime)
+	public TournamentDto convertTournament(Tournament tournament)
 	{
-		return null;
+		return new TournamentDto(tournament);
 	}
 
 	public TournamentDto findTournamentById(Integer id){
