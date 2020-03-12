@@ -13,9 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest
@@ -33,26 +31,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.time.LocalDateTime
-
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @DataJpaTest
 class createClarificationRequestAnswerServiceSpockTest extends Specification {
-    public static final String USERNAME = "username"
+    public static final String USERNAME_TEACHER = "username_teacher"
+    public static final String USERNAME_STUDENT = "username_student"
     public static final String COURSE_NAME = "Software Architecture"
     public static final String CLARIFICATION_CONTENT = "Test"
-    public static final String EMPTY_CLARIFICATION_CONTENT = ""
+    public static final String EMPTY_CLARIFICATION_CONTENT = "  "
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
-    public static final Integer TIME_TAKEN = 1234
-    public static final String QUIZ_TITLE = 'quiz title'
-    public static final String VERSION = 'B'
-    public static final String QUESTION_TITLE = 'question title'
-    public static final String QUESTION_CONTENT = 'question content'
-    public static final String OPTION_CONTENT = "optionId content"
-    public static final Integer SEQUENCE = 0
-    public static final LocalDateTime ANSWER_DATE = LocalDateTime.now()
 
     @Autowired
     QuestionDiscussionService questionDiscussionService
@@ -79,9 +68,6 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     QuestionRepository questionRepository
 
     @Autowired
-    OptionRepository optionRepository
-
-    @Autowired
     QuestionAnswerRepository questionAnswerRepository
 
     @Autowired
@@ -90,12 +76,12 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     @Autowired
     ClarificationRequestAnswerRepository clarificationRequestAnswerRepository
 
-    def user
+    def user_teacher
+    def user_student
     def course
     def courseExecution
     def question
     def quizQuestion
-    def option
     def quizAnswer
     def quiz
     def questionAnswer
@@ -108,45 +94,27 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
-        user = new User("name", USERNAME, 1, User.Role.TEACHER)
-        user.getCourseExecutions().add(courseExecution)
-        courseExecution.getUsers().add(user)
-        userRepository.save(user)
+        user_teacher = new User("name", USERNAME_TEACHER, 1, User.Role.TEACHER)
+        user_student = new User("name", USERNAME_STUDENT, 2, User.Role.STUDENT)
+        user_teacher.getCourseExecutions().add(courseExecution)
+        user_student.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(user_teacher)
+        userRepository.save(user_teacher)
+        userRepository.save(user_student)
 
         question = new Question()
         question.setCourse(course)
         course.addQuestion(question)
         question.setKey(1)
-        question.setTitle(QUESTION_TITLE)
-        question.setContent(QUESTION_CONTENT)
-        question.setStatus(Question.Status.AVAILABLE)
         questionRepository.save(question)
-
-        option = new Option()
-        option.setSequence(0)
-        option.setContent(OPTION_CONTENT)
-        option.setCorrect(true)
-        option.setQuestion(question)
-        question.addOption(option)
-        optionRepository.save(option)
 
         quiz = new Quiz()
         quiz.setKey(1)
-        quiz.setTitle(QUIZ_TITLE)
-        quiz.setType(Quiz.QuizType.GENERATED)
         quiz.setCourseExecution(courseExecution)
         courseExecution.addQuiz(quiz)
-
-        quiz.setCreationDate(LocalDateTime.now())
-        quiz.setAvailableDate(LocalDateTime.now())
-        quiz.setConclusionDate(LocalDateTime.now())
-        quiz.setType(Quiz.QuizType.EXAM)
-        quiz.setSeries(1)
-        quiz.setVersion(VERSION)
         quizRepository.save(quiz)
 
         quizQuestion = new QuizQuestion()
-        quizQuestion.setSequence(SEQUENCE)
         quizQuestion.setQuiz(quiz)
         quizQuestion.setQuestion(question)
         quiz.addQuizQuestion(quizQuestion)
@@ -154,27 +122,23 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
 
         quizAnswer = new QuizAnswer()
         quizAnswer.setQuiz(quiz)
-        quizAnswer.setUser(user)
-        quizAnswer.setAnswerDate(ANSWER_DATE)
+        quizAnswer.setUser(user_student)
         quizAnswer.setCompleted(true)
         quizAnswerRepository.save(quizAnswer)
 
         questionAnswer = new QuestionAnswer()
         quizAnswer.addQuestionAnswer(questionAnswer)
         questionAnswer.setQuizAnswer(quizAnswer)
-        questionAnswer.setTimeTaken(TIME_TAKEN)
-        questionAnswer.setOption(option)
-        questionAnswer.setSequence(SEQUENCE)
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
     }
 
     def "teacher creates clarification request answer to an opened clarification request"() {
         given: "an opened clarification request"
-        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
+        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
         questionAnswer.setClarificationRequest(clarificationRequest)
         question.addClarificationRequest(clarificationRequest)
-        user.addClarificationRequest(clarificationRequest)
+        user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
 
         and: "a clarification request dto"
@@ -185,8 +149,8 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER_ANSWER)
         clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
         clarificationRequestAnswerDto.setClarificationRequest(clarificationRequestDto)
-        clarificationRequestAnswerDto.setName(user.getName())
-        clarificationRequestAnswerDto.setUsername(user.getUsername())
+        clarificationRequestAnswerDto.setName(user_teacher.getName())
+        clarificationRequestAnswerDto.setUsername(user_teacher.getUsername())
 
         when:
         questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
@@ -202,11 +166,11 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
 
     def "teacher creates clarification request answer to a closed clarification request"() {
         given: "a closed clarification request"
-        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
+        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
         clarificationRequest.setStatus(ClarificationRequest.Status.CLOSED)
         questionAnswer.setClarificationRequest(clarificationRequest)
         question.addClarificationRequest(clarificationRequest)
-        user.addClarificationRequest(clarificationRequest)
+        user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
 
         and: "a clarification request dto"
@@ -217,8 +181,8 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER_ANSWER)
         clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
         clarificationRequestAnswerDto.setClarificationRequest(clarificationRequestDto)
-        clarificationRequestAnswerDto.setName(user.getName())
-        clarificationRequestAnswerDto.setUsername(user.getUsername())
+        clarificationRequestAnswerDto.setName(user_teacher.getName())
+        clarificationRequestAnswerDto.setUsername(user_teacher.getUsername())
 
         when:
         questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
@@ -230,14 +194,14 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
 
     def "teacher from a different course execution creates clarification request answer"() {
         given: "an user not associated to the course execution"
-        def userNotAssociated = new User('name1', "username1", 2, User.Role.TEACHER)
+        def userNotAssociated = new User('name1', "username1", 3, User.Role.TEACHER)
         userRepository.save(userNotAssociated)
 
         and: "an opened clarification request"
-        def clarificationRequest = new ClarificationRequest(questionAnswer, question, userNotAssociated, CLARIFICATION_CONTENT)
+        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
         questionAnswer.setClarificationRequest(clarificationRequest)
         question.addClarificationRequest(clarificationRequest)
-        userNotAssociated.addClarificationRequest(clarificationRequest)
+        user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
 
         and: "a clarification request dto"
@@ -261,10 +225,10 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
 
     def "student creates clarification request answer"() {
         given: "an opened clarification request"
-        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
+        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
         questionAnswer.setClarificationRequest(clarificationRequest)
         question.addClarificationRequest(clarificationRequest)
-        user.addClarificationRequest(clarificationRequest)
+        user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
 
         and: "a clarification request dto"
@@ -272,11 +236,11 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
 
         and: "a clarification request answer dto"
         def clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
-        clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.STUDENT_ANSWER)
+        clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER_ANSWER)
         clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
         clarificationRequestAnswerDto.setClarificationRequest(clarificationRequestDto)
-        clarificationRequestAnswerDto.setName(user.getName())
-        clarificationRequestAnswerDto.setUsername(user.getUsername())
+        clarificationRequestAnswerDto.setName(user_student.getName())
+        clarificationRequestAnswerDto.setUsername(user_student.getUsername())
 
         when:
         questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
@@ -290,10 +254,10 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     @Unroll
     def "invalid arguments: type=#type | content=#content | username=#username || errorMessage=#errorMessage"() {
         given: "a clarification request"
-        ClarificationRequest clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
+        ClarificationRequest clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
         questionAnswer.setClarificationRequest(clarificationRequest)
         question.addClarificationRequest(clarificationRequest)
-        user.addClarificationRequest(clarificationRequest)
+        user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
 
         and: "a clarification request dto"
@@ -304,7 +268,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         clarificationRequestAnswerDto.setClarificationRequest(clarificationRequestDto)
         clarificationRequestAnswerDto.setContent(content)
         clarificationRequestAnswerDto.setType(type)
-        clarificationRequestAnswerDto.setName(user.getName())
+        clarificationRequestAnswerDto.setName(user_teacher.getName())
         clarificationRequestAnswerDto.setUsername(username)
 
         when:
@@ -315,14 +279,12 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         error.errorMessage == errorMessage
 
         where:
-        type                                           | content               | username || errorMessage
-        null                                           | CLARIFICATION_CONTENT | USERNAME || CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED
-        ClarificationRequestAnswer.Type.TEACHER_ANSWER | null                  | USERNAME || CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY
-        ClarificationRequestAnswer.Type.TEACHER_ANSWER | "   "                 | USERNAME || CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY
-        ClarificationRequestAnswer.Type.TEACHER_ANSWER | CLARIFICATION_CONTENT | null     || USER_NOT_FOUND_USERNAME
-        ClarificationRequestAnswer.Type.TEACHER_ANSWER | CLARIFICATION_CONTENT | "    "   || USER_NOT_FOUND_USERNAME
-
-        ClarificationRequestAnswer.Type.STUDENT_ANSWER | CLARIFICATION_CONTENT | USERNAME || ACCESS_DENIED
+        type                                           | content                     | username         || errorMessage
+        null                                           | CLARIFICATION_CONTENT       | USERNAME_TEACHER || CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED
+        ClarificationRequestAnswer.Type.TEACHER_ANSWER | null                        | USERNAME_TEACHER || CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY
+        ClarificationRequestAnswer.Type.TEACHER_ANSWER | EMPTY_CLARIFICATION_CONTENT | USERNAME_TEACHER || CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY
+        ClarificationRequestAnswer.Type.TEACHER_ANSWER | CLARIFICATION_CONTENT       | null             || USER_NOT_FOUND_USERNAME
+        ClarificationRequestAnswer.Type.TEACHER_ANSWER | CLARIFICATION_CONTENT       | "    "           || USER_NOT_FOUND_USERNAME
     }
 
     @TestConfiguration
