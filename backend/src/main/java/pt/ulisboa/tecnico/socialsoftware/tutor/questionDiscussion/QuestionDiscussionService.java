@@ -49,6 +49,9 @@ public class QuestionDiscussionService {
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ClarificationRequestDto createClarificationRequest(Integer questionAnswerId, ClarificationRequestDto clarificationRequestDto) {
+        if (questionAnswerId == null) {
+            throw new TutorException(QUESTION_ANSWER_NOT_DEFINED);
+        }
         QuestionAnswer questionAnswer = questionAnswerRepository.findById(questionAnswerId)
                 .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswerId));
 
@@ -70,6 +73,10 @@ public class QuestionDiscussionService {
 
         if (question != questionAnswer.getQuizQuestion().getQuestion()) {
             throw new TutorException(QUESTION_ANSWER_MISMATCH_QUESTION, String.valueOf(questionAnswer.getId()), String.valueOf(question.getId()));
+        }
+
+        if (questionAnswer.getOption() != null && !question.getOptions().contains(questionAnswer.getOption())) {
+            throw new TutorException(QUESTION_ANSWER_MISMATCH_OPTION, String.valueOf(questionAnswer.getId()), String.valueOf(questionAnswer.getOption().getId()));
         }
 
         ClarificationRequest clarificationRequest = new ClarificationRequest(questionAnswer, question, user, content);
