@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
@@ -23,6 +24,7 @@ import javax.persistence.PersistenceContext;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
+@Service
 public class QuestionDiscussionService {
 
     @Autowired
@@ -79,7 +81,12 @@ public class QuestionDiscussionService {
         return new ClarificationRequestDto(clarificationRequest);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ClarificationRequestAnswerDto createClarificationRequestAnswer(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
+
+        if (clarificationRequestAnswerDto.getClarificationRequest() == null) {
+            throw new TutorException(CLARIFICATION_REQUEST_NOT_DEFINED);
+        }
         
         ClarificationRequest clarificationRequest = clarificationRequestRepository.findById(clarificationRequestAnswerDto.getClarificationRequest().getId())
                 .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_NOT_FOUND, clarificationRequestAnswerDto.getClarificationRequest().getId()));

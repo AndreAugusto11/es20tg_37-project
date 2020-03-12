@@ -39,7 +39,6 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     public static final String USERNAME_STUDENT = "username_student"
     public static final String COURSE_NAME = "Software Architecture"
     public static final String CLARIFICATION_CONTENT = "Test"
-    public static final String EMPTY_CLARIFICATION_CONTENT = "  "
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
 
@@ -132,6 +131,27 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
     }
+
+    def "teacher creates clarification request answer to a non existing clarification request"() {
+        given: "a null clarification request answer dto"
+        def clarificationRequestDto = null
+
+        and: "a clarification request answer dto"
+        def clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
+        clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER_ANSWER)
+        clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
+        clarificationRequestAnswerDto.setClarificationRequest(clarificationRequestDto)
+        clarificationRequestAnswerDto.setName(user_teacher.getName())
+        clarificationRequestAnswerDto.setUsername(user_teacher.getUsername())
+
+        when:
+        questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
+
+        then: "an exception is thrown"
+        def error = thrown(TutorException)
+        error.errorMessage == CLARIFICATION_REQUEST_NOT_DEFINED
+    }
+
 
     def "teacher creates clarification request answer to an opened clarification request"() {
         given: "an opened clarification request"
@@ -292,7 +312,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         type                                           | content                     | username         || errorMessage
         null                                           | CLARIFICATION_CONTENT       | USERNAME_TEACHER || CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED
         ClarificationRequestAnswer.Type.TEACHER_ANSWER | null                        | USERNAME_TEACHER || CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY
-        ClarificationRequestAnswer.Type.TEACHER_ANSWER | EMPTY_CLARIFICATION_CONTENT | USERNAME_TEACHER || CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY
+        ClarificationRequestAnswer.Type.TEACHER_ANSWER | "   "                       | USERNAME_TEACHER || CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY
         ClarificationRequestAnswer.Type.TEACHER_ANSWER | CLARIFICATION_CONTENT       | null             || USER_NOT_FOUND_USERNAME
         ClarificationRequestAnswer.Type.TEACHER_ANSWER | CLARIFICATION_CONTENT       | "    "           || USER_NOT_FOUND_USERNAME
     }

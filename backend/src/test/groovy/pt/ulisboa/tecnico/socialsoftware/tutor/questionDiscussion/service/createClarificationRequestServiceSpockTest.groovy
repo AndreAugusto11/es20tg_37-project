@@ -47,12 +47,10 @@ class createClarificationRequestServiceSpockTest extends Specification {
     public static final String ACADEMIC_TERM = "1 SEM"
     public static final Integer TIME_TAKEN = 1234
     public static final String QUIZ_TITLE = 'quiz title'
-    public static final String VERSION = 'B'
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
     public static final Integer SEQUENCE = 0
-    public static final LocalDateTime ANSWER_DATE = LocalDateTime.now()
     public static final String URL = 'URL'
 
     @Autowired
@@ -122,7 +120,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         questionRepository.save(question)
 
         option = new Option()
-        option.setSequence(0)
+        option.setSequence(SEQUENCE)
         option.setContent(OPTION_CONTENT)
         option.setCorrect(true)
         option.setQuestion(question)
@@ -135,13 +133,6 @@ class createClarificationRequestServiceSpockTest extends Specification {
         quiz.setType(Quiz.QuizType.GENERATED)
         quiz.setCourseExecution(courseExecution)
         courseExecution.addQuiz(quiz)
-
-        quiz.setCreationDate(LocalDateTime.now())
-        quiz.setAvailableDate(LocalDateTime.now())
-        quiz.setConclusionDate(LocalDateTime.now())
-        quiz.setType(Quiz.QuizType.EXAM)
-        quiz.setSeries(1)
-        quiz.setVersion(VERSION)
         quizRepository.save(quiz)
 
         quizQuestion = new QuizQuestion(quiz, question, SEQUENCE)
@@ -149,8 +140,6 @@ class createClarificationRequestServiceSpockTest extends Specification {
         quizQuestionRepository.save(quizQuestion)
 
         quizAnswer = new QuizAnswer(user, quiz)
-        quizAnswer.setAnswerDate(ANSWER_DATE)
-        quizAnswer.setCompleted(true)
         quizAnswerRepository.save(quizAnswer)
     }
 
@@ -407,6 +396,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         where:
         username            | content                || errorMessage
         null                | CLARIFICATION_CONTENT  || USER_NOT_FOUND_USERNAME
+        "     "             | CLARIFICATION_CONTENT  || USER_NOT_FOUND_USERNAME
         user.getUsername()  | null                   || CLARIFICATION_REQUEST_IS_EMPTY
         user.getUsername()  | "     "                || CLARIFICATION_REQUEST_IS_EMPTY
     }
@@ -420,5 +410,4 @@ class createClarificationRequestServiceSpockTest extends Specification {
         }
 
     }
-
 }
