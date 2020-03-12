@@ -59,6 +59,7 @@ public class User implements UserDetails {
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
 
+    @ManyToMany
     private Set<Tournament> tournaments = new HashSet<>();
 
     public User() {

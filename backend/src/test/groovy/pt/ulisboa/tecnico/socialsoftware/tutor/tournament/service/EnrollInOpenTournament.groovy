@@ -31,7 +31,6 @@ class EnrollInOpenTournament extends Specification {
         user1 = new User("Manel1", "Man12", 1, User.Role.STUDENT)
         userRepository.save(user1)
         tournament = tournamentService.createTournament(user1.getKey())
-        tournament.setKey(1)
         tournamentRepository.save(tournament)
     }
 

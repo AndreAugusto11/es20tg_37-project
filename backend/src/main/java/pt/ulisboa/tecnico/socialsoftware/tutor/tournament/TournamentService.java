@@ -24,7 +24,12 @@ public class TournamentService
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
+	public TournamentDto createTournament(Integer userKey)
+	{
+		return null;
+	}
+
 	public TournamentDto createTournament(User student, TopicDto topic, int num_of_questions, LocalDateTime startTime, LocalDateTime endTime)
 	{
 		return null;
@@ -35,19 +40,19 @@ public class TournamentService
 		return null;
 	}
 
-	public TournamentDto findTournamentByKey(Integer key){
-		return tournamentRepository.findByKey(key).map(TournamentDto::new)
-				.orElseThrow( () -> new TutorException(TOURNAMENT_NOT_FOUND,key));
+	public TournamentDto findTournamentById(Integer id){
+		return tournamentRepository.findById(id).map(TournamentDto::new)
+				.orElseThrow( () -> new TutorException(TOURNAMENT_NOT_FOUND,id));
 	}
 
-	public void enrollStudentInTournament(Integer userKey, Integer tournamentKey){
-		Tournament tournament = tournamentRepository.findByKey(tournamentKey)
-				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND,tournamentKey));
+	public void enrollStudentInTournament(Integer userKey, Integer tournamentId){
+		Tournament tournament = tournamentRepository.findById(tournamentId)
+				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND,tournamentId));
 		User user = userRepository.findByKey(userKey);
 
 		if(user.getRole() != User.Role.STUDENT) throw new TutorException(TOURNAMENT_NOT_STUDENT);
 
-		if(tournament.getStatus() != "OPEN") throw new TutorException(TOURNAMENT_NOT_OPEN,tournamentKey);
+		if(tournament.getStatus() != "OPEN") throw new TutorException(TOURNAMENT_NOT_OPEN,tournamentId);
 
 		Predicate<User> u1 = s -> s.getKey().equals(userKey);
 

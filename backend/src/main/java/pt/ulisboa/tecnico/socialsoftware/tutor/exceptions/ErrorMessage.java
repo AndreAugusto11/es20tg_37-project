@@ -23,7 +23,7 @@ public enum ErrorMessage {
     TOURNAMENT_NULL_NUM_QUESTS("Number of Questions is null in Tournament Creation"),
     TOURNAMENT_NULL_STARTTIME("Start Time is null in Tournament Creation"),
     TOURNAMENT_NULL_ENDTIME("End Time is null in Tournament Creation"),
-    TOURNAMENT_NON_STUDENT_USER("User is not in a Student (id %d) in Tournament Creation"),
+    TOURNAMENT_NON_VALID_USER("User is not in a Student (id %d) in Tournament Creation"),
     TOURNAMENT_INVALID_NUM_QUESTS("Number of Questions is a non-positive number in Tournament Creation"),
     TOURNAMENT_INVALID_STARTTIME("Start Time is out-of-format or not a valid TimeStamp in Tournament Creation"),
     TOURNAMENT_INVALID_ENDTIME("End Time is out-of-format or not a valid TimeStamp in Tournament Creation"),

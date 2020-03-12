@@ -1,19 +1,31 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import spock.lang.Specification
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class CreateQuestionSuggestionTest extends Specification {
+@DataJpaTest
+class CreateTournamentTest extends Specification {
 
     public static final String TOPIC_ONE = "topicOne"
     public static final String TOPIC_TWO = "topicTwo"
     public static final String TOPIC_THREE = "topicThree"
 	public static final int	number_of_questions = 5
 
-	def tournamentService
+	@Autowired
+	TournamentService tournamentService
+
 	def student
 	def topicdto
 	def topicsdto
@@ -23,11 +35,10 @@ class CreateQuestionSuggestionTest extends Specification {
 
 	def setup()
 	{
-		tournamentService = new TournamentService()
 
 		student = new User('student', "istStu", 1, User.Role.STUDENT)
 
-		topicDto = new TopicDto()
+		def topicDto = new TopicDto()
         topicDto.setName(TOPIC_ONE)
         def topicDtoTwo = new TopicDto()
         topicDtoTwo.setName(TOPIC_TWO)
@@ -38,7 +49,7 @@ class CreateQuestionSuggestionTest extends Specification {
 		topicsdto.putAt(0, topicdto)
 		topicsdto.putAt(1, topicDtoTwo)
 		topicsdto.putAt(2, topicDtoThree)
-        
+
 		formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
 		startTime = LocalDateTime.now()
 		startTime.format(formatter)
@@ -230,5 +241,4 @@ class CreateQuestionSuggestionTest extends Specification {
             return new TournamentService()
         }
     }
-
 }
