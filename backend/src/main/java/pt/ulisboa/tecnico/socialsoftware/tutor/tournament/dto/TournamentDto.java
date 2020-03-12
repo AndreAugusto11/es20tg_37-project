@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import java.io.Serializable;
 
 public class TournamentDto implements Serializable {
+    private String status;
     public TournamentDto() {
 
     }
@@ -14,6 +15,8 @@ public class TournamentDto implements Serializable {
 
     }
 
-    public void enroll(Integer userKey) {
-    }
+    public String getStatus() { return this.status;}
+
+    public void setStatus(String status) {this.status = status;}
+
 }

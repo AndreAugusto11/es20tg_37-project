@@ -15,8 +15,8 @@ import java.util.Optional;
 @Transactional
 public interface TournamentRepository extends JpaRepository<Tournament, Integer> {
     @Query(value = "SELECT * FROM tournaments t", nativeQuery = true)
-    List<TournamentDto> findTournaments();
+    List<Tournament> findTournaments();
 
     @Query(value = "SELECT * FROM tournaments t WHERE t.key = :key", nativeQuery = true)
-    Optional<TournamentDto> findByKey(Integer key);
+    Optional<Tournament> findByKey(Integer key);
 }
