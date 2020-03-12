@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 
 import javax.persistence.*;
@@ -21,7 +22,7 @@ public class Image {
     private Question question;
 
     @OneToOne
-    private QuestionSuggestion questionSuggestion;
+    private Justification justification;
 
     public Image() {}
 
@@ -63,6 +64,10 @@ public class Image {
         this.width = width;
     }
 
+    public Justification getJustification() { return justification; }
+
+    public void setJustification(Justification justification) { this.justification = justification; }
+
     @Override
     public String toString() {
         return "Image{" +
@@ -70,13 +75,5 @@ public class Image {
                 ", url='" + url + '\'' +
                 ", width=" + width +
                 '}';
-    }
-
-    public void setQuestionSuggestion(QuestionSuggestion questionSuggestion) {
-        this.questionSuggestion = questionSuggestion;
-    }
-
-    public QuestionSuggestion getQuestionSuggestion(){
-        return this.questionSuggestion;
     }
 }

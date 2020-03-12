@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
@@ -61,6 +62,9 @@ public class User implements UserDetails {
 
     @OneToMany
     private Set<QuestionSuggestion> questionSuggestion = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch=FetchType.LAZY, orphanRemoval=true)
+    private Set<Justification> justifications = new HashSet<>();
 
     public User() {
     }
@@ -461,5 +465,9 @@ public class User implements UserDetails {
 
     public Set<QuestionSuggestion> getQuestionsSuggestion() {
         return questionSuggestion;
+    }
+
+    public void addJustification(Justification justification) {
+        justifications.add(justification);
     }
 }
