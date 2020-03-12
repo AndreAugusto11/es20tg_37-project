@@ -61,8 +61,6 @@ public class QuestionDiscussionService {
             throw new TutorException(USER_NOT_FOUND_USERNAME, clarificationRequestDto.getUsername());
         }
 
-        String content = clarificationRequestDto.getContent();
-
         if (user != questionAnswer.getQuizAnswer().getUser()) {
             throw new TutorException(QUESTION_ANSWER_MISMATCH_USER, String.valueOf(questionAnswer.getId()), user.getUsername());
         }
@@ -71,7 +69,7 @@ public class QuestionDiscussionService {
             throw new TutorException(QUESTION_ANSWER_MISMATCH_QUESTION, String.valueOf(questionAnswer.getId()), String.valueOf(question.getId()));
         }
 
-        ClarificationRequest clarificationRequest = new ClarificationRequest(questionAnswer, question, user, content);
+        ClarificationRequest clarificationRequest = new ClarificationRequest(questionAnswer, question, user, clarificationRequestDto.getContent());
         if (clarificationRequestDto.getImage() != null) {
             Image img = new Image(clarificationRequestDto.getImage());
             clarificationRequest.setImage(img);

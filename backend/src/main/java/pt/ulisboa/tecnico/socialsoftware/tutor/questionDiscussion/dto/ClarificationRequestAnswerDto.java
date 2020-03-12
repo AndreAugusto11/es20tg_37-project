@@ -10,8 +10,7 @@ public class ClarificationRequestAnswerDto {
     private String name;
     private String username;
 
-    public ClarificationRequestAnswerDto() {
-    }
+    public ClarificationRequestAnswerDto() { }
 
     public ClarificationRequestAnswerDto(ClarificationRequestAnswer clarificationRequestAnswer) {
         this.id = clarificationRequestAnswer.getId();
