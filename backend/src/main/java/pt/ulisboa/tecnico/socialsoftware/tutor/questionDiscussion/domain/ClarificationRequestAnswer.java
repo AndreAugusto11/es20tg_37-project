@@ -33,7 +33,6 @@ public class ClarificationRequestAnswer {
     public ClarificationRequestAnswer() {
     }
 
-
     public ClarificationRequestAnswer(ClarificationRequest clarificationRequest, Type type, User user, String content) {
         if (content == null || content.trim().isEmpty()) {
             throw new TutorException(CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY);
@@ -53,6 +52,7 @@ public class ClarificationRequestAnswer {
         }
 
         this.clarificationRequest = clarificationRequest;
+        clarificationRequest.addClarificationRequestAnswer(this);
         this.user = user;
         this.content = content;
         this.type = type;

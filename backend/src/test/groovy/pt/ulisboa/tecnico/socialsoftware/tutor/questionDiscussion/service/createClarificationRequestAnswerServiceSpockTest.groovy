@@ -160,6 +160,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         result.getId() != null
         result.getType() == ClarificationRequestAnswer.Type.TEACHER_ANSWER
         result.content == CLARIFICATION_CONTENT
+        clarificationRequest.getClarificationRequestAnswer().contains(result)
         result.getClarificationRequest().getStatus() == ClarificationRequest.Status.OPEN
     }
 
