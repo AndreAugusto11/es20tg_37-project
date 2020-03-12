@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -13,7 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 @DataJpaTest
-class EnrollInOpenTournament extends Specification {
+class EnrollInOpenTournamentTest extends Specification {
 
     @Autowired
     TournamentService tournamentService
@@ -30,7 +31,7 @@ class EnrollInOpenTournament extends Specification {
     def setup() {
         user1 = new User("Manel1", "Man12", 1, User.Role.STUDENT)
         userRepository.save(user1)
-        tournament = tournamentService.createTournament(user1.getKey())
+        tournament = new Tournament(user1)
         tournamentRepository.save(tournament)
     }
 
@@ -38,17 +39,19 @@ class EnrollInOpenTournament extends Specification {
         //student enroll in open tournament
         given: "a student"
         def user2 = new User("Manel2","MAN123",2,User.Role.STUDENT)
-        tournament.setStatus("OPEN")
+        userRepository.save(user2)
+        tournament.setStatus(Tournament.Status.OPEN)
 
         when:
-        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getKey())
+        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getId())
 
-        then: "Inserted data is correct"
-        tournament.getStatus() == "OPEN"
-        tournament.getStudents().size() == 2
-        def student = tournament.getStudents().get(1)
-        student.getKey() == user2.getKey()
-        student.getTournaments().get(0).getKey() == tournament.getKey()
+        then: "Data is inserted"
+        tournament.getUsers().size() == 2
+        user2.getTournaments().size() == 1
+        and: "Inserted data is correct"
+        tournament.getStatus() == Tournament.Status.OPEN
+        tournament.getUsers().stream().anyMatch({ u -> u.getKey() == user2.getKey() })
+        user2.getTournaments().stream().anyMatch({ t -> t.getId() == tournament.getId() })
 
     }
 
@@ -56,10 +59,11 @@ class EnrollInOpenTournament extends Specification {
         //TournamentNotOpen exception is thrown
         given: "a student"
         def user2 = new User("Manel2","MAN123",2,User.Role.STUDENT)
-        tournament.setStatus("ONGOING")
+        userRepository.save(user2)
+        tournament.setStatus(Tournament.Status.ONGOING)
 
         when:
-        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getKey())
+        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getId())
 
         then: "Tournament not open exception"
         def exception = thrown(TutorException)
@@ -70,10 +74,11 @@ class EnrollInOpenTournament extends Specification {
         //TeacherTournament exception is thrown
         given: "a teacher"
         def user2 = new User("Manel2","MAN123",2,User.Role.TEACHER)
-        tournament.setStatus("OPEN")
+        userRepository.save(user2)
+        tournament.setStatus(Tournament.Status.OPEN)
 
         when:
-        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getKey())
+        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getId())
 
         then: "Tournament not open exception"
         def exception = thrown(TutorException)
@@ -84,7 +89,8 @@ class EnrollInOpenTournament extends Specification {
         //TournamentNotFound exception is thrown
         given: "a student"
         def user2 = new User("Manel2","MAN123",2,User.Role.STUDENT)
-        tournament.setStatus("OPEN")
+        userRepository.save(user2)
+        tournament.setStatus(Tournament.Status.OPEN)
 
         when:
         tournamentService.enrollStudentInTournament(user2.getKey(),3)
@@ -98,10 +104,12 @@ class EnrollInOpenTournament extends Specification {
         //AlreadyEnrolledTournament exception is thrown
         given: "a student"
         def user2 = new User("Manel2","MAN123",2,User.Role.STUDENT)
-        tournament.setStatus("OPEN")
+        userRepository.save(user2)
+        tournament.setStatus(Tournament.Status.OPEN)
+        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getId())
 
         when:
-        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getKey())
+        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getId())
 
         then: "Tournament not open exception"
         def exception = thrown(TutorException)

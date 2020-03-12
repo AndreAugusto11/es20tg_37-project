@@ -355,6 +355,8 @@ public class User implements UserDetails {
 
     public void addTournament(Tournament tournament) {this.tournaments.add(tournament);}
 
+    public Set<Tournament> getTournaments() { return this.tournaments; }
+
     @Override
     public String toString() {
         return "User{" +
