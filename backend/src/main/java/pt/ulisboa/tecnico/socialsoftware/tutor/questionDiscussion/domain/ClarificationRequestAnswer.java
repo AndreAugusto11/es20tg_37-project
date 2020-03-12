@@ -4,7 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.ACCESS_DENIED;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "clarification_request_answers")
@@ -35,6 +35,18 @@ public class ClarificationRequestAnswer {
 
 
     public ClarificationRequestAnswer(ClarificationRequest clarificationRequest, User user, String content) {
+        if (content == null || content.trim().isEmpty()) {
+            throw new TutorException(CLARIFICATION_REQUEST_ANSWER_IS_EMPTY);
+        }
+
+        if (clarificationRequest.getStatus() == ClarificationRequest.Status.CLOSED) {
+            throw new TutorException(CLARIFICATION_REQUEST_NO_LONGER_AVAILABLE);
+        }
+
+        if (!clarificationRequest.getQuestionAnswer().getQuizAnswer().getQuiz().getCourseExecution().getUsers().contains(user)) {
+            throw new TutorException(ACCESS_DENIED);
+        }
+
         this.clarificationRequest = clarificationRequest;
         this.user = user;
         this.content = content;

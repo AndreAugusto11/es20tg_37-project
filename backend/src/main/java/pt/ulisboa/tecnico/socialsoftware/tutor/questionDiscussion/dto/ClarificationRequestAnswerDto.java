@@ -11,7 +11,6 @@ public class ClarificationRequestAnswerDto {
     private String username;
 
     public ClarificationRequestAnswerDto() {
-
     }
 
     public ClarificationRequestAnswerDto(ClarificationRequestAnswer clarificationRequestAnswer) {

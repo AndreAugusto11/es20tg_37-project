@@ -35,12 +35,16 @@ import spock.lang.Specification
 import java.time.LocalDateTime
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.ACCESS_DENIED
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_ANSWER_IS_EMPTY
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_NOT_DEFINED
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_NOT_FOUND
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_NO_LONGER_AVAILABLE
 
 @DataJpaTest
 class createClarificationRequestAnswerServiceSpockTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String CLARIFICATION_CONTENT = "Test"
+    public static final String EMPTY_CLARIFICATION_CONTENT = ""
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     public static final Integer TIME_TAKEN = 1234
@@ -93,11 +97,8 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     def courseExecution
     def question
     def quizQuestion
-    def optionOk
-    def optionKO
     def option
     def quizAnswer
-    def date
     def quiz
     def questionAnswer
 
@@ -230,15 +231,14 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     }
 
     def "teacher from a different course execution creates clarification request answer"() {
-        given: "an opened clarification request"
-        def clarificationRequest = new ClarificationRequest(questionAnswer, question, userNotAssociated, CLARIFICATION_CONTENT)
-        questionAnswer.setClarificationRequest(clarificationRequest)
-        question.addClarificationRequest(clarificationRequest)
-
-        and: "a user not associated to the course execution"
+        given: "an user not associated to the course execution"
         def userNotAssociated = new User('name1', "username1", 2, User.Role.TEACHER)
         userRepository.save(userNotAssociated)
 
+        and: "an opened clarification request"
+        def clarificationRequest = new ClarificationRequest(questionAnswer, question, userNotAssociated, CLARIFICATION_CONTENT)
+        questionAnswer.setClarificationRequest(clarificationRequest)
+        question.addClarificationRequest(clarificationRequest)
         userNotAssociated.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
 
@@ -262,13 +262,57 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     }
 
     def "clarification request answer is empty"() {
-        // an exception is thrown
-        expect: false
+        given: "a clarification request"
+        ClarificationRequest clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
+        questionAnswer.setClarificationRequest(clarificationRequest)
+        question.addClarificationRequest(clarificationRequest)
+        user.addClarificationRequest(clarificationRequest)
+        clarificationRequestRepository.save(clarificationRequest)
+
+        and: "a clarification request dto"
+        def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
+
+        and: "a clarification request answer dto"
+        ClarificationRequestAnswerDto clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
+        clarificationRequestAnswerDto.setClarificationRequest(clarificationRequestDto)
+        clarificationRequestAnswerDto.setContent(EMPTY_CLARIFICATION_CONTENT)
+        clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER.name())
+        clarificationRequestAnswerDto.setName(user.getName())
+        clarificationRequestAnswerDto.setUsername(user.getUsername())
+
+        when:
+        questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
+
+        then: "an exception is thrown"
+        def error = thrown(TutorException)
+        error.getErrorMessage() == CLARIFICATION_REQUEST_ANSWER_IS_EMPTY
     }
 
     def "clarification request answer is blank"() {
-        // an exception is thrown
-        expect: false
+        given: "a clarification request"
+        ClarificationRequest clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
+        questionAnswer.setClarificationRequest(clarificationRequest)
+        question.addClarificationRequest(clarificationRequest)
+        user.addClarificationRequest(clarificationRequest)
+        clarificationRequestRepository.save(clarificationRequest)
+
+        and: "a clarification request dto"
+        def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
+
+        and: "a clarification request answer dto"
+        ClarificationRequestAnswerDto clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
+        clarificationRequestAnswerDto.setClarificationRequest(clarificationRequestDto)
+        clarificationRequestAnswerDto.setContent(null)
+        clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER.name())
+        clarificationRequestAnswerDto.setName(user.getName())
+        clarificationRequestAnswerDto.setUsername(user.getUsername())
+
+        when:
+        questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
+
+        then: "an exception is thrown"
+        def error = thrown(TutorException)
+        error.getErrorMessage() == CLARIFICATION_REQUEST_ANSWER_IS_EMPTY
     }
 
     @TestConfiguration
@@ -278,6 +322,5 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         QuestionDiscussionService questionDiscussionService() {
             return new QuestionDiscussionService()
         }
-
     }
 }
