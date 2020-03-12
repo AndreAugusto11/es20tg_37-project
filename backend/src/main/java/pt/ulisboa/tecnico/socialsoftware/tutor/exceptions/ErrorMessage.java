@@ -58,7 +58,8 @@ public enum ErrorMessage {
     CANNOT_OPEN_FILE("Cannot open file"),
 
     USER_IS_TEACHER("This operation is invalid to users of the type teacher"),
-    INVALID_NULL_ARGUMENTS("One of the arguments given is null");
+    INVALID_NULL_ARGUMENTS("One of the arguments given is null"),
+    USER_NOT_IN_COURSE("The student is not enrolled in the given course");
 
     public final String label;
 

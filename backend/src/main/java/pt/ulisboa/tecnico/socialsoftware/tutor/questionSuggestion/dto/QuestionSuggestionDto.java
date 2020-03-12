@@ -2,24 +2,18 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class QuestionSuggestionDto {
 
     private Integer id;
     private Integer key;
-    private String title;
-    private String content;
-    private String creationDate = null;
+    private QuestionDto questionDto;
     private String status;
-    private List<OptionDto> options = new ArrayList<>();
-    private ImageDto image;
-    private Integer sequence;
+    private String creationDate = null;
 
     public QuestionSuggestionDto() {
     }
@@ -27,15 +21,7 @@ public class QuestionSuggestionDto {
     public QuestionSuggestionDto(QuestionSuggestion questionSuggestion) {
         this.id = questionSuggestion.getId();
         this.key = questionSuggestion.getKey();
-        this.title = questionSuggestion.getTitle();
-        this.content = questionSuggestion.getContent();
-        this.status = questionSuggestion.getStatus().name();
-        this.options = questionSuggestion.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
-
-        if (questionSuggestion.getImage() != null)
-            this.image = new ImageDto(questionSuggestion.getImage());
-        if (questionSuggestion.getCreationDate() != null)
-            this.creationDate = questionSuggestion.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        this.questionDto = new QuestionDto(questionSuggestion.getQuestion());
 
     }
 
@@ -55,73 +41,43 @@ public class QuestionSuggestionDto {
         this.key = key;
     }
 
-    public String getContent() {
-        return content;
-    }
+    public String getTitle(){ return questionDto.getTitle(); }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+    public void setTitle(String title){ this.questionDto.setTitle(title);}
 
-    public String getStatus() {
-        return status;
-    }
+    public String getContent(){ return questionDto.getContent(); }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public void setContent(String content){ this.questionDto.setContent(content); }
 
-    public List<OptionDto> getOptions() {
-        return options;
-    }
+    public String getStatus() { return status; }
 
-    public void setOptions(List<OptionDto> options) {
-        this.options = options;
-    }
+    public void setStatus(String status) { this.status = status; }
 
-    public ImageDto getImage() {
-        return image;
-    }
+    public ImageDto getImage(){ return questionDto.getImage(); }
 
-    public void setImage(ImageDto image) {
-        this.image = image;
-    }
+    public void setImage(ImageDto image){ this.questionDto.setImage(image);}
 
-    public String getTitle() {
-        return title;
-    }
+    public List<OptionDto> getOptions(){ return questionDto.getOptions(); }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public void setOptions(List<OptionDto> options){ this.questionDto.setOptions(options); }
 
-    public Integer getSequence() {
-        return sequence;
-    }
+    public Integer getSequence(){ return questionDto.getSequence(); }
 
-    public void setSequence(Integer sequence) {
-        this.sequence = sequence;
-    }
+    public void setSequence(Integer sequence){ this.questionDto.setSequence(sequence); }
 
-    public String getCreationDate() {
-        return creationDate;
-    }
+    public String getCreationDate(){ return creationDate; }
 
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
+    public void setCreationDate(String creationDate){ this.creationDate = creationDate; }
+
+    public QuestionDto getQuestionDto(){ return questionDto; }
+
+    public void setQuestionDto(QuestionDto questionDto){ this.questionDto = questionDto; }
 
     @Override
     public String toString() {
         return "QuestionDto{" +
                 "id=" + id +
                 ", id=" + id +
-                ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", status='" + status + '\'' +
-                ", options=" + options +
-                ", image=" + image +
-                ", sequence=" + sequence +
                 '}';
     }
 }

@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.QuestionSuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.QuestionSuggestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -23,11 +24,13 @@ import spock.lang.Specification
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_IS_TEACHER
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_IN_COURSE
 
 @DataJpaTest
 class CreateQuestionSuggestionTest extends Specification {
 
-    public static final String COURSE_NAME = "Software Architecture"
+    public static final String COURSE_NAME1 = "Software Architecture"
+    public static final String COURSE_NAME2 = "Operating Systems"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     public static final String SUGGESTION_TITLE = 'suggestion title'
@@ -51,27 +54,57 @@ class CreateQuestionSuggestionTest extends Specification {
     @Autowired
     QuestionSuggestionRepository questionSuggestionRepository
 
+    def course1
+    def course2
+    def courseExecution
     def user1
     def user2
     def user3
+    def questionDto1
+    def questionDto2
 
 
     def setup() {
 
+        course1 = new Course(COURSE_NAME1, Course.Type.TECNICO)
+        courseRepository.save(course1)
+
+        course2 = new Course(COURSE_NAME2, Course.Type.TECNICO)
+        courseRepository.save(course2)
+
+        courseExecution = new CourseExecution(course1, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecutionRepository.save(courseExecution)
 
         user1 = new User('name1', "username1", 1, User.Role.STUDENT)
+        user1.getCourseExecutions().add(courseExecution)
+        user1.setEnrolledCoursesAcronyms(ACRONYM)
+        courseExecution.getUsers().add(user1)
+        user1.setEnrolledCoursesAcronyms(ACRONYM)
         userRepository.save(user1)
         user2 = new User('name2', "username2", 2, User.Role.STUDENT)
+        user2.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(user2)
+        user2.setEnrolledCoursesAcronyms(ACRONYM)
         userRepository.save(user2)
         user3 = new User('name3', "username3", 3, User.Role.TEACHER)
         userRepository.save(user3)
-        System.out.println(user2.getId())
+
+        questionDto1 = new QuestionDto();
+        questionDto1.setKey(1);
+        questionDto1.setContent("content")
+        questionDto1.setStatus(Question.Status.DISABLED.name())
+
+        questionDto2 = new QuestionDto();
+        questionDto2.setKey(2);
+        questionDto2.setContent("content")
+        questionDto2.setStatus(Question.Status.DISABLED.name())
     }
 
     def "create a question suggestion with no image and one option"() {
         given: "QuestionSuggestionDto"
 
         def questionSuggestionDto = new QuestionSuggestionDto()
+        questionSuggestionDto.setQuestionDto(questionDto1)
         questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE1)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
@@ -84,7 +117,7 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto.setOptions(options)
 
         when:
-        questionSuggestionService.createSuggestionQuestion(user1.getId(), questionSuggestionDto)
+        questionSuggestionService.createSuggestionQuestion(user1.getId(),course1.getId(), questionSuggestionDto)
 
         then: "the correct suggestion is inside the repository"
 
@@ -107,6 +140,7 @@ class CreateQuestionSuggestionTest extends Specification {
     def "create a question with an image and two options"() {
         given: "SuggestionQuestionDto"
         def questionSuggestionDto = new QuestionSuggestionDto()
+        questionSuggestionDto.setQuestionDto(questionDto1)
         questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
@@ -131,7 +165,7 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto.setOptions(options)
 
         when:
-        questionSuggestionService.createSuggestionQuestion(user1.getId(), questionSuggestionDto)
+        questionSuggestionService.createSuggestionQuestion(user1.getId(),course1.getId(), questionSuggestionDto)
 
         then: "the correct suggestion is inside the repository"
         def result = questionSuggestionRepository.findAll().get(0)
@@ -149,6 +183,7 @@ class CreateQuestionSuggestionTest extends Specification {
     def "create two suggestions for different students"() {
         given: "SuggestionQuestionDto"
         def questionSuggestionDto = new QuestionSuggestionDto()
+        questionSuggestionDto.setQuestionDto(questionDto1)
         questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
@@ -160,7 +195,9 @@ class CreateQuestionSuggestionTest extends Specification {
         options.add(optionDto)
         questionSuggestionDto.setOptions(options)
 
+
         def questionSuggestionDto2 = new QuestionSuggestionDto()
+        questionSuggestionDto2.setQuestionDto(questionDto2)
         questionSuggestionDto2.setKey(2)
         questionSuggestionDto2.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto2.setContent(SUGGESTION_CONTENT)
@@ -173,9 +210,9 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto2.setOptions(options2)
 
         when: 'are created two questions'
-        questionSuggestionService.createSuggestionQuestion(user1.getId(), questionSuggestionDto)
+        questionSuggestionService.createSuggestionQuestion(user1.getId(), course1.getId(), questionSuggestionDto)
         questionSuggestionDto.setKey(null)
-        questionSuggestionService.createSuggestionQuestion(user2.getId(), questionSuggestionDto2)
+        questionSuggestionService.createSuggestionQuestion(user2.getId(), course1.getId(), questionSuggestionDto2)
 
         then: "the two suggestions are created with the correct numbers"
         questionSuggestionRepository.count() == 2L
@@ -194,6 +231,7 @@ class CreateQuestionSuggestionTest extends Specification {
     def "create two suggestions for the same students"() {
         given: "SuggestionQuestionDto"
         def questionSuggestionDto = new QuestionSuggestionDto()
+        questionSuggestionDto.setQuestionDto(questionDto1)
         questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
@@ -206,6 +244,7 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto.setOptions(options)
 
         def questionSuggestionDto2 = new QuestionSuggestionDto()
+        questionSuggestionDto2.setQuestionDto(questionDto2)
         questionSuggestionDto2.setKey(2)
         questionSuggestionDto2.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto2.setContent(SUGGESTION_CONTENT)
@@ -218,8 +257,8 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto2.setOptions(options2)
 
         when: 'are created two questions'
-        questionSuggestionService.createSuggestionQuestion(user1.getId(), questionSuggestionDto)
-        questionSuggestionService.createSuggestionQuestion(user1.getId(), questionSuggestionDto2)
+        questionSuggestionService.createSuggestionQuestion(user1.getId(), course1.getId(), questionSuggestionDto)
+        questionSuggestionService.createSuggestionQuestion(user1.getId(), course1.getId(), questionSuggestionDto2)
 
         then: "the two suggestions are created with the correct numbers"
         questionSuggestionRepository.count() == 2L
@@ -236,13 +275,14 @@ class CreateQuestionSuggestionTest extends Specification {
     def "given user that doesnt exist"() {
         given: "SuggestionQuestionDto"
         def questionSuggestionDto = new QuestionSuggestionDto()
+        questionSuggestionDto.setQuestionDto(questionDto1)
         questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
 
         when: 'a suggestion with a none existing student'
-        questionSuggestionService.createSuggestionQuestion(42, questionSuggestionDto)
+        questionSuggestionService.createSuggestionQuestion(42, course1.getId(), questionSuggestionDto)
 
         then:
         TutorException exception = thrown()
@@ -252,13 +292,14 @@ class CreateQuestionSuggestionTest extends Specification {
     def "given a professor"(){
         given: "SuggestionQuestionDto"
         def questionSuggestionDto = new QuestionSuggestionDto()
+        questionSuggestionDto.setQuestionDto(questionDto1)
         questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
 
         when: 'a suggestion with a none existing student'
-        questionSuggestionService.createSuggestionQuestion(user3.getId(), questionSuggestionDto)
+        questionSuggestionService.createSuggestionQuestion(user3.getId(), course1.getId(), questionSuggestionDto)
 
         then:
         TutorException exception = thrown()
@@ -268,13 +309,14 @@ class CreateQuestionSuggestionTest extends Specification {
     def "given null id"(){
         given: "SuggestionQuestionDto"
         def questionSuggestionDto = new QuestionSuggestionDto()
+        questionSuggestionDto.setQuestionDto(questionDto1)
         questionSuggestionDto.setKey(1)
         questionSuggestionDto.setTitle(SUGGESTION_TITLE)
         questionSuggestionDto.setContent(SUGGESTION_CONTENT)
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
 
         when: 'a suggestion with a none existing student'
-        questionSuggestionService.createSuggestionQuestion(null, questionSuggestionDto)
+        questionSuggestionService.createSuggestionQuestion(null, course1.getId(), questionSuggestionDto)
 
         then:
         TutorException exception = thrown()
@@ -286,11 +328,47 @@ class CreateQuestionSuggestionTest extends Specification {
         given: "nothing"
 
         when: 'a suggestion with a none existing student'
-        questionSuggestionService.createSuggestionQuestion(1, null)
+        questionSuggestionService.createSuggestionQuestion(user1.getId(), course1.getId(), null)
 
         then:
         TutorException exception = thrown()
         exception.getErrorMessage() == INVALID_NULL_ARGUMENTS
+    }
+
+    def "given null course"(){
+        given: "SuggestionQuestionDto"
+
+        def questionSuggestionDto = new QuestionSuggestionDto()
+        questionSuggestionDto.setQuestionDto(questionDto1)
+        questionSuggestionDto.setKey(1)
+        questionSuggestionDto.setTitle(SUGGESTION_TITLE)
+        questionSuggestionDto.setContent(SUGGESTION_CONTENT)
+        questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
+
+        when: 'a suggestion with a none existing course'
+        questionSuggestionService.createSuggestionQuestion(user1.getId(), null, questionSuggestionDto)
+
+        then:
+        TutorException exception = thrown()
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS
+    }
+
+    def "given a course that a student isn't enrolled"(){
+        given: "SuggestionQuestionDto"
+
+        def questionSuggestionDto = new QuestionSuggestionDto()
+        questionSuggestionDto.setQuestionDto(questionDto1)
+        questionSuggestionDto.setKey(1)
+        questionSuggestionDto.setTitle(SUGGESTION_TITLE)
+        questionSuggestionDto.setContent(SUGGESTION_CONTENT)
+        questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
+
+        when: 'a suggestion with a none existing course'
+        questionSuggestionService.createSuggestionQuestion(user1.getId(), course2.getId(), questionSuggestionDto)
+
+        then:
+        TutorException exception = thrown()
+        exception.getErrorMessage() == USER_NOT_IN_COURSE
     }
 
     @TestConfiguration

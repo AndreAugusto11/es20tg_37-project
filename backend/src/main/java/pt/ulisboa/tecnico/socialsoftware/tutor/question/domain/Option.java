@@ -54,12 +54,7 @@ public class Option {
 
     public Integer getSequence() {
         if (sequence == null) {
-            if(getQuestion() == null){
-                getQuestionSuggestion().setOptionsSequence();
-            }
-            else{
-                getQuestion().setOptionsSequence();
-            }
+            getQuestion().setOptionsSequence();
         }
         return sequence;
     }
