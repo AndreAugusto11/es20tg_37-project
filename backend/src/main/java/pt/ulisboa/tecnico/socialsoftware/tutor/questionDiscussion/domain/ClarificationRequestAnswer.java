@@ -1,7 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.ACCESS_DENIED;
 
 @Entity
 @Table(name = "clarification_request_answers")
@@ -35,9 +38,7 @@ public class ClarificationRequestAnswer {
         this.clarificationRequest = clarificationRequest;
         this.user = user;
         this.content = content;
-
-        if (user.getRole() == User.Role.STUDENT) {this.type = Type.STUDENT; }
-        if (user.getRole() == User.Role.TEACHER) {this.type = Type.TEACHER; }
+        this.type = Type.TEACHER; // For now assuming only the teachers can create answers to the clarification requests
     }
 
     public Integer getId() {

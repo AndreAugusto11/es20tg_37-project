@@ -80,6 +80,32 @@ public class QuestionDiscussionService {
         return new ClarificationRequestDto(clarificationRequest);
     }
 
+    public ClarificationRequestAnswerDto createClarificationRequestAnswer(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
+
+        ClarificationRequest clarificationRequest = clarificationRequestRepository.findById(clarificationRequestAnswerDto.getClarificationRequest().getId())
+                .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_NOT_FOUND, clarificationRequestAnswerDto.getClarificationRequest().getId()));
+
+        User user = userRepository.findByUsername(clarificationRequestAnswerDto.getUsername());
+        if (user == null) {
+            throw new TutorException(USER_NOT_FOUND_USERNAME, clarificationRequestAnswerDto.getUsername());
+        }
+
+        if (!clarificationRequest.getQuestionAnswer().getQuizAnswer().getQuiz().getCourseExecution().getUsers().contains(user)) {
+            throw new TutorException(ACCESS_DENIED);
+        }
+
+        if (clarificationRequest.getStatus() == ClarificationRequest.Status.CLOSED) {
+            throw new TutorException(CLARIFICATION_REQUEST_NO_LONGER_AVAILABLE);
+        }
+
+        // content null ou vazio????
+
+        ClarificationRequestAnswer clarificationRequestAnswer = new ClarificationRequestAnswer(clarificationRequest, user, clarificationRequestAnswerDto.getContent());
+
+        entityManager.persist(clarificationRequestAnswer);
+        return new ClarificationRequestAnswerDto(clarificationRequestAnswer);
+    }
+
     @Retryable(
         value = { SQLException.class },
         backoff = @Backoff(delay = 5000))

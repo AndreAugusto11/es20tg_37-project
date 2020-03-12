@@ -260,7 +260,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         def error = thrown(TutorException)
         error.errorMessage == ACCESS_DENIED
     }
-    
+
     def "clarification request answer is empty"() {
         // an exception is thrown
         expect: false
@@ -280,5 +280,4 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         }
 
     }
-
 }
