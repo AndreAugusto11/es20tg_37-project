@@ -49,6 +49,7 @@ class EnrollInOpenTournament extends Specification {
         tournament.getStudents().size() == 2
         def student = tournament.getStudents().get(1)
         student.getKey() == user2.getKey()
+        student.getTournaments().get(0).getKey() == tournament.getKey()
 
     }
 

@@ -87,7 +87,7 @@ class CreateQuestionSuggestionTest extends Specification {
 		def result = tournamentService.createTournament(null, topicdto, number_of_questions, startTime, endTime)
 
         then:
-        def exception = thrown(TournamentException)
+        def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_USER
 	}
 
@@ -98,7 +98,7 @@ class CreateQuestionSuggestionTest extends Specification {
 		def result = tournamentService.createTournament(student, null, number_of_questions, startTime, endTime)
 
         then:
-        def exception = thrown(TournamentException)
+        def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_TOPIC
 	}
 
@@ -109,7 +109,7 @@ class CreateQuestionSuggestionTest extends Specification {
 		def result = tournamentService.createTournament(student, topicdto, null, startTime, endTime)
 
         then:
-        def exception = thrown(TournamentException)
+        def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_NUM_QUESTS
 	}
 
@@ -120,7 +120,7 @@ class CreateQuestionSuggestionTest extends Specification {
 		def result = tournamentService.createTournament(student, topicdto, number_of_questions, null, endTime)
 
         then:
-        def exception = thrown(TournamentException)
+        def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_STARTTIME
 	}
 
@@ -131,7 +131,7 @@ class CreateQuestionSuggestionTest extends Specification {
 		def result = tournamentService.createTournament(student, topicdto, number_of_questions, startTime, null)
 
         then:
-        def exception = thrown(TournamentException)
+        def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_ENDTIME
 	}
 
@@ -145,7 +145,7 @@ class CreateQuestionSuggestionTest extends Specification {
 		def result = tournamentService.createTournament(teacher, topicdto, number_of_questions, startTime, endTime)
 
         then:
-        def exception = thrown(TournamentException)
+        def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NON_STUDENT_USER
 	}
 
@@ -159,7 +159,7 @@ class CreateQuestionSuggestionTest extends Specification {
 		def result = tournamentService.createTournament(student, topicdto, num, startTime, endTime)
 
         then:
-        def exception = thrown(TournamentException)
+        def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_NUM_QUESTS
 	}
 
@@ -175,7 +175,7 @@ class CreateQuestionSuggestionTest extends Specification {
 		def result = tournamentService.createTournament(student, topicdto, number_of_questions, start, endTime)
 
         then:
-        def exception = thrown(TournamentException)
+        def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_STARTTIME
 	}
 
@@ -191,7 +191,7 @@ class CreateQuestionSuggestionTest extends Specification {
 		def result = tournamentService.createTournament(student, topicdto, number_of_questions, startTime, end)
 
         then:
-        def exception = thrown(TournamentException)
+        def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_ENDTIME
 	}
 
@@ -207,7 +207,7 @@ class CreateQuestionSuggestionTest extends Specification {
 		def result = tournamentService.createTournament(student, topicdto, number_of_questions, start, start)
 
         then:
-        def exception = thrown(TournamentException)
+        def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_TIMEFRAME
 	}
 
@@ -218,7 +218,7 @@ class CreateQuestionSuggestionTest extends Specification {
 		def result = tournamentService.createTournament(student, topicdto, number_of_questions, endTime, startTime)
 
         then:
-        def exception = thrown(TournamentException)
+        def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_TIMEFRAME
 	}
 
