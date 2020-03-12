@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
@@ -91,13 +92,11 @@ class createClarificationRequestServiceSpockTest extends Specification {
     def user
     def course
     def courseExecution
-    @Shared
     def question
     def quizQuestion
     def option
     def quizAnswer
     def quiz
-    @Shared
     def questionAnswer
 
     def setup() {
@@ -173,10 +172,13 @@ class createClarificationRequestServiceSpockTest extends Specification {
         questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
 
         then: "the correct clarification request is inside the repository"
+        clarificationRequestRepository.findAll().size() == 1
         def result = clarificationRequestRepository.findAll().get(0)
-        result.id != null
-        result.content == CLARIFICATION_CONTENT
-        result.status == ClarificationRequest.Status.OPEN
+        result != null
+        and: "has the correct values"
+        result.getId() != null
+        result.getContent() == CLARIFICATION_CONTENT
+        result.getStatus() == ClarificationRequest.Status.OPEN
         result.getQuestionAnswer() == questionAnswer
         result.getQuestion() == questionAnswer.getQuizQuestion().getQuestion()
         result.getUser() == questionAnswer.getQuizAnswer().getUser()
@@ -201,10 +203,13 @@ class createClarificationRequestServiceSpockTest extends Specification {
         questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
 
         then: "the correct clarification request is inside the repository"
+        clarificationRequestRepository.findAll().size() == 1
         def result = clarificationRequestRepository.findAll().get(0)
-        result.id != null
-        result.content == CLARIFICATION_CONTENT
-        result.status == ClarificationRequest.Status.OPEN
+        result != null
+        and: "has the correct values"
+        result.getId() != null
+        result.getContent() == CLARIFICATION_CONTENT
+        result.getStatus() == ClarificationRequest.Status.OPEN
         result.getQuestionAnswer() == questionAnswer
         result.getQuestion() == questionAnswer.getQuizQuestion().getQuestion()
         result.getUser() == questionAnswer.getQuizAnswer().getUser()
@@ -234,10 +239,13 @@ class createClarificationRequestServiceSpockTest extends Specification {
         questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
 
         then: "the correct clarification request is inside the repository"
+        clarificationRequestRepository.findAll().size() == 1
         def result = clarificationRequestRepository.findAll().get(0)
-        result.id != null
-        result.content == CLARIFICATION_CONTENT
-        result.status == ClarificationRequest.Status.OPEN
+        result != null
+        and: "has the correct values"
+        result.getId() != null
+        result.getContent() == CLARIFICATION_CONTENT
+        result.getStatus() == ClarificationRequest.Status.OPEN
         result.getQuestionAnswer() == questionAnswer
         result.getQuestion() == questionAnswer.getQuizQuestion().getQuestion()
         result.getUser() == questionAnswer.getQuizAnswer().getUser()
@@ -328,6 +336,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         and: "a modified question in question answer dto"
         def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
         questionAnswerDto.setQuestion(new QuestionDto(diffQuestion))
+        questionAnswerDto.setOption(new OptionDto(option))
         clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
 
         when:

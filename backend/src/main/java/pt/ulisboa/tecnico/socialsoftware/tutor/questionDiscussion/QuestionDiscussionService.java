@@ -1,8 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
@@ -22,8 +20,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import java.sql.SQLException;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -73,10 +69,6 @@ public class QuestionDiscussionService {
 
         if (question != questionAnswer.getQuizQuestion().getQuestion()) {
             throw new TutorException(QUESTION_ANSWER_MISMATCH_QUESTION, String.valueOf(questionAnswer.getId()), String.valueOf(question.getId()));
-        }
-
-        if (questionAnswer.getOption() != null && !question.getOptions().contains(questionAnswer.getOption())) {
-            throw new TutorException(QUESTION_ANSWER_MISMATCH_OPTION, String.valueOf(questionAnswer.getId()), String.valueOf(questionAnswer.getOption().getId()));
         }
 
         ClarificationRequest clarificationRequest = new ClarificationRequest(questionAnswer, question, user, content);

@@ -60,7 +60,6 @@ public enum ErrorMessage {
 
     QUESTION_ANSWER_MISMATCH_USER("Question answer %s is not assigned to student %s"),
     QUESTION_ANSWER_MISMATCH_QUESTION("Question answer %s is not assigned to question %s"),
-    QUESTION_ANSWER_MISMATCH_OPTION("Question answer %s is not assigned to option %s"),
     QUESTION_ANSWER_NOT_DEFINED("Question answer is not defined"),
     CLARIFICATION_REQUEST_IS_EMPTY("The clarification request content is empty"),
     CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY("The clarification request answer content must be defined"),
