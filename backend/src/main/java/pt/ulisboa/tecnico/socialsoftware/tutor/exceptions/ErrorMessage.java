@@ -8,6 +8,7 @@ public enum ErrorMessage {
     OPTION_NOT_FOUND("Option not found with id %d"),
     QUESTION_NOT_FOUND("Question not found with id %d"),
     USER_NOT_FOUND("User not found with id %d"),
+    USER_NOT_FOUND_USERNAME("User not found with id %s"),
     TOPIC_NOT_FOUND("Topic not found with id %d"),
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),

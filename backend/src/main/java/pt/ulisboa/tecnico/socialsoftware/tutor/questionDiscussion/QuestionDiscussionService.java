@@ -12,7 +12,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -31,6 +34,9 @@ public class QuestionDiscussionService {
 
     @Autowired
     ClarificationRequestRepository clarificationRequestRepository;
+
+    @Autowired
+    ClarificationRequestAnswerRepository clarificationRequestAnswerRepository;
 
     @Autowired
     QuestionRepository questionRepository;
@@ -54,7 +60,7 @@ public class QuestionDiscussionService {
         User user = userRepository.findByUsername(clarificationRequestDto.getUsername());
 
         if (user == null) {
-            throw new TutorException(USER_NOT_FOUND, clarificationRequestDto.getUsername());
+            throw new TutorException(USER_NOT_FOUND_USERNAME, clarificationRequestDto.getUsername());
         }
 
         String content = clarificationRequestDto.getContent();
