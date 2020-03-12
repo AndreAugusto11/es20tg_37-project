@@ -84,13 +84,7 @@ public class QuestionDiscussionService {
     }
 
     public ClarificationRequestAnswerDto createClarificationRequestAnswer(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
-
-        // check all fields of clarificationRequestAnswerDto
-
-        if (clarificationRequestAnswerDto.getClarificationRequest().getId() == null) {
-            throw new TutorException(CLARIFICATION_REQUEST_NOT_DEFINED);
-        }
-
+        
         ClarificationRequest clarificationRequest = clarificationRequestRepository.findById(clarificationRequestAnswerDto.getClarificationRequest().getId())
                 .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_NOT_FOUND, clarificationRequestAnswerDto.getClarificationRequest().getId()));
 
