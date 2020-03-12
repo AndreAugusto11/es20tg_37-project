@@ -155,11 +155,20 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         when:
         questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
 
-        then: "the clarification request is successfully created"
+        then: "the clarification request answer is inside the repository"
+        clarificationRequestAnswerRepository.findAll().size() == 1
         def result = clarificationRequestAnswerRepository.findAll().get(0)
+        result != null
+
+        and: "has the correct values"
         result.getId() != null
-        result.getType() == ClarificationRequestAnswer.Type.TEACHER_ANSWER
         result.content == CLARIFICATION_CONTENT
+        result.getUser() == user_teacher
+        result.getClarificationRequest() == clarificationRequest
+        result.getType() == ClarificationRequestAnswer.Type.TEACHER_ANSWER
+
+        and: "is associated correctly"
+        user_teacher.getClarificationRequestAnswers().contains(result)
         clarificationRequest.getClarificationRequestAnswer().contains(result)
         result.getClarificationRequest().getStatus() == ClarificationRequest.Status.OPEN
     }

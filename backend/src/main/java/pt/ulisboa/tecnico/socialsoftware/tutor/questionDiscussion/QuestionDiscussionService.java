@@ -53,8 +53,7 @@ public class QuestionDiscussionService {
 
         Question question = questionRepository
                 .findById(clarificationRequestDto.getQuestionAnswer().getQuestion().getId())
-                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND,
-                        clarificationRequestDto.getQuestionAnswer().getQuestion().getId()));
+                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, clarificationRequestDto.getQuestionAnswer().getQuestion().getId()));
 
         User user = userRepository.findByUsername(clarificationRequestDto.getUsername());
         if (user == null) {
