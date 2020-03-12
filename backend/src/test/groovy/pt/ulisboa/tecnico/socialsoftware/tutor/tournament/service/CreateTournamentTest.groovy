@@ -46,9 +46,9 @@ class CreateTournamentTest extends Specification {
         topicDtoThree.setName(TOPIC_THREE)
 
 		topicsdto = new TopicDto[3]
-		topicsdto.putAt(0, topicdto)
-		topicsdto.putAt(1, topicDtoTwo)
-		topicsdto.putAt(2, topicDtoThree)
+		topicsdto[0] = topicdto
+		topicsdto[1] = topicDtoTwo
+		topicsdto[2] = topicDtoThree
 
 		formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
 		startTime = LocalDateTime.now()

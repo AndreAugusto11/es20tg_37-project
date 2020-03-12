@@ -27,7 +27,8 @@ public class TournamentService
 
 	public TournamentDto createTournament(Integer userKey)
 	{
-		return null;
+		User user = userRepository.findByKey(userKey);
+		return new TournamentDto(new Tournament(user));
 	}
 
 	public TournamentDto createTournament(User student, TopicDto topic, int num_of_questions, LocalDateTime startTime, LocalDateTime endTime)
@@ -52,7 +53,7 @@ public class TournamentService
 
 		if(user.getRole() != User.Role.STUDENT) throw new TutorException(TOURNAMENT_NOT_STUDENT);
 
-		if(tournament.getStatus() != "OPEN") throw new TutorException(TOURNAMENT_NOT_OPEN,tournamentId);
+		if(tournament.getStatus() != Tournament.Status.OPEN) throw new TutorException(TOURNAMENT_NOT_OPEN,tournamentId);
 
 		Predicate<User> u1 = s -> s.getKey().equals(userKey);
 

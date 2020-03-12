@@ -109,7 +109,7 @@ class EnrollInOpenTournament extends Specification {
     }
 
     @TestConfiguration
-    static class TournamentServiceImplTestContextConfiguration {
+    static class TournamentServiceCreatTestContextConfiguration {
 
         @Bean
         TournamentService tournamentService() {
