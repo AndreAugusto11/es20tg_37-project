@@ -8,6 +8,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
@@ -32,6 +35,9 @@ public class ClarificationRequest {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clarificationRequest", fetch = FetchType.LAZY, orphanRemoval=true)
+    private Set<ClarificationRequestAnswer> clarificationRequestAnswer = new HashSet<>();
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -86,4 +92,12 @@ public class ClarificationRequest {
     public Image getImage() { return image; }
 
     public void setImage(Image image) { this.image = image; }
+
+    public Set<ClarificationRequestAnswer> getClarificationRequestAnswer() {
+        return clarificationRequestAnswer;
+    }
+
+    public void addClarificationRequestAnswer(ClarificationRequestAnswer clarificationRequestAnswer) {
+        this.clarificationRequestAnswer.add(clarificationRequestAnswer);
+    }
 }
