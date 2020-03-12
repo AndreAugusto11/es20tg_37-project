@@ -18,6 +18,8 @@ public enum ErrorMessage {
     COURSE_NOT_FOUND("Course not found with name %s"),
     COURSE_NAME_IS_EMPTY("The course name is empty"),
     COURSE_TYPE_NOT_DEFINED("The course type is not defined"),
+    CLARIFICATION_REQUEST_NOT_DEFINED("Clarification request is not defined"),
+    CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED("Clarification request answer type is not defined"),
     COURSE_EXECUTION_ACRONYM_IS_EMPTY("The course execution acronym is empty"),
     COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY("The course execution academic term is empty"),
     USERNAME_NOT_FOUND("Username %s not found"),
@@ -59,7 +61,7 @@ public enum ErrorMessage {
     QUESTION_ANSWER_MISMATCH_USER("Question answer %s is not assigned to student %s"),
     QUESTION_ANSWER_MISMATCH_QUESTION("Question answer %s is not assigned to question %s"),
     CLARIFICATION_REQUEST_IS_EMPTY("The clarification request content is empty"),
-    CLARIFICATION_REQUEST_ANSWER_IS_EMPTY("The clarification request answer content must be defined and not empty"),
+    CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY("The clarification request answer content must be defined"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file");

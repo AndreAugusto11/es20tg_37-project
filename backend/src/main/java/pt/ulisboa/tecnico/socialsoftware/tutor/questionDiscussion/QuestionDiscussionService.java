@@ -85,6 +85,12 @@ public class QuestionDiscussionService {
 
     public ClarificationRequestAnswerDto createClarificationRequestAnswer(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
 
+        // check all fields of clarificationRequestAnswerDto
+
+        if (clarificationRequestAnswerDto.getClarificationRequest().getId() == null) {
+            throw new TutorException(CLARIFICATION_REQUEST_NOT_DEFINED);
+        }
+
         ClarificationRequest clarificationRequest = clarificationRequestRepository.findById(clarificationRequestAnswerDto.getClarificationRequest().getId())
                 .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_NOT_FOUND, clarificationRequestAnswerDto.getClarificationRequest().getId()));
 
@@ -93,7 +99,11 @@ public class QuestionDiscussionService {
             throw new TutorException(USER_NOT_FOUND_USERNAME, clarificationRequestAnswerDto.getUsername());
         }
 
-        ClarificationRequestAnswer clarificationRequestAnswer = new ClarificationRequestAnswer(clarificationRequest, user, clarificationRequestAnswerDto.getContent());
+        if (clarificationRequestAnswerDto.getType() == null) {
+            throw new TutorException(CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED);
+        }
+
+        ClarificationRequestAnswer clarificationRequestAnswer = new ClarificationRequestAnswer(clarificationRequest, clarificationRequestAnswerDto.getType(), user, clarificationRequestAnswerDto.getContent());
 
         entityManager.persist(clarificationRequestAnswer);
         return new ClarificationRequestAnswerDto(clarificationRequestAnswer);

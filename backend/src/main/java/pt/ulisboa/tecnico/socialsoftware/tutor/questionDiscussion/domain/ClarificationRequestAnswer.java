@@ -9,7 +9,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "clarification_request_answers")
 public class ClarificationRequestAnswer {
-    public enum Type {TEACHER , STUDENT}
+    public enum Type {TEACHER_ANSWER, STUDENT_ANSWER}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,9 +34,9 @@ public class ClarificationRequestAnswer {
     }
 
 
-    public ClarificationRequestAnswer(ClarificationRequest clarificationRequest, User user, String content) {
+    public ClarificationRequestAnswer(ClarificationRequest clarificationRequest, Type type, User user, String content) {
         if (content == null || content.trim().isEmpty()) {
-            throw new TutorException(CLARIFICATION_REQUEST_ANSWER_IS_EMPTY);
+            throw new TutorException(CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY);
         }
 
         if (clarificationRequest.getStatus() == ClarificationRequest.Status.CLOSED) {
@@ -47,10 +47,15 @@ public class ClarificationRequestAnswer {
             throw new TutorException(ACCESS_DENIED);
         }
 
+        if (type == Type.STUDENT_ANSWER) {
+            // For now assuming only the teachers can create answers to the clarification requests
+            throw new TutorException(ACCESS_DENIED);
+        }
+
         this.clarificationRequest = clarificationRequest;
         this.user = user;
         this.content = content;
-        this.type = Type.TEACHER; // For now assuming only the teachers can create answers to the clarification requests
+        this.type = type;
     }
 
     public Integer getId() {

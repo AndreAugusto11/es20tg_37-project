@@ -4,7 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.Clarifi
 
 public class ClarificationRequestAnswerDto {
     private Integer id;
-    private String type;
+    private ClarificationRequestAnswer.Type type;
     private String content;
     private ClarificationRequestDto clarificationRequestDto;
     private String name;
@@ -15,7 +15,7 @@ public class ClarificationRequestAnswerDto {
 
     public ClarificationRequestAnswerDto(ClarificationRequestAnswer clarificationRequestAnswer) {
         this.id = clarificationRequestAnswer.getId();
-        this.type = clarificationRequestAnswer.getType().name();
+        this.type = clarificationRequestAnswer.getType();
         this.content = clarificationRequestAnswer.getContent();
         this.clarificationRequestDto = new ClarificationRequestDto(clarificationRequestAnswer.getClarificationRequest());
         this.username = clarificationRequestAnswer.getUser().getUsername();
@@ -30,11 +30,11 @@ public class ClarificationRequestAnswerDto {
         this.id = id;
     }
 
-    public String getType() {
+    public ClarificationRequestAnswer.Type getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ClarificationRequestAnswer.Type type) {
         this.type = type;
     }
 
