@@ -188,7 +188,7 @@ class CreateTournamentTest extends Specification {
 		number_of_questions	| 	null					| endTime	|| ErrorMessage.TOURNAMENT_NULL_STARTTIME
 		number_of_questions	| 	startTime				| null		|| ErrorMessage.TOURNAMENT_NULL_ENDTIME
 	}
-	
+
 	def "non-saved student user is invalid"()
 	{
 		// an exception should be thrown

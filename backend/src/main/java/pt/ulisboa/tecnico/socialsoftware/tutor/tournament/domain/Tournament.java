@@ -67,6 +67,7 @@ public class Tournament {
 		numQuests = number_of_questions;
 		startTime = startTimeArg;
 		endTime = endTimeArg;
+		this.checkConsistent();
 		if (startTime.isAfter(LocalDateTime.now()))
 		{
 			status = Status.OPEN;
