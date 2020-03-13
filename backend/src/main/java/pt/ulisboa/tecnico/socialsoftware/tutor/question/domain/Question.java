@@ -54,7 +54,7 @@ public class Question {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
     private Image image;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
     private QuestionSuggestion questionSuggestion;
 
     @Column(name = "creation_date")

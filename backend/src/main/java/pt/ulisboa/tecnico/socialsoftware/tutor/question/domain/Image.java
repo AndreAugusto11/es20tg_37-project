@@ -22,6 +22,7 @@ public class Image {
     private Question question;
 
     @OneToOne
+    @JoinColumn(name="justification_id")
     private Justification justification;
 
     public Image() {}

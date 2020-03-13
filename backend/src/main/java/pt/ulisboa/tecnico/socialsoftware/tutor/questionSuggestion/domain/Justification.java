@@ -45,7 +45,7 @@ public class Justification {
         user.addJustification(this);
 
         this.questionSuggestion = questionSuggestion;
-        // questionSuggestion.setJustification(this);
+        questionSuggestion.setJustification(this);
 
         if (justificationDto.getImage() != null) {
             Image img = new Image(justificationDto.getImage());

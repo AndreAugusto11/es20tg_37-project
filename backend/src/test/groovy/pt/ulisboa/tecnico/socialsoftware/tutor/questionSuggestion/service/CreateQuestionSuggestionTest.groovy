@@ -21,6 +21,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSugges
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
 import spock.lang.Specification
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_IS_TEACHER
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND
@@ -79,7 +80,6 @@ class CreateQuestionSuggestionTest extends Specification {
         user1.getCourseExecutions().add(courseExecution)
         user1.setEnrolledCoursesAcronyms(ACRONYM)
         courseExecution.getUsers().add(user1)
-        user1.setEnrolledCoursesAcronyms(ACRONYM)
         userRepository.save(user1)
         user2 = new User('name2', "username2", 2, User.Role.STUDENT)
         user2.getCourseExecutions().add(courseExecution)
@@ -116,7 +116,7 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto.setOptions(options)
 
         when:
-        questionSuggestionService.createSuggestionQuestion(user1.getId(),course1.getId(), questionSuggestionDto)
+        questionSuggestionService.createSuggestionQuestion(user1.getId(), course1.getId(), questionSuggestionDto)
 
         then: "the correct suggestion is inside the repository"
 
@@ -128,7 +128,7 @@ class CreateQuestionSuggestionTest extends Specification {
         result.getUser().getName() == 'name1'
         result.getImage() == null
         result.getOptions().size() == 1
-        result.getUser().getQuestionsSuggestion().size()==1
+        result.getUser().getQuestionsSuggestion().size() == 1
         result.getUser().getQuestionsSuggestion().contains(result)
         def resOption = result.getOptions().get(0)
         resOption.getContent() == OPTION_CONTENT

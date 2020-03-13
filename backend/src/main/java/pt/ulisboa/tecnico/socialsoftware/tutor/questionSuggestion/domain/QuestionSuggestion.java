@@ -17,7 +17,7 @@ import java.util.List;
 public class QuestionSuggestion {
     @SuppressWarnings("unused")
     public enum Status {
-        REJECTED, AVAILABLE, PENDING
+        REJECTED, ACCEPTED, PENDING
     }
 
     @Id
@@ -31,9 +31,11 @@ public class QuestionSuggestion {
     private QuestionSuggestion.Status status = Status.PENDING;
 
     @OneToOne
+    @JoinColumn(name="question_id")
     private Question question;
 
     @OneToOne
+    @JoinColumn(name="justification_id")
     private Justification justification;
 
     @ManyToOne
@@ -50,7 +52,7 @@ public class QuestionSuggestion {
         this.user = user;
         user.addQuestionSuggestion(this);
 
-        this.status = Status.PENDING;
+        this.status = QuestionSuggestion.Status.valueOf(questionSuggestionDto.getStatus());
     }
 
     public Integer getId() { return id; }
@@ -79,7 +81,7 @@ public class QuestionSuggestion {
 
     public void setCreationDate(LocalDateTime creationDate){ this.creationDate = creationDate; }
 
-    public Question getQuestion() {return question; }
+    public Question getQuestion(){ return question; }
 
     public void setQuestion(Question question) { this.question = question;}
 
