@@ -216,6 +216,12 @@ public class Question {
         clarificationRequests.add(clarificationRequest);
     }
 
+    public QuestionSuggestion getQuestionSuggestion(){ return questionSuggestion; }
+
+    public void setQuestionSuggestion(QuestionSuggestion questionSuggestion) {
+        this.questionSuggestion = questionSuggestion;
+    }
+
     public void remove() {
         canRemove();
         getCourse().getQuestions().remove(this);

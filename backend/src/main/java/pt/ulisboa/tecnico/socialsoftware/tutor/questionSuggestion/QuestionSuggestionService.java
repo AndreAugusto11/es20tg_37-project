@@ -46,9 +46,18 @@ public class QuestionSuggestionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionSuggestionDto createSuggestionQuestion(Integer userId, Integer courseId, QuestionSuggestionDto questionSuggestionDto){
 
-        if (userId == null || questionSuggestionDto == null || courseId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS);
+        if (questionSuggestionDto == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTION);
         }
+
+        if(userId == null){
+            throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
+        }
+
+        if(courseId == null){
+            throw new TutorException(INVALID_NULL_ARGUMENTS_COUSEID);
+        }
+
 
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
@@ -78,7 +87,7 @@ public class QuestionSuggestionService {
     public void acceptQuestionSuggestion(Integer questionSuggestionId) {
 
         if (questionSuggestionId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
         }
 
         QuestionSuggestion suggestion = checkForQuestionSuggestion(questionSuggestionId);
@@ -93,8 +102,12 @@ public class QuestionSuggestionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void rejectQuestionSuggestion(Integer userId, Integer questionSuggestionId, JustificationDto justificationDto) {
 
-        if (userId == null || questionSuggestionId == null || justificationDto == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS);
+        if (questionSuggestionId == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
+        } else if (userId == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
+        } else if (justificationDto == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_JUTIFICATIONDTO);
         } else if (justificationDto.getContent() == null || justificationDto.getContent().equals("   ")) {
             throw new TutorException(JUSTIFICATION_MISSING_DATA);
         }

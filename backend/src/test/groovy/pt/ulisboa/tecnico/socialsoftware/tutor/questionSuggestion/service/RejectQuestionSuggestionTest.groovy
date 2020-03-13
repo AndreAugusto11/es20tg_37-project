@@ -22,6 +22,9 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_JUTIFICATIONDTO
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_SUGGESTIONID
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_USERID
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.JUSTIFICATION_MISSING_DATA
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_SUGGESTION_ALREADY_ACCEPTED
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_SUGGESTION_ALREADY_REJECTED
@@ -224,7 +227,7 @@ class RejectQuestionSuggestionTest extends Specification {
 
         then:
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_USERID
     }
 
     def "The question suggestion to rejected does not exist"() {
@@ -243,7 +246,7 @@ class RejectQuestionSuggestionTest extends Specification {
 
         then:
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_SUGGESTIONID
     }
 
     def "A question suggestion is rejected without justification"() {
@@ -258,7 +261,7 @@ class RejectQuestionSuggestionTest extends Specification {
 
         then:
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_JUTIFICATIONDTO
     }
 
     @TestConfiguration
