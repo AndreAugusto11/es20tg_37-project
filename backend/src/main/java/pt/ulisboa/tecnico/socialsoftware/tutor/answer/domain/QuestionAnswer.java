@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
@@ -28,6 +29,10 @@ public class QuestionAnswer {
     private Option option;
 
     private Integer sequence;
+
+    @OneToOne
+    @JoinColumn(name = "clarification_request_id")
+    private ClarificationRequest clarificationRequest;
 
     public QuestionAnswer() {
     }
@@ -127,5 +132,11 @@ public class QuestionAnswer {
 
     public boolean isCorrect() {
         return getOption() != null && getOption().getCorrect();
+    }
+
+    public ClarificationRequest getClarificationRequest() { return clarificationRequest; }
+
+    public void setClarificationRequest(ClarificationRequest clarificationRequest) {
+        this.clarificationRequest = clarificationRequest;
     }
 }
