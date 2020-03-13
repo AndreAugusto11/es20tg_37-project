@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentR
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
+import spock.lang.Unroll
 
 @DataJpaTest
 class EnrollInOpenTournamentTest extends Specification {
@@ -35,6 +36,7 @@ class EnrollInOpenTournamentTest extends Specification {
         tournamentRepository.save(tournament)
     }
 
+    @Unroll
     def "Null arguments in enroll in open tournament" () {
         //null arguments exception is thrown
         given: "a student"
