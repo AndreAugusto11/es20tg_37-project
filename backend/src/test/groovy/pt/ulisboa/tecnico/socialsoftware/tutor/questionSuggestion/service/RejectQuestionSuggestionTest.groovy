@@ -4,17 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.JustificationDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.QuestionSuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.QuestionSuggestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.JustificationRepository
@@ -29,8 +24,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.JU
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_SUGGESTION_ALREADY_ACCEPTED
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_SUGGESTION_ALREADY_REJECTED
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_IS_STUDENT
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_IS_TEACHER
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND
 
 @DataJpaTest
 class RejectQuestionSuggestionTest extends Specification {
@@ -93,8 +86,8 @@ class RejectQuestionSuggestionTest extends Specification {
         questionSuggestionService.rejectQuestionSuggestion(teacher.getId(), questionSuggestion.getId(), justificationDto)
 
         then: "the suggestion becomes rejected"
-        questionSuggestionRepository.count() == 1L
         def result = questionSuggestionRepository.findAll().get(0)
+        result != null
         result.getStatus() == QuestionSuggestion.Status.REJECTED
         and: "the question status does not change"
         result.getQuestion().getStatus() == Question.Status.DISABLED
@@ -128,8 +121,8 @@ class RejectQuestionSuggestionTest extends Specification {
         questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestion.getId(), justificationDto)
 
         then: "the suggestion becomes rejected"
-        questionSuggestionRepository.count() == 1L
         def result = questionSuggestionRepository.findAll().get(0)
+        result != null
         result.getStatus() == QuestionSuggestion.Status.REJECTED
         and: "the question status does not change"
         result.getQuestion().getStatus() == Question.Status.DISABLED
@@ -155,6 +148,7 @@ class RejectQuestionSuggestionTest extends Specification {
         def suggestion = new QuestionSuggestion()
         suggestion.setQuestion(question)
         suggestion.setStatus(QuestionSuggestion.Status.ACCEPTED)
+        questionSuggestionRepository.save(suggestion)
         and: "a user"
         def user = new User()
         user.setKey(2)
@@ -179,6 +173,7 @@ class RejectQuestionSuggestionTest extends Specification {
         def suggestion = new QuestionSuggestion()
         suggestion.setQuestion(question)
         suggestion.setStatus(QuestionSuggestion.Status.REJECTED)
+        questionSuggestionRepository.save(suggestion)
         and: "a user"
         def user = new User()
         user.setKey(2)
@@ -242,7 +237,7 @@ class RejectQuestionSuggestionTest extends Specification {
 
         then:
         TutorException exception = thrown()
-        exception.getErrorMessage() == USER_NOT_FOUND
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS
     }
 
     def "A question suggestion is rejected by a student user"() {
