@@ -222,6 +222,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         error.errorMessage == CLARIFICATION_REQUEST_NO_LONGER_AVAILABLE
     }
 
+
     def "teacher from a different course execution creates clarification request answer"() {
         given: "an user not associated to the course execution"
         def userNotAssociated = new User('name1', "username1", 3, User.Role.TEACHER)
@@ -252,6 +253,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         def error = thrown(TutorException)
         error.errorMessage == ACCESS_DENIED
     }
+
 
     def "student creates clarification request answer"() {
         given: "an opened clarification request"
@@ -316,6 +318,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         ClarificationRequestAnswer.Type.TEACHER_ANSWER | CLARIFICATION_CONTENT       | null             || USER_NOT_FOUND_USERNAME
         ClarificationRequestAnswer.Type.TEACHER_ANSWER | CLARIFICATION_CONTENT       | "    "           || USER_NOT_FOUND_USERNAME
     }
+
 
     @TestConfiguration
     static class ServiceImplTestContextConfiguration {
