@@ -58,7 +58,6 @@ class AcceptQuestionSuggestionTest extends Specification {
 
     def setup() {
         question = new Question()
-        question.setId(1)
         question.setKey(1)
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
@@ -69,7 +68,6 @@ class AcceptQuestionSuggestionTest extends Specification {
     def "A pending question suggestion is accepted"() {
         given: "a question suggestion"
         def questionSuggestion = new QuestionSuggestion()
-        questionSuggestion.setId(1)
         questionSuggestion.setQuestion(question)
         questionSuggestion.setStatus(QuestionSuggestion.Status.PENDING)
         questionSuggestionRepository.save(questionSuggestion)
@@ -88,9 +86,9 @@ class AcceptQuestionSuggestionTest extends Specification {
     def "An accepted question suggestion is accepted"() {
         given: "a question suggestion"
         def questionSuggestion = new QuestionSuggestion()
-        questionSuggestion.setId(1)
         questionSuggestion.setQuestion(question)
         questionSuggestion.setStatus(QuestionSuggestion.Status.ACCEPTED)
+        questionSuggestionRepository.save(questionSuggestion)
 
         when:
         questionSuggestionService.acceptQuestionSuggestion(questionSuggestion.getId())
@@ -103,9 +101,9 @@ class AcceptQuestionSuggestionTest extends Specification {
     def "A rejected question suggestion is accepted"() {
         given: "a question suggestion"
         def questionSuggestion = new QuestionSuggestion()
-        questionSuggestion.setId(1)
         questionSuggestion.setQuestion(question)
         questionSuggestion.setStatus(QuestionSuggestion.Status.REJECTED)
+        questionSuggestionRepository.save(questionSuggestion)
 
         when:
         questionSuggestionService.acceptQuestionSuggestion(questionSuggestion.getId())
@@ -121,7 +119,7 @@ class AcceptQuestionSuggestionTest extends Specification {
 
         then: "an exception is thrown"
         TutorException exception = thrown()
-        exception.getErrorMessage() == QUESTION_SUGGESTION_NOT_FOUND
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS
     }
 
     @TestConfiguration
