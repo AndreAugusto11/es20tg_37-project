@@ -9,6 +9,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
 import javax.persistence.*;
@@ -56,6 +58,12 @@ public class User implements UserDetails {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
+    private Set<ClarificationRequest> clarificationRequests = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
+    private Set<ClarificationRequestAnswer> clarificationRequestAnswers = new HashSet<>();
 
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
@@ -355,6 +363,20 @@ public class User implements UserDetails {
 
     public void addCourse(CourseExecution course) {
         this.courseExecutions.add(course);
+    }
+
+    public Set<ClarificationRequest> getClarificationRequests() { return clarificationRequests; }
+
+    public void addClarificationRequest(ClarificationRequest clarificationRequest) {
+        this.clarificationRequests.add(clarificationRequest);
+    }
+
+    public Set<ClarificationRequestAnswer> getClarificationRequestAnswers() {
+        return clarificationRequestAnswers;
+    }
+
+    public void addClarificationRequestAnswers(ClarificationRequestAnswer clarificationRequestAnswers) {
+        this.clarificationRequestAnswers.add(clarificationRequestAnswers);
     }
 
     @Override

@@ -2,7 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 
 import javax.persistence.*;
 
@@ -24,6 +24,10 @@ public class Image {
     @OneToOne
     @JoinColumn(name="justification_id")
     private Justification justification;
+
+    @OneToOne
+    @JoinColumn(name="clarification_request_id")
+    private ClarificationRequest clarificationRequest;
 
     public Image() {}
 
@@ -68,6 +72,12 @@ public class Image {
     public Justification getJustification() { return justification; }
 
     public void setJustification(Justification justification) { this.justification = justification; }
+
+    public ClarificationRequest getClarificationRequest() { return clarificationRequest; }
+
+    public void setClarificationRequest(ClarificationRequest clarificationRequest) {
+        this.clarificationRequest = clarificationRequest;
+    }
 
     @Override
     public String toString() {
