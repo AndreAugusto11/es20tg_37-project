@@ -14,6 +14,8 @@ import java.util.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
+
 @Entity
 @Table(name = "tournaments")
 public class Tournament {
@@ -44,6 +46,8 @@ public class Tournament {
 	private LocalDateTime endTime;
 
 	private Status status;
+
+	public Tournament(){}
 
 	public Tournament(User creator)
 	{
@@ -110,8 +114,10 @@ public class Tournament {
 		return status;
 	}
 
-	private void setCreator(User user)
+	public void setCreator(User user)
 	{
+		if(user == null) throw new TutorException(TOURNAMENT_NULL_USER);
+
 		if (user.getRole() == User.Role.STUDENT)
 		{
 			creator = user;
@@ -127,16 +133,14 @@ public class Tournament {
 		users.add(user);
 	}
 
-	public void setNumQuests(int num)
+	public void setNumQuests(Integer num)
 	{
-		if (num > 0)
-		{
-			numQuests = num;
-		}
-		else
+		if(num == null) throw new TutorException(TOURNAMENT_NULL_NUM_QUESTS);
+		if (num <= 0)
 		{
 			throw(new TutorException(ErrorMessage.TOURNAMENT_INVALID_NUM_QUESTS, num));
 		}
+		numQuests = num;
 	}
 
 	public void setTopics (Set<Topic> topic)
@@ -146,12 +150,35 @@ public class Tournament {
 
 	public void setStartTime(LocalDateTime time)
 	{
+		if (time == null)
+		{
+			throw new TutorException(TOURNAMENT_NULL_STARTTIME);
+		}
 		startTime = time;
 	}
 
 	public void setEndTime(LocalDateTime time)
 	{
+		if (time == null)
+		{
+			throw new TutorException(TOURNAMENT_NULL_ENDTIME);
+		}
 		endTime = time;
+	}
+
+	public void checkConsistent() {
+		if (creator.getRole() != User.Role.STUDENT)
+		{
+			throw new TutorException(TOURNAMENT_NON_VALID_USER, creator.getKey());
+		}
+		else if (startTime.isBefore(LocalDateTime.now()))
+		{
+			throw new TutorException(TOURNAMENT_INVALID_STARTTIME);
+		}
+		else if (startTime.isAfter(endTime) || startTime.isEqual(endTime))
+		{
+			throw new TutorException(TOURNAMENT_INVALID_TIMEFRAME);
+		}
 	}
 
 	public void setStatus(Status stat)

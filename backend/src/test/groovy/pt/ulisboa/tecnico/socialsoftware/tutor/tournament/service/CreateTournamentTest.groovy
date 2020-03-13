@@ -15,8 +15,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import spock.lang.Shared
 import spock.lang.Specification
-
+import spock.lang.Unroll
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -44,16 +45,21 @@ class CreateTournamentTest extends Specification {
 	@Autowired
 	UserRepository userRepository
 
+	@Shared
 	def student
+	@Shared
 	def topic
+	@Shared
 	def topics
+	@Shared
 	def startTime
+	@Shared
 	def endTime
+	@Shared
 	def formatter
 
 	def setup()
 	{
-
 		student = new User('student', "istStu", 1, User.Role.STUDENT)
 		userRepository.save(student)
 
@@ -103,9 +109,10 @@ class CreateTournamentTest extends Specification {
 		result.getEndTime() == endTime
 		def retTopic = result.getTopics()
 		def iter = retTopic.iterator()
+		def i=0
 		while(iter.hasNext())
 		{
-			iter.next().getName() == topic[i].getName()
+			iter.next().getName() == topic[i++].getName()
 		}
 	}
 
@@ -122,9 +129,10 @@ class CreateTournamentTest extends Specification {
 		result.getEndTime() == endTime
 		def retTopic = result.getTopics()
 		def iter = retTopic.iterator()
+		def i=0
 		while(iter.hasNext())
 		{
-			iter.next().getName() == topics[i].getName()
+			iter.next().getName() == topics[i++].getName()
 		}
 	}
 
@@ -146,71 +154,41 @@ class CreateTournamentTest extends Specification {
 	{
 		// an exception should be thrown
 		when:
-		def result = tournamentService.createTournament(null, topic, number_of_questions, startTime, endTime)
+		tournamentService.createTournament(null, topic, number_of_questions, startTime, endTime)
 
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_USER
+		then:
+		def exception = thrown(TutorException)
+		exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_USER
 	}
 
 	def "topic is empty"()
 	{
 		// an exception should be thrown
 		when:
-		def result = tournamentService.createTournament(student, null, number_of_questions, startTime, endTime)
+		tournamentService.createTournament(student, null, number_of_questions, startTime, endTime)
 
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_TOPIC
+		then:
+		def exception = thrown(TutorException)
+		exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_TOPIC
 	}
 
-	def "number_of_questions is empty"()
+	def "null static arguments" ()
 	{
 		// an exception should be thrown
 		when:
-		def result = tournamentService.createTournament(student, topic, null, startTime, endTime)
+		tournamentService.createTournament(student, topic, num, startT, endT)
 
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_NUM_QUESTS
+		then:
+		def exception = thrown(TutorException)
+		exception.getErrorMessage() == errorMessage
+
+		where:
+		num 				|	startT					| endT		|| errorMessage
+		null				| 	startTime				| endTime	|| ErrorMessage.TOURNAMENT_NULL_NUM_QUESTS
+		number_of_questions	| 	null					| endTime	|| ErrorMessage.TOURNAMENT_NULL_STARTTIME
+		number_of_questions	| 	startTime				| null		|| ErrorMessage.TOURNAMENT_NULL_ENDTIME
 	}
-
-	def "startTime is empty"()
-	{
-		// an exception should be thrown
-		when:
-		def result = tournamentService.createTournament(student, topic, number_of_questions, null, endTime)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_STARTTIME
-	}
-
-	def "endTime is empty"()
-	{
-		// an exception should be thrown
-		when:
-		def result = tournamentService.createTournament(student, topic, number_of_questions, startTime, null)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_ENDTIME
-	}
-
-	def "user is invalid"()
-	{
-		// an exception should be thrown
-		given: "a teacher"
-		def teacher = new User('teacher', "teach", 2, User.Role.TEACHER)
-
-		when:
-		def result = tournamentService.createTournament(teacher, topic, number_of_questions, startTime, endTime)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NON_VALID_USER
-	}
-
+	
 	def "non-saved student user is invalid"()
 	{
 		// an exception should be thrown
@@ -218,7 +196,7 @@ class CreateTournamentTest extends Specification {
 		def user = new User('user', "user", 3, User.Role.STUDENT)
 
 		when:
-		def result = tournamentService.createTournament(user, topic, number_of_questions, startTime, endTime)
+		tournamentService.createTournament(user, topic, number_of_questions, startTime, endTime)
 
 		then:
 		def exception = thrown(TutorException)
@@ -232,7 +210,7 @@ class CreateTournamentTest extends Specification {
 		def num = 0
 
 		when:
-		def result = tournamentService.createTournament(student, topic, num, startTime, endTime)
+		tournamentService.createTournament(student, topic, num, startTime, endTime)
 
         then:
         def exception = thrown(TutorException)
@@ -253,7 +231,7 @@ class CreateTournamentTest extends Specification {
 		topicSet.add(topicNS)
 
 		when:
-		def result = tournamentService.createTournament(student, topicSet, number_of_questions, startTime, endTime)
+		tournamentService.createTournament(student, topicSet, number_of_questions, startTime, endTime)
 
 		then:
 		def exception = thrown(TutorException)
@@ -269,7 +247,7 @@ class CreateTournamentTest extends Specification {
 		start.format(format)
 
 		when:
-		def result = tournamentService.createTournament(student, topic, number_of_questions, start, endTime)
+		tournamentService.createTournament(student, topic, number_of_questions, start, endTime)
 
         then:
         def exception = thrown(TutorException)
@@ -281,7 +259,7 @@ class CreateTournamentTest extends Specification {
 		// an exception should be thrown
 
 		when:
-		def result = tournamentService.createTournament(student, topic, number_of_questions, startTime, startTime)
+		tournamentService.createTournament(student, topic, number_of_questions, startTime, startTime)
 
         then:
         def exception = thrown(TutorException)
@@ -292,7 +270,7 @@ class CreateTournamentTest extends Specification {
 	{
 		// an exception should be thrown
 		when:
-		def result = tournamentService.createTournament(student, topic, number_of_questions, endTime, startTime)
+		tournamentService.createTournament(student, topic, number_of_questions, endTime, startTime)
 
         then:
         def exception = thrown(TutorException)
