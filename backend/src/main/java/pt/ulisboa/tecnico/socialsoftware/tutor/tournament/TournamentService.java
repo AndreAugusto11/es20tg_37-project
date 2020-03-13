@@ -53,7 +53,7 @@ public class TournamentService
 		{
 			throw new TutorException(TOURNAMENT_NULL_ENDTIME);
 		}
-		else if (student.getRole() != User.Role.STUDENT)
+		else if ((student.getRole() != User.Role.STUDENT) || (userRepository.findByKey(student.getKey()) == null))
 		{
 			throw new TutorException(TOURNAMENT_NON_VALID_USER, student.getKey());
 		}

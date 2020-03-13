@@ -14,7 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
-
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 
@@ -41,6 +41,9 @@ class CreateTournamentTest extends Specification {
 	@Autowired
 	CourseRepository courseRepository
 
+	@Autowired
+	UserRepository userRepository
+
 	def student
 	def topic
 	def topics
@@ -52,6 +55,7 @@ class CreateTournamentTest extends Specification {
 	{
 
 		student = new User('student', "istStu", 1, User.Role.STUDENT)
+		userRepository.save(student)
 
 		topic = new HashSet<Topic>()
 		def tpc = new Topic()
@@ -205,6 +209,20 @@ class CreateTournamentTest extends Specification {
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NON_VALID_USER
+	}
+
+	def "non-saved student user is invalid"()
+	{
+		// an exception should be thrown
+		given: "a non-saved"
+		def user = new User('user', "user", 3, User.Role.STUDENT)
+
+		when:
+		def result = tournamentService.createTournament(user, topic, number_of_questions, startTime, endTime)
+
+		then:
+		def exception = thrown(TutorException)
+		exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NON_VALID_USER
 	}
 
 	def "number_of_questions is invalid"()
