@@ -49,6 +49,10 @@ public class TournamentService
 	}
 
 	public void enrollStudentInTournament(Integer userKey, Integer tournamentId){
+		if(userKey == null) throw new TutorException(TOURNAMENT_NULL_USER);
+
+		if(tournamentId == null) throw new TutorException(TOURNAMENT_NULL_TOURNAMENT);
+
 		Tournament tournament = tournamentRepository.findById(tournamentId)
 				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND,tournamentId));
 		User user = userRepository.findByKey(userKey);

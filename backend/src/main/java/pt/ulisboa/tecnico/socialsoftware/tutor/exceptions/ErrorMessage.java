@@ -19,6 +19,7 @@ public enum ErrorMessage {
     TOURNAMENT_STUDENT_ALREADY_ENROLLED("Tournament already enrolled student with id %d"),
 
     TOURNAMENT_NULL_USER("User is null"),
+    TOURNAMENT_NULL_TOURNAMENT("Tournament is null"),
     TOURNAMENT_NULL_TOPIC("Topic is null in Tournament Creation"),
     TOURNAMENT_NULL_NUM_QUESTS("Number of Questions is null in Tournament Creation"),
     TOURNAMENT_NULL_STARTTIME("Start Time is null in Tournament Creation"),

@@ -35,6 +35,27 @@ class EnrollInOpenTournamentTest extends Specification {
         tournamentRepository.save(tournament)
     }
 
+    def "Null arguments in enroll in open tournament" () {
+        //null arguments exception is thrown
+        given: "a student"
+        def user2 = new User("Manel2","MAN123",2,User.Role.STUDENT)
+        userRepository.save(user2)
+        tournament.setStatus(Tournament.Status.OPEN)
+
+        when:
+        tournamentService.enrollStudentInTournament(key,id)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == errorMessage
+
+        where:
+        key           | id                  || errorMessage
+        null          | 1                   || ErrorMessage.TOURNAMENT_NULL_USER
+        2             | null                || ErrorMessage.TOURNAMENT_NULL_TOURNAMENT
+
+    }
+
     def "student enroll in open tournament"() {
         //student enroll in open tournament
         given: "a student"
