@@ -39,7 +39,6 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     public static final String USERNAME_STUDENT = "username_student"
     public static final String COURSE_NAME = "Software Architecture"
     public static final String CLARIFICATION_CONTENT = "Test"
-    public static final String EMPTY_CLARIFICATION_CONTENT = "  "
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
 
@@ -133,6 +132,27 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         questionAnswerRepository.save(questionAnswer)
     }
 
+    def "teacher creates clarification request answer to a non existing clarification request"() {
+        given: "a null clarification request answer dto"
+        def clarificationRequestDto = null
+
+        and: "a clarification request answer dto"
+        def clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
+        clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER_ANSWER)
+        clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
+        clarificationRequestAnswerDto.setClarificationRequest(clarificationRequestDto)
+        clarificationRequestAnswerDto.setName(user_teacher.getName())
+        clarificationRequestAnswerDto.setUsername(user_teacher.getUsername())
+
+        when:
+        questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
+
+        then: "an exception is thrown"
+        def error = thrown(TutorException)
+        error.errorMessage == CLARIFICATION_REQUEST_NOT_DEFINED
+    }
+
+
     def "teacher creates clarification request answer to an opened clarification request"() {
         given: "an opened clarification request"
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
@@ -155,11 +175,20 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         when:
         questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
 
-        then: "the clarification request is successfully created"
+        then: "the clarification request answer is inside the repository"
+        clarificationRequestAnswerRepository.findAll().size() == 1
         def result = clarificationRequestAnswerRepository.findAll().get(0)
+        result != null
+
+        and: "has the correct values"
         result.getId() != null
-        result.getType() == ClarificationRequestAnswer.Type.TEACHER_ANSWER
         result.content == CLARIFICATION_CONTENT
+        result.getUser() == user_teacher
+        result.getClarificationRequest() == clarificationRequest
+        result.getType() == ClarificationRequestAnswer.Type.TEACHER_ANSWER
+
+        and: "is associated correctly"
+        user_teacher.getClarificationRequestAnswers().contains(result)
         clarificationRequest.getClarificationRequestAnswer().contains(result)
         result.getClarificationRequest().getStatus() == ClarificationRequest.Status.OPEN
     }
@@ -193,6 +222,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         error.errorMessage == CLARIFICATION_REQUEST_NO_LONGER_AVAILABLE
     }
 
+
     def "teacher from a different course execution creates clarification request answer"() {
         given: "an user not associated to the course execution"
         def userNotAssociated = new User('name1', "username1", 3, User.Role.TEACHER)
@@ -223,6 +253,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         def error = thrown(TutorException)
         error.errorMessage == ACCESS_DENIED
     }
+
 
     def "student creates clarification request answer"() {
         given: "an opened clarification request"
@@ -283,10 +314,11 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         type                                           | content                     | username         || errorMessage
         null                                           | CLARIFICATION_CONTENT       | USERNAME_TEACHER || CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED
         ClarificationRequestAnswer.Type.TEACHER_ANSWER | null                        | USERNAME_TEACHER || CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY
-        ClarificationRequestAnswer.Type.TEACHER_ANSWER | EMPTY_CLARIFICATION_CONTENT | USERNAME_TEACHER || CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY
+        ClarificationRequestAnswer.Type.TEACHER_ANSWER | "   "                       | USERNAME_TEACHER || CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY
         ClarificationRequestAnswer.Type.TEACHER_ANSWER | CLARIFICATION_CONTENT       | null             || USER_NOT_FOUND_USERNAME
         ClarificationRequestAnswer.Type.TEACHER_ANSWER | CLARIFICATION_CONTENT       | "    "           || USER_NOT_FOUND_USERNAME
     }
+
 
     @TestConfiguration
     static class ServiceImplTestContextConfiguration {

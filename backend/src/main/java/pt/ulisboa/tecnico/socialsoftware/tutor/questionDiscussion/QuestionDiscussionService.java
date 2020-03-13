@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
@@ -23,6 +24,7 @@ import javax.persistence.PersistenceContext;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
+@Service
 public class QuestionDiscussionService {
 
     @Autowired
@@ -45,58 +47,92 @@ public class QuestionDiscussionService {
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ClarificationRequestDto createClarificationRequest(Integer questionAnswerId, ClarificationRequestDto clarificationRequestDto) {
-        if (questionAnswerId == null) {
-            throw new TutorException(QUESTION_ANSWER_NOT_DEFINED);
-        }
-        QuestionAnswer questionAnswer = questionAnswerRepository.findById(questionAnswerId)
-                .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswerId));
+        QuestionAnswer questionAnswer = getQuestionAnswer(questionAnswerId);
 
-        Question question = questionRepository
-                .findById(clarificationRequestDto.getQuestionAnswer().getQuestion().getId())
-                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND,
-                        clarificationRequestDto.getQuestionAnswer().getQuestion().getId()));
+        Question question = getQuestion(clarificationRequestDto);
 
-        User user = userRepository.findByUsername(clarificationRequestDto.getUsername());
-        if (user == null) {
-            throw new TutorException(USER_NOT_FOUND_USERNAME, clarificationRequestDto.getUsername());
-        }
+        User user = getUser(clarificationRequestDto.getUsername());
 
-        if (user != questionAnswer.getQuizAnswer().getUser()) {
-            throw new TutorException(QUESTION_ANSWER_MISMATCH_USER, String.valueOf(questionAnswer.getId()), user.getUsername());
-        }
+        checkQuestionAnswerMatchUser(questionAnswer, user);
 
-        if (question != questionAnswer.getQuizQuestion().getQuestion()) {
-            throw new TutorException(QUESTION_ANSWER_MISMATCH_QUESTION, String.valueOf(questionAnswer.getId()), String.valueOf(question.getId()));
-        }
+        checkQuestionAnswerMatchQuestion(questionAnswer, question);
 
         ClarificationRequest clarificationRequest = new ClarificationRequest(questionAnswer, question, user, clarificationRequestDto.getContent());
         if (clarificationRequestDto.getImage() != null) {
-            Image img = new Image(clarificationRequestDto.getImage());
-            clarificationRequest.setImage(img);
-            img.setClarificationRequest(clarificationRequest);
+            addImage(clarificationRequestDto, clarificationRequest);
         }
 
         entityManager.persist(clarificationRequest);
         return new ClarificationRequestDto(clarificationRequest);
     }
 
+    private Question getQuestion(ClarificationRequestDto clarificationRequestDto) {
+        return questionRepository
+                    .findById(clarificationRequestDto.getQuestionAnswer().getQuestion().getId())
+                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, clarificationRequestDto.getQuestionAnswer().getQuestion().getId()));
+    }
+
+    private QuestionAnswer getQuestionAnswer(Integer questionAnswerId) {
+        if (questionAnswerId == null) {
+            throw new TutorException(QUESTION_ANSWER_NOT_DEFINED);
+        }
+        return questionAnswerRepository.findById(questionAnswerId)
+                .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswerId));
+    }
+
+    private User getUser(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new TutorException(USER_NOT_FOUND_USERNAME, username);
+        }
+        return user;
+    }
+
+    private void addImage(ClarificationRequestDto clarificationRequestDto, ClarificationRequest clarificationRequest) {
+        Image img = new Image(clarificationRequestDto.getImage());
+        clarificationRequest.setImage(img);
+        img.setClarificationRequest(clarificationRequest);
+    }
+
+    private void checkQuestionAnswerMatchQuestion(QuestionAnswer questionAnswer, Question question) {
+        if (question != questionAnswer.getQuizQuestion().getQuestion()) {
+            throw new TutorException(QUESTION_ANSWER_MISMATCH_QUESTION, String.valueOf(questionAnswer.getId()), String.valueOf(question.getId()));
+        }
+    }
+
+    private void checkQuestionAnswerMatchUser(QuestionAnswer questionAnswer, User user) {
+        if (user != questionAnswer.getQuizAnswer().getUser()) {
+            throw new TutorException(QUESTION_ANSWER_MISMATCH_USER, String.valueOf(questionAnswer.getId()), user.getUsername());
+        }
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ClarificationRequestAnswerDto createClarificationRequestAnswer(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
-        
+
+        checkClarificationRequest(clarificationRequestAnswerDto);
+
         ClarificationRequest clarificationRequest = clarificationRequestRepository.findById(clarificationRequestAnswerDto.getClarificationRequest().getId())
                 .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_NOT_FOUND, clarificationRequestAnswerDto.getClarificationRequest().getId()));
 
-        User user = userRepository.findByUsername(clarificationRequestAnswerDto.getUsername());
-        if (user == null) {
-            throw new TutorException(USER_NOT_FOUND_USERNAME, clarificationRequestAnswerDto.getUsername());
-        }
+        User user = getUser(clarificationRequestAnswerDto.getUsername());
 
-        if (clarificationRequestAnswerDto.getType() == null) {
-            throw new TutorException(CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED);
-        }
+        checkClarificationRequestAnswerType(clarificationRequestAnswerDto);
 
         ClarificationRequestAnswer clarificationRequestAnswer = new ClarificationRequestAnswer(clarificationRequest, clarificationRequestAnswerDto.getType(), user, clarificationRequestAnswerDto.getContent());
 
         entityManager.persist(clarificationRequestAnswer);
         return new ClarificationRequestAnswerDto(clarificationRequestAnswer);
+    }
+
+    private void checkClarificationRequestAnswerType(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
+        if (clarificationRequestAnswerDto.getType() == null) {
+            throw new TutorException(CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED);
+        }
+    }
+
+    private void checkClarificationRequest(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
+        if (clarificationRequestAnswerDto.getClarificationRequest() == null) {
+            throw new TutorException(CLARIFICATION_REQUEST_NOT_DEFINED);
+        }
     }
 }

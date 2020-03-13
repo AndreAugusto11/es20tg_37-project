@@ -47,10 +47,11 @@ public class ClarificationRequestAnswer {
         }
 
         this.clarificationRequest = clarificationRequest;
-        clarificationRequest.addClarificationRequestAnswer(this);
         this.user = user;
         this.content = content;
         this.type = type;
+        clarificationRequest.addClarificationRequestAnswer(this);
+        user.addClarificationRequestAnswers(this);
     }
 
     public Integer getId() { return id; }
