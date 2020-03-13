@@ -81,13 +81,7 @@ public class QuestionSuggestionService {
             throw new TutorException(INVALID_NULL_ARGUMENTS);
         }
 
-        QuestionSuggestion suggestion = questionSuggestionRepository.findById(questionSuggestionId).orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
-
-        if (suggestion.getStatus() == QuestionSuggestion.Status.ACCEPTED) {
-            throw new TutorException(QUESTION_SUGGESTION_ALREADY_ACCEPTED);
-        } else if (suggestion.getStatus() == QuestionSuggestion.Status.REJECTED) {
-            throw new TutorException(QUESTION_SUGGESTION_ALREADY_REJECTED);
-        }
+        QuestionSuggestion suggestion = checkForQuestionSuggestion(questionSuggestionId);
 
         suggestion.setStatus(QuestionSuggestion.Status.ACCEPTED);
         suggestion.getQuestion().setStatus(Question.Status.AVAILABLE);
@@ -105,13 +99,7 @@ public class QuestionSuggestionService {
             throw new TutorException(JUSTIFICATION_MISSING_DATA);
         }
 
-        QuestionSuggestion suggestion = questionSuggestionRepository.findById(questionSuggestionId).orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
-
-        if (suggestion.getStatus() == QuestionSuggestion.Status.ACCEPTED) {
-            throw new TutorException(QUESTION_SUGGESTION_ALREADY_ACCEPTED);
-        } else if (suggestion.getStatus() == QuestionSuggestion.Status.REJECTED) {
-            throw new TutorException(QUESTION_SUGGESTION_ALREADY_REJECTED);
-        }
+        QuestionSuggestion suggestion = checkForQuestionSuggestion(questionSuggestionId);
 
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
@@ -125,5 +113,17 @@ public class QuestionSuggestionService {
         suggestion.setStatus(QuestionSuggestion.Status.REJECTED);
 
         this.entityManager.persist(justification);
+    }
+
+    private QuestionSuggestion checkForQuestionSuggestion(Integer questionSuggestionId) {
+        QuestionSuggestion suggestion = questionSuggestionRepository.findById(questionSuggestionId).orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
+
+        if (suggestion.getStatus() == QuestionSuggestion.Status.ACCEPTED) {
+            throw new TutorException(QUESTION_SUGGESTION_ALREADY_ACCEPTED);
+        } else if (suggestion.getStatus() == QuestionSuggestion.Status.REJECTED) {
+            throw new TutorException(QUESTION_SUGGESTION_ALREADY_REJECTED);
+        }
+
+        return suggestion;
     }
 }
