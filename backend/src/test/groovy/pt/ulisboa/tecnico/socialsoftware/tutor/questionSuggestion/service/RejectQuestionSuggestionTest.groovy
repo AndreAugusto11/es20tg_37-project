@@ -17,7 +17,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSuggestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
+import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.JUSTIFICATION_MISSING_DATA
@@ -143,11 +145,12 @@ class RejectQuestionSuggestionTest extends Specification {
         image.getQuestion() == null
     }
 
-    def "An accepted question suggestion is rejected"() {
+    @Unroll
+    def "A #status question suggestion is rejected"() {
         given: "a question suggestion"
         def suggestion = new QuestionSuggestion()
         suggestion.setQuestion(question)
-        suggestion.setStatus(QuestionSuggestion.Status.ACCEPTED)
+        suggestion.setStatus(status)
         questionSuggestionRepository.save(suggestion)
         and: "a user"
         def user = new User()
@@ -164,47 +167,12 @@ class RejectQuestionSuggestionTest extends Specification {
 
         then: "an exception is thrown"
         TutorException exception = thrown()
-        exception.getErrorMessage() == QUESTION_SUGGESTION_ALREADY_ACCEPTED
+        exception.getErrorMessage() == errorMessage
 
-    }
-
-    def "A rejected question suggestion is rejected"() {
-        given: "a question suggestion"
-        def suggestion = new QuestionSuggestion()
-        suggestion.setQuestion(question)
-        suggestion.setStatus(QuestionSuggestion.Status.REJECTED)
-        questionSuggestionRepository.save(suggestion)
-        and: "a user"
-        def user = new User()
-        user.setKey(2)
-        user.setRole(User.Role.TEACHER)
-        userRepository.save(user)
-        and: "a justification"
-        def justificationDto = new JustificationDto()
-        justificationDto.setKey(2)
-        justificationDto.setContent(JUSTIFICATION_CONTENT)
-
-        when:
-        questionSuggestionService.rejectQuestionSuggestion(user.getId(), suggestion.getId(), justificationDto)
-
-        then: "an exception is thrown"
-        TutorException exception = thrown()
-        exception.getErrorMessage() == QUESTION_SUGGESTION_ALREADY_REJECTED
-    }
-
-    def "A question suggestion is rejected without justification"() {
-        given: "a user"
-        def user = new User()
-        user.setKey(2)
-        user.setRole(User.Role.TEACHER)
-        userRepository.save(user)
-
-        when:
-        questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestion.getId(), null)
-
-        then:
-        TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS
+        where:
+        status                             || errorMessage
+        QuestionSuggestion.Status.ACCEPTED || QUESTION_SUGGESTION_ALREADY_ACCEPTED
+        QuestionSuggestion.Status.REJECTED || QUESTION_SUGGESTION_ALREADY_REJECTED
     }
 
     def "A question suggestion is rejected with a justification without content"() {
@@ -226,20 +194,6 @@ class RejectQuestionSuggestionTest extends Specification {
         exception.getErrorMessage() == JUSTIFICATION_MISSING_DATA
     }
 
-    def "A question suggestion is rejected with a justification and no user"() {
-        given: "a justification"
-        def justificationDto = new JustificationDto()
-        justificationDto.setKey(2)
-        justificationDto.setContent(JUSTIFICATION_CONTENT)
-
-        when:
-        questionSuggestionService.rejectQuestionSuggestion(null, questionSuggestion.getId(), justificationDto)
-
-        then:
-        TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS
-    }
-
     def "A question suggestion is rejected by a student user"() {
         given: "a user"
         def student = new User()
@@ -257,6 +211,54 @@ class RejectQuestionSuggestionTest extends Specification {
         then:
         TutorException exception = thrown()
         exception.getErrorMessage() == USER_IS_STUDENT
+    }
+
+    def "A question suggestion is rejected with a justification and no user"() {
+        given: "a justification"
+        def justificationDto = new JustificationDto()
+        justificationDto.setKey(2)
+        justificationDto.setContent(JUSTIFICATION_CONTENT)
+
+        when:
+        questionSuggestionService.rejectQuestionSuggestion(null, questionSuggestion.getId(), justificationDto)
+
+        then:
+        TutorException exception = thrown()
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS
+    }
+
+    def "The question suggestion to rejected does not exist"() {
+        given: "a user"
+        def user = new User()
+        user.setKey(2)
+        user.setRole(User.Role.TEACHER)
+        userRepository.save(user)
+        and:
+        def justificationDto = new JustificationDto()
+        justificationDto.setKey(2)
+        justificationDto.setContent(JUSTIFICATION_CONTENT)
+
+        when:
+        questionSuggestionService.rejectQuestionSuggestion(user.getId(), null, justificationDto)
+
+        then:
+        TutorException exception = thrown()
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS
+    }
+
+    def "A question suggestion is rejected without justification"() {
+        given: "a user"
+        def user = new User()
+        user.setKey(2)
+        user.setRole(User.Role.TEACHER)
+        userRepository.save(user)
+
+        when:
+        questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestion.getId(), null)
+
+        then:
+        TutorException exception = thrown()
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS
     }
 
     @TestConfiguration
