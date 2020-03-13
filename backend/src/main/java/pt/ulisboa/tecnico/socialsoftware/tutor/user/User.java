@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
@@ -55,6 +56,9 @@ public class User implements UserDetails {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
+    private Set<ClarificationRequest> clarificationRequests = new HashSet<>();
 
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
@@ -356,6 +360,12 @@ public class User implements UserDetails {
     public void addTournament(Tournament tournament) {this.tournaments.add(tournament);}
 
     public Set<Tournament> getTournaments() { return this.tournaments; }
+
+    public Set<ClarificationRequest> getClarificationRequests() { return clarificationRequests; }
+
+    public void addClarificationRequest(ClarificationRequest clarificationRequest) {
+        this.clarificationRequests.add(clarificationRequest);
+    }
 
     @Override
     public String toString() {

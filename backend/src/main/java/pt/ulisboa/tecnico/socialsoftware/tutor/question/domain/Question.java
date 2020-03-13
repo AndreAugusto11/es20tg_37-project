@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
@@ -61,6 +62,9 @@ public class Question {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval=true)
     private Set<QuizQuestion> quizQuestions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval=true)
+    private Set<ClarificationRequest> clarificationRequests = new HashSet<>();
 
     @ManyToMany(mappedBy = "questions")
     private Set<Topic> topics = new HashSet<>();
@@ -174,6 +178,8 @@ public class Question {
         return topics;
     }
 
+    public Set<ClarificationRequest> getClarificationRequest() { return clarificationRequests; }
+
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
@@ -200,6 +206,10 @@ public class Question {
 
     public void addTopic(Topic topic) {
         topics.add(topic);
+    }
+
+    public void addClarificationRequest(ClarificationRequest clarificationRequest) {
+        clarificationRequests.add(clarificationRequest);
     }
 
     public void remove() {

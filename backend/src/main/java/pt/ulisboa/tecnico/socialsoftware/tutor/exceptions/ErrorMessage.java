@@ -8,6 +8,7 @@ public enum ErrorMessage {
     OPTION_NOT_FOUND("Option not found with id %d"),
     QUESTION_NOT_FOUND("Question not found with id %d"),
     USER_NOT_FOUND("User not found with id %d"),
+    USER_NOT_FOUND_USERNAME("User not found with id %s"),
     TOPIC_NOT_FOUND("Topic not found with id %d"),
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
@@ -19,6 +20,7 @@ public enum ErrorMessage {
     TOURNAMENT_STUDENT_ALREADY_ENROLLED("Tournament already enrolled student with id %d"),
 
     TOURNAMENT_NULL_USER("User is null"),
+    TOURNAMENT_NULL_TOURNAMENT("Tournament is null"),
     TOURNAMENT_NULL_TOPIC("Topic is null in Tournament Creation"),
     TOURNAMENT_NULL_NUM_QUESTS("Number of Questions is null in Tournament Creation"),
     TOURNAMENT_NULL_STARTTIME("Start Time is null in Tournament Creation"),
@@ -28,10 +30,13 @@ public enum ErrorMessage {
     TOURNAMENT_INVALID_TOPIC("A Specified Topic does not exist while Creating Tournament"),
     TOURNAMENT_INVALID_STARTTIME("Start Time is out-of-format or not a valid TimeStamp in Tournament Creation"),
     TOURNAMENT_INVALID_TIMEFRAME("The specified TimeFrame in Tournament Creation is not valid."),
+    CLARIFICATION_REQUEST_NOT_FOUND("Question answer not found with id %d"),
 
     COURSE_NOT_FOUND("Course not found with name %s"),
     COURSE_NAME_IS_EMPTY("The course name is empty"),
     COURSE_TYPE_NOT_DEFINED("The course type is not defined"),
+    CLARIFICATION_REQUEST_NOT_DEFINED("Clarification request is not defined"),
+    CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED("Clarification request answer type is not defined"),
     COURSE_EXECUTION_ACRONYM_IS_EMPTY("The course execution acronym is empty"),
     COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY("The course execution academic term is empty"),
     USERNAME_NOT_FOUND("Username %s not found"),
@@ -56,6 +61,7 @@ public enum ErrorMessage {
     USER_NOT_ENROLLED("%s - Not enrolled in any available course"),
     QUIZ_NO_LONGER_AVAILABLE("This quiz is no longer available"),
     QUIZ_NOT_YET_AVAILABLE("This quiz is not yet available"),
+    CLARIFICATION_REQUEST_NO_LONGER_AVAILABLE("This clarification request is no longer available"),
 
     NO_CORRECT_OPTION("Question does not have a correct option"),
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
@@ -69,6 +75,11 @@ public enum ErrorMessage {
     AUTHENTICATION_ERROR("Authentication Error"),
     FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
 
+    QUESTION_ANSWER_MISMATCH_USER("Question answer %s is not assigned to student %s"),
+    QUESTION_ANSWER_MISMATCH_QUESTION("Question answer %s is not assigned to question %s"),
+    QUESTION_ANSWER_NOT_DEFINED("Question answer is not defined"),
+    CLARIFICATION_REQUEST_IS_EMPTY("The clarification request content is empty"),
+    CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY("The clarification request answer content must be defined"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file");
