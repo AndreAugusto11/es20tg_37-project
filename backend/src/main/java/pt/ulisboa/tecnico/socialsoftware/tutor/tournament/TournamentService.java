@@ -12,6 +12,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -30,6 +32,9 @@ public class TournamentService
 
 	@Autowired
 	private TopicRepository topicRepository;
+
+	@PersistenceContext
+	EntityManager entityManager;
 
 	public TournamentDto createTournament(User student, Set<Topic> topics, Integer num_of_questions, LocalDateTime startTime, LocalDateTime endTime)
 	{
@@ -74,6 +79,7 @@ public class TournamentService
 			throw new TutorException(TOURNAMENT_INVALID_TIMEFRAME);
 		}
 		Tournament tournament = new Tournament(student, topics, num_of_questions, startTime, endTime);
+		this.entityManager.persist(tournament);
 		return new TournamentDto(tournament);
 	}
 
