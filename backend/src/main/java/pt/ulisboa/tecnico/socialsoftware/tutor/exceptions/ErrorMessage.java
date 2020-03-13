@@ -25,8 +25,8 @@ public enum ErrorMessage {
     TOURNAMENT_NULL_ENDTIME("End Time is null in Tournament Creation"),
     TOURNAMENT_NON_VALID_USER("User is not in a Student (id %d) in Tournament Creation"),
     TOURNAMENT_INVALID_NUM_QUESTS("Number of Questions is a non-positive number in Tournament Creation"),
+    TOURNAMENT_INVALID_TOPIC("A Specified Topic does not exist while Creating Tournament"),
     TOURNAMENT_INVALID_STARTTIME("Start Time is out-of-format or not a valid TimeStamp in Tournament Creation"),
-    TOURNAMENT_INVALID_ENDTIME("End Time is out-of-format or not a valid TimeStamp in Tournament Creation"),
     TOURNAMENT_INVALID_TIMEFRAME("The specified TimeFrame in Tournament Creation is not valid."),
 
     COURSE_NOT_FOUND("Course not found with name %s"),

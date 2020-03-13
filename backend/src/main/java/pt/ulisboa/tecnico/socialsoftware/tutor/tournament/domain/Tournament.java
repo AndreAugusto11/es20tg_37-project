@@ -51,6 +51,7 @@ public class Tournament {
 		if(creator == null) throw new TutorException(ErrorMessage.TOURNAMENT_NON_VALID_USER, creator.getKey());
 
 		users.add(creator);
+		this.creator = creator;
 		status = Status.OPEN;
 	}
 

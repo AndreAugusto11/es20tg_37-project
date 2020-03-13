@@ -25,13 +25,10 @@ public class TournamentDto implements Serializable {
 
     public TournamentDto(Tournament tournament) {
         this.id = tournament.getId();
-        User user = tournament.getCreator();
-        creatorID = user.getId();
+        creatorID = tournament.getCreator().getKey();
         enrolledStudentsIds.add(creatorID);
-        Set<Topic> Tourtopics = tournament.getTopics();
-        for (Topic topic : Tourtopics) {
-            topics.add(topic);
-        }
+        Set<Topic> tourTopics = tournament.getTopics();
+        topics.addAll(tourTopics);
         numQuests = tournament.getNumQuests();
         startTime = tournament.getStartTime();
         endTime = tournament.getEndTime();
