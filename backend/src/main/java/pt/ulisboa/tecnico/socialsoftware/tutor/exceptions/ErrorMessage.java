@@ -65,7 +65,21 @@ public enum ErrorMessage {
     CLARIFICATION_REQUEST_ANSWER_CONTENT_IS_EMPTY("The clarification request answer content must be defined"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
-    CANNOT_OPEN_FILE("Cannot open file");
+    CANNOT_OPEN_FILE("Cannot open file"),
+
+    USER_IS_TEACHER("This operation is invalid to users of the type teacher"),
+    USER_IS_STUDENT("This operation is invalid to users of the type student"),
+    INVALID_NULL_ARGUMENTS_SUGGESTION("The question suggestion dto given is null"),
+    INVALID_NULL_ARGUMENTS_SUGGESTIONID("The question suggestion Id given is null"),
+    INVALID_NULL_ARGUMENTS_USERID("The User id given is null"),
+    INVALID_NULL_ARGUMENTS_COUSEID("The Course id given given is null"),
+    INVALID_NULL_ARGUMENTS_JUTIFICATIONDTO("The justification dto given given is null"),
+    USER_NOT_IN_COURSE("The student is not enrolled in the given course"),
+
+    QUESTION_SUGGESTION_ALREADY_ACCEPTED("This suggested question was already accepted"),
+    QUESTION_SUGGESTION_ALREADY_REJECTED("This suggested question was already rejected"),
+    QUESTION_SUGGESTION_NOT_FOUND("Question suggestion not found with id %d"),
+    JUSTIFICATION_MISSING_DATA("Missing information for justification");
 
     public final String label;
 

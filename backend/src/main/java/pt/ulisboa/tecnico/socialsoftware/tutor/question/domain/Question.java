@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
@@ -53,6 +54,9 @@ public class Question {
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
     private Image image;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
+    private QuestionSuggestion questionSuggestion;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -210,6 +214,12 @@ public class Question {
 
     public void addClarificationRequest(ClarificationRequest clarificationRequest) {
         clarificationRequests.add(clarificationRequest);
+    }
+
+    public QuestionSuggestion getQuestionSuggestion(){ return questionSuggestion; }
+
+    public void setQuestionSuggestion(QuestionSuggestion questionSuggestion) {
+        this.questionSuggestion = questionSuggestion;
     }
 
     public void remove() {

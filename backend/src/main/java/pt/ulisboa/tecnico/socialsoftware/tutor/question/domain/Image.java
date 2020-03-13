@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 
 import javax.persistence.*;
@@ -11,12 +12,18 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String url;
+
     private Integer width;
 
     @OneToOne
     @JoinColumn(name="question_id")
     private Question question;
+
+    @OneToOne
+    @JoinColumn(name="justification_id")
+    private Justification justification;
 
     @OneToOne
     @JoinColumn(name="clarification_request_id")
@@ -61,6 +68,10 @@ public class Image {
     public void setWidth(Integer width) {
         this.width = width;
     }
+
+    public Justification getJustification() { return justification; }
+
+    public void setJustification(Justification justification) { this.justification = justification; }
 
     public ClarificationRequest getClarificationRequest() { return clarificationRequest; }
 

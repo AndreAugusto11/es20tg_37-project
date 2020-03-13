@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -26,6 +27,11 @@ public class Option {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    private QuestionSuggestion questionSuggestion;
+
+
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", orphanRemoval=true)
     private Set<QuestionAnswer> questionAnswers = new HashSet<>();
@@ -97,5 +103,13 @@ public class Option {
                 ", correct=" + correct +
                 ", content='" + content + '\'' +
                 '}';
+    }
+
+    public void setQuestionSuggestion(QuestionSuggestion questionSuggestion) {
+        this.questionSuggestion = questionSuggestion;
+    }
+
+    public QuestionSuggestion getQuestionSuggestion(){
+        return this.questionSuggestion;
     }
 }
