@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Questio
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -68,6 +69,12 @@ public class User implements UserDetails {
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
 
+    @ManyToMany
+    private Set<Tournament> tournaments = new HashSet<>();
+
+    @OneToMany
+    private Set<Tournament> createdTournamts = new HashSet<>();
+  
     @OneToMany
     private Set<QuestionSuggestion> questionSuggestion = new HashSet<>();
 
@@ -364,6 +371,10 @@ public class User implements UserDetails {
     public void addCourse(CourseExecution course) {
         this.courseExecutions.add(course);
     }
+
+    public void addTournament(Tournament tournament) {this.tournaments.add(tournament);}
+
+    public Set<Tournament> getTournaments() { return this.tournaments; }
 
     public Set<ClarificationRequest> getClarificationRequests() { return clarificationRequests; }
 
