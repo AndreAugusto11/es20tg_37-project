@@ -31,12 +31,6 @@ public class TournamentService
 	@Autowired
 	private TopicRepository topicRepository;
 
-	public TournamentDto createTournament(Integer userKey)
-	{
-		User user = userRepository.findByKey(userKey);
-		return new TournamentDto(new Tournament(user));
-	}
-
 	public TournamentDto createTournament(User student, Set<Topic> topics, Integer num_of_questions, LocalDateTime startTime, LocalDateTime endTime)
 	{
 		if (student == null)
@@ -80,11 +74,6 @@ public class TournamentService
 			throw new TutorException(TOURNAMENT_INVALID_TIMEFRAME);
 		}
 		Tournament tournament = new Tournament(student, topics, num_of_questions, startTime, endTime);
-		return new TournamentDto(tournament);
-	}
-
-	public TournamentDto convertTournament(Tournament tournament)
-	{
 		return new TournamentDto(tournament);
 	}
 
