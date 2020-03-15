@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 @Transactional
 public interface QuestionSuggestionRepository extends JpaRepository <QuestionSuggestion, Integer> {
-    @Query(value = "SELECT * FROM questionSuggestions qs WHERE qs.user_id = :userId", nativeQuery = true)
+    @Query(value = "SELECT * FROM question_suggestions qs WHERE qs.user_id = :userId", nativeQuery = true)
     List<QuestionSuggestion> findQuestionSuggestions(int userId);
 }

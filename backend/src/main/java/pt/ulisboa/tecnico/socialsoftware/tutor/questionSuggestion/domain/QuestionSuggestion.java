@@ -13,7 +13,7 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "questionSuggestions")
+@Table(name = "question_suggestions")
 public class QuestionSuggestion {
     @SuppressWarnings("unused")
     public enum Status {

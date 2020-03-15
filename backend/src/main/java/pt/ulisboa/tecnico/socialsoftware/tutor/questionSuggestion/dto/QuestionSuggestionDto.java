@@ -21,6 +21,7 @@ public class QuestionSuggestionDto {
     public QuestionSuggestionDto(QuestionSuggestion questionSuggestion) {
         this.id = questionSuggestion.getId();
         this.questionDto = new QuestionDto(questionSuggestion.getQuestion());
+        this.status = questionSuggestion.getStatus().name();
 
         if (questionSuggestion.getCreationDate() != null)
             this.creationDate = questionSuggestion.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
