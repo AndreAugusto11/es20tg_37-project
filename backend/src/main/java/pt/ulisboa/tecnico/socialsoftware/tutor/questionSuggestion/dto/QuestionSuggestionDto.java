@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class QuestionSuggestionDto {
@@ -20,6 +21,9 @@ public class QuestionSuggestionDto {
     public QuestionSuggestionDto(QuestionSuggestion questionSuggestion) {
         this.id = questionSuggestion.getId();
         this.questionDto = new QuestionDto(questionSuggestion.getQuestion());
+
+        if (questionSuggestion.getCreationDate() != null)
+            this.creationDate = questionSuggestion.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
     public Integer getId() { return id; }

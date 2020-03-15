@@ -22,6 +22,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -138,5 +141,16 @@ public class QuestionSuggestionService {
         }
 
         return suggestion;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<QuestionSuggestionDto> getQuestionSuggestions(int userId) {
+        return questionSuggestionRepository.findQuestionSuggestions(userId).stream()
+                .map(QuestionSuggestionDto::new)
+                .sorted(Comparator.comparing(QuestionSuggestionDto::getCreationDate))
+                .collect(Collectors.toList());
     }
 }
