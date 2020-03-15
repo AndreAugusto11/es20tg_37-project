@@ -98,7 +98,7 @@ class GetQuestionSuggestionTest extends Specification {
         questionSuggestionRepository.save(questionSuggestion)
 
         when:
-        def result = questionSuggestionService.getQuestionSuggestions(user.getId())
+        def result = questionSuggestionService.getQuestionSuggestions(user.getId(), course.getId())
 
         then:
         result.size() == 1

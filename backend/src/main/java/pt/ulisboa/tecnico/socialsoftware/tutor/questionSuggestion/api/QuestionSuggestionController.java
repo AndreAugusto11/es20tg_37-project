@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 
 @RestController
@@ -26,6 +27,13 @@ public class QuestionSuggestionController {
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name());
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        return this.questionSuggestionService.createSuggestionQuestion(user.getId(), courseId, questionSuggestionDto);
+        return questionSuggestionService.createSuggestionQuestion(user.getId(), courseId, questionSuggestionDto);
+    }
+
+    @GetMapping("/courses/{courseId}/questionSuggestions")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    public List<QuestionSuggestionDto> getQuestionSuggestions(Principal principal, @PathVariable int courseId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return questionSuggestionService.getQuestionSuggestions(user.getId(), courseId);
     }
 }

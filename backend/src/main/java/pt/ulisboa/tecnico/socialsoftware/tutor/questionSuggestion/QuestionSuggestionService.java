@@ -147,8 +147,9 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuestionSuggestionDto> getQuestionSuggestions(int userId) {
+    public List<QuestionSuggestionDto> getQuestionSuggestions(int userId, Integer courseId) {
         return questionSuggestionRepository.findQuestionSuggestions(userId).stream()
+                .filter(questionSuggestion -> questionSuggestion.getQuestion().getCourse().getId() == courseId)
                 .map(QuestionSuggestionDto::new)
                 .sorted(Comparator.comparing(QuestionSuggestionDto::getCreationDate))
                 .collect(Collectors.toList());
