@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification;
@@ -153,5 +154,13 @@ public class QuestionSuggestionService {
                 .map(QuestionSuggestionDto::new)
                 .sorted(Comparator.comparing(QuestionSuggestionDto::getCreationDate))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseDto findQuestionSuggestionCourse(Integer questionSuggestionId) {
+        return questionSuggestionRepository.findById(questionSuggestionId)
+                .map(QuestionSuggestion::getCourse)
+                .map(CourseDto::new)
+                .orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
     }
 }
