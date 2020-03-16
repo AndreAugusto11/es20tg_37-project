@@ -22,6 +22,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
@@ -66,9 +70,18 @@ public class QuestionDiscussionService {
         return new ClarificationRequestDto(clarificationRequest);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<ClarificationRequestDto> getClarificationRequests(String username, Integer courseId) {
+        User user = getUser(username);
+
+        return user.getClarificationRequests().stream()
+                .filter(clarificationRequest -> clarificationRequest.getQuestion().getCourse().getId() == courseId)
+                .map(ClarificationRequestDto::new)
+                .sorted(Comparator.comparing(ClarificationRequestDto::getStatus))
+                .collect(Collectors.toList());
+    }
+
     private Question getQuestion(ClarificationRequestDto clarificationRequestDto) {
-        System.out.println(clarificationRequestDto.getContent());
-        System.out.println(clarificationRequestDto.getQuestionAnswerDto());
         return questionRepository
                     .findById(clarificationRequestDto.getQuestionAnswerDto().getQuestion().getId())
                     .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, clarificationRequestDto.getQuestionAnswerDto().getQuestion().getId()));

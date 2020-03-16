@@ -23,7 +23,6 @@ public class QuestionDiscussionController {
     @PostMapping("/clarificationRequests/{questionAnswerId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionAnswerId, 'QUESTION_ANSWER.ACCESS')")
     public ClarificationRequestDto createClarificationRequest(@PathVariable Integer questionAnswerId, @Valid @RequestBody ClarificationRequestDto clarificationRequest) {
-        System.out.println(clarificationRequest.getQuestionAnswerDto());
         return questionDiscussionService.createClarificationRequest(questionAnswerId, clarificationRequest);
     }
 }
