@@ -38,9 +38,9 @@ public class ClarificationRequestDto implements Serializable {
 
     public void setContent(String content) { this.content = content; }
 
-    public QuestionAnswerDto getQuestionAnswer() { return questionAnswerDto; }
+    public QuestionAnswerDto getQuestionAnswerDto() { return questionAnswerDto; }
 
-    public void setQuestionAnswer(QuestionAnswerDto questionAnswerDto) {
+    public void setQuestionAnswerDto(QuestionAnswerDto questionAnswerDto) {
         this.questionAnswerDto = questionAnswerDto;
     }
 

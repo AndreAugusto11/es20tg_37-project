@@ -67,9 +67,11 @@ public class QuestionDiscussionService {
     }
 
     private Question getQuestion(ClarificationRequestDto clarificationRequestDto) {
+        System.out.println(clarificationRequestDto.getContent());
+        System.out.println(clarificationRequestDto.getQuestionAnswerDto());
         return questionRepository
-                    .findById(clarificationRequestDto.getQuestionAnswer().getQuestion().getId())
-                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, clarificationRequestDto.getQuestionAnswer().getQuestion().getId()));
+                    .findById(clarificationRequestDto.getQuestionAnswerDto().getQuestion().getId())
+                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, clarificationRequestDto.getQuestionAnswerDto().getQuestion().getId()));
     }
 
     private QuestionAnswer getQuestionAnswer(Integer questionAnswerId) {
