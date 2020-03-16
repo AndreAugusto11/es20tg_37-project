@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -100,5 +101,14 @@ public class TournamentService
 			}
 		}
 		return true;
+	}
+
+	@Transactional(isolation = Isolation.REPEATABLE_READ)
+	public List<TournamentDto> getTournaments() {
+		return tournamentRepository.findAll().stream()
+				.map(TournamentDto::new)
+				.sorted(Comparator
+						.comparing(TournamentDto::getId))
+				.collect(Collectors.toList());
 	}
 }
