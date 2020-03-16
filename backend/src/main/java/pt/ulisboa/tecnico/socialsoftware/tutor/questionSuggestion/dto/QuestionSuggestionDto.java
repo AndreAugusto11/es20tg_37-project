@@ -14,6 +14,7 @@ public class QuestionSuggestionDto {
     private QuestionDto questionDto;
     private String status;
     private String creationDate = null;
+    private JustificationDto justificationDto = null;
 
     public QuestionSuggestionDto() {
     }
@@ -23,8 +24,13 @@ public class QuestionSuggestionDto {
         this.questionDto = new QuestionDto(questionSuggestion.getQuestion());
         this.status = questionSuggestion.getStatus().name();
 
-        if (questionSuggestion.getCreationDate() != null)
+        if (questionSuggestion.getCreationDate() != null) {
             this.creationDate = questionSuggestion.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        }
+
+        if (questionSuggestion.getJustification() != null) {
+            this.justificationDto = new JustificationDto(questionSuggestion.getJustification());
+        }
     }
 
     public Integer getId() { return id; }
@@ -62,6 +68,10 @@ public class QuestionSuggestionDto {
     public QuestionDto getQuestionDto(){ return questionDto; }
 
     public void setQuestionDto(QuestionDto questionDto){ this.questionDto = questionDto; }
+
+    public JustificationDto getJustificationDto() { return justificationDto; }
+
+    public void setJustificationDto(JustificationDto justificationDto) { this.justificationDto = justificationDto; }
 
     @Override
     public String toString() {
