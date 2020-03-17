@@ -54,14 +54,13 @@ public class QuestionSuggestionService {
             throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTION);
         }
 
-        if(userId == null){
+        if (userId == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
         }
 
-        if(courseId == null){
+        if (courseId == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_COUSEID);
         }
-
 
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
@@ -98,6 +97,7 @@ public class QuestionSuggestionService {
 
         suggestion.setStatus(QuestionSuggestion.Status.ACCEPTED);
         suggestion.getQuestion().setStatus(Question.Status.AVAILABLE);
+        suggestion.getQuestion().setCreationDate(LocalDateTime.now());
     }
 
     @Retryable(
