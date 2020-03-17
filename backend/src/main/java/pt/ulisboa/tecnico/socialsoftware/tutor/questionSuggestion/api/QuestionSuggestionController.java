@@ -33,13 +33,13 @@ public class QuestionSuggestionController {
         return questionSuggestionService.createSuggestionQuestion(user.getId(), courseId, questionSuggestionDto);
     }
 
-    @PutMapping("/questionSuggestions/{questionSuggestionId}")
+    @PutMapping("/questionSuggestions/{questionSuggestionId}/accepting")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionSuggestionId, 'QUESTION_SUGGESTION.ACCESS')")
     public void acceptQuestionSuggestion(@PathVariable int questionSuggestionId) {
         questionSuggestionService.acceptQuestionSuggestion(questionSuggestionId);
     }
 
-    @PutMapping("/questionSuggestions/{questionSuggestionId}")
+    @PutMapping("/questionSuggestions/{questionSuggestionId}/rejecting")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionSuggestionId, 'QUESTION_SUGGESTION.ACCESS')")
     public void rejectQuestionSuggestion(Principal principal, @PathVariable int questionSuggestionId, @Valid @RequestBody JustificationDto justificationDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
