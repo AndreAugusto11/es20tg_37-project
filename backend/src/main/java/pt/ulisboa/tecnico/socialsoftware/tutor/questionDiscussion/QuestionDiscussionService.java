@@ -71,11 +71,11 @@ public class QuestionDiscussionService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<ClarificationRequestDto> getClarificationRequests(String username, Integer courseId) {
+    public List<ClarificationRequestDto> getClarificationRequests(String username, Integer executionId) {
         User user = getUser(username);
 
         return user.getClarificationRequests().stream()
-                .filter(clarificationRequest -> clarificationRequest.getQuestion().getCourse().getId() == courseId)
+                .filter(clarificationRequest -> clarificationRequest.getQuestionAnswer().getQuizQuestion().getQuiz().getCourseExecution().getId() == executionId)
                 .map(ClarificationRequestDto::new)
                 .sorted(Comparator.comparing(ClarificationRequestDto::getStatus))
                 .collect(Collectors.toList());

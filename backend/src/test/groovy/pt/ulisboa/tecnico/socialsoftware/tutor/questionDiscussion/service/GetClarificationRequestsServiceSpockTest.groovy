@@ -141,7 +141,7 @@ class GetClarificationRequestsServiceSpockTest extends Specification {
         clarificationRequestRepository.save(clarificationRequest2)
 
         when:
-        def result = questionDiscussionService.getClarificationRequests(user.getUsername(), course.getId())
+        def result = questionDiscussionService.getClarificationRequests(user.getUsername(), courseExecution.getId())
 
         then: "the returned data is correct"
         result.size() == 2
