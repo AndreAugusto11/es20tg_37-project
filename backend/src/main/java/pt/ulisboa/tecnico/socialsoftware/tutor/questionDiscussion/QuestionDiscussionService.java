@@ -139,6 +139,24 @@ public class QuestionDiscussionService {
         return new ClarificationRequestAnswerDto(clarificationRequestAnswer);
     }
 
+    public List<ClarificationRequestAnswerDto> getClarificationRequestAnswers(String username, Integer courseExecutionId) {
+        User user = getUser(username);
+
+        if (user.getRole().equals(User.Role.STUDENT)) {
+            return user.getClarificationRequests().stream()
+                    .flatMap(clarificationRequest -> clarificationRequest.getClarificationRequestAnswers().stream())
+                    .map(ClarificationRequestAnswerDto::new)
+                    .collect(Collectors.toList());
+        }
+
+        else {
+            return user.getClarificationRequestAnswers().stream()
+                    .filter(clarificationRequestAnswer -> clarificationRequestAnswer.getClarificationRequest().getQuestionAnswer().getQuizQuestion().getQuiz().getCourseExecution().getId() == courseExecutionId)
+                    .map(ClarificationRequestAnswerDto::new)
+                    .collect(Collectors.toList());
+        }
+    }
+
     private void checkClarificationRequestAnswerType(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
         if (clarificationRequestAnswerDto.getType() == null) {
             throw new TutorException(CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED);
