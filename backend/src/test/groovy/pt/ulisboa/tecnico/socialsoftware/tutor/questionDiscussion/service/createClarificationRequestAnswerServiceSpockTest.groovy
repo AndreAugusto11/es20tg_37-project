@@ -189,7 +189,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
 
         and: "is associated correctly"
         user_teacher.getClarificationRequestAnswers().contains(result)
-        clarificationRequest.getClarificationRequestAnswer().contains(result)
+        clarificationRequest.getClarificationRequestAnswers().contains(result)
         result.getClarificationRequest().getStatus() == ClarificationRequest.Status.OPEN
     }
 

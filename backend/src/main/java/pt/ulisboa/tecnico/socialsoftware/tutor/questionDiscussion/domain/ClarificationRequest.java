@@ -95,7 +95,7 @@ public class ClarificationRequest {
 
     public void setImage(Image image) { this.image = image; }
 
-    public Set<ClarificationRequestAnswer> getClarificationRequestAnswer() { return clarificationRequestAnswer; }
+    public Set<ClarificationRequestAnswer> getClarificationRequestAnswers() { return clarificationRequestAnswer; }
 
     public void addClarificationRequestAnswer(ClarificationRequestAnswer clarificationRequestAnswer) {
         this.clarificationRequestAnswer.add(clarificationRequestAnswer);

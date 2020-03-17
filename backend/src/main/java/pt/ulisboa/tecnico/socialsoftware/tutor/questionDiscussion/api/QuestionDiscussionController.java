@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
@@ -40,5 +41,11 @@ public class QuestionDiscussionController {
         }
 
         return questionDiscussionService.getClarificationRequests(user.getUsername(), executionId);
+    }
+
+    @PostMapping("/executions/{executionId}/clarificationRequests/{clarificationRequestId}/clarificationRequestAnswers")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public ClarificationRequestAnswerDto createClarificationRequestAnswer(@Valid @RequestBody ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
+        return questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto);
     }
 }
