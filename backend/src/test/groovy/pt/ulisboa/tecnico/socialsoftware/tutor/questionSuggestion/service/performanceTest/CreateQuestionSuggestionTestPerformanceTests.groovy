@@ -77,7 +77,7 @@ class CreateQuestionSuggestionTestPerformanceTests extends Specification {
 
     }
 
-    def "performance testing to create 100000 Question Suggestion"(){
+    def "performance testing to create 10000 Question Suggestion"(){
         given: "a question suggestion"
         def questionSuggestionDto = new QuestionSuggestionDto()
         questionSuggestionDto.setQuestionDto(questionDto1)
@@ -105,7 +105,7 @@ class CreateQuestionSuggestionTestPerformanceTests extends Specification {
 
         when:
 
-        1.upto(100000, {questionSuggestionService.createSuggestionQuestion(user1.getId(),course1.getId(), questionSuggestionDto)})
+        1.upto(10000, {questionSuggestionService.createSuggestionQuestion(user1.getId(),course1.getId(), questionSuggestionDto)})
 
         then: true
 
