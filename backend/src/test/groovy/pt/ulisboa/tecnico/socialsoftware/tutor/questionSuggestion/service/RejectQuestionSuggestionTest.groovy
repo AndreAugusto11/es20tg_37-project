@@ -65,7 +65,7 @@ class RejectQuestionSuggestionTest extends Specification {
         question.setKey(1)
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
-        question.setStatus(Question.Status.DISABLED)
+        question.setStatus(Question.Status.PENDING)
         questionRepository.save(question)
 
         questionSuggestion = new QuestionSuggestion()
@@ -79,6 +79,7 @@ class RejectQuestionSuggestionTest extends Specification {
         def justificationDto = new JustificationDto()
         justificationDto.setKey(2)
         justificationDto.setContent(JUSTIFICATION_CONTENT)
+
         and: "a user"
         def teacher = new User()
         teacher.setKey(2)
@@ -92,8 +93,10 @@ class RejectQuestionSuggestionTest extends Specification {
         def result = questionSuggestionRepository.findAll().get(0)
         result != null
         result.getStatus() == QuestionSuggestion.Status.REJECTED
+
         and: "the question status does not change"
-        result.getQuestion().getStatus() == Question.Status.DISABLED
+        result.getQuestion().getStatus() == Question.Status.PENDING
+
         and: "a justification exists"
         result.getJustification() != null
         def justification = result.getJustification()
@@ -109,12 +112,14 @@ class RejectQuestionSuggestionTest extends Specification {
         def justificationDto = new JustificationDto()
         justificationDto.setKey(2)
         justificationDto.setContent(JUSTIFICATION_CONTENT)
+
         and: "a user"
         def user = new User()
         user.setKey(2)
         user.setRole(User.Role.TEACHER)
         userRepository.save(user)
-        and: 'an image'
+
+        and: "an image"
         def imageDto = new ImageDto()
         imageDto.setUrl(IMAGE_URL)
         imageDto.setWidth(20)
@@ -127,8 +132,10 @@ class RejectQuestionSuggestionTest extends Specification {
         def result = questionSuggestionRepository.findAll().get(0)
         result != null
         result.getStatus() == QuestionSuggestion.Status.REJECTED
+
         and: "the question status does not change"
-        result.getQuestion().getStatus() == Question.Status.DISABLED
+        result.getQuestion().getStatus() == Question.Status.PENDING
+
         and: "a justification exists"
         result.getJustification() != null
         def justification = result.getJustification()
@@ -136,6 +143,7 @@ class RejectQuestionSuggestionTest extends Specification {
         justification.getContent() == JUSTIFICATION_CONTENT
         justification.getUser().getId() == user.getId()
         justification.getQuestionSuggestion().getId() == result.getId()
+
         and: "with an image"
         justification.getImage() != null
         def image = justification.getImage()
@@ -153,11 +161,13 @@ class RejectQuestionSuggestionTest extends Specification {
         suggestion.setQuestion(question)
         suggestion.setStatus(status)
         questionSuggestionRepository.save(suggestion)
+
         and: "a user"
         def user = new User()
         user.setKey(2)
         user.setRole(User.Role.TEACHER)
         userRepository.save(user)
+
         and: "a justification"
         def justificationDto = new JustificationDto()
         justificationDto.setKey(2)
@@ -182,6 +192,7 @@ class RejectQuestionSuggestionTest extends Specification {
         user.setKey(2)
         user.setRole(User.Role.TEACHER)
         userRepository.save(user)
+
         and: "a justification"
         def justificationDto = new JustificationDto()
         justificationDto.setKey(2)
@@ -190,7 +201,7 @@ class RejectQuestionSuggestionTest extends Specification {
         when:
         questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestion.getId(), justificationDto)
 
-        then:
+        then: "an exception is thrown"
         TutorException exception = thrown()
         exception.getErrorMessage() == JUSTIFICATION_MISSING_DATA
     }
@@ -201,6 +212,7 @@ class RejectQuestionSuggestionTest extends Specification {
         student.setKey(2)
         student.setRole(User.Role.STUDENT)
         userRepository.save(student)
+
         and: "a justification"
         def justificationDto = new JustificationDto()
         justificationDto.setKey(2)
@@ -209,7 +221,7 @@ class RejectQuestionSuggestionTest extends Specification {
         when:
         questionSuggestionService.rejectQuestionSuggestion(student.getId(), questionSuggestion.getId(), justificationDto)
 
-        then:
+        then: "an exception is thrown"
         TutorException exception = thrown()
         exception.getErrorMessage() == USER_IS_STUDENT
     }
@@ -223,7 +235,7 @@ class RejectQuestionSuggestionTest extends Specification {
         when:
         questionSuggestionService.rejectQuestionSuggestion(null, questionSuggestion.getId(), justificationDto)
 
-        then:
+        then: "an exception is thrown"
         TutorException exception = thrown()
         exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_USERID
     }
@@ -234,7 +246,8 @@ class RejectQuestionSuggestionTest extends Specification {
         user.setKey(2)
         user.setRole(User.Role.TEACHER)
         userRepository.save(user)
-        and:
+
+        and: "a justification"
         def justificationDto = new JustificationDto()
         justificationDto.setKey(2)
         justificationDto.setContent(JUSTIFICATION_CONTENT)
@@ -242,7 +255,7 @@ class RejectQuestionSuggestionTest extends Specification {
         when:
         questionSuggestionService.rejectQuestionSuggestion(user.getId(), null, justificationDto)
 
-        then:
+        then: "an exception is thrown"
         TutorException exception = thrown()
         exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_SUGGESTIONID
     }
@@ -257,7 +270,7 @@ class RejectQuestionSuggestionTest extends Specification {
         when:
         questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestion.getId(), null)
 
-        then:
+        then: "an exception is thrown"
         TutorException exception = thrown()
         exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_JUTIFICATIONDTO
     }

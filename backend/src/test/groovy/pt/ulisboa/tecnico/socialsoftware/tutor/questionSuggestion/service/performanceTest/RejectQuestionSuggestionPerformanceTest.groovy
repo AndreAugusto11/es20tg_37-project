@@ -18,7 +18,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
-
 @DataJpaTest
 class RejectQuestionSuggestionPerformanceTest extends Specification {
 
@@ -55,39 +54,40 @@ class RejectQuestionSuggestionPerformanceTest extends Specification {
         question.setKey(1)
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
-        question.setStatus(Question.Status.DISABLED)
+        question.setStatus(Question.Status.PENDING)
         questionRepository.save(question)
-
     }
 
-    def "A pending question suggestion is rejected with a justification with an image"() {
+    def "Performance testing to reject 10000 question suggestions"() {
         given: "a user"
-
         def user = new User()
         user.setKey(2)
         user.setRole(User.Role.TEACHER)
         userRepository.save(user)
 
-
-        and: 'an image'
+        and: "an image"
         def imageDto = new ImageDto()
         imageDto.setUrl(IMAGE_URL)
         imageDto.setWidth(20)
 
+        and: "a question suggestion"
         def questionSuggestions = new ArrayList<QuestionSuggestion>()
+
+        and: "10000 justifications and suggestions"
         def justificationDto = new ArrayList<JustificationDto>()
         for (def i = 0; i < 10000; i++) {
             justificationDto[i] = new JustificationDto()
             justificationDto[i].setKey(i)
             justificationDto[i].setContent(JUSTIFICATION_CONTENT)
             justificationDto[i].setImage(imageDto)
+
             questionSuggestions[i] = new QuestionSuggestion()
             questionSuggestions[i].setQuestion(question)
             questionSuggestions[i].setStatus(QuestionSuggestion.Status.PENDING)
             questionSuggestionRepository.save(questionSuggestions[i])
         }
 
-        when:
+        when: "10000 suggestions are rejected"
         for (def i = 0; i < 10000; i++) {
             questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestions[i].getId(), justificationDto[i])
         }

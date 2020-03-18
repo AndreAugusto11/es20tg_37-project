@@ -11,7 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSuggestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.QuestionSuggestionDto
@@ -84,7 +83,7 @@ class GetQuestionSuggestionTest extends Specification {
         questionDto.setTitle(QUESTION_TITLE)
         questionDto.setContent(QUESTION_CONTENT)
         questionDto.setKey(1)
-        questionDto.setStatus(Question.Status.DISABLED.name())
+        questionDto.setStatus(Question.Status.PENDING.name())
         questionDto.setOptions(options)
 
         questionSuggestionDto = new QuestionSuggestionDto()
@@ -110,7 +109,7 @@ class GetQuestionSuggestionTest extends Specification {
         resQuestionSuggestion.getQuestionDto().getId() != null
         resQuestionSuggestion.getTitle() == QUESTION_TITLE
         resQuestionSuggestion.getContent() == QUESTION_CONTENT
-        resQuestionSuggestion.getQuestionDto().getStatus() == Question.Status.DISABLED.name()
+        resQuestionSuggestion.getQuestionDto().getStatus() == Question.Status.PENDING.name()
     }
 
     @TestConfiguration

@@ -81,14 +81,14 @@ class GetQuestionSuggestionPerformanceTest extends Specification {
         options.add(optionDto2)
     }
 
-    def "performance testing to get 1000 question suggestions"() {
+    def "performance testing to get 10000 question suggestions"() {
         given: "5 question suggestions"
         1.upto(5, {
             questionDto = new QuestionDto();
             questionDto.setTitle(QUESTION_TITLE + it)
             questionDto.setContent(QUESTION_CONTENT)
             questionDto.setKey(1 + it)
-            questionDto.setStatus(Question.Status.DISABLED.name())
+            questionDto.setStatus(Question.Status.PENDING.name())
             questionDto.setOptions(options)
 
             questionSuggestionDto = new QuestionSuggestionDto()
@@ -101,13 +101,12 @@ class GetQuestionSuggestionPerformanceTest extends Specification {
             questionSuggestionRepository.save(questionSuggestion)
         })
 
-        when:
+        when: "10000 suggestions are retrieved"
         1.upto(10000, {
             questionSuggestionService.getQuestionSuggestions(user.getId(), course.getId())
         })
 
-        then:
-        true
+        then: true
     }
 
     @TestConfiguration

@@ -48,6 +48,7 @@ public class QuestionSuggestion {
     public QuestionSuggestion(User user, Course course, QuestionSuggestionDto questionSuggestionDto) {
 
         this.question = new Question(course, questionSuggestionDto.getQuestionDto());
+        this.question.setStatus(Question.Status.PENDING);
 
         this.user = user;
         user.addQuestionSuggestion(this);
