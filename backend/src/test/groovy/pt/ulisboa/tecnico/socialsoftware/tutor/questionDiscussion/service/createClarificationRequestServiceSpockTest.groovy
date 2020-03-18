@@ -170,7 +170,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         result.getQuestion() == questionAnswer.getQuizQuestion().getQuestion()
         result.getUser() == questionAnswer.getQuizAnswer().getUser()
         and: "is associated correctly"
-        questionAnswer.getClarificationRequest() == result
+        questionAnswer.getClarificationRequest().contains(result)
         question.getClarificationRequest().contains(result)
         user.getClarificationRequests().contains(result)
 
@@ -205,7 +205,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         result.getQuestion() == questionAnswer.getQuizQuestion().getQuestion()
         result.getUser() == questionAnswer.getQuizAnswer().getUser()
         and: "is associated correctly"
-        questionAnswer.getClarificationRequest() == result
+        questionAnswer.getClarificationRequest().contains(result)
         question.getClarificationRequest().contains(result)
         user.getClarificationRequests().contains(result)
     }
@@ -248,7 +248,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         result.getImage().getUrl() == URL
         result.getImage().getWidth() == 20
         and: "is associated correctly"
-        questionAnswer.getClarificationRequest() == result
+        questionAnswer.getClarificationRequest().contains(result)
         question.getClarificationRequest().contains(result)
         user.getClarificationRequests().contains(result)
 

@@ -24,7 +24,7 @@ public class ClarificationRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "question_answer_id")
     private QuestionAnswer questionAnswer;
 
@@ -57,10 +57,10 @@ public class ClarificationRequest {
         }
 
         this.questionAnswer = questionAnswer;
+        questionAnswer.addClarificationRequest(this);
         this.question = question;
-        this.user = user;
-        questionAnswer.setClarificationRequest(this);
         question.addClarificationRequest(this);
+        this.user = user;
         user.addClarificationRequest(this);
         this.content = content;
     }
