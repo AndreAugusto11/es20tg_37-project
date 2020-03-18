@@ -149,10 +149,7 @@ public class QuestionDiscussionService {
         User user = getUser(username);
 
         if (user.getRole().equals(User.Role.STUDENT)) {
-            return user.getClarificationRequests().stream()
-                    .flatMap(clarificationRequest -> clarificationRequest.getClarificationRequestAnswers().stream())
-                    .map(ClarificationRequestAnswerDto::new)
-                    .collect(Collectors.toList());
+            return null;
         }
 
         else {

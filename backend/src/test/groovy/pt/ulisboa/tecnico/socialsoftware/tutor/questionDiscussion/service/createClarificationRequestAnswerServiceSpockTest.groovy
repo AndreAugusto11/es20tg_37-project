@@ -156,7 +156,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     def "teacher creates clarification request answer to an opened clarification request"() {
         given: "an opened clarification request"
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
-        questionAnswer.setClarificationRequest(clarificationRequest)
+        questionAnswer.addClarificationRequest(clarificationRequest)
         question.addClarificationRequest(clarificationRequest)
         user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
@@ -189,7 +189,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
 
         and: "is associated correctly"
         user_teacher.getClarificationRequestAnswers().contains(result)
-        clarificationRequest.getClarificationRequestAnswers().contains(result)
+        clarificationRequest.getClarificationRequestAnswer() == result
         result.getClarificationRequest().getStatus() == ClarificationRequest.Status.OPEN
     }
 
@@ -198,7 +198,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         given: "a closed clarification request"
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
         clarificationRequest.setStatus(ClarificationRequest.Status.CLOSED)
-        questionAnswer.setClarificationRequest(clarificationRequest)
+        questionAnswer.addClarificationRequest(clarificationRequest)
         question.addClarificationRequest(clarificationRequest)
         user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
@@ -230,7 +230,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
 
         and: "an opened clarification request"
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
-        questionAnswer.setClarificationRequest(clarificationRequest)
+        questionAnswer.addClarificationRequest(clarificationRequest)
         question.addClarificationRequest(clarificationRequest)
         user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
@@ -258,7 +258,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     def "student creates clarification request answer"() {
         given: "an opened clarification request"
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
-        questionAnswer.setClarificationRequest(clarificationRequest)
+        questionAnswer.addClarificationRequest(clarificationRequest)
         question.addClarificationRequest(clarificationRequest)
         user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
@@ -287,7 +287,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     def "invalid arguments: type=#type | content=#content | username=#username || errorMessage=#errorMessage"() {
         given: "a clarification request"
         ClarificationRequest clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
-        questionAnswer.setClarificationRequest(clarificationRequest)
+        questionAnswer.addClarificationRequest(clarificationRequest)
         question.addClarificationRequest(clarificationRequest)
         user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
