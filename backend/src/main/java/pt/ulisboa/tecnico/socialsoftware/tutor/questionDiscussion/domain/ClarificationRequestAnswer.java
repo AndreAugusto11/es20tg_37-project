@@ -51,6 +51,8 @@ public class ClarificationRequestAnswer {
         this.type = type;
         clarificationRequest.setClarificationRequestAnswer(this);
         user.addClarificationRequestAnswers(this);
+
+        this.clarificationRequest.setStatus(ClarificationRequest.Status.CLOSED);
     }
 
     public Integer getId() { return id; }

@@ -133,19 +133,18 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     }
 
     def "teacher creates clarification request answer to a non existing clarification request"() {
-        given: "a null clarification request answer dto"
-        def clarificationRequestDto = null
+        given: "a null clarification request id"
+        def clarificationRequestId = null
 
         and: "a clarification request answer dto"
         def clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
         clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER_ANSWER)
         clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
-        clarificationRequestAnswerDto.setClarificationRequest(clarificationRequestDto)
         clarificationRequestAnswerDto.setName(user_teacher.getName())
         clarificationRequestAnswerDto.setUsername(user_teacher.getUsername())
 
         when:
-        questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
+        questionDiscussionService.createClarificationRequestAnswer(clarificationRequestId, clarificationRequestAnswerDto)
 
         then: "an exception is thrown"
         def error = thrown(TutorException)
@@ -156,24 +155,17 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     def "teacher creates clarification request answer to an opened clarification request"() {
         given: "an opened clarification request"
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
-        questionAnswer.addClarificationRequest(clarificationRequest)
-        question.addClarificationRequest(clarificationRequest)
-        user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
-
-        and: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
 
         and: "a clarification request answer dto"
         def clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
         clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER_ANSWER)
         clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
-        clarificationRequestAnswerDto.setClarificationRequest(clarificationRequestDto)
         clarificationRequestAnswerDto.setName(user_teacher.getName())
         clarificationRequestAnswerDto.setUsername(user_teacher.getUsername())
 
         when:
-        questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
+        questionDiscussionService.createClarificationRequestAnswer(clarificationRequest.getId(), clarificationRequestAnswerDto)
 
         then: "the clarification request answer is inside the repository"
         clarificationRequestAnswerRepository.findAll().size() == 1
@@ -190,7 +182,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         and: "is associated correctly"
         user_teacher.getClarificationRequestAnswers().contains(result)
         clarificationRequest.getClarificationRequestAnswer() == result
-        result.getClarificationRequest().getStatus() == ClarificationRequest.Status.OPEN
+        result.getClarificationRequest().getStatus() == ClarificationRequest.Status.CLOSED
     }
 
 
@@ -198,24 +190,17 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
         given: "a closed clarification request"
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
         clarificationRequest.setStatus(ClarificationRequest.Status.CLOSED)
-        questionAnswer.addClarificationRequest(clarificationRequest)
-        question.addClarificationRequest(clarificationRequest)
-        user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
-
-        and: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
 
         and: "a clarification request answer dto"
         def clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
         clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER_ANSWER)
         clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
-        clarificationRequestAnswerDto.setClarificationRequest(clarificationRequestDto)
         clarificationRequestAnswerDto.setName(user_teacher.getName())
         clarificationRequestAnswerDto.setUsername(user_teacher.getUsername())
 
         when:
-        questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
+        questionDiscussionService.createClarificationRequestAnswer(clarificationRequest.getId(), clarificationRequestAnswerDto)
 
         then: "an exception is thrown"
         def error = thrown(TutorException)
@@ -230,24 +215,17 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
 
         and: "an opened clarification request"
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
-        questionAnswer.addClarificationRequest(clarificationRequest)
-        question.addClarificationRequest(clarificationRequest)
-        user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
-
-        and: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
 
         and: "a clarification request answer dto"
         def clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
         clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER_ANSWER)
         clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
-        clarificationRequestAnswerDto.setClarificationRequest(clarificationRequestDto)
         clarificationRequestAnswerDto.setName(userNotAssociated.getName())
         clarificationRequestAnswerDto.setUsername(userNotAssociated.getUsername())
 
         when:
-        questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
+        questionDiscussionService.createClarificationRequestAnswer(clarificationRequest.getId(), clarificationRequestAnswerDto)
 
         then: "exception is thrown"
         def error = thrown(TutorException)
@@ -258,24 +236,17 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     def "student creates clarification request answer"() {
         given: "an opened clarification request"
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
-        questionAnswer.addClarificationRequest(clarificationRequest)
-        question.addClarificationRequest(clarificationRequest)
-        user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
-
-        and: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
 
         and: "a clarification request answer dto"
         def clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
         clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER_ANSWER)
         clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
-        clarificationRequestAnswerDto.setClarificationRequest(clarificationRequestDto)
         clarificationRequestAnswerDto.setName(user_student.getName())
         clarificationRequestAnswerDto.setUsername(user_student.getUsername())
 
         when:
-        questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
+        questionDiscussionService.createClarificationRequestAnswer(clarificationRequest.getId(), clarificationRequestAnswerDto)
 
         then: "exception is thrown"
         def error = thrown(TutorException)
@@ -287,24 +258,17 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
     def "invalid arguments: type=#type | content=#content | username=#username || errorMessage=#errorMessage"() {
         given: "a clarification request"
         ClarificationRequest clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
-        questionAnswer.addClarificationRequest(clarificationRequest)
-        question.addClarificationRequest(clarificationRequest)
-        user_student.addClarificationRequest(clarificationRequest)
         clarificationRequestRepository.save(clarificationRequest)
-
-        and: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
 
         and: "a clarification request answer dto"
         ClarificationRequestAnswerDto clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
-        clarificationRequestAnswerDto.setClarificationRequest(clarificationRequestDto)
         clarificationRequestAnswerDto.setContent(content)
         clarificationRequestAnswerDto.setType(type)
         clarificationRequestAnswerDto.setName(user_teacher.getName())
         clarificationRequestAnswerDto.setUsername(username)
 
         when:
-        questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto)
+        questionDiscussionService.createClarificationRequestAnswer(clarificationRequest.getId(), clarificationRequestAnswerDto)
 
         then:
         def error = thrown(TutorException)
