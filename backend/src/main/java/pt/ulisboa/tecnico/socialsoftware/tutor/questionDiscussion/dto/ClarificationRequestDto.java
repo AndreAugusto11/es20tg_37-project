@@ -14,6 +14,7 @@ public class ClarificationRequestDto implements Serializable {
     private String username;
     private String status;
     private ImageDto image;
+    private ClarificationRequestAnswerDto clarificationRequestAnswerDto;
 
     public ClarificationRequestDto() {
     }
@@ -28,6 +29,9 @@ public class ClarificationRequestDto implements Serializable {
 
         if (clarificationRequest.getImage() != null)
             this.image = new ImageDto(clarificationRequest.getImage());
+
+        if (clarificationRequest.getClarificationRequestAnswer() != null)
+            this.clarificationRequestAnswerDto = new ClarificationRequestAnswerDto(clarificationRequest.getClarificationRequestAnswer());
     }
 
     public Integer getId() { return id; }
@@ -59,4 +63,12 @@ public class ClarificationRequestDto implements Serializable {
     public ImageDto getImage() { return image; }
 
     public void setImage(ImageDto image) { this.image = image; }
+
+    public ClarificationRequestAnswerDto getClarificationRequestAnswerDto() {
+        return clarificationRequestAnswerDto;
+    }
+
+    public void setClarificationRequestAnswerDto(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
+        this.clarificationRequestAnswerDto = clarificationRequestAnswerDto;
+    }
 }

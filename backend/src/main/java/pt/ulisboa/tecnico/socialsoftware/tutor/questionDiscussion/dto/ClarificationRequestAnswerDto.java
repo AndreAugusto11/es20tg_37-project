@@ -6,7 +6,6 @@ public class ClarificationRequestAnswerDto {
     private Integer id;
     private ClarificationRequestAnswer.Type type;
     private String content;
-    private ClarificationRequestDto clarificationRequestDto;
     private String name;
     private String username;
 
@@ -16,7 +15,6 @@ public class ClarificationRequestAnswerDto {
         this.id = clarificationRequestAnswer.getId();
         this.type = clarificationRequestAnswer.getType();
         this.content = clarificationRequestAnswer.getContent();
-        this.clarificationRequestDto = new ClarificationRequestDto(clarificationRequestAnswer.getClarificationRequest());
         this.username = clarificationRequestAnswer.getUser().getUsername();
         this.content = clarificationRequestAnswer.getContent();
     }
@@ -43,14 +41,6 @@ public class ClarificationRequestAnswerDto {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public ClarificationRequestDto getClarificationRequest() {
-        return clarificationRequestDto;
-    }
-
-    public void setClarificationRequest(ClarificationRequestDto clarificationRequestDto) {
-        this.clarificationRequestDto = clarificationRequestDto;
     }
 
     public String getName() {
