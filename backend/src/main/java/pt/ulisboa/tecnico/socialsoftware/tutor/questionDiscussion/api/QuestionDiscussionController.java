@@ -45,15 +45,7 @@ public class QuestionDiscussionController {
 
     @PostMapping("/executions/{executionId}/clarificationRequests/{clarificationRequestId}/clarificationRequestAnswers")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public ClarificationRequestAnswerDto createClarificationRequestAnswer(@Valid @RequestBody ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
-        return questionDiscussionService.createClarificationRequestAnswer(clarificationRequestAnswerDto);
-    }
-
-    @GetMapping("/executions/{executionId}/clarificationRequestAnswers")
-    @PreAuthorize("(hasRole('ROLE_STUDENT') or (hasRole('ROLE_TEACHER'))) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<ClarificationRequestAnswerDto> getClarificationRequestAnswers(Principal principal, @PathVariable Integer executionId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
-        return questionDiscussionService.getClarificationRequestAnswers(user.getUsername(), executionId);
+    public ClarificationRequestAnswerDto createClarificationRequestAnswer(@PathVariable Integer clarificationRequestId, @Valid @RequestBody ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
+        return questionDiscussionService.createClarificationRequestAnswer(clarificationRequestId, clarificationRequestAnswerDto);
     }
 }

@@ -128,12 +128,9 @@ public class QuestionDiscussionService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public ClarificationRequestAnswerDto createClarificationRequestAnswer(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
+    public ClarificationRequestAnswerDto createClarificationRequestAnswer(Integer clarificationRequestId, ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
 
-        checkClarificationRequest(clarificationRequestAnswerDto);
-
-        ClarificationRequest clarificationRequest = clarificationRequestRepository.findById(clarificationRequestAnswerDto.getClarificationRequest().getId())
-                .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_NOT_FOUND, clarificationRequestAnswerDto.getClarificationRequest().getId()));
+        ClarificationRequest clarificationRequest = getClarificationRequest(clarificationRequestId);
 
         User user = getUser(clarificationRequestAnswerDto.getUsername());
 
@@ -145,30 +142,18 @@ public class QuestionDiscussionService {
         return new ClarificationRequestAnswerDto(clarificationRequestAnswer);
     }
 
-    public List<ClarificationRequestAnswerDto> getClarificationRequestAnswers(String username, Integer courseExecutionId) {
-        User user = getUser(username);
-
-        if (user.getRole().equals(User.Role.STUDENT)) {
-            return null;
+    private ClarificationRequest getClarificationRequest(Integer clarificationRequestId) {
+        if (clarificationRequestId == null) {
+            throw new TutorException(CLARIFICATION_REQUEST_NOT_DEFINED);
         }
 
-        else {
-            return user.getClarificationRequestAnswers().stream()
-                    .filter(clarificationRequestAnswer -> clarificationRequestAnswer.getClarificationRequest().getQuestionAnswer().getQuizQuestion().getQuiz().getCourseExecution().getId() == courseExecutionId)
-                    .map(ClarificationRequestAnswerDto::new)
-                    .collect(Collectors.toList());
-        }
+        return clarificationRequestRepository.findById(clarificationRequestId)
+                .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_NOT_FOUND, clarificationRequestId));
     }
 
     private void checkClarificationRequestAnswerType(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
         if (clarificationRequestAnswerDto.getType() == null) {
             throw new TutorException(CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED);
-        }
-    }
-
-    private void checkClarificationRequest(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
-        if (clarificationRequestAnswerDto.getClarificationRequest() == null) {
-            throw new TutorException(CLARIFICATION_REQUEST_NOT_DEFINED);
         }
     }
 }
