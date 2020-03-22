@@ -14,9 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer
@@ -30,11 +28,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import spock.lang.Shared
 import spock.lang.Specification
 
 @DataJpaTest
 class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specification {
+    public static final Integer NUMBER_OF_ITERATIONS = 1000
     public static final String USERNAME_TEACHER = "username_teacher"
     public static final String USERNAME_STUDENT = "username_student"
     public static final String COURSE_NAME = "Software Architecture"
@@ -149,20 +147,20 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
         clarificationRequestAnswerDto.setUsername(user_teacher.getUsername())
 
         and: "10000 clarification requests"
-        1.upto(10000, {
+        1.upto(NUMBER_OF_ITERATIONS, {
             questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
         })
         List<ClarificationRequest> clarificationRequestList = clarificationRequestRepository.findAll()
 
         when: "10000 clarification request answers are created"
-        1.upto(10000, {
+        1.upto(NUMBER_OF_ITERATIONS, {
             questionDiscussionService.createClarificationRequestAnswer(clarificationRequestList.pop().getId(), clarificationRequestAnswerDto)
         })
 
         List<ClarificationRequestAnswer> clarificationRequestAnswersList = clarificationRequestAnswerRepository.findAll()
 
         then:
-        clarificationRequestAnswersList.size() >= 10000
+        clarificationRequestAnswersList.size() >= NUMBER_OF_ITERATIONS
     }
 
     @TestConfiguration
