@@ -15,8 +15,8 @@ public class ClarificationRequestAnswerDto {
         this.id = clarificationRequestAnswer.getId();
         this.type = clarificationRequestAnswer.getType();
         this.content = clarificationRequestAnswer.getContent();
+        this.name = clarificationRequestAnswer.getUser().getName();
         this.username = clarificationRequestAnswer.getUser().getUsername();
-        this.content = clarificationRequestAnswer.getContent();
     }
 
     public Integer getId() {
