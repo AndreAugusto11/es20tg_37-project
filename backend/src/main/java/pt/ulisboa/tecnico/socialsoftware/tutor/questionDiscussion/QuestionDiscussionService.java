@@ -26,7 +26,9 @@ import javax.persistence.PersistenceContext;
 
 import java.sql.SQLException;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -79,8 +81,17 @@ public class QuestionDiscussionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<ClarificationRequestDto> getClarificationRequests(String username, Integer executionId) {
         User user = getUser(username);
+        Set<ClarificationRequest> clarificationRequests = new HashSet<>();
 
-        return user.getClarificationRequests().stream()
+        if (user.getRole() == User.Role.STUDENT) {
+            clarificationRequests = user.getClarificationRequests();
+        }
+
+        if (user.getRole() == User.Role.TEACHER) {
+            clarificationRequests = clarificationRequestRepository.findClarificationRequestsByCourseExecutions(executionId);
+        }
+
+        return clarificationRequests.stream()
                 .filter(clarificationRequest -> clarificationRequest.getQuestionAnswer().getQuizQuestion().getQuiz().getCourseExecution().getId() == executionId)
                 .map(ClarificationRequestDto::new)
                 .sorted(Comparator.comparing(ClarificationRequestDto::getStatus))

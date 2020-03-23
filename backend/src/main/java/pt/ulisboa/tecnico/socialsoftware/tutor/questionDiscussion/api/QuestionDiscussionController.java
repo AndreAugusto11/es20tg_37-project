@@ -32,7 +32,7 @@ public class QuestionDiscussionController {
     }
 
     @GetMapping("/executions/{executionId}/clarificationRequests")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<ClarificationRequestDto> getClarificationRequests(Principal principal, @PathVariable Integer executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
