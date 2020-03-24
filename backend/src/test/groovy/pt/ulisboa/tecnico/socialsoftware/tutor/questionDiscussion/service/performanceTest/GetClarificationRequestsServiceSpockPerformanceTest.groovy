@@ -73,7 +73,8 @@ class GetClarificationRequestsServiceSpockPerformanceTest extends Specification 
     @Autowired
     ClarificationRequestRepository clarificationRequestRepository
 
-    def user
+    def user_student
+    def user_teacher
     def course
     def courseExecution
     def question
@@ -91,10 +92,15 @@ class GetClarificationRequestsServiceSpockPerformanceTest extends Specification 
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
-        user = new User('name', "username", 1, User.Role.STUDENT)
-        user.getCourseExecutions().add(courseExecution)
-        courseExecution.getUsers().add(user)
-        userRepository.save(user)
+        user_student = new User('name', "username", 1, User.Role.STUDENT)
+        user_student.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(user_student)
+        userRepository.save(user_student)
+
+        user_teacher = new User('name-teacher', "username-teacher", 2, User.Role.TEACHER)
+        user_teacher.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(user_teacher)
+        userRepository.save(user_teacher)
 
         question = new Question()
         question.setCourse(course)
@@ -125,7 +131,7 @@ class GetClarificationRequestsServiceSpockPerformanceTest extends Specification 
         quiz.addQuizQuestion(quizQuestion)
         quizQuestionRepository.save(quizQuestion)
 
-        quizAnswer = new QuizAnswer(user, quiz)
+        quizAnswer = new QuizAnswer(user_student, quiz)
         quizAnswerRepository.save(quizAnswer)
 
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
@@ -133,14 +139,27 @@ class GetClarificationRequestsServiceSpockPerformanceTest extends Specification 
         questionAnswerRepository.save(questionAnswer)
     }
 
-    def "performance testing to 10000 get clarification requests"() {
+    def "performance testing to 10000 student get clarification requests"() {
         given: "1000 clarification requests"
         1.upto(10, {
-            clarificationRequestRepository.save(new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT))
+            clarificationRequestRepository.save(new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT))
         })
 
         when:
-        1.upto(10000, { questionDiscussionService.getClarificationRequests(user.getUsername(), courseExecution.getId())})
+        1.upto(10000, { questionDiscussionService.getClarificationRequests(user_student.getUsername(), courseExecution.getId())})
+
+        then:
+        true
+    }
+
+    def "performance testing to 10000 teacher get clarification requests"() {
+        given: "1000 clarification requests"
+        1.upto(10, {
+            clarificationRequestRepository.save(new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT))
+        })
+
+        when:
+        1.upto(10000, { questionDiscussionService.getClarificationRequests(user_teacher.getUsername(), courseExecution.getId())})
 
         then:
         true
