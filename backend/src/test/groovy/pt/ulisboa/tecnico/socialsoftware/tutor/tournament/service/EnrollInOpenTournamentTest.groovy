@@ -74,7 +74,7 @@ class EnrollInOpenTournamentTest extends Specification {
         and: "Inserted data is correct"
         tournament.getStatus() == Tournament.Status.OPEN
         tournament.getUsers().stream().anyMatch({ u -> u.getKey() == user2.getKey() })
-        user2.getTournaments().stream().anyMatch({ t -> t.getId() == tournament.getId() })
+        user2.getTournaments().stream().anyMatch({ t -> t.getid() == tournament.getId() })
 
     }
 

@@ -18,8 +18,8 @@ public class TournamentController {
     @Autowired
     private TournamentService tournamentService;
 
-    @GetMapping("/executions/{executionId}/tournaments")
-    @PreAuthorize("hasPermission(#executionId,'EXECUTION.ACCESS')")
+    @GetMapping("/tournaments")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<TournamentDto> getTournaments() {
         return tournamentService.getTournaments();
     }

@@ -1,11 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import java.util.*;
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -24,43 +22,43 @@ public class TournamentDto implements Serializable {
     }
 
     public TournamentDto(Tournament tournament) {
-        this.id = tournament.getId();
-        creatorID = tournament.getCreator().getKey();
+        this.id = tournament.getid();
+        creatorID = tournament.getcreator().getKey();
         enrolledStudentsIds.add(creatorID);
-        Set<Topic> tourTopics = tournament.getTopics();
+        Set<Topic> tourTopics = tournament.gettopics();
         topics.addAll(tourTopics);
-        numQuests = tournament.getNumQuests();
-        startTime = tournament.getStartTime();
-        endTime = tournament.getEndTime();
+        numQuests = tournament.getnumQuests();
+        startTime = tournament.getstartTime();
+        endTime = tournament.getendTime();
     }
 
-    public int getCreatorID()
+    public int getcreatorID()
     {
         return creatorID;
     }
 
-    public Set<Integer> getEnrolledStudentsIds()
+    public Set<Integer> getenrolledStudentsIds()
     {
         return enrolledStudentsIds;
     }
 
-    public Integer getId() {
+    public Integer getid() {
         return id;
     }
 
-    public int getNumQuests() {
+    public int getnumQuests() {
         return numQuests;
     }
 
-    public Set<Topic> getTopics() {
+    public Set<Topic> gettopics() {
         return topics;
     }
 
-    public LocalDateTime getStartTime() {
+    public LocalDateTime getstartTime() {
         return startTime;
     }
 
-    public LocalDateTime getEndTime() {
+    public LocalDateTime getendTime() {
         return endTime;
     }
 
@@ -68,32 +66,32 @@ public class TournamentDto implements Serializable {
         this.creatorID = creatorID;
     }
 
-    public void setEnrolledStudentsIds(Set<Integer> enrolledStudentsIds) {
+    public void setenrolledStudentsIds(Set<Integer> enrolledStudentsIds) {
         this.enrolledStudentsIds.addAll(enrolledStudentsIds);
     }
 
-    private void setId(Integer id) {
+    private void setid(Integer id) {
         this.id = id;
     }
 
-    public void setNumQuests(int numQuests) {
+    public void setnumQuests(int numQuests) {
         this.numQuests = numQuests;
     }
 
-    public void setTopics(Set<Topic> topics) {
+    public void settopics(Set<Topic> topics) {
         this.topics.addAll(topics);
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setstartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
+    public void setendTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 
-    public Tournament.Status getStatus() { return this.status;}
+    public Tournament.Status getstatus() { return this.status;}
 
-    public void setStatus(Tournament.Status status) {this.status = status;}
+    public void setstatus(Tournament.Status status) {this.status = status;}
 
 }

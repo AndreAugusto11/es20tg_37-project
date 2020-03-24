@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -18,7 +17,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentR
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -44,16 +42,16 @@ public class TournamentService
 	public TournamentDto createTournament(User student, Set<Topic> topics, Integer numOfQuestions, LocalDateTime startTime, LocalDateTime endTime)
 	{
 		Tournament tournament = new Tournament();
-		tournament.setCreator(student);
+		tournament.setcreator(student);
 		if(userRepository.findByKey(student.getKey()) == null) throw new TutorException(TOURNAMENT_NON_VALID_USER);
 
 		if (topics == null) throw new TutorException(TOURNAMENT_NULL_TOPIC);
 		if(!this.checkTopicsExistence(topics)) throw new TutorException(TOURNAMENT_INVALID_TOPIC);
-		tournament.setTopics(topics);
+		tournament.settopics(topics);
 
-		tournament.setNumQuests(numOfQuestions);
-		tournament.setStartTime(startTime);
-		tournament.setEndTime(endTime);
+		tournament.setnumQuests(numOfQuestions);
+		tournament.setstartTime(startTime);
+		tournament.setendTime(endTime);
 
 		tournament.checkConsistent();
 
@@ -78,11 +76,11 @@ public class TournamentService
 
 		if(user.getRole() != User.Role.STUDENT) throw new TutorException(TOURNAMENT_NOT_STUDENT);
 
-		if(tournament.getStatus() != Tournament.Status.OPEN) throw new TutorException(TOURNAMENT_NOT_OPEN,tournamentId);
+		if(tournament.getstatus() != Tournament.Status.OPEN) throw new TutorException(TOURNAMENT_NOT_OPEN,tournamentId);
 
 		Predicate<User> u1 = s -> s.getKey().equals(userKey);
 
-		if(tournament.getUsers().stream().anyMatch(u1)) throw new TutorException(TOURNAMENT_STUDENT_ALREADY_ENROLLED,userKey);
+		if(tournament.getusers().stream().anyMatch(u1)) throw new TutorException(TOURNAMENT_STUDENT_ALREADY_ENROLLED,userKey);
 
 		tournament.addUser(user);
 		user.addTournament(tournament);
@@ -108,7 +106,7 @@ public class TournamentService
 		return tournamentRepository.findAll().stream()
 				.map(TournamentDto::new)
 				.sorted(Comparator
-						.comparing(TournamentDto::getId))
+						.comparing(TournamentDto::getid))
 				.collect(Collectors.toList());
 	}
 }

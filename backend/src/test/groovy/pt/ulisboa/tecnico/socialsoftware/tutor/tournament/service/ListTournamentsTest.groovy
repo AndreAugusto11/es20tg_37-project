@@ -41,8 +41,8 @@ class ListTournamentsTest extends Specification {
         then: "inserted data is correct"
         result.size() == 2
         and: "is sorted correctly"
-        result.get(0).getId() == tournament1.getId()
-        result.get(1).getId() == tournament2.getId()
+        result.get(0).getid() == tournament1.getid()
+        result.get(1).getid() == tournament2.getid()
     }
 
     def "no tournaments"() {
