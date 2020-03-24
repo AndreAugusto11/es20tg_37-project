@@ -48,7 +48,7 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionSuggestionDto createSuggestionQuestion(Integer userId, Integer courseId, QuestionSuggestionDto questionSuggestionDto){
+    public QuestionSuggestionDto createQuestionSuggestion(Integer userId, Integer courseId, QuestionSuggestionDto questionSuggestionDto){
 
         if (questionSuggestionDto == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTION);

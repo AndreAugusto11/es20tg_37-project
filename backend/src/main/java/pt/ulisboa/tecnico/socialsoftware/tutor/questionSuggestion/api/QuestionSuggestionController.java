@@ -30,7 +30,7 @@ public class QuestionSuggestionController {
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name());
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        return questionSuggestionService.createSuggestionQuestion(user.getId(), courseId, questionSuggestionDto);
+        return questionSuggestionService.createQuestionSuggestion(user.getId(), courseId, questionSuggestionDto);
     }
 
     @PutMapping("/questionSuggestions/{questionSuggestionId}/accepting")

@@ -116,7 +116,7 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto.setOptions(options)
 
         when: "a suggestion is created"
-        questionSuggestionService.createSuggestionQuestion(user1.getId(), course1.getId(), questionSuggestionDto)
+        questionSuggestionService.createQuestionSuggestion(user1.getId(), course1.getId(), questionSuggestionDto)
 
         then: "the correct suggestion is inside the repository"
         def result = questionSuggestionRepository.findAll().get(0)
@@ -161,7 +161,7 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto.setOptions(options)
 
         when: "a suggestion is created"
-        questionSuggestionService.createSuggestionQuestion(user1.getId(),course1.getId(), questionSuggestionDto)
+        questionSuggestionService.createQuestionSuggestion(user1.getId(),course1.getId(), questionSuggestionDto)
 
         then: "the correct suggestion is inside the repository"
         def result = questionSuggestionRepository.findAll().get(0)
@@ -207,8 +207,8 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto2.setOptions(options2)
 
         when: "two questions are created"
-        questionSuggestionService.createSuggestionQuestion(user1.getId(), course1.getId(), questionSuggestionDto)
-        questionSuggestionService.createSuggestionQuestion(user2.getId(), course1.getId(), questionSuggestionDto2)
+        questionSuggestionService.createQuestionSuggestion(user1.getId(), course1.getId(), questionSuggestionDto)
+        questionSuggestionService.createQuestionSuggestion(user2.getId(), course1.getId(), questionSuggestionDto2)
 
         then: "the two suggestions are created with the correct numbers"
         questionSuggestionRepository.count() == 2L
@@ -255,8 +255,8 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto2.setOptions(options2)
 
         when: "two questions suggestions are created"
-        questionSuggestionService.createSuggestionQuestion(user1.getId(), course1.getId(), questionSuggestionDto)
-        questionSuggestionService.createSuggestionQuestion(user1.getId(), course1.getId(), questionSuggestionDto2)
+        questionSuggestionService.createQuestionSuggestion(user1.getId(), course1.getId(), questionSuggestionDto)
+        questionSuggestionService.createQuestionSuggestion(user1.getId(), course1.getId(), questionSuggestionDto2)
 
         then: "the two suggestions are created with the correct numbers"
         questionSuggestionRepository.count() == 2L
@@ -278,7 +278,7 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
 
         when: "a suggestion is created  with a none existing user"
-        questionSuggestionService.createSuggestionQuestion(42, course1.getId(), questionSuggestionDto)
+        questionSuggestionService.createQuestionSuggestion(42, course1.getId(), questionSuggestionDto)
 
         then:
         TutorException exception = thrown()
@@ -294,7 +294,7 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
 
         when: "a suggestion is created with a teacher"
-        questionSuggestionService.createSuggestionQuestion(user3.getId(), course1.getId(), questionSuggestionDto)
+        questionSuggestionService.createQuestionSuggestion(user3.getId(), course1.getId(), questionSuggestionDto)
 
         then:
         TutorException exception = thrown()
@@ -310,7 +310,7 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
 
         when: "a suggestion is created with a none existing student"
-        questionSuggestionService.createSuggestionQuestion(null, course1.getId(), questionSuggestionDto)
+        questionSuggestionService.createQuestionSuggestion(null, course1.getId(), questionSuggestionDto)
 
         then:
         TutorException exception = thrown()
@@ -322,7 +322,7 @@ class CreateQuestionSuggestionTest extends Specification {
         given: "nothing"
 
         when: "a suggestion is created with a none existing suggestion Dto"
-        questionSuggestionService.createSuggestionQuestion(user1.getId(), course1.getId(), null)
+        questionSuggestionService.createQuestionSuggestion(user1.getId(), course1.getId(), null)
 
         then:
         TutorException exception = thrown()
@@ -338,7 +338,7 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
 
         when: "a suggestion is created with a none existing course"
-        questionSuggestionService.createSuggestionQuestion(user1.getId(), null, questionSuggestionDto)
+        questionSuggestionService.createQuestionSuggestion(user1.getId(), null, questionSuggestionDto)
 
         then:
         TutorException exception = thrown()
@@ -354,7 +354,7 @@ class CreateQuestionSuggestionTest extends Specification {
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
 
         when: "a suggestion is created"
-        questionSuggestionService.createSuggestionQuestion(user1.getId(), course2.getId(), questionSuggestionDto)
+        questionSuggestionService.createQuestionSuggestion(user1.getId(), course2.getId(), questionSuggestionDto)
 
         then:
         TutorException exception = thrown()

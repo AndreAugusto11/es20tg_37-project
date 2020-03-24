@@ -5,10 +5,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 
+import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class QuestionSuggestionDto {
+public class QuestionSuggestionDto implements Serializable {
 
     private Integer id;
     private QuestionDto questionDto;

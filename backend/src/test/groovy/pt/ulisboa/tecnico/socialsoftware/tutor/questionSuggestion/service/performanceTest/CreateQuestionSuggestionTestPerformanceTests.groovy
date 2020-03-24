@@ -98,7 +98,7 @@ class CreateQuestionSuggestionTestPerformanceTests extends Specification {
 
         when: "10000 suggestions are created"
         1.upto(10000, {
-            questionSuggestionService.createSuggestionQuestion(user1.getId(), course1.getId(), questionSuggestionDto)
+            questionSuggestionService.createQuestionSuggestion(user1.getId(), course1.getId(), questionSuggestionDto)
         })
 
         then: true

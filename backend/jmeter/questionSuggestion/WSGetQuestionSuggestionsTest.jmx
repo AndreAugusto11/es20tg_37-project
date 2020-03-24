@@ -183,7 +183,7 @@
               <boolProp name="ISREGEX">false</boolProp>
             </JSONPathAssertion>
             <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert first QS status" enabled="true">
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert second QS status" enabled="true">
               <stringProp name="JSON_PATH">$[1].status</stringProp>
               <stringProp name="EXPECTED_VALUE">PENDING</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
@@ -192,7 +192,7 @@
               <boolProp name="ISREGEX">false</boolProp>
             </JSONPathAssertion>
             <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert first QS status" enabled="true">
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert third QS status" enabled="true">
               <stringProp name="JSON_PATH">$[2].status</stringProp>
               <stringProp name="EXPECTED_VALUE">PENDING</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
@@ -201,7 +201,7 @@
               <boolProp name="ISREGEX">false</boolProp>
             </JSONPathAssertion>
             <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert first QS status" enabled="true">
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert fourth QS status" enabled="true">
               <stringProp name="JSON_PATH">$[3].status</stringProp>
               <stringProp name="EXPECTED_VALUE">PENDING</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
@@ -210,7 +210,7 @@
               <boolProp name="ISREGEX">false</boolProp>
             </JSONPathAssertion>
             <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert first QS status" enabled="true">
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert fifth QS status" enabled="true">
               <stringProp name="JSON_PATH">$[4].status</stringProp>
               <stringProp name="EXPECTED_VALUE">PENDING</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
