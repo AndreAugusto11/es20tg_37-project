@@ -59,6 +59,16 @@ public class TournamentService
 		return new TournamentDto(tournament);
 	}
 
+	@Transactional(isolation = Isolation.REPEATABLE_READ)
+	public TournamentDto createTournament(User student, TournamentDto tournamentDto)
+	{
+		Set<Topic> topics = tournamentDto.gettopics();
+		Integer numOfQuestions = tournamentDto.getnumQuests();
+		LocalDateTime start = tournamentDto.getstartTime();
+		LocalDateTime end = tournamentDto.getendTime();
+		return createTournament(student, topics, numOfQuestions, start, end);
+	}
+
 	public TournamentDto findTournamentById(Integer id){
 		return tournamentRepository.findById(id).map(TournamentDto::new)
 				.orElseThrow( () -> new TutorException(TOURNAMENT_NOT_FOUND,id));
