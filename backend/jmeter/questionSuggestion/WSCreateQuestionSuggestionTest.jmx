@@ -367,7 +367,7 @@
           <stringProp name="username">goncalo</stringProp>
         </JDBCDataSource>
         <hashTree/>
-        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Delete created relacionship between user and suggestion and question_suggestions " enabled="true">
+        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Delete created relationship between user and suggestion and question_suggestions " enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="query"> DELETE FROM users_question_suggestion;
  DELETE FROM question_Suggestions;</stringProp>
