@@ -73,7 +73,8 @@ class GetClarificationRequestsServiceSpockTest extends Specification {
     @Autowired
     ClarificationRequestRepository clarificationRequestRepository
 
-    def user
+    def user_student
+    def user_teacher
     def course
     def courseExecution
     def question
@@ -91,10 +92,15 @@ class GetClarificationRequestsServiceSpockTest extends Specification {
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
-        user = new User('name', "username", 1, User.Role.STUDENT)
-        user.getCourseExecutions().add(courseExecution)
-        courseExecution.getUsers().add(user)
-        userRepository.save(user)
+        user_student = new User('name', "username", 1, User.Role.STUDENT)
+        user_student.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(user_student)
+        userRepository.save(user_student)
+
+        user_teacher = new User('name-teacher', "username-teacher", 2, User.Role.TEACHER)
+        user_teacher.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(user_teacher)
+        userRepository.save(user_teacher)
 
         question = new Question()
         question.setCourse(course)
@@ -125,7 +131,7 @@ class GetClarificationRequestsServiceSpockTest extends Specification {
         quiz.addQuizQuestion(quizQuestion)
         quizQuestionRepository.save(quizQuestion)
 
-        quizAnswer = new QuizAnswer(user, quiz)
+        quizAnswer = new QuizAnswer(user_student, quiz)
         quizAnswerRepository.save(quizAnswer)
 
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
@@ -133,15 +139,15 @@ class GetClarificationRequestsServiceSpockTest extends Specification {
         questionAnswerRepository.save(questionAnswer)
     }
 
-    def "clarification requests exist"() {
+    def "clarification requests exist and student gets"() {
         given: "two clarification requests"
-        def clarificationRequest1 = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
-        def clarificationRequest2 = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
+        def clarificationRequest1 = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
+        def clarificationRequest2 = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
         clarificationRequestRepository.save(clarificationRequest1)
         clarificationRequestRepository.save(clarificationRequest2)
 
         when:
-        def result = questionDiscussionService.getClarificationRequests(user.getUsername(), courseExecution.getId())
+        def result = questionDiscussionService.getClarificationRequests(user_student.getUsername(), courseExecution.getId())
 
         then: "the returned data is correct"
         result.size() == 2
@@ -150,7 +156,27 @@ class GetClarificationRequestsServiceSpockTest extends Specification {
         clarificationRequestDto.getContent() == CLARIFICATION_CONTENT
         clarificationRequestDto.getStatus() == ClarificationRequest.Status.OPEN.name()
         clarificationRequestDto.getQuestionAnswerDto().getQuestion().getId() == question.getId()
-        clarificationRequestDto.getUsername() == user.getUsername()
+        clarificationRequestDto.getUsername() == user_student.getUsername()
+    }
+
+    def "clarification requests exist and teacher gets"() {
+        given: "two clarification requests"
+        def clarificationRequest1 = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
+        def clarificationRequest2 = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
+        clarificationRequestRepository.save(clarificationRequest1)
+        clarificationRequestRepository.save(clarificationRequest2)
+
+        when:
+        def result = questionDiscussionService.getClarificationRequests(user_teacher.getUsername(), courseExecution.getId())
+
+        then: "the returned data is correct"
+        result.size() == 2
+        def clarificationRequestDto = result.get(0)
+        clarificationRequestDto.getId() != null
+        clarificationRequestDto.getContent() == CLARIFICATION_CONTENT
+        clarificationRequestDto.getStatus() == ClarificationRequest.Status.OPEN.name()
+        clarificationRequestDto.getQuestionAnswerDto().getQuestion().getId() == question.getId()
+        clarificationRequestDto.getUsername() == user_student.getUsername()
     }
 
     @TestConfiguration

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.2.1">
   <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Load Test Web Service getExternalCourseExecutions" enabled="true">
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Load Test Web Service createClarificationRequest" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
@@ -34,6 +34,16 @@
             <stringProp name="Argument.value">66473</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="questionId" elementType="Argument">
+            <stringProp name="Argument.name">questionId</stringProp>
+            <stringProp name="Argument.value">1804</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="userId" elementType="Argument">
+            <stringProp name="Argument.name">userId</stringProp>
+            <stringProp name="Argument.value">676</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </Arguments>
       <hashTree/>
@@ -51,6 +61,67 @@
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
+        <JDBCDataSource guiclass="TestBeanGUI" testclass="JDBCDataSource" testname="JDBC Connection Configuration" enabled="true">
+          <boolProp name="autocommit">true</boolProp>
+          <stringProp name="checkQuery"></stringProp>
+          <stringProp name="connectionAge">5000</stringProp>
+          <stringProp name="connectionProperties"></stringProp>
+          <stringProp name="dataSource">sampleReq</stringProp>
+          <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
+          <stringProp name="driver">org.postgresql.Driver</stringProp>
+          <stringProp name="initQuery"></stringProp>
+          <boolProp name="keepAlive">true</boolProp>
+          <stringProp name="password">war</stringProp>
+          <stringProp name="poolMax">0</stringProp>
+          <boolProp name="preinit">false</boolProp>
+          <stringProp name="timeout">10000</stringProp>
+          <stringProp name="transactionIsolation">DEFAULT</stringProp>
+          <stringProp name="trimInterval">60000</stringProp>
+          <stringProp name="username">lucas</stringProp>
+        </JDBCDataSource>
+        <hashTree/>
+        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request to get question answer id" enabled="true">
+          <stringProp name="dataSource">sampleReq</stringProp>
+          <stringProp name="query">SELECT qa.id FROM question_answers qa JOIN quiz_answers qua ON qa.quiz_answer_id = qua.id WHERE qua.user_id = ${userId};</stringProp>
+          <stringProp name="queryArguments"></stringProp>
+          <stringProp name="queryArgumentsTypes"></stringProp>
+          <stringProp name="queryTimeout"></stringProp>
+          <stringProp name="queryType">Callable Statement</stringProp>
+          <stringProp name="resultSetHandler">Store as String</stringProp>
+          <stringProp name="resultSetMaxRows"></stringProp>
+          <stringProp name="resultVariable">questionAnswerIds</stringProp>
+          <stringProp name="variableNames"></stringProp>
+        </JDBCSampler>
+        <hashTree>
+          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="BeanShell PostProcessor" enabled="true">
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="script">vars.put(&quot;questionAnswerId&quot;, Integer.toString(vars.getObject(&quot;questionAnswerIds&quot;).get(0).get(&quot;id&quot;)));</stringProp>
+          </BeanShellPostProcessor>
+          <hashTree/>
+        </hashTree>
+        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request to get question id" enabled="true">
+          <stringProp name="dataSource">sampleReq</stringProp>
+          <stringProp name="query">SELECT q.id FROM question_answers qa JOIN quiz_questions qq ON qa.quiz_question_id = qq.id JOIN questions q ON q.id = qq.question_id;</stringProp>
+          <stringProp name="queryArguments"></stringProp>
+          <stringProp name="queryArgumentsTypes"></stringProp>
+          <stringProp name="queryTimeout"></stringProp>
+          <stringProp name="queryType">Callable Statement</stringProp>
+          <stringProp name="resultSetHandler">Store as String</stringProp>
+          <stringProp name="resultSetMaxRows"></stringProp>
+          <stringProp name="resultVariable">questionIds</stringProp>
+          <stringProp name="variableNames"></stringProp>
+        </JDBCSampler>
+        <hashTree>
+          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="BeanShell PostProcessor" enabled="true">
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="script">vars.put(&quot;questionId&quot;, Integer.toString(vars.getObject(&quot;questionIds&quot;).get(0).get(&quot;id&quot;)));</stringProp>
+          </BeanShellPostProcessor>
+          <hashTree/>
+        </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login as Student" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
             <collectionProp name="Arguments.arguments"/>
@@ -104,37 +175,7 @@
 	&quot;username&quot;: &quot;Demo-Student&quot;,&#xd;
 	&quot;questionAnswerDto&quot;: {&#xd;
 		&quot;question&quot;: {&#xd;
-		   &quot;id&quot;:1804,&#xd;
-		   &quot;title&quot;:&quot;Utility tree&quot;,&#xd;
-		   &quot;status&quot;:&quot;AVAILABLE&quot;,&#xd;
-		   &quot;content&quot;:&quot;A utility tree for the design of a system&quot;,&#xd;
-		   &quot;image&quot;:null,&#xd;
-		   &quot;sequence&quot;:null,&#xd;
-		   &quot;options&quot;:[&#xd;
-		      {&#xd;
-		         &quot;id&quot;:7914,&#xd;
-		         &quot;content&quot;:&quot;Addresses several quality attributes.&quot;,&#xd;
-		         &quot;correct&quot;:false&#xd;
-		      },&#xd;
-		      {&#xd;
-		         &quot;id&quot;:7915,&#xd;
-		         &quot;content&quot;:&quot;All options are true.&quot;,&#xd;
-		         &quot;correct&quot;:true&#xd;
-		      },&#xd;
-		      {&#xd;
-		         &quot;id&quot;:7918,&#xd;
-		         &quot;content&quot;:&quot;Associates with each architecturally significant requirement its business value and architectural impact.&quot;,&#xd;
-		         &quot;correct&quot;:false&#xd;
-		      },&#xd;
-		      {&#xd;
-		         &quot;id&quot;:7919,&#xd;
-		         &quot;content&quot;:&quot;Is a technique to assess what are the most relevant requirements that architecture should address.&quot;,&#xd;
-		         &quot;correct&quot;:false&#xd;
-		      }&#xd;
-		   ],&#xd;
-		   &quot;topics&quot;:[&#xd;
-		&#xd;
-		   ]&#xd;
+		   &quot;id&quot;:${questionId}&#xd;
 		},&#xd;
 		&quot;option&quot;: {&#xd;
 		}&#xd;
@@ -162,7 +203,7 @@
           <hashTree>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert question id" enabled="true">
               <stringProp name="JSON_PATH">$.questionAnswerDto.question.id</stringProp>
-              <stringProp name="EXPECTED_VALUE">1804</stringProp>
+              <stringProp name="EXPECTED_VALUE">${questionId}</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
@@ -320,7 +361,7 @@
           <stringProp name="query">UPDATE question_answers
 SET clarification_request_id = null
 WHERE
-	id = 66473;
+	id = ${questionAnswerId};
 DELETE FROM clarification_requests;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
