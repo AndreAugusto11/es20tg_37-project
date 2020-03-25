@@ -70,9 +70,6 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
     @Autowired
     ClarificationRequestRepository clarificationRequestRepository
 
-    @Autowired
-    ClarificationRequestAnswerRepository clarificationRequestAnswerRepository
-
     def user_teacher
     def user_student
     def course
@@ -157,10 +154,7 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
             questionDiscussionService.createClarificationRequestAnswer(clarificationRequestList.pop().getId(), clarificationRequestAnswerDto)
         })
 
-        List<ClarificationRequestAnswer> clarificationRequestAnswersList = clarificationRequestAnswerRepository.findAll()
-
-        then:
-        clarificationRequestAnswersList.size() >= NUMBER_OF_ITERATIONS
+        then: true
     }
 
     @TestConfiguration
