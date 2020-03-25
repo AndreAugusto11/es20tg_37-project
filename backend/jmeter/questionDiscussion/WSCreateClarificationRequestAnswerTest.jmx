@@ -44,6 +44,11 @@
             <stringProp name="Argument.value">11</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="counter" elementType="Argument">
+            <stringProp name="Argument.name">counter</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </Arguments>
       <hashTree/>
@@ -71,18 +76,20 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">myespassword</stringProp>
+          <stringProp name="password">war</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">TRANSACTION_REPEATABLE_READ</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">andre_augusto</stringProp>
+          <stringProp name="username">lucas</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">INSERT INTO clarification_requests (content, status, question_id, question_answer_id, user_id, clarification_request_answer_id) VALUES (&apos;CONTENT&apos;, &apos;OPEN&apos;, 1804, 66473, 676, null);</stringProp>
+          <stringProp name="query">INSERT INTO clarification_requests (content, status, question_id, question_answer_id, user_id, clarification_request_answer_id) VALUES (&apos;CONTENT&apos;, &apos;OPEN&apos;, 1804, 66473, 676, null);
+INSERT INTO clarification_requests (content, status, question_id, question_answer_id, user_id, clarification_request_answer_id) VALUES (&apos;CONTENT&apos;, &apos;OPEN&apos;, 1804, 66473, 676, null);
+INSERT INTO clarification_requests (content, status, question_id, question_answer_id, user_id, clarification_request_answer_id) VALUES (&apos;CONTENT&apos;, &apos;OPEN&apos;, 1804, 66473, 676, null);</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
@@ -110,7 +117,9 @@
           <boolProp name="resetInterpreter">false</boolProp>
           <stringProp name="parameters"></stringProp>
           <stringProp name="filename"></stringProp>
-          <stringProp name="script">vars.put(&quot;clarificationRequestId&quot;, Integer.toString(vars.getObject(&quot;clarification_request_id&quot;).get(0).get(&quot;id&quot;)));</stringProp>
+          <stringProp name="script">int counter = Integer.parseInt(vars.get(&quot;counter&quot;));
+counter++;
+vars.put(&quot;clarificationRequestId&quot;, Integer.toString(vars.getObject(&quot;clarification_request_id&quot;).get(counter).get(&quot;id&quot;)));</stringProp>
         </BeanShellPreProcessor>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login as Teacher" enabled="true">
@@ -214,25 +223,6 @@
             </JSONPathAssertion>
             <hashTree/>
           </hashTree>
-          <JDBCDataSource guiclass="TestBeanGUI" testclass="JDBCDataSource" testname="JDBC Connection Configuration" enabled="true">
-            <boolProp name="autocommit">true</boolProp>
-            <stringProp name="checkQuery"></stringProp>
-            <stringProp name="connectionAge">5000</stringProp>
-            <stringProp name="connectionProperties"></stringProp>
-            <stringProp name="dataSource">sampleReq</stringProp>
-            <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
-            <stringProp name="driver">org.postgresql.Driver</stringProp>
-            <stringProp name="initQuery"></stringProp>
-            <boolProp name="keepAlive">true</boolProp>
-            <stringProp name="password">mybdpassword</stringProp>
-            <stringProp name="poolMax">0</stringProp>
-            <boolProp name="preinit">false</boolProp>
-            <stringProp name="timeout">10000</stringProp>
-            <stringProp name="transactionIsolation">DEFAULT</stringProp>
-            <stringProp name="trimInterval">60000</stringProp>
-            <stringProp name="username">andre_augusto</stringProp>
-          </JDBCDataSource>
-          <hashTree/>
           <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
             <stringProp name="dataSource">sampleReq</stringProp>
             <stringProp name="query">SELECT status FROM clarification_requests

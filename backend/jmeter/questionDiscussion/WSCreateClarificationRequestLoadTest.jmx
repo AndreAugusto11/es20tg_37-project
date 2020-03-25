@@ -103,7 +103,7 @@
         </hashTree>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request to get question id" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">SELECT q.id FROM question_answers qa JOIN quiz_questions qq ON qa.quiz_question_id = qq.id JOIN questions q ON q.id = qq.question_id;</stringProp>
+          <stringProp name="query">SELECT q.id FROM question_answers qa JOIN quiz_questions qq ON qa.quiz_question_id = qq.id JOIN questions q ON q.id = qq.question_id WHERE qa.id = ${questionAnswerId};</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
