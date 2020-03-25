@@ -42,7 +42,7 @@ class EnrollInOpenTournamentTest extends Specification {
         given: "a student"
         def user2 = new User("Manel2","MAN123",2,User.Role.STUDENT)
         userRepository.save(user2)
-        tournament.setStatus(Tournament.Status.OPEN)
+        tournament.setstatus(Tournament.Status.OPEN)
 
         when:
         tournamentService.enrollStudentInTournament(key,id)
@@ -63,18 +63,18 @@ class EnrollInOpenTournamentTest extends Specification {
         given: "a student"
         def user2 = new User("Manel2","MAN123",2,User.Role.STUDENT)
         userRepository.save(user2)
-        tournament.setStatus(Tournament.Status.OPEN)
+        tournament.setstatus(Tournament.Status.OPEN)
 
         when:
-        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getId())
+        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getid())
 
         then: "Data is inserted"
-        tournament.getUsers().size() == 2
+        tournament.getusers().size() == 2
         user2.getTournaments().size() == 1
         and: "Inserted data is correct"
-        tournament.getStatus() == Tournament.Status.OPEN
-        tournament.getUsers().stream().anyMatch({ u -> u.getKey() == user2.getKey() })
-        user2.getTournaments().stream().anyMatch({ t -> t.getid() == tournament.getId() })
+        tournament.getstatus() == Tournament.Status.OPEN
+        tournament.getusers().stream().anyMatch({ u -> u.getKey() == user2.getKey() })
+        user2.getTournaments().stream().anyMatch({ t -> t.getid() == tournament.getid() })
 
     }
 
@@ -83,10 +83,10 @@ class EnrollInOpenTournamentTest extends Specification {
         given: "a student"
         def user2 = new User("Manel2","MAN123",2,User.Role.STUDENT)
         userRepository.save(user2)
-        tournament.setStatus(Tournament.Status.ONGOING)
+        tournament.setstatus(Tournament.Status.ONGOING)
 
         when:
-        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getId())
+        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getid())
 
         then: "Tournament not open exception"
         def exception = thrown(TutorException)
@@ -98,10 +98,10 @@ class EnrollInOpenTournamentTest extends Specification {
         given: "a teacher"
         def user2 = new User("Manel2","MAN123",2,User.Role.TEACHER)
         userRepository.save(user2)
-        tournament.setStatus(Tournament.Status.OPEN)
+        tournament.setstatus(Tournament.Status.OPEN)
 
         when:
-        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getId())
+        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getid())
 
         then: "Tournament not open exception"
         def exception = thrown(TutorException)
@@ -113,7 +113,7 @@ class EnrollInOpenTournamentTest extends Specification {
         given: "a student"
         def user2 = new User("Manel2","MAN123",2,User.Role.STUDENT)
         userRepository.save(user2)
-        tournament.setStatus(Tournament.Status.OPEN)
+        tournament.setstatus(Tournament.Status.OPEN)
 
         when:
         tournamentService.enrollStudentInTournament(user2.getKey(),3)
@@ -128,11 +128,11 @@ class EnrollInOpenTournamentTest extends Specification {
         given: "a student"
         def user2 = new User("Manel2","MAN123",2,User.Role.STUDENT)
         userRepository.save(user2)
-        tournament.setStatus(Tournament.Status.OPEN)
-        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getId())
+        tournament.setstatus(Tournament.Status.OPEN)
+        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getid())
 
         when:
-        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getId())
+        tournamentService.enrollStudentInTournament(user2.getKey(),tournament.getid())
 
         then: "Tournament not open exception"
         def exception = thrown(TutorException)

@@ -73,7 +73,7 @@ public class User implements UserDetails {
     private Set<Tournament> tournaments = new HashSet<>();
 
     @OneToMany
-    private Set<Tournament> createdTournamts = new HashSet<>();
+    private Set<Tournament> createdTournaments = new HashSet<>();
   
     @OneToMany
     private Set<QuestionSuggestion> questionSuggestion = new HashSet<>();

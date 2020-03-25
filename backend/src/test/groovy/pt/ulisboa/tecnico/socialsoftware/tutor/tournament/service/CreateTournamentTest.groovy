@@ -112,7 +112,7 @@ class CreateTournamentTest extends Specification {
 		def i=0
 		while(iter.hasNext())
 		{
-			iter.next().getName() == topic[i++].getName()
+			iter.next() == topic[i++].getId()
 		}
 	}
 
@@ -132,7 +132,7 @@ class CreateTournamentTest extends Specification {
 		def i=0
 		while(iter.hasNext())
 		{
-			iter.next().getName() == topics[i++].getName()
+			iter.next() == topics[i++].getId()
 		}
 	}
 

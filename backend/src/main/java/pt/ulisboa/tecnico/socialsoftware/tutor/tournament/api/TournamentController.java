@@ -35,6 +35,6 @@ public class TournamentController {
     public TournamentDto createTournament(Principal principal, @RequestBody TournamentDto tournamentDto)
     {
         User user = (User) ((Authentication) principal).getPrincipal();
-        return tournamentService.createTournament(user, tournamentDto);
+        return tournamentService.createTournament(user.getId(), tournamentDto);
     }
 }

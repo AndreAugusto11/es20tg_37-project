@@ -60,9 +60,14 @@ public class TournamentService
 	}
 
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
-	public TournamentDto createTournament(User student, TournamentDto tournamentDto)
+	public TournamentDto createTournament(Integer userId, TournamentDto tournamentDto)
 	{
-		Set<Topic> topics = tournamentDto.gettopics();
+		User student = userRepository.findById(userId).get();
+		Set<Integer> tmp = tournamentDto.gettopics();
+		Set<Topic> topics = new HashSet<>();
+		for(Integer id: tmp){
+			topics.add(topicRepository.findById(id).get());
+		}
 		Integer numOfQuestions = tournamentDto.getnumQuests();
 		LocalDateTime start = tournamentDto.getstartTime();
 		LocalDateTime end = tournamentDto.getendTime();
