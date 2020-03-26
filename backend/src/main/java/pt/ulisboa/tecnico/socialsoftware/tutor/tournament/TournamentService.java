@@ -97,7 +97,7 @@ public class TournamentService
 		Predicate<User> u1 = s -> s.getId().equals(userId);
 
 		//DEMO STUDENT has id 676 needed for load test
-		if(tournament.getusers().stream().anyMatch(u1) && userId != 676) throw new TutorException(TOURNAMENT_STUDENT_ALREADY_ENROLLED,userId);
+		if(userId != 676 && tournament.getusers().stream().anyMatch(u1)) throw new TutorException(TOURNAMENT_STUDENT_ALREADY_ENROLLED,userId);
 
 		tournament.addUser(user);
 		user.addTournament(tournament);
