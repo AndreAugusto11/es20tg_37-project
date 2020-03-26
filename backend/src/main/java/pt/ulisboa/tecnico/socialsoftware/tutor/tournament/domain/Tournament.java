@@ -45,6 +45,7 @@ public class Tournament {
 	@Column(name = "end_date")
 	private LocalDateTime endTime;
 
+	@Enumerated(EnumType.STRING)
 	private Status status;
 
 	public Tournament(){}

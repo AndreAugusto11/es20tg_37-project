@@ -80,22 +80,23 @@ public class TournamentService
 	}
 
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
-	public void enrollStudentInTournament(Integer userKey, Integer tournamentId){
-		if(userKey == null) throw new TutorException(TOURNAMENT_NULL_USER);
+	public void enrollStudentInTournament(Integer userId, Integer tournamentId){
+		if(userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
 
 		if(tournamentId == null) throw new TutorException(TOURNAMENT_NULL_TOURNAMENT);
 
 		Tournament tournament = tournamentRepository.findById(tournamentId)
 				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND,tournamentId));
-		User user = userRepository.findByKey(userKey);
+		User user = userRepository.findById(userId)
+				.orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
 
 		if(user.getRole() != User.Role.STUDENT) throw new TutorException(TOURNAMENT_NOT_STUDENT);
 
 		if(tournament.getstatus() != Tournament.Status.OPEN) throw new TutorException(TOURNAMENT_NOT_OPEN,tournamentId);
 
-		Predicate<User> u1 = s -> s.getKey().equals(userKey);
+		Predicate<User> u1 = s -> s.getId().equals(userId);
 
-		if(tournament.getusers().stream().anyMatch(u1)) throw new TutorException(TOURNAMENT_STUDENT_ALREADY_ENROLLED,userKey);
+		if(tournament.getusers().stream().anyMatch(u1)) throw new TutorException(TOURNAMENT_STUDENT_ALREADY_ENROLLED,userId);
 
 		tournament.addUser(user);
 		user.addTournament(tournament);

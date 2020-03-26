@@ -35,11 +35,11 @@ public class TournamentController {
         return tournamentService.createTournament(user.getId(), tournamentDto);
     }
 
-    @PostMapping("/tournaments/{tournamentId}}/enroll")
+    @PostMapping("/tournaments/{tournamentId}/enroll")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public void enrollTournament(Principal principal, @PathVariable int tournamentId)
     {
         User user = (User) ((Authentication) principal).getPrincipal();
-        tournamentService.enrollStudentInTournament(user.getKey(),tournamentId);
+        tournamentService.enrollStudentInTournament(user.getId(),tournamentId);
     }
 }
