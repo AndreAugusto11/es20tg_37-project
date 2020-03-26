@@ -23,7 +23,7 @@ public class TournamentDto implements Serializable {
 
     public TournamentDto(Tournament tournament) {
         this.id = tournament.getid();
-        creatorID = tournament.getcreator().getKey();
+        creatorID = tournament.getcreator().getId();
         enrolledStudentsIds.add(creatorID);
         settopicsTour(tournament.gettopics());
         numQuests = tournament.getnumQuests();
@@ -61,7 +61,7 @@ public class TournamentDto implements Serializable {
         return endTime;
     }
 
-    private void setCreatorID(int creatorID) {
+    public void setCreatorID(int creatorID) {
         this.creatorID = creatorID;
     }
 

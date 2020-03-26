@@ -37,7 +37,7 @@ public class TournamentController {
 
     @PostMapping("/tournaments/{tournamentId}/enroll")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public void enrollTournament(Principal principal, @PathVariable int tournamentId)
+    public void enrollTournament(Principal principal, @PathVariable Integer tournamentId)
     {
         User user = (User) ((Authentication) principal).getPrincipal();
         tournamentService.enrollStudentInTournament(user.getId(),tournamentId);

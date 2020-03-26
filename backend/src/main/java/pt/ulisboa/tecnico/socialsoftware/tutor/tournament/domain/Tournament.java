@@ -53,7 +53,7 @@ public class Tournament {
 	public Tournament(User creator)
 	{
 
-		if(creator == null) throw new TutorException(ErrorMessage.TOURNAMENT_NON_VALID_USER, creator.getKey());
+		if(creator == null) throw new TutorException(ErrorMessage.TOURNAMENT_NON_VALID_USER, creator.getId());
 
 		users.add(creator);
 		this.creator = creator;
