@@ -20,7 +20,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.Clarifi
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
@@ -127,7 +126,7 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
         questionAnswerRepository.save(questionAnswer)
     }
 
-    def "performance testing to create 10000 clarification request answers"() {
+    def "performance testing to create 1000 clarification request answers"() {
         given: "a clarification request dto"
         def clarificationRequestDto = new ClarificationRequestDto()
         clarificationRequestDto.setContent(CLARIFICATION_CONTENT)
@@ -143,7 +142,7 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
         clarificationRequestAnswerDto.setName(user_teacher.getName())
         clarificationRequestAnswerDto.setUsername(user_teacher.getUsername())
 
-        and: "10000 clarification requests"
+        and: "1000 clarification requests"
         1.upto(NUMBER_OF_ITERATIONS, {
             questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
         })
