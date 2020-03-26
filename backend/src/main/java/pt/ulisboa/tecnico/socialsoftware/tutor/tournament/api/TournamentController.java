@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -36,5 +33,13 @@ public class TournamentController {
     {
         User user = (User) ((Authentication) principal).getPrincipal();
         return tournamentService.createTournament(user.getId(), tournamentDto);
+    }
+
+    @PostMapping("/tournaments/{tournamentId}}/enroll")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public void enrollTournament(Principal principal, @PathVariable int tournamentId)
+    {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        tournamentService.enrollStudentInTournament(user.getKey(),tournamentId);
     }
 }
