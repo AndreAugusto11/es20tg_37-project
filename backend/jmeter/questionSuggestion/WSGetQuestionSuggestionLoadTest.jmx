@@ -70,19 +70,41 @@
           <stringProp name="username">goncalo</stringProp>
         </JDBCDataSource>
         <hashTree/>
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">true</boolProp>
+          <stringProp name="LoopController.loops">5</stringProp>
+        </LoopController>
+        <hashTree>
+          <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter" enabled="true">
+            <stringProp name="CounterConfig.start">1</stringProp>
+            <stringProp name="CounterConfig.end">5</stringProp>
+            <stringProp name="CounterConfig.incr">1</stringProp>
+            <stringProp name="CounterConfig.name">counter</stringProp>
+            <stringProp name="CounterConfig.format"></stringProp>
+            <boolProp name="CounterConfig.per_user">false</boolProp>
+          </CounterConfig>
+          <hashTree/>
+          <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
+            <stringProp name="dataSource">sampleReq</stringProp>
+            <stringProp name="query">insert into justifications values(${counter}, &apos;1&apos;, ${counter}, 676);
+
+
+
+</stringProp>
+            <stringProp name="queryArguments"></stringProp>
+            <stringProp name="queryArgumentsTypes"></stringProp>
+            <stringProp name="queryTimeout"></stringProp>
+            <stringProp name="queryType">Callable Statement</stringProp>
+            <stringProp name="resultSetHandler">Store as String</stringProp>
+            <stringProp name="resultSetMaxRows"></stringProp>
+            <stringProp name="resultVariable"></stringProp>
+            <stringProp name="variableNames"></stringProp>
+          </JDBCSampler>
+          <hashTree/>
+        </hashTree>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">insert into justifications values(1, &apos;1&apos;, 1, 676);
-
-insert into justifications values(2, &apos;2&apos;, 2, 676);
-
-insert into justifications values(3, &apos;3&apos;, 3, 676);
-
-insert into justifications values(4, &apos;4&apos;, 4, 676);
-
-insert into justifications values(5, &apos;5&apos;, 5, 676);
-
-insert into question_suggestions values(1, &apos;2020-03-16 17:51:25.601205&apos;, &apos;PENDING&apos;, 1, 1413, 676);
+          <stringProp name="query">insert into question_suggestions values(1, &apos;2020-03-16 17:51:25.601205&apos;, &apos;PENDING&apos;, 1, 1413, 676);
 
 insert into question_suggestions values(2, &apos;2020-03-16 18:51:25.601205&apos;, &apos;PENDING&apos;, 2, 1330, 676);
 
