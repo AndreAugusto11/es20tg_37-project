@@ -140,7 +140,7 @@ class GetClarificationRequestsServiceSpockPerformanceTest extends Specification 
     }
 
     def "performance testing to 10000 student get clarification requests"() {
-        given: "1000 clarification requests"
+        given: "10 clarification requests"
         1.upto(10, {
             clarificationRequestRepository.save(new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT))
         })
@@ -153,7 +153,7 @@ class GetClarificationRequestsServiceSpockPerformanceTest extends Specification 
     }
 
     def "performance testing to 10000 teacher get clarification requests"() {
-        given: "1000 clarification requests"
+        given: "10 clarification requests"
         1.upto(10, {
             clarificationRequestRepository.save(new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT))
         })
