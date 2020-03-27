@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 
@@ -10,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "options")
-public class Option {
+public class Option implements DomainEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +44,11 @@ public class Option {
         this.sequence = option.getSequence();
         this.content = option.getContent();
         this.correct = option.getCorrect();
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitOption(this);
     }
 
     public Integer getId() {
