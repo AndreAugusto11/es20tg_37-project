@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
@@ -16,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentR
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.function.*;
 import java.time.LocalDateTime;
@@ -38,6 +41,9 @@ public class TournamentService
 	@PersistenceContext
 	EntityManager entityManager;
 
+	@Retryable(
+			value = { SQLException.class },
+			backoff = @Backoff(delay = 5000))
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
 	public TournamentDto createTournament(User student, Set<Topic> topics, Integer numOfQuestions, LocalDateTime startTime, LocalDateTime endTime)
 	{
@@ -59,6 +65,9 @@ public class TournamentService
 		return new TournamentDto(tournament);
 	}
 
+	@Retryable(
+			value = { SQLException.class },
+			backoff = @Backoff(delay = 5000))
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
 	public TournamentDto createTournament(Integer userId, TournamentDto tournamentDto)
 	{
@@ -79,6 +88,9 @@ public class TournamentService
 				.orElseThrow( () -> new TutorException(TOURNAMENT_NOT_FOUND,id));
 	}
 
+	@Retryable(
+			value = { SQLException.class },
+			backoff = @Backoff(delay = 5000))
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
 	public void enrollStudentInTournament(Integer userId, Integer tournamentId){
 		if(userId == null) throw new TutorException(TOURNAMENT_NULL_USER);

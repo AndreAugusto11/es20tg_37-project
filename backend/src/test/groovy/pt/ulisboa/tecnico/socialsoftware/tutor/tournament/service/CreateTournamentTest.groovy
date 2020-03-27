@@ -62,6 +62,7 @@ class CreateTournamentTest extends Specification {
 	{
 		student = new User('student', "istStu", 1, User.Role.STUDENT)
 		userRepository.save(student)
+		student = userRepository.findByKey(1)
 
 		topic = new HashSet<Topic>()
 		def tpc = new Topic()
@@ -103,7 +104,7 @@ class CreateTournamentTest extends Specification {
 		def result = tournamentService.createTournament(student, topic, number_of_questions, startTime, endTime)
 
 		then: "the returned data is correct"
-		result.getcreatorID() == student.getKey()
+		result.getcreatorID() == student.getId()
 		result.getnumQuests() == number_of_questions
 		result.getstartTime() == startTime
 		result.getendTime() == endTime
@@ -123,7 +124,7 @@ class CreateTournamentTest extends Specification {
 		def result = tournamentService.createTournament(student, topics, number_of_questions, startTime, endTime)
 
 		then: "the tournament was created correctly"
-		result.getcreatorID() == student.getKey()
+		result.getcreatorID() == student.getId()
 		result.getnumQuests() == number_of_questions
 		result.getstartTime() == startTime
 		result.getendTime() == endTime

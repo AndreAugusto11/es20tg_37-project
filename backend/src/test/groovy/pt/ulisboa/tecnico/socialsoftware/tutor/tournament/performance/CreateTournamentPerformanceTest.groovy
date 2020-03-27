@@ -4,10 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import spock.lang.Shared
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -15,10 +19,10 @@ import java.time.LocalDateTime
 
 @DataJpaTest
 class CreateTournamentPerformanceTest extends Specification {
-    static final Set<Integer> topics = [82]
-    static final Integer num = 10
-    static final LocalDateTime startTime = LocalDateTime.now().plusDays(1)
-    static final LocalDateTime endTime = LocalDateTime.now().plusDays(2)
+    public static final String TOPIC_ONE = "topicOne"
+    public static final Integer number_of_questions = 10
+    public static final LocalDateTime startTime = LocalDateTime.now().plusDays(1)
+    public static final LocalDateTime endTime = LocalDateTime.now().plusDays(2)
 
     @Autowired
     TournamentService tournamentService
@@ -26,21 +30,40 @@ class CreateTournamentPerformanceTest extends Specification {
     @Autowired
     UserRepository userRepository
 
-    def "performance testing to get 10000 course executions"() {
-        given: "a student"
-        def student = new User("Student", "stu", 1, User.Role.STUDENT)
-        userRepository.save(student)
-        and: "a tournamentDto"
-        def tournamentdto = new TournamentDto()
-        tournamentdto.setCreatorID(student.getId())
-        tournamentdto.settopics(topics)
-        tournamentdto.setnumQuests(num)
-        tournamentdto.setstartTime(startTime)
-        tournamentdto.setendTime(endTime)
+    @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
+    TopicRepository topicRepository
+
+    @Shared
+    User student
+    @Shared
+    Set<Topic> topic
+
+    def setup()
+    {
+        def user = new User("Student", "stu", 1, User.Role.STUDENT)
+        userRepository.save(user)
+        student = userRepository.findByKey(1)
+
+        topic = new HashSet<Topic>()
+        def tpc = new Topic()
+        tpc.setName(TOPIC_ONE)
+        def course = new Course("LEIC", Course.Type.TECNICO)
+        courseRepository.save(course)
+        course = courseRepository.findByNameType("LEIC", "TECNICO").get()
+        tpc.setCourse(course)
+        topic.add(tpc)
+        topicRepository.save(tpc)
+    }
+
+    def "performance testing to create 10000 tournaments"()
+    {
 
         when:
         1.upto(10000, {
-            tournamentService.createTournament(student.getId(), tournamentdto)
+            tournamentService.createTournament(student, topic, number_of_questions, startTime, endTime)
         })
 
         then:
