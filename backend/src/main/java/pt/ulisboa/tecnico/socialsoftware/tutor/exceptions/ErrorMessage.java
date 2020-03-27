@@ -29,7 +29,7 @@ public enum ErrorMessage {
     TOURNAMENT_INVALID_TOPIC("A Specified Topic does not exist while Creating Tournament"),
     TOURNAMENT_INVALID_STARTTIME("Start Time is out-of-format or not a valid TimeStamp in Tournament Creation"),
     TOURNAMENT_INVALID_TIMEFRAME("The specified TimeFrame in Tournament Creation is not valid."),
-    CLARIFICATION_REQUEST_NOT_FOUND("Question answer not found with id %d"),
+    CLARIFICATION_REQUEST_NOT_FOUND("Clarification resquest not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),
 
     COURSE_NOT_FOUND("Course not found with name %s"),

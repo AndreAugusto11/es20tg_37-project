@@ -6,6 +6,8 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
@@ -15,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,6 +79,15 @@ public class UserService {
 
         user.addCourse(courseExecution);
         courseExecution.addUser(user);
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<QuestionAnswer> getQuestionAnswers(String username) {
+        User user = this.userRepository.findByUsername(username);
+
+        return user.getQuizAnswers().stream()
+                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
+                .collect(Collectors.toList());
     }
 
     public String exportUsers() {

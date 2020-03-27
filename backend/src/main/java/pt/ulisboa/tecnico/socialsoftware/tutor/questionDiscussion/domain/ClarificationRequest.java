@@ -8,9 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
@@ -24,7 +21,7 @@ public class ClarificationRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "question_answer_id")
     private QuestionAnswer questionAnswer;
 
@@ -36,8 +33,9 @@ public class ClarificationRequest {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clarificationRequest", fetch = FetchType.LAZY, orphanRemoval=true)
-    private Set<ClarificationRequestAnswer> clarificationRequestAnswer = new HashSet<>();
+    @OneToOne
+    @JoinColumn(name = "clarification_request_answer_id")
+    private ClarificationRequestAnswer clarificationRequestAnswer;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -57,10 +55,10 @@ public class ClarificationRequest {
         }
 
         this.questionAnswer = questionAnswer;
+        questionAnswer.addClarificationRequest(this);
         this.question = question;
-        this.user = user;
-        questionAnswer.setClarificationRequest(this);
         question.addClarificationRequest(this);
+        this.user = user;
         user.addClarificationRequest(this);
         this.content = content;
     }
@@ -95,9 +93,9 @@ public class ClarificationRequest {
 
     public void setImage(Image image) { this.image = image; }
 
-    public Set<ClarificationRequestAnswer> getClarificationRequestAnswer() { return clarificationRequestAnswer; }
+    public ClarificationRequestAnswer getClarificationRequestAnswer() { return clarificationRequestAnswer; }
 
-    public void addClarificationRequestAnswer(ClarificationRequestAnswer clarificationRequestAnswer) {
-        this.clarificationRequestAnswer.add(clarificationRequestAnswer);
+    public void setClarificationRequestAnswer(ClarificationRequestAnswer clarificationRequestAnswer) {
+        this.clarificationRequestAnswer = clarificationRequestAnswer;
     }
 }

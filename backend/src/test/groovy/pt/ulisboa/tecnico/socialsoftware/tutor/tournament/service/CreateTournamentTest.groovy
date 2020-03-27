@@ -62,6 +62,7 @@ class CreateTournamentTest extends Specification {
 	{
 		student = new User('student', "istStu", 1, User.Role.STUDENT)
 		userRepository.save(student)
+		student = userRepository.findByKey(1)
 
 		topic = new HashSet<Topic>()
 		def tpc = new Topic()
@@ -103,16 +104,16 @@ class CreateTournamentTest extends Specification {
 		def result = tournamentService.createTournament(student, topic, number_of_questions, startTime, endTime)
 
 		then: "the returned data is correct"
-		result.getCreatorID() == student.getKey()
-		result.getNumQuests() == number_of_questions
-		result.getStartTime() == startTime
-		result.getEndTime() == endTime
-		def retTopic = result.getTopics()
+		result.getcreatorID() == student.getId()
+		result.getnumQuests() == number_of_questions
+		result.getstartTime() == startTime
+		result.getendTime() == endTime
+		def retTopic = result.gettopics()
 		def iter = retTopic.iterator()
 		def i=0
 		while(iter.hasNext())
 		{
-			iter.next().getName() == topic[i++].getName()
+			iter.next() == topic[i++].getId()
 		}
 	}
 
@@ -123,16 +124,16 @@ class CreateTournamentTest extends Specification {
 		def result = tournamentService.createTournament(student, topics, number_of_questions, startTime, endTime)
 
 		then: "the tournament was created correctly"
-		result.getCreatorID() == student.getKey()
-		result.getNumQuests() == number_of_questions
-		result.getStartTime() == startTime
-		result.getEndTime() == endTime
-		def retTopic = result.getTopics()
+		result.getcreatorID() == student.getId()
+		result.getnumQuests() == number_of_questions
+		result.getstartTime() == startTime
+		result.getendTime() == endTime
+		def retTopic = result.gettopics()
 		def iter = retTopic.iterator()
 		def i=0
 		while(iter.hasNext())
 		{
-			iter.next().getName() == topics[i++].getName()
+			iter.next() == topics[i++].getId()
 		}
 	}
 
@@ -144,10 +145,10 @@ class CreateTournamentTest extends Specification {
 
 		when:
 		tournamentRepository.save(tournament)
-		def res = tournamentService.findTournamentById(tournament.getId())
+		def res = tournamentService.findTournamentById(tournament.getid())
 
 		then:
-		res.getId() == tournament.getId()
+		res.getid() == tournament.getid()
 	}
 
 	def "user is empty"()
