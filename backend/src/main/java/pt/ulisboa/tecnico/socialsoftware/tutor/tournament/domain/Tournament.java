@@ -1,14 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 import javax.persistence.*;
@@ -45,6 +40,7 @@ public class Tournament {
 	@Column(name = "end_date")
 	private LocalDateTime endTime;
 
+	@Enumerated(EnumType.STRING)
 	private Status status;
 
 	public Tournament(){}
@@ -52,7 +48,7 @@ public class Tournament {
 	public Tournament(User creator)
 	{
 
-		if(creator == null) throw new TutorException(ErrorMessage.TOURNAMENT_NON_VALID_USER, creator.getKey());
+		if(creator == null) throw new TutorException(ErrorMessage.TOURNAMENT_NON_VALID_USER, creator.getId());
 
 		users.add(creator);
 		this.creator = creator;
@@ -74,48 +70,48 @@ public class Tournament {
 		}
 	}
 
-	public Integer getId()
+	public Integer getid()
 	{
 		return id;
 	}
 
-	public User getCreator()
+	public User getcreator()
 	{
 		return creator;
 	}
 
 
-	public Set<User> getUsers()
+	public Set<User> getusers()
 	{
 		return this.users;
 	}
 
-	public Set<Topic> getTopics()
+	public Set<Topic> gettopics()
 	{
 		return topics;
 	}
 
-	public int getNumQuests()
+	public int getnumQuests()
 	{
 		return numQuests;
 	}
 
-	public LocalDateTime getStartTime()
+	public LocalDateTime getstartTime()
 	{
 		return startTime;
 	}
 
-	public LocalDateTime getEndTime()
+	public LocalDateTime getendTime()
 	{
 		return endTime;
 	}
 
-	public Status getStatus()
+	public Status getstatus()
 	{
 		return status;
 	}
 
-	public void setCreator(User user)
+	public void setcreator(User user)
 	{
 		if(user == null) throw new TutorException(TOURNAMENT_NULL_USER);
 
@@ -134,7 +130,7 @@ public class Tournament {
 		users.add(user);
 	}
 
-	public void setNumQuests(Integer num)
+	public void setnumQuests(Integer num)
 	{
 		if(num == null) throw new TutorException(TOURNAMENT_NULL_NUM_QUESTS);
 		if (num <= 0)
@@ -144,12 +140,12 @@ public class Tournament {
 		numQuests = num;
 	}
 
-	public void setTopics (Set<Topic> topic)
+	public void settopics(Set<Topic> topic)
 	{
 		topics.addAll(topic);
 	}
 
-	public void setStartTime(LocalDateTime time)
+	public void setstartTime(LocalDateTime time)
 	{
 		if (time == null)
 		{
@@ -158,7 +154,7 @@ public class Tournament {
 		startTime = time;
 	}
 
-	public void setEndTime(LocalDateTime time)
+	public void setendTime(LocalDateTime time)
 	{
 		if (time == null)
 		{
@@ -182,7 +178,7 @@ public class Tournament {
 		}
 	}
 
-	public void setStatus(Status stat)
+	public void setstatus(Status stat)
 	{
 		status = stat;
 	}
