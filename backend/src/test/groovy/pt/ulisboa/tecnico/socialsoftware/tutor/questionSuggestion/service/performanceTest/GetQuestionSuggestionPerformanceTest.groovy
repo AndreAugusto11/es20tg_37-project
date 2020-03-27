@@ -90,6 +90,7 @@ class GetQuestionSuggestionPerformanceTest extends Specification {
             questionDto.setKey(1 + it)
             questionDto.setStatus(Question.Status.PENDING.name())
             questionDto.setOptions(options)
+            questionDto.setCreationDate("2020-03-16 17:51")
 
             questionSuggestionDto = new QuestionSuggestionDto()
             questionSuggestionDto.setQuestionDto(questionDto)

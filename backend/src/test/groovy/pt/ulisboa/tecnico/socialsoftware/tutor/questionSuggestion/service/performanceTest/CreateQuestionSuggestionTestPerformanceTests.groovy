@@ -68,6 +68,7 @@ class CreateQuestionSuggestionTestPerformanceTests extends Specification {
         questionDto1.setContent("content")
         questionDto1.setKey(1)
         questionDto1.setStatus(Question.Status.PENDING.name())
+        questionDto1.setCreationDate("2020-03-16 17:51")
     }
 
     def "performance testing to create 10000 question suggestion"() {
