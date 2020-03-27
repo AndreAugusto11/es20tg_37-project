@@ -56,13 +56,13 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">1234</stringProp>
+          <stringProp name="password">SoloLeveling10</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">manel</stringProp>
+          <stringProp name="username">jgalamba</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop 50 times" enabled="true">
@@ -313,7 +313,8 @@ VALUES (${Count},651,1,null,null,&apos;OPEN&apos;);</stringProp>
       <hashTree>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">DELETE FROM tournaments_users;
+          <stringProp name="query">DELETE FROM tournaments_topics;
+DELETE FROM tournaments_users;
 DELETE FROM users_tournaments;
 DELETE FROM tournaments;</stringProp>
           <stringProp name="queryArguments"></stringProp>

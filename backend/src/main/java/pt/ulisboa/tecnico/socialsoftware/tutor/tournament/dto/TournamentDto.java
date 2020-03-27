@@ -69,7 +69,7 @@ public class TournamentDto implements Serializable {
         this.enrolledStudentsIds.addAll(enrolledStudentsIds);
     }
 
-    private void setid(Integer id) {
+    public void setid(Integer id) {
         this.id = id;
     }
 

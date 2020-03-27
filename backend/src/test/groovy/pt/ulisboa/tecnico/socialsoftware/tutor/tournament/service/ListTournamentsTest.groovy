@@ -30,7 +30,7 @@ class ListTournamentsTest extends Specification {
         userRepository.save(user)
     }
 
-    def "2 tournaments"() {
+    def "Lists tournaments when there are 2 tournaments"() {
         given:
         def tournament1 = new Tournament(user)
         tournamentRepository.save(tournament1)
@@ -45,7 +45,7 @@ class ListTournamentsTest extends Specification {
         result.get(1).getid() == tournament2.getid()
     }
 
-    def "no tournaments"() {
+    def "Lists tournaments when there are no tournaments"() {
         when:
         def result = tournamentService.getTournaments()
         then:
