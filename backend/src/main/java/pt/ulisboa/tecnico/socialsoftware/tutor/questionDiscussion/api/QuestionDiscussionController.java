@@ -27,7 +27,8 @@ public class QuestionDiscussionController {
 
     @PostMapping("/questionAnswers/{questionAnswerId}/clarificationRequests")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionAnswerId, 'QUESTION_ANSWER.ACCESS')")
-    public ClarificationRequestDto createClarificationRequest(@PathVariable Integer questionAnswerId, @Valid @RequestBody ClarificationRequestDto clarificationRequest) {
+    public ClarificationRequestDto createClarificationRequest(@PathVariable Integer questionAnswerId,
+                                                              @Valid @RequestBody ClarificationRequestDto clarificationRequest) {
         return questionDiscussionService.createClarificationRequest(questionAnswerId, clarificationRequest);
     }
 
@@ -45,7 +46,9 @@ public class QuestionDiscussionController {
 
     @PostMapping("/executions/{executionId}/clarificationRequests/{clarificationRequestId}/clarificationRequestAnswers")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public ClarificationRequestAnswerDto createClarificationRequestAnswer(@PathVariable Integer executionId, @PathVariable Integer clarificationRequestId, @Valid @RequestBody ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
+    public ClarificationRequestAnswerDto createClarificationRequestAnswer(@PathVariable Integer executionId,
+                                                                          @PathVariable Integer clarificationRequestId,
+                                                                          @Valid @RequestBody ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
         return questionDiscussionService.createClarificationRequestAnswer(clarificationRequestId, clarificationRequestAnswerDto);
     }
 }
