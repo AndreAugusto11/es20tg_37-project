@@ -21,6 +21,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSugges
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
 import spock.lang.Specification
 
+import java.time.LocalDateTime
+
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_COUSEID
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_SUGGESTION
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_USERID
@@ -92,11 +94,13 @@ class CreateQuestionSuggestionTest extends Specification {
         questionDto1.setContent("content")
         questionDto1.setKey(1)
         questionDto1.setStatus(Question.Status.PENDING.name())
+        questionDto1.setCreationDate("2020-04-16 17:51")
 
         questionDto2 = new QuestionDto();
         questionDto2.setContent("content")
         questionDto2.setKey(2)
         questionDto2.setStatus(Question.Status.PENDING.name())
+        questionDto2.setCreationDate("2020-03-16 17:51")
     }
 
     def "create a question suggestion with no image and one option"() {
