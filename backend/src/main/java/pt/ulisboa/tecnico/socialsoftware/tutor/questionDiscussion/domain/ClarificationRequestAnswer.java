@@ -18,8 +18,7 @@ public class ClarificationRequestAnswer {
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @ManyToOne
-    @JoinColumn(name = "clarification_request_id")
+    @OneToOne(mappedBy = "clarificationRequestAnswer")
     private ClarificationRequest clarificationRequest;
 
     @ManyToOne(fetch=FetchType.LAZY)
@@ -50,8 +49,10 @@ public class ClarificationRequestAnswer {
         this.user = user;
         this.content = content;
         this.type = type;
-        clarificationRequest.addClarificationRequestAnswer(this);
+        clarificationRequest.setClarificationRequestAnswer(this);
         user.addClarificationRequestAnswers(this);
+
+        this.clarificationRequest.setStatus(ClarificationRequest.Status.CLOSED);
     }
 
     public Integer getId() { return id; }

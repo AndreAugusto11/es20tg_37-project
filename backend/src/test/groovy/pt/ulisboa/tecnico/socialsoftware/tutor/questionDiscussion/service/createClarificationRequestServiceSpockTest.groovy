@@ -153,7 +153,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         clarificationRequestDto.setName(user.getName())
         clarificationRequestDto.setUsername(user.getUsername())
         def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
-        clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
+        clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
 
         when:
         questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
@@ -170,7 +170,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         result.getQuestion() == questionAnswer.getQuizQuestion().getQuestion()
         result.getUser() == questionAnswer.getQuizAnswer().getUser()
         and: "is associated correctly"
-        questionAnswer.getClarificationRequest() == result
+        questionAnswer.getClarificationRequest().contains(result)
         question.getClarificationRequest().contains(result)
         user.getClarificationRequests().contains(result)
 
@@ -188,7 +188,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         clarificationRequestDto.setName(user.getName())
         clarificationRequestDto.setUsername(user.getUsername())
         def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
-        clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
+        clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
 
         when:
         questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
@@ -205,7 +205,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         result.getQuestion() == questionAnswer.getQuizQuestion().getQuestion()
         result.getUser() == questionAnswer.getQuizAnswer().getUser()
         and: "is associated correctly"
-        questionAnswer.getClarificationRequest() == result
+        questionAnswer.getClarificationRequest().contains(result)
         question.getClarificationRequest().contains(result)
         user.getClarificationRequests().contains(result)
     }
@@ -222,7 +222,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         clarificationRequestDto.setName(user.getName())
         clarificationRequestDto.setUsername(user.getUsername())
         def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
-        clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
+        clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
 
         and: "an image"
         def image = new ImageDto()
@@ -248,7 +248,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         result.getImage().getUrl() == URL
         result.getImage().getWidth() == 20
         and: "is associated correctly"
-        questionAnswer.getClarificationRequest() == result
+        questionAnswer.getClarificationRequest().contains(result)
         question.getClarificationRequest().contains(result)
         user.getClarificationRequests().contains(result)
 
@@ -272,7 +272,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         clarificationRequestDto.setName(diffUser.getName())
         clarificationRequestDto.setUsername(diffUser.getUsername())
         def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
-        clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
+        clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
 
         when:
         questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
@@ -300,7 +300,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         clarificationRequestDto.setName(diffUser.getName())
         clarificationRequestDto.setUsername(diffUser.getUsername())
         def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
-        clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
+        clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
 
         when:
         questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
@@ -336,7 +336,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
         questionAnswerDto.setQuestion(new QuestionDto(diffQuestion))
         questionAnswerDto.setOption(new OptionDto(option))
-        clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
+        clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
 
         when:
         questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
@@ -358,7 +358,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         clarificationRequestDto.setName(user.getName())
         clarificationRequestDto.setUsername(user.getUsername())
         def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
-        clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
+        clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
 
         when:
         questionDiscussionService.createClarificationRequest(null, clarificationRequestDto)
@@ -382,7 +382,7 @@ class createClarificationRequestServiceSpockTest extends Specification {
         clarificationRequestDto.setName(user.getName())
         clarificationRequestDto.setUsername(username)
         def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
-        clarificationRequestDto.setQuestionAnswer(questionAnswerDto)
+        clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
 
         when:
         questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)

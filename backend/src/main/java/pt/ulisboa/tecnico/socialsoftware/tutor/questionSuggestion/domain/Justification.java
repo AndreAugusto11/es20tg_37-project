@@ -21,7 +21,6 @@ public class Justification {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    // Check if cascade is right
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "justification")
     private QuestionSuggestion questionSuggestion;
 
@@ -29,7 +28,6 @@ public class Justification {
     @JoinColumn(name = "user_id")
     private User user;
 
-    // Check if cascade is right
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "justification")
     private Image image;
 

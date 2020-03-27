@@ -5,14 +5,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 
+import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class QuestionSuggestionDto {
+public class QuestionSuggestionDto implements Serializable {
 
     private Integer id;
     private QuestionDto questionDto;
     private String status;
     private String creationDate = null;
+    private JustificationDto justificationDto = null;
 
     public QuestionSuggestionDto() {
     }
@@ -20,6 +23,15 @@ public class QuestionSuggestionDto {
     public QuestionSuggestionDto(QuestionSuggestion questionSuggestion) {
         this.id = questionSuggestion.getId();
         this.questionDto = new QuestionDto(questionSuggestion.getQuestion());
+        this.status = questionSuggestion.getStatus().name();
+
+        if (questionSuggestion.getCreationDate() != null) {
+            this.creationDate = questionSuggestion.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        }
+
+        if (questionSuggestion.getJustification() != null) {
+            this.justificationDto = new JustificationDto(questionSuggestion.getJustification());
+        }
     }
 
     public Integer getId() { return id; }
@@ -57,6 +69,10 @@ public class QuestionSuggestionDto {
     public QuestionDto getQuestionDto(){ return questionDto; }
 
     public void setQuestionDto(QuestionDto questionDto){ this.questionDto = questionDto; }
+
+    public JustificationDto getJustificationDto() { return justificationDto; }
+
+    public void setJustificationDto(JustificationDto justificationDto) { this.justificationDto = justificationDto; }
 
     @Override
     public String toString() {

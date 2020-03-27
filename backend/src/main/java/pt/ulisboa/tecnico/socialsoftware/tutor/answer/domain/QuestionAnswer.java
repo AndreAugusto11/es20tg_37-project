@@ -2,9 +2,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "question_answers")
@@ -30,9 +33,8 @@ public class QuestionAnswer {
 
     private Integer sequence;
 
-    @OneToOne
-    @JoinColumn(name = "clarification_request_id")
-    private ClarificationRequest clarificationRequest;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionAnswer", orphanRemoval=true)
+    private Set<ClarificationRequest> clarificationRequest = new HashSet<>();
 
     public QuestionAnswer() {
     }
@@ -134,9 +136,9 @@ public class QuestionAnswer {
         return getOption() != null && getOption().getCorrect();
     }
 
-    public ClarificationRequest getClarificationRequest() { return clarificationRequest; }
+    public Set<ClarificationRequest> getClarificationRequest() { return this.clarificationRequest; }
 
-    public void setClarificationRequest(ClarificationRequest clarificationRequest) {
-        this.clarificationRequest = clarificationRequest;
+    public void addClarificationRequest(ClarificationRequest clarificationRequest) {
+        this.clarificationRequest.add(clarificationRequest);
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification;
@@ -22,6 +23,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -44,20 +48,19 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionSuggestionDto createSuggestionQuestion(Integer userId, Integer courseId, QuestionSuggestionDto questionSuggestionDto){
+    public QuestionSuggestionDto createQuestionSuggestion(Integer userId, Integer courseId, QuestionSuggestionDto questionSuggestionDto){
 
         if (questionSuggestionDto == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTION);
         }
 
-        if(userId == null){
+        if (userId == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
         }
 
-        if(courseId == null){
+        if (courseId == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_COUSEID);
         }
-
 
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
@@ -94,6 +97,7 @@ public class QuestionSuggestionService {
 
         suggestion.setStatus(QuestionSuggestion.Status.ACCEPTED);
         suggestion.getQuestion().setStatus(Question.Status.AVAILABLE);
+        suggestion.getQuestion().setCreationDate(LocalDateTime.now());
     }
 
     @Retryable(
@@ -138,5 +142,25 @@ public class QuestionSuggestionService {
         }
 
         return suggestion;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<QuestionSuggestionDto> getQuestionSuggestions(int userId, Integer courseId) {
+        return questionSuggestionRepository.findQuestionSuggestions(userId).stream()
+                .filter(questionSuggestion -> questionSuggestion.getQuestion().getCourse().getId() == courseId)
+                .map(QuestionSuggestionDto::new)
+                .sorted(Comparator.comparing(QuestionSuggestionDto::getCreationDate))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseDto findQuestionSuggestionCourse(Integer questionSuggestionId) {
+        return questionSuggestionRepository.findById(questionSuggestionId)
+                .map(QuestionSuggestion::getCourse)
+                .map(CourseDto::new)
+                .orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
     }
 }

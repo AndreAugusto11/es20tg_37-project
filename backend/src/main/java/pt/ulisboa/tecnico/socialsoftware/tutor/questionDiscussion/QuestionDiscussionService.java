@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -45,6 +54,9 @@ public class QuestionDiscussionService {
     @PersistenceContext
     EntityManager entityManager;
 
+    @Retryable(
+        value = { SQLException.class },
+        backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ClarificationRequestDto createClarificationRequest(Integer questionAnswerId, ClarificationRequestDto clarificationRequestDto) {
         QuestionAnswer questionAnswer = getQuestionAnswer(questionAnswerId);
@@ -66,10 +78,30 @@ public class QuestionDiscussionService {
         return new ClarificationRequestDto(clarificationRequest);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<ClarificationRequestDto> getClarificationRequests(String username, Integer executionId) {
+        User user = getUser(username);
+        Set<ClarificationRequest> clarificationRequests = new HashSet<>();
+
+        if (user.getRole() == User.Role.STUDENT) {
+            clarificationRequests = user.getClarificationRequests();
+        }
+
+        if (user.getRole() == User.Role.TEACHER) {
+            clarificationRequests = clarificationRequestRepository.findClarificationRequestsByCourseExecutions(executionId);
+        }
+
+        return clarificationRequests.stream()
+                .filter(clarificationRequest -> clarificationRequest.getQuestionAnswer().getQuizQuestion().getQuiz().getCourseExecution().getId() == executionId)
+                .map(ClarificationRequestDto::new)
+                .sorted(Comparator.comparing(ClarificationRequestDto::getStatus))
+                .collect(Collectors.toList());
+    }
+
     private Question getQuestion(ClarificationRequestDto clarificationRequestDto) {
         return questionRepository
-                    .findById(clarificationRequestDto.getQuestionAnswer().getQuestion().getId())
-                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, clarificationRequestDto.getQuestionAnswer().getQuestion().getId()));
+                    .findById(clarificationRequestDto.getQuestionAnswerDto().getQuestion().getId())
+                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, clarificationRequestDto.getQuestionAnswerDto().getQuestion().getId()));
     }
 
     private QuestionAnswer getQuestionAnswer(Integer questionAnswerId) {
@@ -107,12 +139,9 @@ public class QuestionDiscussionService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public ClarificationRequestAnswerDto createClarificationRequestAnswer(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
+    public ClarificationRequestAnswerDto createClarificationRequestAnswer(Integer clarificationRequestId, ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
 
-        checkClarificationRequest(clarificationRequestAnswerDto);
-
-        ClarificationRequest clarificationRequest = clarificationRequestRepository.findById(clarificationRequestAnswerDto.getClarificationRequest().getId())
-                .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_NOT_FOUND, clarificationRequestAnswerDto.getClarificationRequest().getId()));
+        ClarificationRequest clarificationRequest = getClarificationRequest(clarificationRequestId);
 
         User user = getUser(clarificationRequestAnswerDto.getUsername());
 
@@ -124,15 +153,18 @@ public class QuestionDiscussionService {
         return new ClarificationRequestAnswerDto(clarificationRequestAnswer);
     }
 
+    private ClarificationRequest getClarificationRequest(Integer clarificationRequestId) {
+        if (clarificationRequestId == null) {
+            throw new TutorException(CLARIFICATION_REQUEST_NOT_DEFINED);
+        }
+
+        return clarificationRequestRepository.findById(clarificationRequestId)
+                .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_NOT_FOUND, clarificationRequestId));
+    }
+
     private void checkClarificationRequestAnswerType(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
         if (clarificationRequestAnswerDto.getType() == null) {
             throw new TutorException(CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED);
-        }
-    }
-
-    private void checkClarificationRequest(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
-        if (clarificationRequestAnswerDto.getClarificationRequest() == null) {
-            throw new TutorException(CLARIFICATION_REQUEST_NOT_DEFINED);
         }
     }
 }
