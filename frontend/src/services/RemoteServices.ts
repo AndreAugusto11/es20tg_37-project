@@ -14,6 +14,7 @@ import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -570,6 +571,17 @@ export default class RemoteServices {
         );
         document.body.appendChild(link);
         link.click();
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createClarificationRequest(clarificationRequest: ClarificationRequest): Promise<ClarificationRequest> {
+    return httpClient
+      .post(`/questionAnswers/{questionAnswerId}/clarificationRequests`, clarificationRequest)
+      .then(response => {
+        return new ClarificationRequest(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
