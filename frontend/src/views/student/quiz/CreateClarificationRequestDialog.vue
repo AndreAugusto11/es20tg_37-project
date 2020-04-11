@@ -49,11 +49,13 @@
   import { Component, Model, Prop, Vue } from 'vue-property-decorator';
   import RemoteServices from '@/services/RemoteServices';
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
+  import StatementAnswer from '@/models/statement/StatementAnswer';
 
   @Component
   export default class CreateClarificationRequestDialog extends Vue {
     @Model('dialog', Boolean) dialog!: boolean;
     @Prop({ type: ClarificationRequest, required: true }) readonly clarificationRequest!: ClarificationRequest;
+    @Prop({ type: StatementAnswer, required: true }) readonly answer!: StatementAnswer;
 
     createClarificationRequest!: ClarificationRequest;
 
@@ -73,9 +75,12 @@
         return;
       }
 
-      if (this.createClarificationRequest) {
+      if (this.createClarificationRequest && this.answer.questionAnswerId) {
         try {
-          const result = await RemoteServices.createClarificationRequest(this.createClarificationRequest);
+          this.createClarificationRequest.name = this.$store.getters.getUser.name;
+          this.createClarificationRequest.username = this.$store.getters.getUser.username;
+          this.createClarificationRequest.questionAnswerDto = this.answer.questionAnswerDto;
+          const result = await RemoteServices.createClarificationRequest(this.answer.questionAnswerId, this.createClarificationRequest);
           this.$emit('new-clarification-request', result);
         } catch (error) {
           await this.$store.dispatch('error', error);

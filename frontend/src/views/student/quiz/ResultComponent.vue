@@ -69,6 +69,7 @@
       v-if="currentClarificationRequest"
       v-model="createClarificationRequestDialog"
       :clarification-request="currentClarificationRequest"
+      :answer="answer"
       v-on:new-clarification-request="onCreateClarificationRequest"
       v-on:close-dialog="onCloseDialog"
     />
@@ -84,6 +85,7 @@ import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 import Image from '@/models/management/Image';
 import CreateClarificationRequestDialog from '@/views/student/quiz/CreateClarificationRequestDialog.vue';
 import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
+import store from '@/store';
 
 @Component({
   components: {

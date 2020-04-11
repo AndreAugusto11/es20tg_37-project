@@ -577,9 +577,9 @@ export default class RemoteServices {
       });
   }
 
-  static async createClarificationRequest(clarificationRequest: ClarificationRequest): Promise<ClarificationRequest> {
+  static async createClarificationRequest(questionAnswerId: number, clarificationRequest: ClarificationRequest): Promise<ClarificationRequest> {
     return httpClient
-      .post(`/questionAnswers/{questionAnswerId}/clarificationRequests`, clarificationRequest)
+      .post(`/questionAnswers/${questionAnswerId}/clarificationRequests`, clarificationRequest)
       .then(response => {
         return new ClarificationRequest(response.data);
       })
