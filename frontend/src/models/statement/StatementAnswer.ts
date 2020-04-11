@@ -2,7 +2,7 @@ import { QuestionAnswer } from '@/models/management/QuestionAnswer';
 
 export default class StatementAnswer {
   public questionAnswerId: number | null = null;
-  public questionAnswerDto: QuestionAnswer;
+  public questionAnswerDto!: QuestionAnswer;
   public optionId: number | null = null;
   public timeTaken: number = 0;
   public sequence!: number;

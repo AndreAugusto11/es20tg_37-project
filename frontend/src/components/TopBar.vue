@@ -152,6 +152,11 @@
           <v-icon>fas fa-user</v-icon>
         </v-btn>
 
+        <v-btn to="/student/discussion" v-if="isStudent && currentCourse" text dark>
+          Discussion
+          <v-icon>fas fa-comments</v-icon>
+        </v-btn>
+
         <v-btn
           v-if="isLoggedIn && moreThanOneCourse"
           to="/courses"

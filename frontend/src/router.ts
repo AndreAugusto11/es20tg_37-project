@@ -25,6 +25,7 @@ import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
+import ClarificationRequestsView from '@/views/student/discussion/ClarificationRequestsView.vue';
 
 Vue.use(Router);
 
@@ -173,6 +174,15 @@ let router = new Router({
           component: StatsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Stats',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'discussion',
+          name: 'discussion',
+          component: ClarificationRequestsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Discussion',
             requiredAuth: 'Student'
           }
         },
