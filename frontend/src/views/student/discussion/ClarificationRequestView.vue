@@ -50,11 +50,12 @@
                     <p class="post-text">{{ this.clarificationRequest.questionAnswerDto.question.content }}</p>
                 </v-col>
             </v-row>
-            <v-subheader>Possible options</v-subheader>
             <v-list>
                 <v-list-item class="post-text" v-for="item in this.clarificationRequest.questionAnswerDto.question.options" :key="item.content">
                     <v-list-item-icon>
-                        <v-icon color="blue">mdi-circle-medium</v-icon>
+                        <v-icon v-if="item.correct" color="green">mdi-check</v-icon>
+                        <v-icon v-else-if="chosen(item.content)" color="yellow">mdi-help</v-icon>
+                        <v-icon v-else color="red">mdi-close</v-icon>
                     </v-list-item-icon>
 
                     <v-list-item-content>
@@ -62,16 +63,6 @@
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
-            <v-subheader>Student option</v-subheader>
-            <v-row
-                    align="center"
-                    class="spacer ml-5"
-                    no-gutters
-            >
-                <v-col>
-                    <p class="post-text">{{ this.clarificationRequest.questionAnswerDto.option.content }}</p>
-                </v-col>
-            </v-row>
         </v-card>
     </div>
 </template>
@@ -86,7 +77,7 @@
 
   @Component
   export default class ClarificationRequestView extends Vue {
-    clarificationRequest: ClarificationRequest;
+    clarificationRequest!: ClarificationRequest;
     statusList = ['OPEN', 'CLOSED'];
 
     headers: object = [
@@ -95,7 +86,7 @@
     ];
 
     created() {
-      this.clarificationRequest = JSON.parse(this.$route.params.clarificationRequest);
+        this.clarificationRequest = JSON.parse(this.$route.params.clarificationRequest);
     }
 
     customFilter(value: string, search: string, question: Question) {
@@ -115,6 +106,10 @@
     getStatusColor(status: string) {
       if (status === 'CLOSE') return 'red';
       else return 'green';
+    }
+
+    chosen(content: string) {
+      return content === this.clarificationRequest.questionAnswerDto.option.content;
     }
   }
 </script>
