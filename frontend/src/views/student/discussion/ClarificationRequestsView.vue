@@ -1,6 +1,13 @@
 <template>
     <v-card class="table">
+        <v-skeleton-loader
+                v-if="this.$store.getters.getLoading"
+                ref="skeleton"
+                type="table"
+                class="mx-auto"
+        ></v-skeleton-loader>
         <v-data-table
+                v-if="!this.$store.getters.getLoading"
                 :headers="headers"
                 :custom-filter="customFilter"
                 :items="clarificationRequests"
@@ -9,6 +16,7 @@
                 :mobile-breakpoint="0"
                 :items-per-page="15"
                 :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+                @click:row='openClarificationRequest'
         >
             <template v-slot:top>
                 <v-card-title>
@@ -26,8 +34,8 @@
             </template>
 
             <template v-slot:item.status="{ item }">
-                <v-chip :color="getStatusColor(item)" small>
-                    <span>{{ item }}</span>
+                <v-chip :color="getStatusColor(item.status)" small>
+                    <span>{{ item.status }}</span>
                 </v-chip>
             </template>
         </v-data-table>
@@ -41,6 +49,8 @@
   import Question from '@/models/management/Question';
   import Image from '@/models/management/Image';
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
+  import StatementQuiz from '@/models/statement/StatementQuiz';
+  import StatementManager from '@/models/statement/StatementManager';
 
   @Component
   export default class ClarificationRequestsView extends Vue {
@@ -80,6 +90,10 @@
     getStatusColor(status: string) {
       if (status === 'CLOSE') return 'red';
       else return 'green';
+    }
+
+    async openClarificationRequest(value: ClarificationRequest) {
+      await this.$router.push({ name: 'discussion1', params: { clarificationRequest: JSON.stringify(value) } });
     }
   }
 </script>

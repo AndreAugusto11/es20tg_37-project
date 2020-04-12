@@ -26,6 +26,7 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import ClarificationRequestsView from '@/views/student/discussion/ClarificationRequestsView.vue';
+import ClarificationRequestView from '@/views/student/discussion/ClarificationRequestView.vue';
 
 Vue.use(Router);
 
@@ -183,6 +184,16 @@ let router = new Router({
           component: ClarificationRequestsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Discussion',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'discussion1',
+          name: 'discussion1',
+          component: ClarificationRequestView,
+          props: true,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Discussion1',
             requiredAuth: 'Student'
           }
         },
