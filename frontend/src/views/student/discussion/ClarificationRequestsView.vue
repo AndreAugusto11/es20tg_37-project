@@ -56,7 +56,6 @@
   export default class ClarificationRequestsView extends Vue {
     clarificationRequests: ClarificationRequest[] = [];
     search: string = '';
-    statusList = ['OPEN', 'CLOSED'];
 
     headers: object = [
       { text: 'Clarification', value: 'content', align: 'left' },
@@ -93,7 +92,7 @@
     }
 
     async openClarificationRequest(value: ClarificationRequest) {
-      await this.$router.push({ name: 'discussion1', params: { clarificationRequest: JSON.stringify(value) } });
+      await this.$router.push({ name: 'clarification', params: { clarificationRequest: JSON.stringify(value) } });
     }
   }
 </script>
