@@ -188,12 +188,12 @@ let router = new Router({
           }
         },
         {
-          path: 'discussion1',
-          name: 'discussion1',
+          path: 'clarification',
+          name: 'clarification',
           component: ClarificationRequestView,
           props: true,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Discussion1',
+            title: process.env.VUE_APP_NAME + ' - Clarification',
             requiredAuth: 'Student'
           }
         },
