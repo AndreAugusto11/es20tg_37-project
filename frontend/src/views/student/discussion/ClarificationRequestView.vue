@@ -61,7 +61,7 @@
                         </v-tooltip>
                         <v-tooltip v-else-if="chosen(item.content)" left>
                             <template v-slot:activator="{ on }">
-                                <v-icon color="yellow" v-on="on">mdi-help</v-icon>
+                                <v-icon color="yellow darken-3" v-on="on">mdi-help</v-icon>
                             </template>
                             <span>Student's option</span>
                         </v-tooltip>
