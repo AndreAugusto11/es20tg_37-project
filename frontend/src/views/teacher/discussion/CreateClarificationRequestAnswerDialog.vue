@@ -60,7 +60,7 @@
       createClarificationRequestAnswer!: ClarificationRequestAnswer;
 
     created() {
-      this.createClarificationRequestAnswer = new ClarificationRequestAnswer(this.clarificationRequest);
+      this.createClarificationRequestAnswer = new ClarificationRequestAnswer(this.createClarificationRequestAnswer);
     }
 
     async saveClarificationRequestAnswer() {
