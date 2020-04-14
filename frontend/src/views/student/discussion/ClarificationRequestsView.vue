@@ -33,6 +33,10 @@
                 <p v-html="convertMarkDownNoFigure(item.content, null)" />
             </template>
 
+            <template v-slot:item.number="{ item }">
+                <p v-html="convertMarkDownNoFigure(getNumberOfAnswers(item.clarificationRequestAnswerDto), null)" />
+            </template>
+
             <template v-slot:item.status="{ item }">
                 <v-chip :color="getStatusColor(item.status)" small>
                     <span>{{ item.status }}</span>
@@ -51,6 +55,7 @@
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
   import StatementQuiz from '@/models/statement/StatementQuiz';
   import StatementManager from '@/models/statement/StatementManager';
+  import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 
   @Component
   export default class ClarificationRequestsView extends Vue {
@@ -59,6 +64,7 @@
 
     headers: object = [
       { text: 'Clarification', value: 'content', align: 'left' },
+      { text: 'Number of Answers', value: 'number', align: 'left' },
       { text: 'Status', value: 'status', align: 'center' }
     ];
 
@@ -89,6 +95,13 @@
     getStatusColor(status: string) {
       if (status === 'CLOSE') return 'red';
       else return 'green';
+    }
+
+    getNumberOfAnswers(clarificationRequestAnswer: ClarificationRequestAnswer) {
+      if (clarificationRequestAnswer.id == null) {
+        return '0';
+      }
+      return '1';
     }
 
     async openClarificationRequest(value: ClarificationRequest) {

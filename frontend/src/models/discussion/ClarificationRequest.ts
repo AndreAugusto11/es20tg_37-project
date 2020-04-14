@@ -1,5 +1,6 @@
 import { QuestionAnswer } from '@/models/management/QuestionAnswer';
 import Image from '@/models/management/Image';
+import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 
 export class ClarificationRequest {
   id: number | null = null;
@@ -9,6 +10,7 @@ export class ClarificationRequest {
   username: string | null = null;
   status: string = 'OPEN';
   image: Image | null = null;
+  clarificationRequestAnswerDto!: ClarificationRequestAnswer;
 
   constructor(jsonObj?: ClarificationRequest) {
     if (jsonObj) {
@@ -19,6 +21,7 @@ export class ClarificationRequest {
       this.username = jsonObj.username;
       this.status = jsonObj.status;
       this.image = jsonObj.image;
+      this.clarificationRequestAnswerDto = new ClarificationRequestAnswer(jsonObj.clarificationRequestAnswerDto);
     }
   }
 }
