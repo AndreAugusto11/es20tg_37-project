@@ -49,8 +49,8 @@
   import { Component, Model, Prop, Vue } from 'vue-property-decorator';
   import RemoteServices from '@/services/RemoteServices';
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
-  import { ClarificationRequestAnswer } from "@/models/discussion/ClarificationRequestAnswer";
-  import { TYPE } from "@/models/discussion/ClarificationRequestAnswer";
+  import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
+  import { TYPE } from '@/models/discussion/ClarificationRequestAnswer';
 
   @Component
   export default class CreateClarificationRequestAnswerDialog extends Vue {
