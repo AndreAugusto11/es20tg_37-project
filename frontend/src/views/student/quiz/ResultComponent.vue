@@ -64,6 +64,12 @@
       <v-btn color="primary" dark @click="newClarificationRequest" data-cy="createButton">
         Ask clarification
       </v-btn>
+      <v-btn class="ml-5" v-if="this.answer.questionAnswerDto.hasClarificationRequest" color="primary" dark @click="openClarificationRequest" data-cy="createButton">
+        See clarification
+      </v-btn>
+      <v-btn class="ml-5" v-else disabled data-cy="createButton">
+        See clarification
+      </v-btn>
     </v-container>
     <create-clarification-request-dialog
       v-if="currentClarificationRequest"
@@ -86,6 +92,7 @@ import Image from '@/models/management/Image';
 import CreateClarificationRequestDialog from '@/views/student/quiz/CreateClarificationRequestDialog.vue';
 import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
 import store from '@/store';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component({
   components: {
@@ -99,6 +106,7 @@ export default class ResultComponent extends Vue {
   @Prop(StatementAnswer) readonly answer!: StatementAnswer;
   @Prop() readonly questionNumber!: number;
   currentClarificationRequest: ClarificationRequest | null = null;
+  clarification: ClarificationRequest | null = null;
   createClarificationRequestDialog: boolean = false;
   hover: boolean = false;
   optionLetters: string[] = ['A', 'B', 'C', 'D'];
@@ -130,6 +138,19 @@ export default class ResultComponent extends Vue {
   onCloseDialog() {
     this.createClarificationRequestDialog = false;
     this.currentClarificationRequest = null;
+  }
+
+  async openClarificationRequest() {
+    await this.$store.dispatch('loading');
+    if (this.answer.questionAnswerId) {
+      try {
+        this.clarification = await RemoteServices.getClarificationRequest(this.answer.questionAnswerId);
+        await this.$router.push({ name: 'clarification', params: { clarificationRequest: JSON.stringify(this.clarification) } });
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+      await this.$store.dispatch('clearLoading');
+    }
   }
 }
 </script>
