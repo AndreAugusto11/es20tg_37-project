@@ -93,7 +93,7 @@
     }
 
     getStatusColor(status: string) {
-      if (status === 'CLOSE') return 'red';
+      if (status === 'CLOSED') return 'red';
       else return 'green';
     }
 
