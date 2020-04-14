@@ -61,7 +61,10 @@
       </li>
     </ul>
     <v-container>
-      <v-btn color="primary" dark @click="newClarificationRequest" data-cy="createButton">
+      <v-btn v-if="this.answer.questionAnswerDto.hasClarificationRequest" disabled data-cy="createButton">
+        Ask clarification
+      </v-btn>
+      <v-btn v-else color="primary" dark @click="newClarificationRequest" data-cy="createButton">
         Ask clarification
       </v-btn>
       <v-btn class="ml-5" v-if="this.answer.questionAnswerDto.hasClarificationRequest" color="primary" dark @click="openClarificationRequest" data-cy="createButton">
@@ -133,6 +136,7 @@ export default class ResultComponent extends Vue {
   async onCreateClarificationRequest(clarificationRequest: ClarificationRequest) {
     this.createClarificationRequestDialog = false;
     this.currentClarificationRequest = null;
+    this.$emit('update-answers');
   }
 
   onCloseDialog() {
