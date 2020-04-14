@@ -1,8 +1,9 @@
 <template>
     <div class="container">
         <clarification-request :clarification-request="clarificationRequest" />
+        <clarification-request-answer :clarification-request="clarificationRequest" />
         <v-container>
-            <v-btn color="primary" dark @click="newClarificationRequestAnswer" data-cy="createButton">
+            <v-btn v-if="!this.clarificationRequest.clarificationRequestAnswerDto.content" color="primary" dark @click="newClarificationRequestAnswer" data-cy="createButton">
                 Answer
             </v-btn>
         </v-container>
@@ -21,14 +22,16 @@
     import {Component, Vue} from 'vue-property-decorator';
     import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
     import CreateClarificationRequestAnswerDialog
-        from "@/views/teacher/discussion/CreateClarificationRequestAnswerDialog.vue";
+        from '@/views/teacher/discussion/CreateClarificationRequestAnswerDialog.vue';
     import ClarificationRequestComponent from '@/components/discussion/ClarificationRequestComponent.vue';
-    import {ClarificationRequestAnswer} from "@/models/discussion/ClarificationRequestAnswer";
+    import {ClarificationRequestAnswer} from '@/models/discussion/ClarificationRequestAnswer';
+    import ClarificationRequestAnswerComponent from '@/components/discussion/ClarificationRequestAnswerComponent.vue';
 
     @Component({
       components: {
         'create-clarification-request-answer-dialog': CreateClarificationRequestAnswerDialog,
-        'clarification-request': ClarificationRequestComponent
+        'clarification-request': ClarificationRequestComponent,
+        'clarification-request-answer': ClarificationRequestAnswerComponent
       }
     })
 
