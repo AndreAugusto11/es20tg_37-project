@@ -6,16 +6,24 @@
                 Answer
             </v-btn>
         </v-container>
+        <create-clarification-request-answer-dialog
+                v-if="currentClarificationRequestAnswer"
+                v-model="createClarificationRequestAnswerDialog"
+                :clarification-request-answer="currentClarificationRequestAnswer"
+                :clarification-request="clarificationRequest"
+                v-on:new-clarification-request-answer="onCreateClarificationRequestAnswer"
+                v-on:close-dialog="onCloseDialog"
+        />
     </div>
 </template>
 
 <script lang="ts">
-    import { Component, Vue } from 'vue-property-decorator';
-    import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
+    import {Component, Vue} from 'vue-property-decorator';
     import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
     import CreateClarificationRequestAnswerDialog
         from "@/views/teacher/discussion/CreateClarificationRequestAnswerDialog.vue";
     import ClarificationRequestComponent from '@/components/discussion/ClarificationRequestComponent.vue';
+    import {ClarificationRequestAnswer} from "@/models/discussion/ClarificationRequestAnswer";
 
     @Component({
       components: {
@@ -23,8 +31,11 @@
         'clarification-request': ClarificationRequestComponent
       }
     })
+
     export default class ClarificationRequestTeacherView extends Vue {
         clarificationRequest!: ClarificationRequest;
+        currentClarificationRequestAnswer: ClarificationRequestAnswer | null = null;
+        createClarificationRequestAnswerDialog: boolean = false;
 
         headers: object = [
             { text: 'Clarification', value: 'content', align: 'left' },
@@ -36,7 +47,18 @@
         }
 
         newClarificationRequestAnswer() {
+            this.currentClarificationRequestAnswer = new ClarificationRequestAnswer();
+            this.createClarificationRequestAnswerDialog = true;
+        }
 
+        async onCreateClarificationRequestAnswer() {
+            this.createClarificationRequestAnswerDialog = false;
+            this.currentClarificationRequestAnswer = null;
+        }
+
+        onCloseDialog() {
+            this.createClarificationRequestAnswerDialog = false;
+            this.currentClarificationRequestAnswer = null;
         }
     }
 </script>

@@ -1,7 +1,12 @@
+export const enum TYPE {
+    TEACHER = "TEACHER_ANSWER",
+    STUDENT = "STUDENT_ANSWER"
+}
+
 export class ClarificationRequestAnswer {
     id: number | null = null;
     content: string = '';
-    // type
+    type: TYPE | null = null;
     name: string | null = null;
     username: string | null = null;
 
