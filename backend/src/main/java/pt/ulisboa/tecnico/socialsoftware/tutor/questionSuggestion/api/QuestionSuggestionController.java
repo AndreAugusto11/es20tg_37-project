@@ -29,7 +29,6 @@ public class QuestionSuggestionController {
     public QuestionSuggestionDto createSuggestionQuestion(Principal principal, @PathVariable int courseId, @Valid @RequestBody QuestionSuggestionDto questionSuggestionDto) {
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name());
         User user = (User) ((Authentication) principal).getPrincipal();
-
         return questionSuggestionService.createQuestionSuggestion(user.getId(), courseId, questionSuggestionDto);
     }
 

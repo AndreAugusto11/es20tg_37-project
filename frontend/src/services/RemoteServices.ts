@@ -14,6 +14,7 @@ import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import QuestionSuggestion from '@/models/management/QuestionSuggestion';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -139,6 +140,7 @@ export default class RemoteServices {
   }
 
   static createQuestion(question: Question): Promise<Question> {
+    console.log(question);
     return httpClient
       .post(
         `/courses/${Store.getters.getCurrentCourse.courseId}/questions/`,
@@ -590,5 +592,37 @@ export default class RemoteServices {
       console.log(error);
       return 'Unknown Error - Contact admin';
     }
+  }
+
+  static async getQuestionSuggestions(): Promise<QuestionSuggestion[]> {
+    return httpClient
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/questionSuggestions`
+      )
+      .then(response => {
+        return response.data.map((questionSuggestion: any) => {
+          return new QuestionSuggestion(questionSuggestion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createQuestionSuggestion(
+    questionSuggestion: QuestionSuggestion
+  ): Promise<QuestionSuggestion> {
+    questionSuggestion.questionDto.status = 'PENDING';
+    return httpClient
+      .post(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/questionSuggestions/`,
+        questionSuggestion
+      )
+      .then(response => {
+        return new QuestionSuggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 }

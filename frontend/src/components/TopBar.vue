@@ -152,9 +152,9 @@
           <v-icon>fas fa-user</v-icon>
         </v-btn>
 
-        <v-btn to="/student/suggestions" v-if="isStudent && currentCourse" text dark>
+        <v-btn to="/student/suggestions" v-if="isStudent && currentCourse" text dark >
           Suggestions
-          <v-icon>fas fa-user</v-icon>
+          <v-icon>question_answer</v-icon>
         </v-btn>
 
         <v-btn

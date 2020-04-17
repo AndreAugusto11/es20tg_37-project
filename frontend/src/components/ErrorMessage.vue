@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="dialog">
-    <v-alert v-model="dialog" type="error" close-text="Close Alert" dismissible>
+    <v-alert v-model="dialog" type="error" close-text="Close Alert" dismissible data-cy="error">
       {{ errorMessage }}
     </v-alert>
   </v-dialog>

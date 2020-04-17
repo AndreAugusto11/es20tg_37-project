@@ -114,6 +114,7 @@ export default class EditQuestionDialog extends Vue {
         const result = await RemoteServices.createQuestion(this.editQuestion);
         this.$emit('save-question', result);
       } catch (error) {
+        console.log('hello');
         await this.$store.dispatch('error', error);
       }
     }

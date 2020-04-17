@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.JustificationDto;
@@ -37,6 +38,9 @@ public class QuestionSuggestionService {
 
     @Autowired
     QuestionSuggestionRepository questionSuggestionRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Autowired
     CourseRepository courseRepository;
@@ -76,6 +80,14 @@ public class QuestionSuggestionService {
 
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name());
 
+        if (questionSuggestionDto.getCreationDate() == null) {
+            questionSuggestionDto.setCreationDate(LocalDateTime.now().format(Course.formatter));
+        }
+
+        if (questionSuggestionDto.getQuestionDto().getCreationDate() == null) {
+            questionSuggestionDto.getQuestionDto().setCreationDate(LocalDateTime.now().format(Course.formatter));
+        }
+
         QuestionSuggestion questionSuggestion = new QuestionSuggestion(user, course, questionSuggestionDto);
         questionSuggestion.setCreationDate(LocalDateTime.now());
         this.entityManager.persist(questionSuggestion);
@@ -98,6 +110,7 @@ public class QuestionSuggestionService {
         suggestion.setStatus(QuestionSuggestion.Status.ACCEPTED);
         suggestion.getQuestion().setStatus(Question.Status.AVAILABLE);
         suggestion.getQuestion().setCreationDate(LocalDateTime.now());
+        questionRepository.save(suggestion.getQuestion());
     }
 
     @Retryable(
@@ -152,7 +165,7 @@ public class QuestionSuggestionService {
         return questionSuggestionRepository.findQuestionSuggestions(userId).stream()
                 .filter(questionSuggestion -> questionSuggestion.getQuestion().getCourse().getId() == courseId)
                 .map(QuestionSuggestionDto::new)
-                .sorted(Comparator.comparing(QuestionSuggestionDto::getCreationDate))
+                .sorted(Comparator.comparing(QuestionSuggestionDto::getCreationDate).reversed())
                 .collect(Collectors.toList());
     }
 

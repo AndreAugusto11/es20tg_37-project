@@ -78,7 +78,10 @@ public class QuestionSuggestionDto implements Serializable {
     public String toString() {
         return "QuestionDto{" +
                 "id=" + id +
-                ", id=" + id +
+                ", status=" + status +
+                ", question=" + questionDto +
+                ", creation date=" + creationDate +
+                ", justification=" + justificationDto +
                 '}';
     }
 }
