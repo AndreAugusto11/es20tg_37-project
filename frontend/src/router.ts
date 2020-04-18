@@ -19,7 +19,7 @@ import ResultsView from './views/student/quiz/ResultsView.vue';
 import StatsView from './views/student/StatsView.vue';
 import ScanView from './views/student/ScanView.vue';
 import SuggestionsView from './views/student/questionSuggestion/QuestionSuggestionView.vue';
-import SuggestionsTView from './views/teacher/questionSuggestions/QuestionSuggestion.vue';
+import SuggestionsTView from './views/teacher/questionSuggestions/QuestionSuggestionsView.vue';
 
 import AdminManagementView from './views/admin/AdminManagementView.vue';
 import NotFoundView from './views/NotFoundView.vue';
