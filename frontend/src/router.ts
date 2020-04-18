@@ -19,6 +19,7 @@ import ResultsView from './views/student/quiz/ResultsView.vue';
 import StatsView from './views/student/StatsView.vue';
 import ScanView from './views/student/ScanView.vue';
 import SuggestionsView from './views/student/questionSuggestion/QuestionSuggestionView.vue';
+import SuggestionsTView from './views/teacher/questionSuggestions/QuestionSuggestion.vue';
 
 import AdminManagementView from './views/admin/AdminManagementView.vue';
 import NotFoundView from './views/NotFoundView.vue';
@@ -66,6 +67,15 @@ let router = new Router({
           path: 'questions',
           name: 'questions-management',
           component: QuestionsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Questions',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'suggestions',
+          name: 'suggestions-management',
+          component: SuggestionsTView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Questions',
             requiredAuth: 'Teacher'
