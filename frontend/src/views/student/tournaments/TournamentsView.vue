@@ -59,6 +59,12 @@ export default class TournamentsView extends Vue {
       width: '10%'
     },
     {
+      text: 'Tournament Topics',
+      value: 'topicsName',
+      align: 'center',
+      width: '10%'
+    },
+    {
       text: 'Number of Questions',
       value: 'numQuests',
       align: 'center',
