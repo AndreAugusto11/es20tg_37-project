@@ -51,4 +51,10 @@ public class QuestionSuggestionController {
         User user = (User) ((Authentication) principal).getPrincipal();
         return questionSuggestionService.getQuestionSuggestions(user.getId(), courseId);
     }
+
+    @GetMapping("/courses/{courseId}/allQuestionSuggestions")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    public List<QuestionSuggestionDto> getAllQuestionSuggestions(@PathVariable int courseId) {
+        return questionSuggestionService.getAllQuestionSuggestions(courseId);
+    }
 }

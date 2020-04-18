@@ -20,6 +20,13 @@
           <v-spacer />
         </v-card-title>
       </template>
+
+      <template v-slot:item.status="{ item }">
+        <v-chip :color="getStatusColor(item.status)" small>
+          <span>{{ item.status }}</span>
+        </v-chip>
+      </template>
+
     </v-data-table>
   </v-card>
 </template>
@@ -45,12 +52,18 @@
       await this.$store.dispatch('loading');
       try {
         [this.questionSuggestions] = await Promise.all([
-          RemoteServices.getQuestionSuggestions()
+          RemoteServices.getAllQuestionSuggestions()
         ]);
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
       await this.$store.dispatch('clearLoading');
+    }
+
+    getStatusColor(status: string) {
+      if (status === 'REJECTED') return 'red';
+      else if (status === 'PENDING') return 'orange';
+      else return 'green';
     }
   }
 

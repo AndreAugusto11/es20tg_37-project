@@ -594,6 +594,23 @@ export default class RemoteServices {
     }
   }
 
+  static async createQuestionSuggestion(
+    questionSuggestion: QuestionSuggestion
+  ): Promise<QuestionSuggestion> {
+    questionSuggestion.questionDto.status = 'PENDING';
+    return httpClient
+      .post(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/questionSuggestions/`,
+        questionSuggestion
+      )
+      .then(response => {
+        return new QuestionSuggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getQuestionSuggestions(): Promise<QuestionSuggestion[]> {
     return httpClient
       .get(
@@ -609,17 +626,15 @@ export default class RemoteServices {
       });
   }
 
-  static async createQuestionSuggestion(
-    questionSuggestion: QuestionSuggestion
-  ): Promise<QuestionSuggestion> {
-    questionSuggestion.questionDto.status = 'PENDING';
+  static async getAllQuestionSuggestions(): Promise<QuestionSuggestion[]> {
     return httpClient
-      .post(
-        `/courses/${Store.getters.getCurrentCourse.courseId}/questionSuggestions/`,
-        questionSuggestion
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/allQuestionSuggestions`
       )
       .then(response => {
-        return new QuestionSuggestion(response.data);
+        return response.data.map((questionSuggestion: any) => {
+          return new QuestionSuggestion(questionSuggestion);
+        });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

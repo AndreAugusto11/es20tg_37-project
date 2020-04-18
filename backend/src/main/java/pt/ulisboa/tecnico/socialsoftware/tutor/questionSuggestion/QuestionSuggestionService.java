@@ -146,7 +146,9 @@ public class QuestionSuggestionService {
     }
 
     private QuestionSuggestion checkForQuestionSuggestion(Integer questionSuggestionId) {
-        QuestionSuggestion suggestion = questionSuggestionRepository.findById(questionSuggestionId).orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
+        QuestionSuggestion suggestion = questionSuggestionRepository.
+                findById(questionSuggestionId).
+                orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
 
         if (suggestion.getStatus() == QuestionSuggestion.Status.ACCEPTED) {
             throw new TutorException(QUESTION_SUGGESTION_ALREADY_ACCEPTED);
@@ -163,7 +165,19 @@ public class QuestionSuggestionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSuggestionDto> getQuestionSuggestions(int userId, Integer courseId) {
         return questionSuggestionRepository.findQuestionSuggestions(userId).stream()
-                .filter(questionSuggestion -> questionSuggestion.getQuestion().getCourse().getId() == courseId)
+                .filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId))
+                .map(QuestionSuggestionDto::new)
+                .sorted(Comparator.comparing(QuestionSuggestionDto::getCreationDate).reversed())
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<QuestionSuggestionDto> getAllQuestionSuggestions(Integer courseId) {
+        return questionSuggestionRepository.findAll().stream()
+                .filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId))
                 .map(QuestionSuggestionDto::new)
                 .sorted(Comparator.comparing(QuestionSuggestionDto::getCreationDate).reversed())
                 .collect(Collectors.toList());
