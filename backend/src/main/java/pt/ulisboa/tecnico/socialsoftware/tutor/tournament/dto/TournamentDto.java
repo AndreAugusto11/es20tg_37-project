@@ -87,12 +87,12 @@ public class TournamentDto implements Serializable {
 
     public void settopics(Set<Integer> topics)
     {
-        for (Integer i: topics)
-        {
-            Topic topic = topicRepository.findById(i).get();
-            this.topics.add(i);
-            this.topicsName.add(topic.getName());
-        }
+        this.topics = topics;
+    }
+
+    public void setTopicsName(Set<String> topics)
+    {
+        this.topicsName = topics;
     }
 
     public void settopicsTour(Set<Topic> topics) {

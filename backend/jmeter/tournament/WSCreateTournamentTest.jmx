@@ -98,7 +98,8 @@
 	&quot;topics&quot;: [82],&#xd;
 	&quot;numQuests&quot;: 10,&#xd;
 	&quot;startTime&quot;: [2020, 5, 24, 0, 0],&#xd;
-	&quot;endTime&quot;: [2020, 5, 26, 0, 0]&#xd;
+	&quot;endTime&quot;: [2020, 5, 26, 0, 0],&#xd;
+	&quot;status&quot;: &quot;OPEN&quot;&#xd;
 }&#xd;
 </stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
@@ -270,8 +271,8 @@
           <stringProp name="checkQuery"></stringProp>
           <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
           <stringProp name="driver">org.postgresql.Driver</stringProp>
-          <stringProp name="username">jgalamba</stringProp>
-          <stringProp name="password">SoloLeveling10</stringProp>
+          <stringProp name="username">manel</stringProp>
+          <stringProp name="password">1234</stringProp>
           <stringProp name="connectionProperties"></stringProp>
         </JDBCDataSource>
         <hashTree/>
