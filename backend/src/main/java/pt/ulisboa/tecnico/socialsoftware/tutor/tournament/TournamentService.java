@@ -60,6 +60,7 @@ public class TournamentService
 		tournament.setendTime(endTime);
 
 		tournament.checkConsistent();
+		tournament.setstatus(Tournament.Status.OPEN);
 
 		this.entityManager.persist(tournament);
 		return new TournamentDto(tournament);

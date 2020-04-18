@@ -1,13 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import java.util.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 public class TournamentDto implements Serializable {
+    @Autowired
+    private TopicRepository topicRepository;
+
     private Integer id;
     private Set<Integer> enrolledStudentsIds = new HashSet<>();
     private int creatorID;
@@ -15,6 +21,7 @@ public class TournamentDto implements Serializable {
     private int numQuests = 1;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private Set<String> topicsName = new HashSet<>();
 
     private String status;
 
@@ -78,11 +85,20 @@ public class TournamentDto implements Serializable {
         this.numQuests = numQuests;
     }
 
-    public void settopics(Set<Integer> topics) {this.topics = topics;}
+    public void settopics(Set<Integer> topics)
+    {
+        for (Integer i: topics)
+        {
+            Topic topic = topicRepository.findById(i).get();
+            this.topics.add(i);
+            this.topicsName.add(topic.getName());
+        }
+    }
 
     public void settopicsTour(Set<Topic> topics) {
         for(Topic t: topics){
             this.topics.add(t.getId());
+            this.topicsName.add(t.getName());
         }
     }
 
