@@ -16,7 +16,7 @@
             :mobile-breakpoint="0"
             :items-per-page="15"
             :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
-            @click:row='openClarificationRequest'
+            @click:row="openClarificationRequest"
     >
       <template v-slot:top>
         <v-card-title>
@@ -54,7 +54,6 @@
     export default class ClarificationRequestsTeacherView extends Vue {
         clarificationRequests: ClarificationRequest[] = [];
         search: string = '';
-        statusList = ['OPEN', 'CLOSED'];
 
         headers: object = [
             { text: 'Clarification', value: 'content', align: 'left' },

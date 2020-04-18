@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" :key="clarificationRequest.clarificationRequestAnswerDto.id">
         <clarification-request :clarification-request="clarificationRequest" />
         <clarification-request-answer :clarification-request="clarificationRequest" />
         <v-container>
@@ -54,7 +54,8 @@
             this.createClarificationRequestAnswerDialog = true;
         }
 
-        async onCreateClarificationRequestAnswer() {
+        async onCreateClarificationRequestAnswer(clarificationRequestAnswer: ClarificationRequestAnswer) {
+            this.clarificationRequest.clarificationRequestAnswerDto = clarificationRequestAnswer;
             this.createClarificationRequestAnswerDialog = false;
             this.currentClarificationRequestAnswer = null;
         }
