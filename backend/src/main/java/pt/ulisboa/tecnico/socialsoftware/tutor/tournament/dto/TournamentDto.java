@@ -16,7 +16,7 @@ public class TournamentDto implements Serializable {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
-    private Tournament.Status status;
+    private String status;
 
     public TournamentDto() {
     }
@@ -29,6 +29,7 @@ public class TournamentDto implements Serializable {
         numQuests = tournament.getnumQuests();
         startTime = tournament.getstartTime();
         endTime = tournament.getendTime();
+        status = tournament.getstatus().name();
     }
 
     public int getcreatorID()
@@ -93,8 +94,8 @@ public class TournamentDto implements Serializable {
         this.endTime = endTime;
     }
 
-    public Tournament.Status getstatus() { return this.status;}
+    public String getstatus() { return this.status;}
 
-    public void setstatus(Tournament.Status status) {this.status = status;}
+    public void setstatus(Tournament.Status status) {this.status = status.name();}
 
 }
