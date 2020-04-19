@@ -31,6 +31,31 @@ Cypress.Commands.add('demoAdminLogin', () => {
     cy.contains('Manage Courses').click()
 })
 
+Cypress.Commands.add('demoStudentLogin', () => {
+    cy.visit('/')
+    cy.get('[data-cy="demoStudentButton"]').click()
+})
+
+Cypress.Commands.add('allTournaments', () => {
+    cy.contains('Tournaments').click()
+    cy.contains('All Tournaments').click()
+})
+
+Cypress.Commands.add('enrollTournament', (id) => {
+    cy.contains('Tournaments').click()
+    cy.contains('All Tournaments').click()
+    cy.contains(id)
+      .parent()
+      .should('have.length', 1)
+      .children()
+      .should('have.length', 7)
+      .find('[data-cy="enrollTournament"]')
+      .click()
+    cy.contains('Tournaments').click()
+    cy.contains('Enrolled Tournaments').click()
+    cy.contains(id)
+})
+
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
     cy.get('[data-cy="createButton"]').click()
     cy.get('[data-cy="Name"]').type(name)

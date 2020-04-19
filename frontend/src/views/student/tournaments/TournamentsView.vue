@@ -21,9 +21,6 @@
                             class="mx-2"
                     />
                     <v-spacer />
-                    <v-btn color="primary" dark @click="newTournament" data-cy="createButton"
-                    >New Tournament</v-btn
-                    >
                 </v-card-title>
             </template>
             <template v-slot:item.action="{ item }">
