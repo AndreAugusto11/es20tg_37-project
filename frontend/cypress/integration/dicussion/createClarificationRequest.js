@@ -18,6 +18,7 @@ describe('Create Clarification Request walkthrough', () => {
 
         cy.solveQuiz()
         cy.createClarificationRequest(content)
+        cy.wait(1000)
         cy.listClarificationRequest(content)
       });
 
