@@ -73,7 +73,6 @@
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
-//import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import ShowQuestionSuggestionDialog from '@/views/student/questionSuggestion/ShowQuestionSuggestionDialog.vue';
 

@@ -34,6 +34,18 @@
                 small
                 class="mr-2"
                 v-on="on"
+                @click="showSuggestionDialog(item)"
+            >visibility</v-icon
+            >
+          </template>
+          <span>Show Suggestion</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+                small
+                class="mr-2"
+                v-on="on"
                 @click="accepted(item.id)"
             >add</v-icon
             >
@@ -43,6 +55,13 @@
       </template>
 
     </v-data-table>
+
+    <show-questionSuggestion-dialog
+        v-if="currentSuggestion"
+        :dialog="suggestionDialog"
+        :questionSuggestion="currentSuggestion"
+        v-on:close-dialog="onCloseSuggestionDialog"
+    />
   </v-card>
 </template>
 
@@ -50,10 +69,17 @@
   import { Component, Vue } from 'vue-property-decorator';
   import QuestionSuggestion from '@/models/management/QuestionSuggestion';
   import RemoteServices from '@/services/RemoteServices';
+  import ShowQuestionSuggestionDialog from '@/views/student/questionSuggestion/ShowQuestionSuggestionDialog.vue';
 
-  @Component
+  @Component({
+    components: {
+      'show-questionSuggestion-dialog': ShowQuestionSuggestionDialog
+    }
+  })
   export default class SuggestionsTView extends Vue {
     suggestions: QuestionSuggestion[] = [];
+    currentSuggestion: QuestionSuggestion | null = null;
+    suggestionDialog: boolean = false;
     search: string = '';
 
     headers: object = [
@@ -94,6 +120,15 @@
       if (status === 'PENDING') return 'orange';
       else if (status === 'ACCEPTED') return 'green';
       else return 'red';
+    }
+
+    showSuggestionDialog(suggestion: QuestionSuggestion) {
+      this.currentSuggestion = suggestion;
+      this.suggestionDialog = true;
+    }
+
+    onCloseSuggestionDialog() {
+      this.suggestionDialog = false;
     }
   }
 

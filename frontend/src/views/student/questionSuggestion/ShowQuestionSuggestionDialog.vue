@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    v-model="dialog"
+    :value="dialog" @input="$emit('close-dialog')"
     @keydown.esc="closeQuestionSuggestionDialog"
     max-width="75%"
   >
