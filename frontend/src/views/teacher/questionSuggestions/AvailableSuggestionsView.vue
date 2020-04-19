@@ -58,8 +58,8 @@
                 small
                 class="mr-2"
                 v-on="on"
-                @click=""
-            >remove</v-icon
+                @click="showRejectionDialog(item)"
+            >mdi-close</v-icon
             >
           </template>
           <span>Reject Question</span>
@@ -72,6 +72,7 @@
         v-if="currentSuggestion"
         :dialog="suggestionDialog"
         :questionSuggestion="currentSuggestion"
+        :rejected="rejectionDialog"
         v-on:accept-suggestion="accepted(currentSuggestion.id)"
         v-on:reject-suggestion="rejected(currentSuggestion.id, $event)"
         v-on:close-dialog="onCloseSuggestionDialog"
@@ -95,6 +96,7 @@
     suggestions: QuestionSuggestion[] = [];
     currentSuggestion: QuestionSuggestion | null = null;
     suggestionDialog: boolean = false;
+    rejectionDialog: boolean = false;
     search: string = '';
 
     headers: object = [
@@ -156,11 +158,19 @@
 
     showSuggestionDialog(suggestion: QuestionSuggestion) {
       this.currentSuggestion = suggestion;
+      this.rejectionDialog = false;
+      this.suggestionDialog = true;
+    }
+
+    showRejectionDialog(suggestion: QuestionSuggestion) {
+      this.currentSuggestion = suggestion;
+      this.rejectionDialog = true;
       this.suggestionDialog = true;
     }
 
     onCloseSuggestionDialog() {
       this.suggestionDialog = false;
+      this.rejectionDialog = false;
       this.currentSuggestion = null;
     }
   }
