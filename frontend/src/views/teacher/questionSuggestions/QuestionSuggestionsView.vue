@@ -2,7 +2,7 @@
   <v-card class="table">
     <v-data-table
       :headers="headers"
-      :items="questionSuggestions"
+      :items="suggestions"
       :search="search"
       multi-sort
       :mobile-breakpoint="0"
@@ -27,6 +27,21 @@
         </v-chip>
       </template>
 
+      <template v-slot:item.action="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+                small
+                class="mr-2"
+                v-on="on"
+                @click="accepted(item.id)"
+            >add</v-icon
+            >
+          </template>
+          <span>Accept Question</span>
+        </v-tooltip>
+      </template>
+
     </v-data-table>
   </v-card>
 </template>
@@ -38,8 +53,9 @@
 
   @Component
   export default class SuggestionsTView extends Vue {
-    questionSuggestions: QuestionSuggestion[] = [];
+    suggestions: QuestionSuggestion[] = [];
     search: string = '';
+
     headers: object = [
       { text: 'Title', value: 'questionDto.title', align: 'center' },
       { text: 'Content', value: 'questionDto.content', align: 'left' },
@@ -51,7 +67,7 @@
     async created() {
       await this.$store.dispatch('loading');
       try {
-        [this.questionSuggestions] = await Promise.all([
+        [this.suggestions] = await Promise.all([
           RemoteServices.getAllQuestionSuggestions()
         ]);
       } catch (error) {
@@ -60,10 +76,24 @@
       await this.$store.dispatch('clearLoading');
     }
 
+    async accepted(suggestionId: number) {
+      try {
+        await RemoteServices.acceptQuestionSuggestion(suggestionId);
+        let suggestion = this.suggestions.find(
+          suggestion => suggestion.id === suggestionId
+        );
+        if (suggestion) {
+          suggestion.status = 'ACCEPTED';
+        }
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
+
     getStatusColor(status: string) {
-      if (status === 'REJECTED') return 'red';
-      else if (status === 'PENDING') return 'orange';
-      else return 'green';
+      if (status === 'PENDING') return 'orange';
+      else if (status === 'ACCEPTED') return 'green';
+      else return 'red';
     }
   }
 

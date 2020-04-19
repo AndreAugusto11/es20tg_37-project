@@ -17,7 +17,7 @@ import { QuizAnswers } from '@/models/management/QuizAnswers';
 import QuestionSuggestion from '@/models/management/QuestionSuggestion';
 
 const httpClient = axios.create();
-httpClient.defaults.timeout = 10000;
+httpClient.defaults.timeout = 50000;
 httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
 httpClient.defaults.headers.post['Content-Type'] = 'application/json';
 httpClient.interceptors.request.use(
@@ -603,6 +603,19 @@ export default class RemoteServices {
         `/courses/${Store.getters.getCurrentCourse.courseId}/questionSuggestions/`,
         questionSuggestion
       )
+      .then(response => {
+        return new QuestionSuggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async acceptQuestionSuggestion(
+    suggestionId: number
+  ): Promise<QuestionSuggestion> {
+    return httpClient
+      .put(`/questionSuggestions/${suggestionId}/accepting`)
       .then(response => {
         return new QuestionSuggestion(response.data);
       })
