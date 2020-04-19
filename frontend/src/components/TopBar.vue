@@ -268,6 +268,14 @@
               <v-list-item-title>Students</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item to="/management/discussion">
+              <v-list-item-action>
+                <v-icon>fas fa-comments</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Discussion</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           <v-list-item to="/management/impexp">
             <v-list-item-action>
               <v-icon>cloud</v-icon>
@@ -324,6 +332,13 @@
               <v-icon>fas fa-user</v-icon>
             </v-list-item-action>
             <v-list-item-content>Stats</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/discussion">
+            <v-list-item-action>
+              <v-icon>fas fa-comments</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Discussion</v-list-item-content>
           </v-list-item>
         </v-list-group>
 
