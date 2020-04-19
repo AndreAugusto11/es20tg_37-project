@@ -34,7 +34,7 @@
                 small
                 class="mr-2"
                 v-on="on"
-                @click="showSuggestionDialog(item)"
+                @click="showSuggestionDialog(item)" data-cy="showButton"
             >visibility</v-icon
             >
           </template>
@@ -46,7 +46,7 @@
                 small
                 class="mr-2"
                 v-on="on"
-                @click="accepted(item.id)"
+                @click="accepted(item.id)" data-cy="acceptButton"
             >add</v-icon
             >
           </template>

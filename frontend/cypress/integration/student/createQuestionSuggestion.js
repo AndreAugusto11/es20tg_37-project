@@ -7,7 +7,7 @@ describe('Create a valide suggestion', () => {
     cy.contains('Logout').click()
   })
 
-  it('login and creates a suggestion and shows it', () => {
+  it('login and creates a suggestion', () => {
     cy.createQuestionSuggestion('TestNormal','Question','a', 'b', 'c', 'd', 'No');
   });
 

@@ -15,7 +15,7 @@
       </v-card-text>
 
       <v-card-actions v-if="!rejected">
-        <v-btn dark color="green darken-1" @click="acceptSuggestionDialog"
+        <v-btn dark color="green darken-1" @click="acceptSuggestionDialog" data-cy="acceptQuestion"
         >Accept</v-btn>
         <v-btn dark color="red darken-1" @click="rejectSuggestionDialog"
         >Reject</v-btn>

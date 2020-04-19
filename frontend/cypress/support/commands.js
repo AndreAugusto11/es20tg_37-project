@@ -75,6 +75,13 @@ Cypress.Commands.add('demoStudentLogin', () => {
     cy.contains('Suggestions').click()
 })
 
+Cypress.Commands.add('demoTeacherLogin', () => {
+    cy.visit('/')
+    cy.get('[data-cy="teacherButton"]').click()
+    cy.contains('Management').click()
+    cy.contains('Suggestions').click()
+})
+
 Cypress.Commands.add('createQuestionSuggestion', (title, question, op0, op1, op2, op3, flag)=>{
     cy.contains('New Suggestion').click();
     if(title !== ''){cy.get('[data-cy="Title"]').type(title,{force: true})}
@@ -98,3 +105,30 @@ Cypress.Commands.add('showQuestionSuggestion', (title) =>{
     cy.get('[data-cy="closeButton"]').click()
 });
 
+Cypress.Commands.add('acceptQuestionSuggestion', (title) =>{
+    cy.contains(title)
+        .parent()
+        .children()
+        .should('have.length', 5)
+        .find('[data-cy="acceptButton"]')
+        .click({force: true});
+});
+
+Cypress.Commands.add('acceptQuestionSuggestionShow', (title) =>{
+    cy.contains(title)
+        .parent()
+        .children()
+        .should('have.length', 5)
+        .find('[data-cy="showButton"]')
+        .click({force: true});
+    cy.get('[data-cy="acceptQuestion"]').click();
+});
+
+Cypress.Commands.add('acceptQuestionSuggestion', (title) =>{
+    cy.contains(title)
+        .parent()
+        .children()
+        .should('have.length', 5)
+        .find('[data-cy="acceptButton"]')
+        .click({force: true});
+});
