@@ -24,13 +24,16 @@ describe('Create Clarifiction Request Answer walkthrough', () => {
 	});
 
 	it('student login creates a Clarification Request and teacher login to confirm', () => {
+		var randomNumber = Math.floor(Math.random() * 10000);
+		var content = "Tenho uma dvida aqui" + randomNumber;
+
 		cy.demoStudentLogin()
 		cy.solveQuiz()
-		cy.createClarificationRequest("Tenho uma duvida aqui")
+		cy.createClarificationRequest(content)
 		cy.contains('Logout').click()
 		cy.demoTeacherLogin()
-		cy.get('[data-cy="Search"]').type("Tenho uma duvida aqui")
-		cy.contains("Tenho uma duvida aqui")
+		cy.get('[data-cy="Search"]').type(content)
+		cy.contains(content)
 	});
 
   });
