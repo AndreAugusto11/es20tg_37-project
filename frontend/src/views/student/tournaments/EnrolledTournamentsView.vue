@@ -21,7 +21,6 @@
                             class="mx-2"
                     />
                     <v-spacer />
-                    >
                 </v-card-title>
             </template>
         </v-data-table>

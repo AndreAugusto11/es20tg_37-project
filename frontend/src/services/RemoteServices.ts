@@ -136,9 +136,7 @@ export default class RemoteServices {
     return httpClient
       .post(`/tournaments/${tournament.id}/enroll`,tournament)
       .then(response => {
-        return response.data.map((tournament: any) => {
-          return new Tournament(tournament);
-        });
+        return  new Tournament(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

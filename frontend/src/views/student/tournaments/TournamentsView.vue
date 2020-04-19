@@ -26,6 +26,22 @@
                     >
                 </v-card-title>
             </template>
+            <template v-slot:item.action="{ item }">
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-icon
+                                x-large
+                                class="mr-2"
+                                color="primary" dark
+                                v-on="on"
+                                @click="enrollTournament(item)"
+                                data-cy="enrollTournament"
+                        >mdi-location-enter</v-icon
+                        >
+                    </template>
+                    <span>Enroll Tournament</span>
+                </v-tooltip>
+            </template>
         </v-data-table>
     </v-card>
 </template>
@@ -93,6 +109,16 @@ export default class TournamentsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async enrollTournament(tournamentToEnroll: Tournament) {
+    if (confirm('Are you sure you want to enroll?')) {
+      try {
+        await RemoteServices.enrollTournament(tournamentToEnroll);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
   }
 }
 </script>
