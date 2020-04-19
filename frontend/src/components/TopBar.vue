@@ -168,6 +168,14 @@
                 <v-list-item-title>All tournaments</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/student/createTournament">
+              <v-list-item-action>
+                <v-icon>assignment</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Create tournaments</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/student/enrolled">
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
