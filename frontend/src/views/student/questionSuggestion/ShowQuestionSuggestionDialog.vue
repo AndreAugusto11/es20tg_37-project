@@ -15,7 +15,11 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn dark color="blue darken-1" @click="closeQuestionSuggestionDialog" data-cy="closeButton"
+        <v-btn
+          dark
+          color="blue darken-1"
+          @click="closeQuestionSuggestionDialog"
+          data-cy="closeButton"
           >close</v-btn
         >
       </v-card-actions>

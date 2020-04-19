@@ -76,16 +76,16 @@ Cypress.Commands.add('demoStudentLogin', () => {
 })
 
 Cypress.Commands.add('createQuestionSuggestion', (title, question, op0, op1, op2, op3, flag)=>{
-    cy.contains('New Suggestion').click()
+    cy.contains('New Suggestion').click();
     if(title !== ''){cy.get('[data-cy="Title"]').type(title,{force: true})}
     if(question !== ''){cy.get('[data-cy="Content"]').type(question,{force: true})}
-    cy.get('[data-cy="Option"]').eq(0).type(op0,{force: true})
-    cy.get('[data-cy="Option"]').eq(1).type(op1,{force: true})
-    cy.get('[data-cy="Option"]').eq(2).type(op2,{force: true})
+    cy.get('[data-cy="Option"]').eq(0).type(op0,{force: true});
+    cy.get('[data-cy="Option"]').eq(1).type(op1,{force: true});
+    cy.get('[data-cy="Option"]').eq(2).type(op2,{force: true});
     if(op3 !== ''){cy.get('[data-cy="Option"]').eq(3).type(op3,{force: true})}
     if(flag === 'No'){cy.get('[data-cy="Correct"]').eq(3).click({force: true})}
     cy.get('[data-cy="saveButton"]').click()
-})
+});
 
 Cypress.Commands.add('showQuestionSuggestion', (title) =>{
     cy.contains(title)
@@ -94,7 +94,7 @@ Cypress.Commands.add('showQuestionSuggestion', (title) =>{
         .children()
         .should('have.length', 5)
         .find('[data-cy="showSuggestion"]')
-        .click()
+        .click();
     cy.get('[data-cy="closeButton"]').click()
-})
+});
 

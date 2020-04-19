@@ -44,7 +44,8 @@
               small
               class="mr-2"
               v-on="on"
-              @click="showQuestionSuggestionDialog(item)" data-cy="showSuggestion"
+              @click="showQuestionSuggestionDialog(item)"
+              data-cy="showSuggestion"
               >visibility</v-icon
             >
           </template>
@@ -73,7 +74,6 @@
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
-import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import ShowQuestionSuggestionDialog from '@/views/student/questionSuggestion/ShowQuestionSuggestionDialog.vue';
 
