@@ -22,6 +22,7 @@
                                     rows="5"
                                     v-model="createClarificationRequest.content"
                                     label="Content"
+                                    data-cy="Content"
                             ></v-textarea>
                         </v-flex>
                     </v-layout>

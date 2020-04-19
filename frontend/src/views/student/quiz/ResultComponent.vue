@@ -61,16 +61,16 @@
       </li>
     </ul>
     <v-container>
-      <v-btn v-if="this.answer.questionAnswerDto.hasClarificationRequest" disabled data-cy="createButton">
+      <v-btn v-if="this.answer.questionAnswerDto.hasClarificationRequest" disabled>
         Ask clarification
       </v-btn>
-      <v-btn v-else color="primary" dark @click="newClarificationRequest" data-cy="createButton">
+      <v-btn v-else color="primary" dark @click="newClarificationRequest" data-cy="createClarificationButton">
         Ask clarification
       </v-btn>
-      <v-btn class="ml-5" v-if="this.answer.questionAnswerDto.hasClarificationRequest" color="primary" dark @click="openClarificationRequest" data-cy="createButton">
+      <v-btn class="ml-5" v-if="this.answer.questionAnswerDto.hasClarificationRequest" color="primary" dark @click="openClarificationRequest" data-cy="seeClarificationButton">
         See clarification
       </v-btn>
-      <v-btn class="ml-5" v-else disabled data-cy="createButton">
+      <v-btn class="ml-5" v-else disabled>
         See clarification
       </v-btn>
     </v-container>

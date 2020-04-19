@@ -25,6 +25,7 @@
                   append-icon="search"
                   label="Search"
                   class="mx-2"
+                  data-cy="Search"
           />
         </v-card-title>
       </template>

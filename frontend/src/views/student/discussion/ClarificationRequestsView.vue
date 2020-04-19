@@ -24,6 +24,7 @@
                             v-model="search"
                             append-icon="search"
                             label="Search"
+                            data-cy="Search"
                             class="mx-2"
                     />
                 </v-card-title>

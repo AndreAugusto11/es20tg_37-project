@@ -3,7 +3,7 @@
         <clarification-request :clarification-request="clarificationRequest" />
         <clarification-request-answer :clarification-request="clarificationRequest" />
         <v-container>
-            <v-btn v-if="!this.clarificationRequest.clarificationRequestAnswerDto.content" color="primary" dark @click="newClarificationRequestAnswer" data-cy="createButton">
+            <v-btn v-if="!this.clarificationRequest.clarificationRequestAnswerDto.content" color="primary" dark @click="newClarificationRequestAnswer" data-cy="answerButton">
                 Answer
             </v-btn>
         </v-container>
