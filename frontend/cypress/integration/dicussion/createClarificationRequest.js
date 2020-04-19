@@ -8,15 +8,21 @@ describe('Create Clarifiction Request walkthrough', () => {
     })
   
     it('login, solves quiz, creates Clarification Request, and visualizes it', () => {
+      var randomNumber = Math.floor(Math.random() * 10000);
+      var content = "Tenho uma dvida aqui" + randomNumber;
+
       cy.solveQuiz()
-      cy.createClarificationRequest("Tenho uma duvida")
+      cy.createClarificationRequest(content)
       cy.seeClarificationRequest()
     });
 
     it('login, solves quiz and creates Clarification Request, and checks on the list', () => {
+        var randomNumber = Math.floor(Math.random() * 10000);
+        var content = "Tenho uma dvida aqui" + randomNumber;
+
         cy.solveQuiz()
-        cy.createClarificationRequest("Tenho uma duvida")
-        cy.listClarificationRequest("Tenho uma duvida")
+        cy.createClarificationRequest(content)
+        cy.listClarificationRequest(content)
       });
 
     it('login, solves quiz and creates empty Clarification Request', () => {
