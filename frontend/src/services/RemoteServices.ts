@@ -12,9 +12,9 @@ import { Student } from '@/models/management/Student';
 import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
-import { QuizAnswer } from '@/models/management/QuizAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import QuestionSuggestion from '@/models/management/QuestionSuggestion';
+import Justification from '@/models/management/Justification';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 50000;
@@ -616,6 +616,23 @@ export default class RemoteServices {
   ): Promise<QuestionSuggestion> {
     return httpClient
       .put(`/questionSuggestions/${suggestionId}/accepting`)
+      .then(response => {
+        return new QuestionSuggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async rejectQuestionSuggestion(
+    suggestionId: number,
+    justification: Justification
+  ): Promise<QuestionSuggestion> {
+    return httpClient
+      .put(
+          `/questionSuggestions/${suggestionId}/rejecting`,
+          justification
+        )
       .then(response => {
         return new QuestionSuggestion(response.data);
       })

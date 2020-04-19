@@ -50,7 +50,19 @@
             >add</v-icon
             >
           </template>
-          <span>Accept Question</span>
+          <span>Accept Suggestion</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+                small
+                class="mr-2"
+                v-on="on"
+                @click=""
+            >remove</v-icon
+            >
+          </template>
+          <span>Reject Question</span>
         </v-tooltip>
       </template>
 
@@ -60,6 +72,8 @@
         v-if="currentSuggestion"
         :dialog="suggestionDialog"
         :questionSuggestion="currentSuggestion"
+        v-on:accept-suggestion="accepted(currentSuggestion.id)"
+        v-on:reject-suggestion="rejected(currentSuggestion.id, $event)"
         v-on:close-dialog="onCloseSuggestionDialog"
     />
   </v-card>
@@ -69,11 +83,12 @@
   import { Component, Vue } from 'vue-property-decorator';
   import QuestionSuggestion from '@/models/management/QuestionSuggestion';
   import RemoteServices from '@/services/RemoteServices';
-  import ShowQuestionSuggestionDialog from '@/views/student/questionSuggestion/ShowQuestionSuggestionDialog.vue';
+  import ShowSuggestionDialog from '@/views/teacher/questionSuggestions/ShowSuggestionDialog.vue';
+  import Justification from '@/models/management/Justification';
 
   @Component({
     components: {
-      'show-questionSuggestion-dialog': ShowQuestionSuggestionDialog
+      'show-questionSuggestion-dialog': ShowSuggestionDialog
     }
   })
   export default class SuggestionsTView extends Vue {
@@ -103,6 +118,7 @@
     }
 
     async accepted(suggestionId: number) {
+      console.log(suggestionId);
       try {
         await RemoteServices.acceptQuestionSuggestion(suggestionId);
         let suggestion = this.suggestions.find(
@@ -111,6 +127,22 @@
         if (suggestion) {
           suggestion.status = 'ACCEPTED';
         }
+        this.onCloseSuggestionDialog();
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
+
+    async rejected(suggestionId: number, justification: Justification) {
+      try {
+        await RemoteServices.rejectQuestionSuggestion(suggestionId, justification);
+        let suggestion = this.suggestions.find(
+          suggestion => suggestion.id === suggestionId
+        );
+        if (suggestion) {
+          suggestion.status = 'REJECTED';
+        }
+        this.onCloseSuggestionDialog();
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
@@ -129,6 +161,7 @@
 
     onCloseSuggestionDialog() {
       this.suggestionDialog = false;
+      this.currentSuggestion = null;
     }
   }
 

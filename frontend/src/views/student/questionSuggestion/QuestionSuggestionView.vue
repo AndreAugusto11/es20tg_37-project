@@ -85,7 +85,7 @@ import EditQuestionSuggestionDialog from '@/views/student/questionSuggestion/Edi
     'show-questionSuggestion-dialog': ShowQuestionSuggestionDialog
   }
 })
-export default class SuggestionView extends Vue {
+export default class QuestionSuggestionView extends Vue {
   questionSuggestions: QuestionSuggestion[] = [];
   currentQuestionSuggestion: QuestionSuggestion | null = null;
   editQuestionSuggestionDialog: boolean = false;
