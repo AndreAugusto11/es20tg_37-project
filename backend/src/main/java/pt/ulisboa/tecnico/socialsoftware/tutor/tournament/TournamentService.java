@@ -62,6 +62,9 @@ public class TournamentService
 		tournament.checkConsistent();
 		tournament.setstatus(Tournament.Status.OPEN);
 
+		student.addCreatedTournament(tournament);
+		tournament.addUser(student);
+
 		this.entityManager.persist(tournament);
 		return new TournamentDto(tournament);
 	}

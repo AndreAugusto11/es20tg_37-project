@@ -24,7 +24,8 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "users")
 public class User implements UserDetails, DomainEntity {
-    public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
+
+	public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -485,5 +486,14 @@ public class User implements UserDetails, DomainEntity {
 
     public void addJustification(Justification justification) {
         justifications.add(justification);
+    }
+
+    public void addCreatedTournament(Tournament tournament) {
+        createdTournaments.add(tournament);
+    }
+
+    public Set<Tournament> getCreatedTournaments()
+    {
+        return tournaments;
     }
 }

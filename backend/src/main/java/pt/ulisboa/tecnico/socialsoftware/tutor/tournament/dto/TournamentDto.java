@@ -11,8 +11,6 @@ import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class TournamentDto implements Serializable {
-    @Autowired
-    private TopicRepository topicRepository;
 
     private Integer id;
     private Set<Integer> enrolledStudentsIds = new HashSet<>();
