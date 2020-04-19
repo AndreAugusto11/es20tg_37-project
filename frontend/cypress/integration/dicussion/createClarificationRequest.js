@@ -1,4 +1,4 @@
-describe('Create Clarifiction Request walkthrough', () => {
+describe('Create Clarification Request walkthrough', () => {
     beforeEach(() => {
       cy.demoStudentLogin()
     })

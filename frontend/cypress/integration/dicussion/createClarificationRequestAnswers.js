@@ -1,4 +1,4 @@
-describe('Create Clarifiction Request Answer walkthrough', () => {
+describe('Create Clarification Request Answer walkthrough', () => {
 	beforeEach(() => {
 
 	})
