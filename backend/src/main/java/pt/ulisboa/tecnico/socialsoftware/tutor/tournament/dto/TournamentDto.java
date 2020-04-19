@@ -59,6 +59,9 @@ public class TournamentDto implements Serializable {
         return topics;
     }
 
+    public Set<String> gettopicsName() {
+        return topicsName;
+    }
     public LocalDateTime getstartTime() {
         return startTime;
     }
@@ -88,7 +91,7 @@ public class TournamentDto implements Serializable {
         this.topics = topics;
     }
 
-    public void setTopicsName(Set<String> topics)
+    public void settopicsName(Set<String> topics)
     {
         this.topicsName = topics;
     }
@@ -96,7 +99,7 @@ public class TournamentDto implements Serializable {
     public void settopicsTour(Set<Topic> topics) {
         for(Topic t: topics){
             this.topics.add(t.getId());
-            this.topicsName.add(t.getName());
+            this.topicsName.add(""+t.getCourse().getName()+":"+t.getName());
         }
     }
 
