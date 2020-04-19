@@ -27,6 +27,13 @@ public class TournamentController {
         return tournamentService.getTournaments();
     }
 
+    @GetMapping("/tournaments/enrolled")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public List<TournamentDto> getEnrolledTournaments(Principal principal) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return tournamentService.getEnrolledTournaments(user.getId());
+    }
+
     @PostMapping("/tournaments")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public TournamentDto createTournament(Principal principal, @RequestBody TournamentDto tournamentDto)
@@ -37,9 +44,9 @@ public class TournamentController {
 
     @PostMapping("/tournaments/{tournamentId}/enroll")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public void enrollTournament(Principal principal, @PathVariable Integer tournamentId)
+    public TournamentDto enrollTournament(Principal principal, @PathVariable Integer tournamentId)
     {
         User user = (User) ((Authentication) principal).getPrincipal();
-        tournamentService.enrollStudentInTournament(user.getId(),tournamentId);
+        return tournamentService.enrollStudentInTournament(user.getId(),tournamentId);
     }
 }

@@ -119,6 +119,32 @@ export default class RemoteServices {
       });
   }
 
+  static async getEnrolledTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get('/tournaments/enrolled')
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async enrollTournament(tournament: Tournament): Promise<Tournament> {
+    return httpClient
+      .post(`/tournaments/${tournament.id}/enroll`,tournament)
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async exportCourseQuestions(): Promise<Blob> {
     return httpClient
       .get(
