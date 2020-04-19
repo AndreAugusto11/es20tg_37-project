@@ -110,7 +110,6 @@ public class QuestionSuggestionService {
         suggestion.setStatus(QuestionSuggestion.Status.ACCEPTED);
         suggestion.getQuestion().setStatus(Question.Status.AVAILABLE);
         suggestion.getQuestion().setCreationDate(LocalDateTime.now());
-        questionRepository.save(suggestion.getQuestion());
     }
 
     @Retryable(
