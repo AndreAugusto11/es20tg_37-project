@@ -7,25 +7,8 @@ describe('Create Clarification Request Answer walkthrough', () => {
 	  cy.contains('Logout').click()
 	})
 
-	it('login tries to create a Clarification Answer to a closed Request', () => {
-		cy.demoTeacherLogin()
-
-		cy.contains('CLOSED').click()
-
-		cy.get('[data-cy="answerButton"]').should('not.exist')
-	});
-
-	it('login creates a Clarification Request Answer', () => {
-		cy.demoTeacherLogin()
-
-		cy.contains('OPEN').click()
-
-		cy.createClarificationRequestAnswer('This is the answer to the request')
-	});
-
 	it('student login creates a Clarification Request and teacher login to confirm', () => {
-		var randomNumber = Math.floor(Math.random() * 10000);
-		var content = "Tenho uma dvida aqui" + randomNumber;
+		var content = generateContent(6)
 
 		cy.demoStudentLogin()
 		cy.solveQuiz()
@@ -36,5 +19,33 @@ describe('Create Clarification Request Answer walkthrough', () => {
 		cy.contains(content)
 	});
 
+	it('login tries to create a Clarification Answer to a closed Request', () => {
+		var contentReq = generateContent(6);
+		var contentRes = generateContent(6);
+
+		cy.demoStudentLogin()
+		cy.solveQuiz()
+		cy.createClarificationRequest(contentReq)
+		cy.contains('Logout').click()
+		cy.demoTeacherLogin()
+		cy.get('[data-cy="Search"]').type(contentReq)
+		cy.contains(contentReq).click()
+		cy.createClarificationRequestAnswer(contentRes)
+		cy.contains('Logout').click()
+
+		cy.demoTeacherLogin()
+		cy.contains(contentReq).click()
+		cy.get('[data-cy="answerButton"]').should('not.exist')
+	});
+
   });
   
+  function generateContent(length) {
+	let result           = '';
+	let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	let charactersLength = characters.length;
+	for (let i = 0; i < length; i++) {
+	  result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+	return result;
+  }
