@@ -61,11 +61,11 @@
     @Prop({ type: QuestionSuggestion, required: true })
     readonly questionSuggestion!: QuestionSuggestion;
     @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
-    rejected: boolean = false;
+    @Prop({ type: Boolean, required: true }) rejected!: boolean;
 
     justification!: Justification;
 
-    created() {
+    async created() {
       this.justification = new Justification();
     }
 
