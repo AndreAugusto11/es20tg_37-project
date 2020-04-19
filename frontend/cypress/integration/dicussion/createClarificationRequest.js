@@ -4,21 +4,17 @@ describe('Create Clarifiction Request walkthrough', () => {
     })
   
     afterEach(() => {
-
+      cy.contains('Logout').click()
     })
   
     it('login, solves quiz, creates Clarification Request, and visualizes it', () => {
-      var randomNumber = Math.floor(Math.random() * 10000);
-      var content = "Tenho uma dvida aqui" + randomNumber;
-
       cy.solveQuiz()
-      cy.createClarificationRequest(content)
+      cy.createClarificationRequest(generateContent(5))
       cy.seeClarificationRequest()
     });
 
     it('login, solves quiz and creates Clarification Request, and checks on the list', () => {
-        var randomNumber = Math.floor(Math.random() * 10000);
-        var content = "Tenho uma dvida aqui" + randomNumber;
+        let content = generateContent(5)
 
         cy.solveQuiz()
         cy.createClarificationRequest(content)
@@ -32,3 +28,13 @@ describe('Create Clarifiction Request walkthrough', () => {
       });
   
   });
+
+function generateContent(length) {
+  let result           = '';
+  let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
