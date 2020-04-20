@@ -29,9 +29,8 @@ import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import ClarificationRequestsView from '@/views/student/discussion/ClarificationRequestsView.vue';
 import ClarificationRequestView from '@/views/student/discussion/ClarificationRequestView.vue';
-import ClarificationRequestAnswerView from '@/views/teacher/discussion/ClarificationRequestsTeacherView.vue';
-import ClarificationRequestsTeacherView from "@/views/teacher/discussion/ClarificationRequestsTeacherView.vue";
-import ClarificationRequestTeacherView from "@/views/teacher/discussion/ClarificationRequestTeacherView.vue";
+import ClarificationRequestsTeacherView from '@/views/teacher/discussion/ClarificationRequestsTeacherView.vue';
+import ClarificationRequestTeacherView from '@/views/teacher/discussion/ClarificationRequestTeacherView.vue';
 
 Vue.use(Router);
 
@@ -79,7 +78,7 @@ let router = new Router({
         },
         {
           path: 'suggestions',
-          name: 'suggestions-management',
+          name: 'student-suggestions-management',
           component: SuggestionsTView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Questions',
@@ -159,7 +158,7 @@ let router = new Router({
       children: [
         {
           path: 'suggestions',
-          name: 'suggestions-management',
+          name: 'create-suggestions',
           component: SuggestionsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Questions',

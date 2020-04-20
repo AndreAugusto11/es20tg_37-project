@@ -170,7 +170,7 @@
 
         <v-btn to="/student/suggestions" v-if="isStudent && currentCourse" text dark>
           Suggestions
-          <v-icon>question_answer</v-icon>
+          <v-icon>mdi-message-plus</v-icon>
         </v-btn>
 
         <v-btn to="/student/discussion" v-if="isStudent && currentCourse" text dark>
@@ -353,6 +353,13 @@
               <v-icon>fas fa-user</v-icon>
             </v-list-item-action>
             <v-list-item-content>Stats</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/suggestions">
+            <v-list-item-action>
+              <v-icon>mdi-message-plus</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Suggestions</v-list-item-content>
           </v-list-item>
 
           <v-list-item to="/student/discussion">

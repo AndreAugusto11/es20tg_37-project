@@ -1,4 +1,3 @@
-import Image from '@/models/management/Image';
 import Question from '@/models/management/Question';
 import Justification from '@/models/management/Justification';
 
