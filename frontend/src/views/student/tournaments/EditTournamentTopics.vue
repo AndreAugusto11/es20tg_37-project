@@ -40,7 +40,9 @@ export default class EditTournamentTopics extends Vue {
   @Prop({ type: Tournament, required: true }) readonly tournament!: Tournament;
   @Prop({ type: Array, required: true }) readonly topics!: Topic[];
 
-  tournamentTopics: Topic[] = JSON.parse(JSON.stringify(this.tournament.topics));
+  tournamentTopics: Topic[] = JSON.parse(
+    JSON.stringify(this.tournament.topics)
+  );
 
   async saveTopics() {
     this.$emit(

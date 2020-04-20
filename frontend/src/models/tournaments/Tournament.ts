@@ -2,9 +2,9 @@ export class Tournament {
   id: number | null = null;
   creatorID: number | null = null;
   numQuests: number | null = null;
-  topics!: number[];
+  topics: number[] | null = null;
+  topicsName: string[] | null = null;
   enrolledStudentsIds!: number[];
-  topicsName!: string[];
   startTime!: number[];
   endTime!: number[];
   startTimeString!: string;

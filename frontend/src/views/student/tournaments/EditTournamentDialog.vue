@@ -25,7 +25,7 @@
             <template>
               <edit-tournament-topics
                 :tournament="editTournament"
-                :topics="topicsAll"
+                :topics="this.topicsAll"
                 v-on:tournament-changed-topics="retrieveTopics"
               />
             </template>
