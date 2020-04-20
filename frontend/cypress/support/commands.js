@@ -31,11 +31,6 @@ Cypress.Commands.add('demoAdminLogin', () => {
     cy.contains('Manage Courses').click()
 });
 
-Cypress.Commands.add('demoTeacherLogin', () => {
-    cy.visit('/');
-    cy.get('[data-cy="teacherDemoButton"]').click()
-});
-
 Cypress.Commands.add('goToDiscussion', () => {
     cy.contains('Management').click();
     cy.contains('Discussion').click()
@@ -121,13 +116,6 @@ Cypress.Commands.add('createFromCourseExecution', (name, acronym, academicTerm) 
 Cypress.Commands.add('demoStudentLogin', () => {
     cy.visit('/');
     cy.get('[data-cy="studentDemoButton"]').click();
-    cy.contains('Suggestions').click()
-});
-
-Cypress.Commands.add('demoTeacherLogin', () => {
-    cy.visit('/');
-    cy.get('[data-cy="teacherDemoButton"]').click();
-    cy.contains('Management').click();
     cy.contains('Suggestions').click()
 });
 

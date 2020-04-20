@@ -1,6 +1,9 @@
 describe('Accept a suggestion', () => {
   beforeEach(() => {
-    cy.demoStudentLogin()
+    cy.demoStudentLogin();
+    cy.contains('Suggestions').click();
+    cy.contains('Management').click();
+    cy.contains('Suggestions').click()
   });
 
   afterEach(() => {
@@ -13,9 +16,12 @@ describe('Accept a suggestion', () => {
     cy.contains('Logout').click();
     cy.wait(10000);
     cy.demoTeacherLogin();
+    cy.contains('Management').click();
+    cy.contains('Suggestions').click();
     cy.acceptQuestionSuggestion('TestAccept');
     cy.contains('Logout').click();
     cy.demoStudentLogin();
+    cy.contains('Suggestions').click();
     cy.showQuestionSuggestion('TestAccept')
   });
 
@@ -25,15 +31,20 @@ describe('Accept a suggestion', () => {
     cy.contains('Logout').click();
     cy.wait(10000);
     cy.demoTeacherLogin();
+    cy.contains('Management').click();
+    cy.contains('Suggestions').click();
     cy.acceptQuestionSuggestionShow('TestAcceptShow');
     cy.contains('Logout').click();
     cy.demoStudentLogin();
+    cy.contains('Suggestions').click();
     cy.showQuestionSuggestion('TestAcceptShow')
   });
 
   it('login, accepts accepted suggestion and rejects accepted suggestion and fails both times', () => {
 
     cy.demoTeacherLogin();
+    cy.contains('Management').click();
+    cy.contains('Suggestions').click();
     cy.acceptQuestionSuggestion('TestAccept');
     cy.closeErrorMessage();
     cy.rejectQuestionSuggestion('TestAccept', 'Some justification Rejected');

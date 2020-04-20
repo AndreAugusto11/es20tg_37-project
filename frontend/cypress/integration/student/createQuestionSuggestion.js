@@ -1,6 +1,7 @@
 describe('Create a suggestion', () => {
   beforeEach(() => {
     cy.demoStudentLogin()
+    cy.contains('Suggestions').click()
   });
 
   afterEach(() => {

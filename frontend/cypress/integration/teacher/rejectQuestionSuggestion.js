@@ -13,6 +13,8 @@ describe('Reject a suggestion', () => {
     cy.contains('Logout').click();
     cy.wait(10000);
     cy.demoTeacherLogin();
+    cy.contains('Management').click();
+    cy.contains('Suggestions').click()
     cy.rejectQuestionSuggestion('TestReject', 'Some justification');
     cy.contains('Logout').click();
     cy.demoStudentLogin();
@@ -25,6 +27,8 @@ describe('Reject a suggestion', () => {
     cy.contains('Logout').click();
     cy.wait(10000);
     cy.demoTeacherLogin();
+    cy.contains('Management').click();
+    cy.contains('Suggestions').click()
     cy.rejectQuestionSuggestionShow('TestRejectShow', 'Some justification 2');
     cy.contains('Logout').click();
     cy.demoStudentLogin();
@@ -34,6 +38,8 @@ describe('Reject a suggestion', () => {
   it('login, accepts rejected suggestion and rejects rejected suggestion and fails both times', () => {
 
     cy.demoTeacherLogin();
+    cy.contains('Management').click();
+    cy.contains('Suggestions').click()
     cy.acceptQuestionSuggestion('TestReject');
     cy.closeErrorMessage();
     cy.rejectQuestionSuggestion('TestReject', 'Some justification Rejected 2');
