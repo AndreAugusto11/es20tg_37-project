@@ -34,6 +34,13 @@ public class TournamentController {
         return tournamentService.getEnrolledTournaments(user.getId());
     }
 
+    @GetMapping("/tournaments/created")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public List<TournamentDto> getCreatedTournaments(Principal principal) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return tournamentService.getCreatedTournaments(user.getId());
+    }
+
     @PostMapping("/tournaments")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public TournamentDto createTournament(Principal principal, @RequestBody TournamentDto tournamentDto)

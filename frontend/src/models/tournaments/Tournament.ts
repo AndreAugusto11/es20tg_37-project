@@ -2,10 +2,13 @@ export class Tournament {
   id: number | null = null;
   creatorID: number | null = null;
   numQuests: number | null = null;
+  topics!: number[];
   enrolledStudentsIds!: number[];
-  topicsName: string | null = null;
-  startTime!: string;
-  endTime!: string;
+  topicsName!: string[];
+  startTime!: number[];
+  endTime!: number[];
+  startTimeString!: string;
+  endTimeString!: string;
   status!: string;
 
   constructor(jsonObj?: Tournament) {
@@ -14,7 +17,10 @@ export class Tournament {
       this.creatorID = jsonObj.creatorID;
       this.numQuests = jsonObj.numQuests;
       this.enrolledStudentsIds = jsonObj.enrolledStudentsIds;
+      this.topics = jsonObj.topics;
       this.topicsName = jsonObj.topicsName;
+      this.startTime = jsonObj.startTime;
+      this.endTime = jsonObj.endTime;
       this.getDateFormatted(jsonObj);
       this.status = jsonObj.status;
     }
@@ -23,8 +29,8 @@ export class Tournament {
   getDateFormatted(t: Tournament):void{
     let start = String(t.startTime).split(',');
     let end = String(t.endTime).split(',');
-    this.startTime = start[0] + '-' + start[1] + '-' + start[2] + ' ' + start[3]+ ':'+start[4];
-    this.endTime = end[0] + '-' + end[1] + '-' + end[2] + ' ' + end[3]+ ':'+end[4];
+    this.startTimeString = start[0] + '-' + start[1] + '-' + start[2] + ' ' + start[3]+ ':'+start[4];
+    this.endTimeString = end[0] + '-' + end[1] + '-' + end[2] + ' ' + end[3]+ ':'+end[4];
   }
 
 }

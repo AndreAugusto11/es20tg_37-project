@@ -119,6 +119,19 @@ export default class RemoteServices {
       });
   }
 
+  static async getCreatedTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get('/tournaments/created')
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getEnrolledTournaments(): Promise<Tournament[]> {
     return httpClient
       .get('/tournaments/enrolled')
@@ -134,9 +147,9 @@ export default class RemoteServices {
 
   static async enrollTournament(tournament: Tournament): Promise<Tournament> {
     return httpClient
-      .post(`/tournaments/${tournament.id}/enroll`,tournament)
+      .post(`/tournaments/${tournament.id}/enroll`, tournament)
       .then(response => {
-        return  new Tournament(response.data);
+        return new Tournament(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -170,6 +183,20 @@ export default class RemoteServices {
         return response.data.map((question: any) => {
           return new Question(question);
         });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static createTournament(tournament: Tournament): Promise<Tournament> {
+    console.log('Nope');
+    console.log(tournament);
+    return httpClient
+      .post('/tournaments', tournament)
+      .then(response => {
+        console.log('Maybe');
+        return new Tournament(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

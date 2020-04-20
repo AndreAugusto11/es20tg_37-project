@@ -1,50 +1,51 @@
 <template>
-    <v-card class="table">
+  <v-card class="table">
     <div>
-        <h1>Tournaments View</h1>
+      <h1>Tournaments View</h1>
     </div>
-        <v-data-table
-                :headers="headers"
-                :items="tournaments"
-                :search="search"
-                disable-pagination
-                :hide-default-footer="true"
-                :mobile-breakpoint="0"
-                multi-sort
-        >
-            <template v-slot:top>
-                <v-card-title>
-                    <v-text-field
-                            v-model="search"
-                            append-icon="search"
-                            label="Search"
-                            class="mx-2"
-                    />
-                    <v-spacer />
-                </v-card-title>
-            </template>
-            <template v-slot:item.action="{ item }">
-                <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                        <v-icon
-                                x-large
-                                class="mr-2"
-                                color="primary" dark
-                                v-on="on"
-                                @click="enrollTournament(item)"
-                                data-cy="enrollTournament"
-                        >mdi-location-enter</v-icon
-                        >
-                    </template>
-                    <span>Enroll Tournament</span>
-                </v-tooltip>
-            </template>
-        </v-data-table>
-    </v-card>
+    <v-data-table
+      :headers="headers"
+      :items="tournaments"
+      :search="search"
+      disable-pagination
+      :hide-default-footer="true"
+      :mobile-breakpoint="0"
+      multi-sort
+    >
+      <template v-slot:top>
+        <v-card-title>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            class="mx-2"
+          />
+          <v-spacer />
+        </v-card-title>
+      </template>
+      <template v-slot:item.action="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              x-large
+              class="mr-2"
+              color="primary"
+              dark
+              v-on="on"
+              @click="enrollTournament(item)"
+              data-cy="enrollTournament"
+              >mdi-location-enter</v-icon
+            >
+          </template>
+          <span>Enroll Tournament</span>
+        </v-tooltip>
+      </template>
+    </v-data-table>
+  </v-card>
 </template>
 
 <script lang="ts">
-import { Component, Vue }  from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { Tournament } from '@/models/tournaments/Tournament';
 import RemoteServices from '@/services/RemoteServices';
 
@@ -61,13 +62,13 @@ export default class TournamentsView extends Vue {
     },
     {
       text: 'Start Date',
-      value: 'startTime',
+      value: 'startTimeString',
       align: 'center',
       width: '10%'
     },
     {
       text: 'Closure Date',
-      value: 'endTime',
+      value: 'endTimeString',
       align: 'center',
       width: '10%'
     },
@@ -121,7 +122,7 @@ export default class TournamentsView extends Vue {
 </script>
 
 <style lang="scss" scoped>
-    .pos-text {
-        text-align: left !important;
-    }
+.pos-text {
+  text-align: left !important;
+}
 </style>
