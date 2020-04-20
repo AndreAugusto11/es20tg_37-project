@@ -15,7 +15,6 @@ public class Justification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique = true, nullable = false)
     private Integer key;
 
     @Column(columnDefinition = "TEXT")
