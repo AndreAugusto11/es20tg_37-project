@@ -34,6 +34,9 @@ Cypress.Commands.add('demoAdminLogin', () => {
 Cypress.Commands.add('demoTeacherLogin', () => {
     cy.visit('/')
     cy.get('[data-cy="teacherDemoButton"]').click()
+})
+
+Cypress.Commands.add('goToDiscussion', () => {
     cy.contains('Management').click()
     cy.contains('Discussion').click()
 })
@@ -41,11 +44,11 @@ Cypress.Commands.add('demoTeacherLogin', () => {
 Cypress.Commands.add('demoStudentLogin', () => {
     cy.visit('/')
     cy.get('[data-cy="studentDemoButton"]').click()
-    cy.contains('QUIZZES').click()
-    cy.contains('Create').click()
 })
 
 Cypress.Commands.add('solveQuiz', () => {
+    cy.contains('QUIZZES').click()
+    cy.contains('Create').click()
     cy.contains('Create quiz').click()
     for (let i = 0; i < 5; i++) {
         cy.get('.option').first().click()

@@ -15,6 +15,7 @@ describe('Create Clarification Request Answer walkthrough', () => {
 		cy.createClarificationRequest(content)
 		cy.contains('Logout').click()
 		cy.demoTeacherLogin()
+		cy.goToDiscussion()
 		cy.get('[data-cy="Search"]').type(content)
 		cy.contains(content)
 	});
@@ -28,12 +29,14 @@ describe('Create Clarification Request Answer walkthrough', () => {
 		cy.createClarificationRequest(contentReq)
 		cy.contains('Logout').click()
 		cy.demoTeacherLogin()
+		cy.goToDiscussion()
 		cy.get('[data-cy="Search"]').type(contentReq)
 		cy.contains(contentReq).click()
 		cy.createClarificationRequestAnswer(contentRes)
 		cy.contains('Logout').click()
 
 		cy.demoTeacherLogin()
+		cy.goToDiscussion()
 		cy.contains(contentReq).click()
 		cy.get('[data-cy="answerButton"]').should('not.exist')
 	});

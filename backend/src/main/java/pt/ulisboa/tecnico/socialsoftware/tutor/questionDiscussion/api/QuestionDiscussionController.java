@@ -46,7 +46,7 @@ public class QuestionDiscussionController {
 
     @GetMapping("/questionAnswers/{questionAnswerId}/clarificationRequests")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionAnswerId, 'QUESTION_ANSWER.ACCESS')")
-    public ClarificationRequestDto getClarificationRequest(Principal principal, @PathVariable Integer questionAnswerId) {
+    public ClarificationRequestDto getClarificationRequest(@PathVariable Integer questionAnswerId) {
         return questionDiscussionService.getClarification(questionAnswerId);
     }
 

@@ -9,7 +9,7 @@
     <v-card>
       <v-card-title>
         <span class="headline">
-          New Clarification Request
+          New Course
         </span>
       </v-card-title>
 
