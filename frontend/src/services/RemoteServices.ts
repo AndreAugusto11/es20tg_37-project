@@ -193,12 +193,9 @@ export default class RemoteServices {
   }
 
   static createTournament(tournament: Tournament): Promise<Tournament> {
-    console.log('Nope');
-    console.log(tournament);
     return httpClient
       .post('/tournaments', tournament)
       .then(response => {
-        console.log('Maybe');
         return new Tournament(response.data);
       })
       .catch(async error => {
@@ -207,7 +204,6 @@ export default class RemoteServices {
   }
 
   static createQuestion(question: Question): Promise<Question> {
-    console.log(question);
     return httpClient
       .post(
         `/courses/${Store.getters.getCurrentCourse.courseId}/questions/`,

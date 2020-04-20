@@ -157,7 +157,7 @@ public class TournamentService
 	}
 
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
-	public List<TournamentDto> getCreatedTournaments(Integer userId) {
+		public List<TournamentDto> getCreatedTournaments(Integer userId) {
 		if(userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
 		User user = userRepository.findById(userId)
 				.orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
