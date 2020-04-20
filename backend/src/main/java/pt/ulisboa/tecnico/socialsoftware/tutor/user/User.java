@@ -488,12 +488,14 @@ public class User implements UserDetails, DomainEntity {
         justifications.add(justification);
     }
 
-    public void addCreatedTournament(Tournament tournament) {
+    public void addCreatedTournament(Tournament tournament)
+    {
+        tournaments.add(tournament);
         createdTournaments.add(tournament);
     }
 
     public Set<Tournament> getCreatedTournaments()
     {
-        return tournaments;
+        return createdTournaments;
     }
 }

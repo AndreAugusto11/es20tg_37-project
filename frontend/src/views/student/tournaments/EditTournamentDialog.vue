@@ -20,6 +20,7 @@
               <v-text-field
                 v-model="editTournament.numQuests"
                 label="Number Of Questions"
+                data-cy="numQuest"
               />
             </v-flex>
             <template>
@@ -28,18 +29,21 @@
                 :tournament="editTournament"
                 :topics="this.topicsAll"
                 v-on:tournament-changed-topics="retrieveTopics"
+                data-cy="topicSearch"
               />
             </template>
             <v-flex xs24 sm12 md8>
               <v-text-field
                 v-model="editTournament.startTimeString"
                 label="Start Time (format = YYYY-MM-DD HH:MM)"
+                data-cy="start"
               ></v-text-field>
             </v-flex>
             <v-flex xs24 sm12 md8>
               <v-text-field
                 v-model="editTournament.endTimeString"
                 label="End Time (format = YYYY-MM-DD HH:MM)"
+                data-cy="end"
               ></v-text-field>
             </v-flex>
           </v-layout>
@@ -77,7 +81,7 @@ export default class EditTournamentDialog extends Vue {
   editTournament!: Tournament;
   topicsAll: Topic[] = [];
   stringAux: String[] | null = null;
-  compoundKey: Number = 0;
+  compoundKey: number = 0;
 
   async created() {
     try {
@@ -99,8 +103,13 @@ export default class EditTournamentDialog extends Vue {
 
   async retrieveTopics(topics: Topic[]) {
     for (var t in topics) {
-      this.editTournament.topics.unshift(topics[t].id);
-      this.editTournament.topicsName.unshift(topics[t].name);
+      if (this.editTournament.topics && this.editTournament.topicsName) {
+        this.editTournament.topics.unshift(topics[t].id);
+        this.editTournament.topicsName.unshift(topics[t].name);
+      } else {
+        this.editTournament.topics = [topics[t].id];
+        this.editTournament.topicsName = [topics[t].name];
+      }
     }
   }
 
