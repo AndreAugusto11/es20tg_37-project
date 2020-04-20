@@ -41,6 +41,11 @@ Cypress.Commands.add('demoStudentLogin', () => {
     cy.get('[data-cy="studentDemoButton"]').click()
 });
 
+Cypress.Commands.add('demoTeacherLogin', () => {
+    cy.visit('/');
+    cy.get('[data-cy="teacherDemoButton"]').click();
+});
+
 Cypress.Commands.add('solveQuiz', () => {
     cy.contains('QUIZZES').click();
     cy.contains('Create').click();
@@ -113,11 +118,7 @@ Cypress.Commands.add('createFromCourseExecution', (name, acronym, academicTerm) 
     cy.get('[data-cy="saveButton"]').click()
 });
 
-Cypress.Commands.add('demoStudentLogin', () => {
-    cy.visit('/');
-    cy.get('[data-cy="studentDemoButton"]').click();
-    cy.contains('Suggestions').click()
-});
+
 
 Cypress.Commands.add('createQuestionSuggestion', (title, question, op0, op1, op2, op3, flag)=>{
     cy.contains('New Suggestion').click();
