@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class QuestionAnswerDto implements Serializable {
     private QuestionDto question;
     private OptionDto option;
+    private boolean hasClarificationRequest;
 
 
     public QuestionAnswerDto() {}
@@ -18,6 +19,8 @@ public class QuestionAnswerDto implements Serializable {
 
         if(questionAnswer.getOption() != null)
             this.option = new OptionDto(questionAnswer.getOption());
+
+        this.hasClarificationRequest = !questionAnswer.getClarificationRequest().isEmpty();
     }
 
     public QuestionDto getQuestion() {
@@ -34,5 +37,13 @@ public class QuestionAnswerDto implements Serializable {
 
     public void setOption(OptionDto option) {
         this.option = option;
+    }
+
+    public boolean getHasClarificationRequest() {
+        return hasClarificationRequest;
+    }
+
+    public void setHasClarificationRequest(boolean hasClarificationRequest) {
+        this.hasClarificationRequest = hasClarificationRequest;
     }
 }

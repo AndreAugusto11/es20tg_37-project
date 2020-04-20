@@ -93,6 +93,14 @@
                 <v-list-item-title>Students</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/management/discussion">
+              <v-list-item-action>
+                <v-icon>fas fa-comments</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Discussion</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/management/impexp">
               <v-list-item-action>
                 <v-icon>cloud</v-icon>
@@ -107,7 +115,7 @@
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>
-              Quizzes
+              QUIZZES
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
           </template>
@@ -185,6 +193,11 @@
         <v-btn to="/student/stats" v-if="isStudent && currentCourse" text dark>
           Stats
           <v-icon>fas fa-user</v-icon>
+        </v-btn>
+
+        <v-btn to="/student/discussion" v-if="isStudent && currentCourse" text dark>
+          Discussion
+          <v-icon>fas fa-comments</v-icon>
         </v-btn>
 
         <v-btn
@@ -290,6 +303,14 @@
               <v-list-item-title>Students</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item to="/management/discussion">
+              <v-list-item-action>
+                <v-icon>fas fa-comments</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Discussion</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           <v-list-item to="/management/impexp">
             <v-list-item-action>
               <v-icon>cloud</v-icon>
@@ -367,6 +388,13 @@
               <v-icon>fas fa-user</v-icon>
             </v-list-item-action>
             <v-list-item-content>Enrolled Tournaments</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/discussion">
+            <v-list-item-action>
+              <v-icon>fas fa-comments</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Discussion</v-list-item-content>
           </v-list-item>
         </v-list-group>
 

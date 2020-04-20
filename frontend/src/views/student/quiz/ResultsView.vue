@@ -46,6 +46,7 @@
       :questionNumber="statementManager.statementQuiz.questions.length"
       @increase-order="increaseOrder"
       @decrease-order="decreaseOrder"
+      v-on:update-answers="updateStatementManager"
     />
   </div>
 </template>
@@ -54,6 +55,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import StatementManager from '@/models/statement/StatementManager';
 import ResultComponent from '@/views/student/quiz/ResultComponent.vue';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component({
   components: {
@@ -73,6 +75,20 @@ export default class ResultsView extends Vue {
         this.statementManager.concludeQuiz();
       }, 2000);
 
+      await this.$store.dispatch('clearLoading');
+    }
+  }
+
+  async updateStatementManager() {
+    if (this.statementManager.statementQuiz) {
+      await this.$store.dispatch('loading');
+      try {
+        let newQuiz = await RemoteServices.getSolvedQuiz(this.statementManager.statementQuiz.id);
+        this.statementManager.correctAnswers = newQuiz.correctAnswers;
+        this.statementManager.statementQuiz = newQuiz.statementQuiz;
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
       await this.$store.dispatch('clearLoading');
     }
   }
