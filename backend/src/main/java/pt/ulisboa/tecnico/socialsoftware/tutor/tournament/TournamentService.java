@@ -161,7 +161,6 @@ public class TournamentService
 		if(userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
 		User user = userRepository.findById(userId)
 				.orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
-		System.out.println(user);
 		return user.getCreatedTournaments().stream()
 				.map(TournamentDto::new)
 				.sorted(Comparator

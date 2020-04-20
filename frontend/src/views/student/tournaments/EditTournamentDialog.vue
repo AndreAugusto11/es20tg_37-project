@@ -24,6 +24,7 @@
             </v-flex>
             <template>
               <edit-tournament-topics
+                :key="compoundKey"
                 :tournament="editTournament"
                 :topics="this.topicsAll"
                 v-on:tournament-changed-topics="retrieveTopics"
@@ -74,18 +75,26 @@ export default class EditTournamentDialog extends Vue {
   @Prop({ type: Tournament, required: true }) readonly tournament!: Tournament;
 
   editTournament!: Tournament;
-  topicsAll!: Topic[];
+  topicsAll: Topic[] = [];
   stringAux: String[] | null = null;
+  compoundKey: Number = 0;
 
   async created() {
-    this.editTournament = new Tournament(this.tournament);
     try {
+      this.editTournament = new Tournament(this.tournament);
+      this.editTournament.topics = [];
+      this.editTournament.topicsName = [];
       this.topicsAll = await Promise.all(await RemoteServices.getTopics());
       console.log(this.topicsAll);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+    this.forceRenderer();
+  }
+
+  forceRenderer() {
+    this.compoundKey += 1;
   }
 
   async retrieveTopics(topics: Topic[]) {
