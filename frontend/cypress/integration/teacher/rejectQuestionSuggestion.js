@@ -1,6 +1,7 @@
 describe('Reject a suggestion', () => {
   beforeEach(() => {
-    cy.demoStudentLogin()
+    cy.demoStudentLogin();
+    cy.contains('Suggestions').click()
   });
 
   afterEach(() => {
@@ -18,6 +19,7 @@ describe('Reject a suggestion', () => {
     cy.rejectQuestionSuggestion('TestReject', 'Some justification');
     cy.contains('Logout').click();
     cy.demoStudentLogin();
+    cy.contains('Suggestions').click();
     cy.showQuestionSuggestion('TestReject')
   });
 
@@ -32,6 +34,7 @@ describe('Reject a suggestion', () => {
     cy.rejectQuestionSuggestionShow('TestRejectShow', 'Some justification 2');
     cy.contains('Logout').click();
     cy.demoStudentLogin();
+    cy.contains('Suggestions').click();
     cy.showQuestionSuggestion('TestReject')
   });
 
