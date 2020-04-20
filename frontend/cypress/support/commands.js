@@ -51,7 +51,7 @@ Cypress.Commands.add('enrollTournament', (id) => {
       .should('have.length', 7)
       .find('[data-cy="enrollTournament"]')
       .click()
-    cy.contains('I\'m sure').click()
+    //cy.contains('I\'m sure').click()
     cy.contains('Tournaments').click()
     cy.contains('Enrolled Tournaments').click()
     cy.contains(id)
