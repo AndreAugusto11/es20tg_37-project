@@ -12,14 +12,15 @@ import { Student } from '@/models/management/Student';
 import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
-import { QuizAnswer } from '@/models/management/QuizAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import { Tournament } from '@/models/tournaments/Tournament';
+import QuestionSuggestion from '@/models/management/QuestionSuggestion';
+import Justification from '@/models/management/Justification';
 import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
-import {ClarificationRequestAnswer} from '@/models/discussion/ClarificationRequestAnswer';
+import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 
 const httpClient = axios.create();
-httpClient.defaults.timeout = 10000;
+httpClient.defaults.timeout = 50000;
 httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
 httpClient.defaults.headers.post['Content-Type'] = 'application/json';
 httpClient.interceptors.request.use(
@@ -206,6 +207,7 @@ export default class RemoteServices {
   }
 
   static createQuestion(question: Question): Promise<Question> {
+    console.log(question);
     return httpClient
       .post(
         `/courses/${Store.getters.getCurrentCourse.courseId}/questions/`,
@@ -713,8 +715,84 @@ export default class RemoteServices {
       await Store.dispatch('logout');
       return 'Unauthorized access or Expired token';
     } else {
-      console.log(error);
       return 'Unknown Error - Contact admin';
     }
+  }
+
+  static async createQuestionSuggestion(
+    questionSuggestion: QuestionSuggestion
+  ): Promise<QuestionSuggestion> {
+    questionSuggestion.questionDto.status = 'PENDING';
+    return httpClient
+      .post(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/questionSuggestions/`,
+        questionSuggestion
+      )
+      .then(response => {
+        return new QuestionSuggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async acceptQuestionSuggestion(
+    suggestionId: number
+  ): Promise<QuestionSuggestion> {
+    return httpClient
+      .put(`/questionSuggestions/${suggestionId}/accepting`)
+      .then(response => {
+        return new QuestionSuggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async rejectQuestionSuggestion(
+    suggestionId: number,
+    justification: Justification
+  ): Promise<QuestionSuggestion> {
+    return httpClient
+      .put(
+          `/questionSuggestions/${suggestionId}/rejecting`,
+          justification
+        )
+      .then(response => {
+        return new QuestionSuggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getQuestionSuggestions(): Promise<QuestionSuggestion[]> {
+    return httpClient
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/questionSuggestions`
+      )
+      .then(response => {
+        return response.data.map((questionSuggestion: any) => {
+          return new QuestionSuggestion(questionSuggestion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getAllQuestionSuggestions(): Promise<QuestionSuggestion[]> {
+    return httpClient
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/allQuestionSuggestions`
+      )
+      .then(response => {
+        return response.data.map((questionSuggestion: any) => {
+          return new QuestionSuggestion(questionSuggestion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 }

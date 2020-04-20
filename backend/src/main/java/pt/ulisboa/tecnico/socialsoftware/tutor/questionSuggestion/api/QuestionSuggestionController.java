@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -29,21 +30,24 @@ public class QuestionSuggestionController {
     public QuestionSuggestionDto createSuggestionQuestion(Principal principal, @PathVariable int courseId, @Valid @RequestBody QuestionSuggestionDto questionSuggestionDto) {
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name());
         User user = (User) ((Authentication) principal).getPrincipal();
-
         return questionSuggestionService.createQuestionSuggestion(user.getId(), courseId, questionSuggestionDto);
     }
 
     @PutMapping("/questionSuggestions/{questionSuggestionId}/accepting")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionSuggestionId, 'QUESTION_SUGGESTION.ACCESS')")
-    public void acceptQuestionSuggestion(@PathVariable int questionSuggestionId) {
+    public ResponseEntity acceptQuestionSuggestion(@PathVariable int questionSuggestionId) {
         questionSuggestionService.acceptQuestionSuggestion(questionSuggestionId);
+
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/questionSuggestions/{questionSuggestionId}/rejecting")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionSuggestionId, 'QUESTION_SUGGESTION.ACCESS')")
-    public void rejectQuestionSuggestion(Principal principal, @PathVariable int questionSuggestionId, @Valid @RequestBody JustificationDto justificationDto) {
+    public ResponseEntity rejectQuestionSuggestion(Principal principal, @PathVariable int questionSuggestionId, @Valid @RequestBody JustificationDto justificationDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
         questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestionId, justificationDto);
+
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/courses/{courseId}/questionSuggestions")
@@ -51,5 +55,11 @@ public class QuestionSuggestionController {
     public List<QuestionSuggestionDto> getQuestionSuggestions(Principal principal, @PathVariable int courseId) {
         User user = (User) ((Authentication) principal).getPrincipal();
         return questionSuggestionService.getQuestionSuggestions(user.getId(), courseId);
+    }
+
+    @GetMapping("/courses/{courseId}/allQuestionSuggestions")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    public List<QuestionSuggestionDto> getAllQuestionSuggestions(@PathVariable int courseId) {
+        return questionSuggestionService.getAllQuestionSuggestions(courseId);
     }
 }

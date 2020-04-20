@@ -61,6 +61,14 @@
                 <v-list-item-title>Questions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/management/suggestions">
+              <v-list-item-action>
+                <v-icon>mdi-message-plus</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Suggestions</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/management/topics">
               <v-list-item-action>
                 <v-icon>category</v-icon>
@@ -195,7 +203,22 @@
           <v-icon>fas fa-user</v-icon>
         </v-btn>
 
-        <v-btn to="/student/discussion" v-if="isStudent && currentCourse" text dark>
+        <v-btn
+          to="/student/suggestions"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+        >
+          Suggestions
+          <v-icon>mdi-message-plus</v-icon>
+        </v-btn>
+
+        <v-btn
+          to="/student/discussion"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+        >
           Discussion
           <v-icon>fas fa-comments</v-icon>
         </v-btn>
@@ -271,6 +294,14 @@
               <v-list-item-title>Questions</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item to="/management/suggestions">
+            <v-list-item-action>
+              <v-icon>mdi-message-plus</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Suggestions</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item to="/management/topics">
             <v-list-item-action>
               <v-icon>category</v-icon>
@@ -304,13 +335,13 @@
             </v-list-item-content>
           </v-list-item>
           <v-list-item to="/management/discussion">
-              <v-list-item-action>
-                <v-icon>fas fa-comments</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Discussion</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
+            <v-list-item-action>
+              <v-icon>fas fa-comments</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Discussion</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item to="/management/impexp">
             <v-list-item-action>
               <v-icon>cloud</v-icon>
@@ -388,6 +419,13 @@
               <v-icon>fas fa-user</v-icon>
             </v-list-item-action>
             <v-list-item-content>Enrolled Tournaments</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/suggestions">
+            <v-list-item-action>
+              <v-icon>mdi-message-plus</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Suggestions</v-list-item-content>
           </v-list-item>
 
           <v-list-item to="/student/discussion">

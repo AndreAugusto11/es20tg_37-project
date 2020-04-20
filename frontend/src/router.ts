@@ -21,6 +21,8 @@ import ScanView from './views/student/ScanView.vue';
 import TournamentsView from '@/views/student/tournaments/TournamentsView.vue';
 import EnrolledTournamentsView from '@/views/student/tournaments/EnrolledTournamentsView.vue';
 import CreateTournamentsView from '@/views/student/tournaments/CreateTournamentsView.vue';
+import SuggestionsView from './views/student/questionSuggestion/QuestionSuggestionView.vue';
+import SuggestionsTView from './views/teacher/questionSuggestions/AvailableSuggestionsView.vue';
 
 import AdminManagementView from './views/admin/AdminManagementView.vue';
 import NotFoundView from './views/NotFoundView.vue';
@@ -30,9 +32,8 @@ import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import ClarificationRequestsView from '@/views/student/discussion/ClarificationRequestsView.vue';
 import ClarificationRequestView from '@/views/student/discussion/ClarificationRequestView.vue';
-import ClarificationRequestAnswerView from '@/views/teacher/discussion/ClarificationRequestsTeacherView.vue';
-import ClarificationRequestsTeacherView from "@/views/teacher/discussion/ClarificationRequestsTeacherView.vue";
-import ClarificationRequestTeacherView from "@/views/teacher/discussion/ClarificationRequestTeacherView.vue";
+import ClarificationRequestsTeacherView from '@/views/teacher/discussion/ClarificationRequestsTeacherView.vue';
+import ClarificationRequestTeacherView from '@/views/teacher/discussion/ClarificationRequestTeacherView.vue';
 
 Vue.use(Router);
 
@@ -73,6 +74,15 @@ let router = new Router({
           path: 'questions',
           name: 'questions-management',
           component: QuestionsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Questions',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'suggestions',
+          name: 'student-suggestions-management',
+          component: SuggestionsTView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Questions',
             requiredAuth: 'Teacher'
@@ -149,6 +159,15 @@ let router = new Router({
       name: 'student',
       component: StudentView,
       children: [
+        {
+          path: 'suggestions',
+          name: 'create-suggestions',
+          component: SuggestionsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Questions',
+            requiredAuth: 'Student'
+          }
+        },
         {
           path: 'available',
           name: 'available-quizzes',

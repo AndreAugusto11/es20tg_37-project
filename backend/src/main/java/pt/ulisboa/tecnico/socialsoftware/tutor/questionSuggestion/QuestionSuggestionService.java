@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.JustificationDto;
@@ -37,6 +38,9 @@ public class QuestionSuggestionService {
 
     @Autowired
     QuestionSuggestionRepository questionSuggestionRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Autowired
     CourseRepository courseRepository;
@@ -75,6 +79,14 @@ public class QuestionSuggestionService {
         }
 
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name());
+
+        if (questionSuggestionDto.getCreationDate() == null) {
+            questionSuggestionDto.setCreationDate(LocalDateTime.now().format(Course.formatter));
+        }
+
+        if (questionSuggestionDto.getQuestionDto().getCreationDate() == null) {
+            questionSuggestionDto.getQuestionDto().setCreationDate(LocalDateTime.now().format(Course.formatter));
+        }
 
         QuestionSuggestion questionSuggestion = new QuestionSuggestion(user, course, questionSuggestionDto);
         questionSuggestion.setCreationDate(LocalDateTime.now());
@@ -133,7 +145,9 @@ public class QuestionSuggestionService {
     }
 
     private QuestionSuggestion checkForQuestionSuggestion(Integer questionSuggestionId) {
-        QuestionSuggestion suggestion = questionSuggestionRepository.findById(questionSuggestionId).orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
+        QuestionSuggestion suggestion = questionSuggestionRepository.
+                findById(questionSuggestionId).
+                orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
 
         if (suggestion.getStatus() == QuestionSuggestion.Status.ACCEPTED) {
             throw new TutorException(QUESTION_SUGGESTION_ALREADY_ACCEPTED);
@@ -150,9 +164,21 @@ public class QuestionSuggestionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSuggestionDto> getQuestionSuggestions(int userId, Integer courseId) {
         return questionSuggestionRepository.findQuestionSuggestions(userId).stream()
-                .filter(questionSuggestion -> questionSuggestion.getQuestion().getCourse().getId() == courseId)
+                .filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId))
                 .map(QuestionSuggestionDto::new)
-                .sorted(Comparator.comparing(QuestionSuggestionDto::getCreationDate))
+                .sorted(Comparator.comparing(QuestionSuggestionDto::getCreationDate).reversed())
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<QuestionSuggestionDto> getAllQuestionSuggestions(Integer courseId) {
+        return questionSuggestionRepository.findAll().stream()
+                .filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId))
+                .map(QuestionSuggestionDto::new)
+                .sorted(Comparator.comparing(QuestionSuggestionDto::getCreationDate).reversed())
                 .collect(Collectors.toList());
     }
 
