@@ -122,7 +122,6 @@ export default class SuggestionsTView extends Vue {
   }
 
   async accepted(suggestionId: number) {
-    console.log(suggestionId);
     try {
       await RemoteServices.acceptQuestionSuggestion(suggestionId);
       let suggestion = this.suggestions.find(

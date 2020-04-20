@@ -116,7 +116,12 @@ public class Option implements DomainEntity {
         this.questionSuggestion = questionSuggestion;
     }
 
-    public QuestionSuggestion getQuestionSuggestion(){
+    public QuestionSuggestion getQuestionSuggestion() {
         return this.questionSuggestion;
+    }
+
+    public void remove() {
+        this.question = null;
+        this.questionAnswers.clear();
     }
 }
