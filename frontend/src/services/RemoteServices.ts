@@ -13,10 +13,11 @@ import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import { Tournament } from '@/models/tournaments/Tournament';
 import QuestionSuggestion from '@/models/management/QuestionSuggestion';
 import Justification from '@/models/management/Justification';
 import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
-import {ClarificationRequestAnswer} from "@/models/discussion/ClarificationRequestAnswer";
+import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 50000;
@@ -108,6 +109,56 @@ export default class RemoteServices {
       });
   }
 
+  static async getTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get('/tournaments')
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getCreatedTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get('/tournaments/created')
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getEnrolledTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get('/tournaments/enrolled')
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async enrollTournament(tournament: Tournament): Promise<Tournament> {
+    return httpClient
+      .post(`/tournaments/${tournament.id}/enroll`, tournament)
+      .then(response => {
+        return new Tournament(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async exportCourseQuestions(): Promise<Blob> {
     return httpClient
       .get(
@@ -141,8 +192,18 @@ export default class RemoteServices {
       });
   }
 
+  static createTournament(tournament: Tournament): Promise<Tournament> {
+    return httpClient
+      .post('/tournaments', tournament)
+      .then(response => {
+        return new Tournament(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static createQuestion(question: Question): Promise<Question> {
-    console.log(question);
     return httpClient
       .post(
         `/courses/${Store.getters.getCurrentCourse.courseId}/questions/`,

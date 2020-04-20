@@ -18,6 +18,9 @@ import QuizView from './views/student/quiz/QuizView.vue';
 import ResultsView from './views/student/quiz/ResultsView.vue';
 import StatsView from './views/student/StatsView.vue';
 import ScanView from './views/student/ScanView.vue';
+import TournamentsView from '@/views/student/tournaments/TournamentsView.vue';
+import EnrolledTournamentsView from '@/views/student/tournaments/EnrolledTournamentsView.vue';
+import CreateTournamentsView from '@/views/student/tournaments/CreateTournamentsView.vue';
 import SuggestionsView from './views/student/questionSuggestion/QuestionSuggestionView.vue';
 import SuggestionsTView from './views/teacher/questionSuggestions/AvailableSuggestionsView.vue';
 
@@ -244,6 +247,33 @@ let router = new Router({
           component: ScanView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Scan',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'tournaments',
+          name: 'tournaments',
+          component: TournamentsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Tournaments',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'enrolled',
+          name: 'enrolled',
+          component: EnrolledTournamentsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Enrolled Tournaments',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'createTournament',
+          name: 'createTournament',
+          component: CreateTournamentsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Create Tournaments',
             requiredAuth: 'Student'
           }
         }

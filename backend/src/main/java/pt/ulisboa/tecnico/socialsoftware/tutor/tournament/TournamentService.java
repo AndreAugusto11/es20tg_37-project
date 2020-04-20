@@ -60,6 +60,10 @@ public class TournamentService
 		tournament.setendTime(endTime);
 
 		tournament.checkConsistent();
+		tournament.setstatus(Tournament.Status.OPEN);
+
+		student.addCreatedTournament(tournament);
+		tournament.addUser(student);
 
 		this.entityManager.persist(tournament);
 		return new TournamentDto(tournament);
@@ -92,7 +96,7 @@ public class TournamentService
 			value = { SQLException.class },
 			backoff = @Backoff(delay = 5000))
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
-	public void enrollStudentInTournament(Integer userId, Integer tournamentId){
+	public TournamentDto enrollStudentInTournament(Integer userId, Integer tournamentId){
 		if(userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
 
 		if(tournamentId == null) throw new TutorException(TOURNAMENT_NULL_TOURNAMENT);
@@ -113,6 +117,7 @@ public class TournamentService
 
 		tournament.addUser(user);
 		user.addTournament(tournament);
+		return new TournamentDto(tournament);
 	}
 
 	private boolean checkTopicsExistence(Set<Topic> topics)
@@ -138,4 +143,29 @@ public class TournamentService
 						.comparing(TournamentDto::getid))
 				.collect(Collectors.toList());
 	}
+
+	@Transactional(isolation = Isolation.REPEATABLE_READ)
+	public List<TournamentDto> getEnrolledTournaments(Integer userId) {
+		if(userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
+		User user = userRepository.findById(userId)
+				.orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
+		return user.getTournaments().stream()
+				.map(TournamentDto::new)
+				.sorted(Comparator
+						.comparing(TournamentDto::getid))
+				.collect(Collectors.toList());
+	}
+
+	@Transactional(isolation = Isolation.REPEATABLE_READ)
+		public List<TournamentDto> getCreatedTournaments(Integer userId) {
+		if(userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
+		User user = userRepository.findById(userId)
+				.orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
+		return user.getCreatedTournaments().stream()
+				.map(TournamentDto::new)
+				.sorted(Comparator
+						.comparing(TournamentDto::getid))
+				.collect(Collectors.toList());
+	}
+
 }

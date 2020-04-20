@@ -115,7 +115,6 @@ export default class EditQuestionSuggestionDialog extends Vue {
         const result = await RemoteServices.createQuestionSuggestion(
           this.editQuestionSuggestion
         );
-        console.log(result);
         this.$emit('save-questionSuggestion', result);
       } catch (error) {
         await this.$store.dispatch('error', error);

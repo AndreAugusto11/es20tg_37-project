@@ -31,6 +31,44 @@ Cypress.Commands.add('demoAdminLogin', () => {
     cy.contains('Manage Courses').click()
 });
 
+Cypress.Commands.add('allTournaments', () => {
+    cy.contains('Tournaments').click()
+    cy.contains('All Tournaments').click()
+});
+
+Cypress.Commands.add('createTournaments', (numQ, topicName, start, finish) => {
+    cy.contains('Tournaments').click()
+    cy.contains('Create Tournaments').click()
+    cy.get('[data-cy="createButton"]').click()
+    cy.wait(5000)
+    cy.get('[data-cy="numQuest"]').type(numQ)
+    cy.get('[data-cy="topicSearch"]').click()
+    cy.get('[data-cy="topicSearch"]').type(topicName + '\n').type('{esc}')
+    cy.get('[data-cy="start"]').type(start)
+    cy.get('[data-cy="end"]').type(finish)
+    cy.get('[data-cy="save"]').click();
+});
+
+Cypress.Commands.add('enrollTournament', (id) => {
+    cy.contains('Tournaments').click()
+    cy.contains('All Tournaments').click()
+    cy.contains(id)
+      .parent()
+      .should('have.length', 1)
+      .children()
+      .should('have.length', 7)
+      .find('[data-cy="enrollTournament"]')
+      .click()
+    cy.contains('Tournaments').click()
+    cy.contains('Enrolled Tournaments').click()
+    cy.contains(id)
+});
+
+Cypress.Commands.add('demoTeacherLogin', () => {
+    cy.visit('/')
+    cy.get('[data-cy="teacherDemoButton"]').click()
+});
+
 Cypress.Commands.add('goToDiscussion', () => {
     cy.contains('Management').click();
     cy.contains('Discussion').click()
@@ -39,11 +77,6 @@ Cypress.Commands.add('goToDiscussion', () => {
 Cypress.Commands.add('demoStudentLogin', () => {
     cy.visit('/');
     cy.get('[data-cy="studentDemoButton"]').click()
-});
-
-Cypress.Commands.add('demoTeacherLogin', () => {
-    cy.visit('/');
-    cy.get('[data-cy="teacherDemoButton"]').click();
 });
 
 Cypress.Commands.add('solveQuiz', () => {

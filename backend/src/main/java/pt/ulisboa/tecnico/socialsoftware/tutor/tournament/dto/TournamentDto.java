@@ -1,13 +1,17 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import java.util.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 public class TournamentDto implements Serializable {
+
     private Integer id;
     private Set<Integer> enrolledStudentsIds = new HashSet<>();
     private int creatorID;
@@ -15,8 +19,9 @@ public class TournamentDto implements Serializable {
     private int numQuests = 1;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private Set<String> topicsName = new HashSet<>();
 
-    private Tournament.Status status;
+    private String status;
 
     public TournamentDto() {
     }
@@ -29,6 +34,7 @@ public class TournamentDto implements Serializable {
         numQuests = tournament.getnumQuests();
         startTime = tournament.getstartTime();
         endTime = tournament.getendTime();
+        status = tournament.getstatus().name();
     }
 
     public int getcreatorID()
@@ -53,6 +59,9 @@ public class TournamentDto implements Serializable {
         return topics;
     }
 
+    public Set<String> gettopicsName() {
+        return topicsName;
+    }
     public LocalDateTime getstartTime() {
         return startTime;
     }
@@ -77,11 +86,20 @@ public class TournamentDto implements Serializable {
         this.numQuests = numQuests;
     }
 
-    public void settopics(Set<Integer> topics) {this.topics = topics;}
+    public void settopics(Set<Integer> topics)
+    {
+        this.topics = topics;
+    }
+
+    public void settopicsName(Set<String> topics)
+    {
+        this.topicsName = topics;
+    }
 
     public void settopicsTour(Set<Topic> topics) {
         for(Topic t: topics){
             this.topics.add(t.getId());
+            this.topicsName.add(""+t.getCourse().getName()+":"+t.getName());
         }
     }
 
@@ -93,8 +111,8 @@ public class TournamentDto implements Serializable {
         this.endTime = endTime;
     }
 
-    public Tournament.Status getstatus() { return this.status;}
+    public String getstatus() { return this.status;}
 
-    public void setstatus(Tournament.Status status) {this.status = status;}
+    public void setstatus(Tournament.Status status) {this.status = status.name();}
 
 }
