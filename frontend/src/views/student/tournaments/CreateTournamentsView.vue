@@ -60,8 +60,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { Tournament } from '@/models/tournaments/Tournament';
 import RemoteServices from '@/services/RemoteServices';
+import { Tournament } from '@/models/tournaments/Tournament';
 import EditTournamentDialog from '@/views/student/tournaments/EditTournamentDialog.vue';
 
 @Component({
@@ -73,7 +73,6 @@ export default class CreateTournamentsView extends Vue {
   tournaments: Tournament[] = [];
   currentTournament: Tournament | null = null;
   editTournamentDialog: boolean = false;
-  tournamentDialog: boolean = false;
   search: string = '';
   headers: object = [
     {
@@ -145,11 +144,6 @@ export default class CreateTournamentsView extends Vue {
   async onCloseDialog() {
     this.editTournamentDialog = false;
     this.currentTournament = null;
-  }
-
-  showTournamentDialog(tournament: Tournament) {
-    this.currentTournament = tournament;
-    this.tournamentDialog = true;
   }
 
   async cancelTournament(tournamentToCancel: Tournament) {

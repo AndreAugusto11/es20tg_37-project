@@ -65,11 +65,10 @@
 
 <script lang="ts">
 import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+import Topic from '@/models/management/Topic';
 import RemoteServices from '@/services/RemoteServices';
 import { Tournament } from '@/models/tournaments/Tournament';
 import EditTournamentTopics from '@/views/student/tournaments/EditTournamentTopics.vue';
-import Topic from '@/models/management/Topic';
-import Question from '@/models/management/Question';
 
 @Component({
   components: {

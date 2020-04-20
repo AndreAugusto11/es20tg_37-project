@@ -32,8 +32,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import Topic from '@/models/management/Topic';
-import RemoteServices from '@/services/RemoteServices';
-import {Tournament} from '@/models/tournaments/Tournament';
+import { Tournament } from '@/models/tournaments/Tournament';
 
 @Component
 export default class EditTournamentTopics extends Vue {
@@ -45,10 +44,7 @@ export default class EditTournamentTopics extends Vue {
   );
 
   async saveTopics() {
-    this.$emit(
-      'tournament-changed-topics',
-      this.tournamentTopics
-    );
+    this.$emit('tournament-changed-topics', this.tournamentTopics);
   }
 
   removeTopic(topic: Topic) {
