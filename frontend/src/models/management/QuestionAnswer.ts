@@ -4,11 +4,13 @@ import Option from '@/models/management/Option';
 export class QuestionAnswer {
   question!: Question;
   option!: Option;
+  hasClarificationRequest: Boolean = false;
 
   constructor(jsonObj?: QuestionAnswer) {
     if (jsonObj) {
       this.question = new Question(jsonObj.question);
       this.option = new Option(jsonObj.option);
+      this.hasClarificationRequest = jsonObj.hasClarificationRequest;
     }
   }
 }

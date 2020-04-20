@@ -60,6 +60,28 @@
         />
       </li>
     </ul>
+    <v-container>
+      <v-btn v-if="this.answer.questionAnswerDto.hasClarificationRequest" disabled>
+        Ask clarification
+      </v-btn>
+      <v-btn v-else color="primary" dark @click="newClarificationRequest" data-cy="createClarificationButton">
+        Ask clarification
+      </v-btn>
+      <v-btn class="ml-5" v-if="this.answer.questionAnswerDto.hasClarificationRequest" color="primary" dark @click="openClarificationRequest" data-cy="seeClarificationButton">
+        See clarification
+      </v-btn>
+      <v-btn class="ml-5" v-else disabled>
+        See clarification
+      </v-btn>
+    </v-container>
+    <create-clarification-request-dialog
+      v-if="currentClarificationRequest"
+      v-model="createClarificationRequestDialog"
+      :clarification-request="currentClarificationRequest"
+      :answer="answer"
+      v-on:new-clarification-request="onCreateClarificationRequest"
+      v-on:close-dialog="onCloseDialog"
+    />
   </div>
 </template>
 
@@ -70,14 +92,25 @@ import StatementQuestion from '@/models/statement/StatementQuestion';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 import Image from '@/models/management/Image';
+import CreateClarificationRequestDialog from '@/views/student/quiz/CreateClarificationRequestDialog.vue';
+import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
+import store from '@/store';
+import RemoteServices from '@/services/RemoteServices';
 
-@Component
+@Component({
+  components: {
+    'create-clarification-request-dialog': CreateClarificationRequestDialog
+  }
+})
 export default class ResultComponent extends Vue {
   @Model('questionOrder', Number) questionOrder: number | undefined;
   @Prop(StatementQuestion) readonly question!: StatementQuestion;
   @Prop(StatementCorrectAnswer) readonly correctAnswer!: StatementCorrectAnswer;
   @Prop(StatementAnswer) readonly answer!: StatementAnswer;
   @Prop() readonly questionNumber!: number;
+  currentClarificationRequest: ClarificationRequest | null = null;
+  clarification: ClarificationRequest | null = null;
+  createClarificationRequestDialog: boolean = false;
   hover: boolean = false;
   optionLetters: string[] = ['A', 'B', 'C', 'D'];
 
@@ -93,6 +126,35 @@ export default class ResultComponent extends Vue {
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
+  }
+
+  newClarificationRequest() {
+    this.currentClarificationRequest = new ClarificationRequest();
+    this.createClarificationRequestDialog = true;
+  }
+
+  async onCreateClarificationRequest(clarificationRequest: ClarificationRequest) {
+    this.createClarificationRequestDialog = false;
+    this.currentClarificationRequest = null;
+    this.$emit('update-answers');
+  }
+
+  onCloseDialog() {
+    this.createClarificationRequestDialog = false;
+    this.currentClarificationRequest = null;
+  }
+
+  async openClarificationRequest() {
+    await this.$store.dispatch('loading');
+    if (this.answer.questionAnswerId) {
+      try {
+        this.clarification = await RemoteServices.getClarificationRequest(this.answer.questionAnswerId);
+        await this.$router.push({ name: 'clarification', params: { clarificationRequest: JSON.stringify(this.clarification) } });
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+      await this.$store.dispatch('clearLoading');
+    }
   }
 }
 </script>

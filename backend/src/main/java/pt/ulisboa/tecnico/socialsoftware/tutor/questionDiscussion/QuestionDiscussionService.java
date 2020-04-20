@@ -98,6 +98,15 @@ public class QuestionDiscussionService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ClarificationRequestDto getClarification(Integer questionAnswerId) {
+        QuestionAnswer questionAnswer = getQuestionAnswer(questionAnswerId);
+
+        return questionAnswer.getClarificationRequest().stream()
+                .map(ClarificationRequestDto::new)
+                .collect(Collectors.toList()).get(0);
+    }
+
     private Question getQuestion(ClarificationRequestDto clarificationRequestDto) {
         return questionRepository
                     .findById(clarificationRequestDto.getQuestionAnswerDto().getQuestion().getId())
