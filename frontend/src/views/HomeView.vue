@@ -9,25 +9,14 @@
     </v-btn>
 
     <div class="demo-buttons" v-if="!isLoggedIn">
-      <v-btn
-        depressed
-        small
-        color="primary"
-        @click="demoStudent"
-        data-cy="studentButton"
-      >
+      <v-btn depressed small color="primary" @click="demoStudent" data-cy="studentDemoButton" data-cy="studentButton">
         <i class="fa fa-graduation-cap" />Demo as student
       </v-btn>
-      <v-btn depressed small color="primary" @click="demoTeacher" data-cy="teacherButton">
+      <v-btn depressed small color="primary" @click="demoTeacher" data-cy="teacherDemoButton" data-cy="teacherButton">
         <i class="fa fa-graduation-cap" />Demo as teacher
       </v-btn>
       <v-btn
-        depressed
-        small
-        color="primary"
-        @click="demoAdmin"
-        data-cy="adminButton"
-      >
+        depressed small color="primary" @click="demoAdmin" data-cy="adminButton">
         <i class="fa fa-user-cog" />Demo as administrator
       </v-btn>
     </div>

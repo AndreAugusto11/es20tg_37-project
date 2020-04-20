@@ -197,6 +197,21 @@ public class StatementService {
     }
 
     @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public SolvedQuizDto getSolvedQuiz(String username, int executionId, int quizId) {
+        User user = userRepository.findByUsername(username);
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
+        return user.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getId() == quizId)
+                .map(SolvedQuizDto::new)
+                .collect(Collectors.toList()).get(0);
+    }
+
+    @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)

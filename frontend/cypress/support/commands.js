@@ -31,6 +31,55 @@ Cypress.Commands.add('demoAdminLogin', () => {
     cy.contains('Manage Courses').click()
 })
 
+Cypress.Commands.add('demoTeacherLogin', () => {
+    cy.visit('/')
+    cy.get('[data-cy="teacherDemoButton"]').click()
+})
+
+Cypress.Commands.add('goToDiscussion', () => {
+    cy.contains('Management').click()
+    cy.contains('Discussion').click()
+})
+
+Cypress.Commands.add('demoStudentLogin', () => {
+    cy.visit('/')
+    cy.get('[data-cy="studentDemoButton"]').click()
+})
+
+Cypress.Commands.add('solveQuiz', () => {
+    cy.contains('QUIZZES').click()
+    cy.contains('Create').click()
+    cy.contains('Create quiz').click()
+    for (let i = 0; i < 5; i++) {
+        cy.get('.option').first().click()
+        cy.get('div.square').click()
+    }
+    cy.get('.end-quiz').click()
+    cy.contains('I\'m sure').click()
+})
+
+Cypress.Commands.add('createClarificationRequest', (content) => {
+    cy.get('[data-cy="createClarificationButton"]').click()
+    cy.get('[data-cy="Content"]').type(content)
+    cy.get('[data-cy="saveButton"]').click()
+})
+
+Cypress.Commands.add('createClarificationRequestAnswer', (content) => {
+    cy.get('[data-cy="answerButton"]').click()
+    cy.get('[data-cy="Content"]').type(content)
+    cy.get('[data-cy="saveButton"]').click()
+})
+
+Cypress.Commands.add('seeClarificationRequest', () => {
+    cy.get('[data-cy="seeClarificationButton"]').click()
+})
+
+Cypress.Commands.add('listClarificationRequest', (content) => {
+    cy.contains('Discussion').click()
+    cy.get('[data-cy="Search"]').type(content)
+    cy.contains(content)
+})
+
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
     cy.get('[data-cy="createButton"]').click()
     cy.get('[data-cy="Name"]').type(name)
