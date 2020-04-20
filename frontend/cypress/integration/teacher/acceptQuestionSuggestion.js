@@ -2,8 +2,6 @@ describe('Accept a suggestion', () => {
   beforeEach(() => {
     cy.demoStudentLogin();
     cy.contains('Suggestions').click();
-    cy.contains('Management').click();
-    cy.contains('Suggestions').click()
   });
 
   afterEach(() => {
