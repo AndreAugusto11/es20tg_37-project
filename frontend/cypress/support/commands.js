@@ -41,6 +41,19 @@ Cypress.Commands.add('allTournaments', () => {
     cy.contains('All Tournaments').click()
 })
 
+Cypress.Commands.add('createTournaments', (numQ: String, topicName: String, start: String, finish: String) => {
+    cy.contains('Tournaments').click()
+    cy.contains('Create Tournaments').click()
+    cy.get('[data-cy="createButton"]').click()
+    cy.wait(5000)
+    cy.get('[data-cy="numQuest"]').type(numQ)
+    cy.get('[data-cy="topicSearch"]').click()
+    cy.get('[data-cy="topicSearch"]').type(topicName + '\n').type('{esc}')
+    cy.get('[data-cy="start"]').type(start)
+    cy.get('[data-cy="end"]').type(finish)
+    cy.get('[data-cy="save"]').click();
+})
+
 Cypress.Commands.add('enrollTournament', (id) => {
     cy.contains('Tournaments').click()
     cy.contains('All Tournaments').click()

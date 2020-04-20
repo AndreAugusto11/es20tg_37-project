@@ -34,14 +34,14 @@
             </template>
             <v-flex xs24 sm12 md8>
               <v-text-field
-                v-model="editTournament.startTimeString"
+                v-model="startString"
                 label="Start Time (format = YYYY-MM-DD HH:MM)"
                 data-cy="start"
               ></v-text-field>
             </v-flex>
             <v-flex xs24 sm12 md8>
               <v-text-field
-                v-model="editTournament.endTimeString"
+                v-model="endString"
                 label="End Time (format = YYYY-MM-DD HH:MM)"
                 data-cy="end"
               ></v-text-field>
@@ -55,7 +55,9 @@
         <v-btn color="blue darken-1" @click="$emit('close-dialog', false)"
           >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" @click="saveTournament">Save</v-btn>
+        <v-btn color="blue darken-1" @click="saveTournament" data-cy="save"
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -81,6 +83,8 @@ export default class EditTournamentDialog extends Vue {
   editTournament!: Tournament;
   topicsAll: Topic[] = [];
   stringAux: String[] | null = null;
+  startString: string = '';
+  endString: string = '';
   compoundKey: number = 0;
 
   async created() {
@@ -127,6 +131,8 @@ export default class EditTournamentDialog extends Vue {
       );
       return;
     }
+    this.editTournament.startTimeString = this.startString;
+    this.editTournament.endTimeString = this.endString;
     this.stringAux = this.editTournament.startTimeString.split(/ |:|-/);
     this.editTournament.startTime = this.stringAux.map(Number);
     this.stringAux = this.editTournament.endTimeString.split(/ |:|-/);
