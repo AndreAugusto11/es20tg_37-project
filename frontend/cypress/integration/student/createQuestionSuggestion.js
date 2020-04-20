@@ -1,11 +1,11 @@
 describe('Create a suggestion', () => {
   beforeEach(() => {
     cy.demoStudentLogin()
-  })
+  });
 
   afterEach(() => {
     cy.contains('Logout').click()
-  })
+  });
 
   it('login and creates a suggestion', () => {
     cy.createQuestionSuggestion('TestNormal','Question','a', 'b', 'c', 'd', 'No');

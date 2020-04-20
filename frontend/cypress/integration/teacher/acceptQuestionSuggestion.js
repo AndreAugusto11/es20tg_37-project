@@ -1,21 +1,21 @@
 describe('Accept a suggestion', () => {
   beforeEach(() => {
     cy.demoStudentLogin()
-  })
+  });
 
   afterEach(() => {
     cy.contains('Logout').click()
-  })
+  });
 
   it('login, creates a suggestion and accepts it through direct button', () => {
 
     cy.createQuestionSuggestion('TestAccept','Question','a', 'b', 'c', 'd', 'No');
     cy.contains('Logout').click();
-    cy.wait(10000)
+    cy.wait(10000);
     cy.demoTeacherLogin();
     cy.acceptQuestionSuggestion('TestAccept');
-    cy.contains('Logout').click()
-    cy.demoStudentLogin()
+    cy.contains('Logout').click();
+    cy.demoStudentLogin();
     cy.showQuestionSuggestion('TestAccept')
   });
 

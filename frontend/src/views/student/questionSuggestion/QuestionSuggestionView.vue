@@ -44,7 +44,8 @@
               small
               class="mr-2"
               v-on="on"
-              @click="showQuestionSuggestionDialog(item)" data-cy="showSuggestion"
+              @click="showQuestionSuggestionDialog(item)"
+              data-cy="showSuggestion"
               >visibility</v-icon
             >
           </template>

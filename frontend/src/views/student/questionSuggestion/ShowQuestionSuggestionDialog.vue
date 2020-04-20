@@ -1,6 +1,7 @@
 <template>
   <v-dialog
-    :value="dialog" @input="$emit('close-dialog')"
+    :value="dialog"
+    @input="$emit('close-dialog')"
     @keydown.esc="closeQuestionSuggestionDialog"
     max-width="75%"
   >
@@ -15,7 +16,11 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn dark color="blue darken-1" @click="closeQuestionSuggestionDialog" data-cy="closeButton"
+        <v-btn
+          dark
+          color="blue darken-1"
+          @click="closeQuestionSuggestionDialog"
+          data-cy="closeButton"
           >close</v-btn
         >
       </v-card-actions>
@@ -27,12 +32,13 @@
       </v-card-title>
 
       <v-card-text class="text-left">
-        <span v-html="
-          convertMarkDown(
-            questionSuggestion.justificationDto.content,
-            questionSuggestion.justificationDto.image
-          )
-        "
+        <span
+          v-html="
+            convertMarkDown(
+              questionSuggestion.justificationDto.content,
+              questionSuggestion.justificationDto.image
+            )
+          "
         />
       </v-card-text>
     </v-card>
