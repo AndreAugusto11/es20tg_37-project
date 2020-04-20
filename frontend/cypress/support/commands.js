@@ -124,11 +124,25 @@ Cypress.Commands.add('acceptQuestionSuggestionShow', (title) =>{
     cy.get('[data-cy="acceptQuestion"]').click();
 });
 
-Cypress.Commands.add('acceptQuestionSuggestion', (title) =>{
+Cypress.Commands.add('rejectQuestionSuggestion', (title, text) =>{
     cy.contains(title)
         .parent()
         .children()
         .should('have.length', 5)
-        .find('[data-cy="acceptButton"]')
+        .find('[data-cy="rejectButton"]')
         .click({force: true});
+    cy.get('[data-cy="justification_text"]').type(text);
+    cy.get('[data-cy="saveJustification"]').click();
+});
+
+Cypress.Commands.add('rejectQuestionSuggestionShow', (title, text) =>{
+    cy.contains(title)
+      .parent()
+      .children()
+      .should('have.length', 5)
+      .find('[data-cy="showButton"]')
+      .click({force: true});
+    cy.get('[data-cy="rejectQuestion"]').click();
+    cy.get('[data-cy="justification_text"]').type(text);
+    cy.get('[data-cy="saveJustification"]').click();
 });

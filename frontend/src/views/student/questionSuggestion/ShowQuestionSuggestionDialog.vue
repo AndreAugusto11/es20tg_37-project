@@ -20,6 +20,22 @@
         >
       </v-card-actions>
     </v-card>
+
+    <v-card class="mt-5" v-if="questionSuggestion.justificationDto">
+      <v-card-title>
+        <span class="headline">Justification</span>
+      </v-card-title>
+
+      <v-card-text class="text-left">
+        <span v-html="
+          convertMarkDown(
+            questionSuggestion.justificationDto.content,
+            questionSuggestion.justificationDto.image
+          )
+        "
+        />
+      </v-card-text>
+    </v-card>
   </v-dialog>
 </template>
 
@@ -27,6 +43,8 @@
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import QuestionSuggestion from '../../../models/management/QuestionSuggestion';
 import ShowQuestionSuggestion from '@/views/student/questionSuggestion/ShowQuestionSuggestion.vue';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import Image from '@/models/management/Image';
 
 @Component({
   components: {
@@ -40,6 +58,10 @@ export default class ShowQuestionSuggestionDialog extends Vue {
 
   closeQuestionSuggestionDialog() {
     this.$emit('close-dialog');
+  }
+
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
   }
 }
 </script>

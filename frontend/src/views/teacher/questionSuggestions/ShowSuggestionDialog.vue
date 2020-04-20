@@ -15,9 +15,12 @@
       </v-card-text>
 
       <v-card-actions v-if="!rejected">
-        <v-btn dark color="green darken-1" @click="acceptSuggestionDialog" data-cy="acceptQuestion"
+        <v-btn
+            dark color="green darken-1"
+            @click="acceptSuggestionDialog"
+            data-cy="acceptQuestion"
         >Accept</v-btn>
-        <v-btn dark color="red darken-1" @click="rejectSuggestionDialog"
+        <v-btn dark color="red darken-1" @click="rejectSuggestionDialog" data-cy="rejectQuestion"
         >Reject</v-btn>
         <v-spacer />
         <v-btn dark color="blue darken-1" @click="closeSuggestionDialog"
@@ -31,26 +34,45 @@
           rows="2"
           label="Justification"
           v-model="justification.content"
+          data-cy="justification_text"
         ></v-textarea>
       </v-card-text>
 
       <v-card-actions v-if="rejected">
         <v-spacer />
-        <v-btn dark color="blue darken-1" @click="saveJustification"
+        <v-btn dark color="blue darken-1" @click="saveJustification" data-cy="saveJustification"
         >save</v-btn>
         <v-btn dark color="blue darken-1" @click="closeJustificationDialog"
         >close</v-btn
         >
       </v-card-actions>
     </v-card>
+
+    <v-card class="mt-5" v-if="questionSuggestion.justificationDto">
+      <v-card-title>
+        <span class="headline">Justification</span>
+      </v-card-title>
+
+      <v-card-text class="text-left">
+        <span v-html="
+          convertMarkDown(
+            questionSuggestion.justificationDto.content,
+            questionSuggestion.justificationDto.image
+          )
+        "
+        />
+      </v-card-text>
+    </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
   import { Component, Vue, Prop } from 'vue-property-decorator';
+  import { convertMarkDown } from '@/services/ConvertMarkdownService';
   import QuestionSuggestion from '../../../models/management/QuestionSuggestion';
   import ShowQuestionSuggestion from '@/views/student/questionSuggestion/ShowQuestionSuggestion.vue';
   import Justification from '@/models/management/Justification';
+  import Image from '@/models/management/Image';
 
   @Component({
     components: {
@@ -85,6 +107,10 @@
 
     closeJustificationDialog() {
       this.rejected = false;
+    }
+
+    convertMarkDown(text: string, image: Image | null = null): string {
+      return convertMarkDown(text, image);
     }
 
     async saveJustification() {

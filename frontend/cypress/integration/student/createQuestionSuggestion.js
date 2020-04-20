@@ -1,4 +1,4 @@
-describe('Create a valide suggestion', () => {
+describe('Create a suggestion', () => {
   beforeEach(() => {
     cy.demoStudentLogin()
   })

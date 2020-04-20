@@ -1,4 +1,4 @@
-describe('Create a valide suggestion', () => {
+describe('Accept a suggestion', () => {
   beforeEach(() => {
     cy.demoStudentLogin()
   })
@@ -7,11 +7,11 @@ describe('Create a valide suggestion', () => {
     cy.contains('Logout').click()
   })
 
-  it('login and creates a suggestion and accept it', () => {
+  it('login, creates a suggestion and accepts it through direct button', () => {
 
     cy.createQuestionSuggestion('TestAccept','Question','a', 'b', 'c', 'd', 'No');
     cy.contains('Logout').click();
-    cy.wait(30000)
+    cy.wait(10000)
     cy.demoTeacherLogin();
     cy.acceptQuestionSuggestion('TestAccept');
     cy.contains('Logout').click()
@@ -19,11 +19,11 @@ describe('Create a valide suggestion', () => {
     cy.showQuestionSuggestion('TestAccept')
   });
 
-  it('login and creates a suggestion and accept it now in show', () => {
+  it('login, creates a suggestion and accepts it through show menu', () => {
 
     cy.createQuestionSuggestion('TestAcceptShow','Question','a', 'b', 'c', 'd', 'No');
     cy.contains('Logout').click();
-    cy.wait(30000);
+    cy.wait(10000);
     cy.demoTeacherLogin();
     cy.acceptQuestionSuggestionShow('TestAcceptShow');
     cy.contains('Logout').click();
@@ -31,17 +31,12 @@ describe('Create a valide suggestion', () => {
     cy.showQuestionSuggestion('TestAcceptShow')
   });
 
-  it('login and creates a suggestion and reject it', () => {
+  it('login, accepts accepted suggestion and rejects accepted suggestion and fails both times', () => {
 
-    cy.createQuestionSuggestion('TestAccept','Question','a', 'b', 'c', 'd', 'No');
-    cy.contains('Logout').click();
-    cy.wait(30000)
     cy.demoTeacherLogin();
-    cy.rejectQuestionSuggestion('TestAccept');
-    cy.contains('Logout').click()
-    cy.demoStudentLogin()
-    cy.showQuestionSuggestion('TestAccept')
+    cy.acceptQuestionSuggestion('TestAccept');
+    cy.closeErrorMessage();
+    cy.rejectQuestionSuggestion('TestAccept', 'Some justification Rejected');
+    cy.closeErrorMessage();
   });
-
-
 });

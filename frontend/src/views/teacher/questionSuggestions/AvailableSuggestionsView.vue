@@ -47,7 +47,7 @@
                 class="mr-2"
                 v-on="on"
                 @click="accepted(item.id)" data-cy="acceptButton"
-            >add</v-icon
+            >mdi-check</v-icon
             >
           </template>
           <span>Accept Suggestion</span>
@@ -58,14 +58,13 @@
                 small
                 class="mr-2"
                 v-on="on"
-                @click="showRejectionDialog(item)"
+                @click="showRejectionDialog(item)" data-cy="rejectButton"
             >mdi-close</v-icon
             >
           </template>
-          <span>Reject Question</span>
+          <span>Reject Suggestion</span>
         </v-tooltip>
       </template>
-
     </v-data-table>
 
     <show-questionSuggestion-dialog
