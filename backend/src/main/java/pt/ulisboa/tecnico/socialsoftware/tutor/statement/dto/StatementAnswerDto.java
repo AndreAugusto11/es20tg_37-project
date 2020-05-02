@@ -5,7 +5,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
 
 import java.io.Serializable;
 
-
 public class StatementAnswerDto implements Serializable {
     private Integer questionAnswerId;
     private QuestionAnswerDto questionAnswerDto;
@@ -13,7 +12,7 @@ public class StatementAnswerDto implements Serializable {
     private Integer sequence;
     private Integer optionId;
 
-    public StatementAnswerDto(){}
+    public StatementAnswerDto() {}
 
     public StatementAnswerDto(QuestionAnswer questionAnswer) {
         this.questionAnswerId = questionAnswer.getId();
@@ -21,7 +20,7 @@ public class StatementAnswerDto implements Serializable {
         this.timeTaken = questionAnswer.getTimeTaken();
         this.sequence = questionAnswer.getSequence();
 
-        if(questionAnswer.getOption() != null) {
+        if (questionAnswer.getOption() != null) {
             this.optionId = questionAnswer.getOption().getId();
         }
     }
