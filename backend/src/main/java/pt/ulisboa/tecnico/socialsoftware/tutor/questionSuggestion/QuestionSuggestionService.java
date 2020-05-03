@@ -80,13 +80,13 @@ public class QuestionSuggestionService {
 
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name());
 
-        if (questionSuggestionDto.getCreationDate() == null) {
+        /*if (questionSuggestionDto.getCreationDate() == null) {
             questionSuggestionDto.setCreationDate(LocalDateTime.now().format(Course.formatter));
         }
 
         if (questionSuggestionDto.getQuestionDto().getCreationDate() == null) {
             questionSuggestionDto.getQuestionDto().setCreationDate(LocalDateTime.now().format(Course.formatter));
-        }
+        }*/
 
         QuestionSuggestion questionSuggestion = new QuestionSuggestion(user, course, questionSuggestionDto);
         questionSuggestion.setCreationDate(LocalDateTime.now());

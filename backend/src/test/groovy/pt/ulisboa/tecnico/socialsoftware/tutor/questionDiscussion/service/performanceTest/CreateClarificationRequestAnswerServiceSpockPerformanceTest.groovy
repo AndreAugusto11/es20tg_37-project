@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
@@ -38,6 +40,11 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
     public static final String CLARIFICATION_CONTENT = "Test"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
+    public static final String QUIZ_TITLE = 'quiz title'
+    public static final String QUESTION_TITLE = 'question title'
+    public static final String QUESTION_CONTENT = 'question content'
+    public static final String OPTION_CONTENT = "optionId content"
+    public static final Integer SEQUENCE = 0
 
     @Autowired
     QuestionDiscussionService questionDiscussionService
@@ -64,6 +71,9 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
     QuestionRepository questionRepository
 
     @Autowired
+    OptionRepository optionRepository
+
+    @Autowired
     QuestionAnswerRepository questionAnswerRepository
 
     @Autowired
@@ -74,6 +84,7 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
     def course
     def courseExecution
     def question
+    def option
     def quizQuestion
     def quizAnswer
     def quiz
@@ -99,10 +110,23 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
         question.setCourse(course)
         course.addQuestion(question)
         question.setKey(1)
+        question.setTitle(QUESTION_TITLE)
+        question.setContent(QUESTION_CONTENT)
+        question.setStatus(Question.Status.AVAILABLE)
         questionRepository.save(question)
+
+        option = new Option()
+        option.setSequence(SEQUENCE)
+        option.setContent(OPTION_CONTENT)
+        option.setCorrect(true)
+        option.setQuestion(question)
+        question.addOption(option)
+        optionRepository.save(option)
 
         quiz = new Quiz()
         quiz.setKey(1)
+        quiz.setTitle(QUIZ_TITLE)
+        quiz.setType(Quiz.QuizType.GENERATED.name())
         quiz.setCourseExecution(courseExecution)
         courseExecution.addQuiz(quiz)
         quizRepository.save(quiz)

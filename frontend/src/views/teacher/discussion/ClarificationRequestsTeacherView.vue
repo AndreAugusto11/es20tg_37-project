@@ -31,7 +31,7 @@
       </template>
 
       <template v-slot:item.content="{ item }">
-        <p v-html="convertMarkDownNoFigure(item.content, null)" />
+        <p v-html="convertMarkDown(item.content, null)" />
       </template>
 
       <template v-slot:item.status="{ item }">
@@ -46,7 +46,7 @@
 <script lang="ts">
     import { Component, Vue } from 'vue-property-decorator';
     import RemoteServices from '@/services/RemoteServices';
-    import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
+    import { convertMarkDown } from '@/services/ConvertMarkdownService';
     import Question from '@/models/management/Question';
     import Image from '@/models/management/Image';
     import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
@@ -82,8 +82,8 @@
             );
         }
 
-        convertMarkDownNoFigure(text: string, image: Image | null = null): string {
-            return convertMarkDownNoFigure(text, image);
+      convertMarkDown(text: string, image: Image | null = null): string {
+            return convertMarkDown(text, image);
         }
 
         getStatusColor(status: string) {

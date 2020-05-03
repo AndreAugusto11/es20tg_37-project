@@ -101,7 +101,7 @@ Cypress.Commands.add('enrollTournament', (id) => {
 
 Cypress.Commands.add('demoTeacherLogin', () => {
   cy.visit('/')
-  cy.get('[data-cy="teacherDemoButton"]').click()
+  cy.get('[data-cy="demoTeacherLoginButton"]').click()
 });
 
 Cypress.Commands.add('goToDiscussion', () => {
@@ -111,7 +111,7 @@ Cypress.Commands.add('goToDiscussion', () => {
 
 Cypress.Commands.add('demoStudentLogin', () => {
   cy.visit('/');
-  cy.get('[data-cy="studentDemoButton"]').click()
+  cy.get('[data-cy="demoStudentLoginButton"]').click()
 });
 
 Cypress.Commands.add('solveQuiz', () => {

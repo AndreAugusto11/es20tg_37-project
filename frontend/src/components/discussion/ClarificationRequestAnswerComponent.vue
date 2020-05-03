@@ -25,7 +25,7 @@
                 no-gutters
         >
             <v-col class="post-text">
-                <span v-html="convertMarkDownNoFigure(this.clarificationRequest.clarificationRequestAnswerDto.content, null)" />
+                <span v-html="convertMarkDown(this.clarificationRequest.clarificationRequestAnswerDto.content, null)" />
             </v-col>
         </v-row>
     </v-card>
@@ -33,7 +33,7 @@
 
 <script lang="ts">
     import { Component, Prop, Vue } from 'vue-property-decorator';
-    import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
+    import { convertMarkDown } from '@/services/ConvertMarkdownService';
     import Image from '@/models/management/Image';
     import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
 
@@ -41,8 +41,8 @@
     export default class ClarificationRequestComponent extends Vue {
         @Prop(ClarificationRequest) readonly clarificationRequest!: ClarificationRequest;
 
-        convertMarkDownNoFigure(text: string, image: Image | null = null): string {
-            return convertMarkDownNoFigure(text, image);
+      convertMarkDown(text: string, image: Image | null = null): string {
+            return convertMarkDown(text, image);
         }
     }
 </script>

@@ -48,18 +48,18 @@
       <v-card-actions v-if="rejected">
         <v-spacer />
 
-        <v-btn dark color="blue darken-1" @click="closeJustificationDialog"
-        >close</v-btn
-        >
+        <v-btn dark color="blue darken-1" @click="closeJustificationDialog">
+          close
+        </v-btn>
 
         <v-btn
           dark
           color="blue darken-1"
           @click="saveJustification"
           data-cy="saveJustification"
-          >save</v-btn
         >
-
+          save
+        </v-btn>
       </v-card-actions>
     </v-card>
 
