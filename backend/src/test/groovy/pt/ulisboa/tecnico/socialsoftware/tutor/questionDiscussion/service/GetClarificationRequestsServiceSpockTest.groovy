@@ -122,7 +122,7 @@ class GetClarificationRequestsServiceSpockTest extends Specification {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setType(Quiz.QuizType.GENERATED)
+        quiz.setType(Quiz.QuizType.GENERATED.name())
         quiz.setCourseExecution(courseExecution)
         courseExecution.addQuiz(quiz)
         quizRepository.save(quiz)
