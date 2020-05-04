@@ -168,6 +168,7 @@ public class QuestionDiscussionService {
 
         return clarificationRequest.getClarificationRequestAnswer().stream()
                 .map(ClarificationRequestAnswerDto::new)
+                .sorted(Comparator.comparing(ClarificationRequestAnswerDto::getCreationDate))
                 .collect(Collectors.toList());
     }
 

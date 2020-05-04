@@ -1,8 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
+
+import java.time.LocalDateTime;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -29,6 +32,8 @@ public class ClarificationRequestAnswer {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
 
     public ClarificationRequestAnswer() { }
 
@@ -52,6 +57,7 @@ public class ClarificationRequestAnswer {
         this.type = type;
         clarificationRequest.addClarificationRequestAnswer(this);
         user.addClarificationRequestAnswers(this);
+        this.creationDate = DateHandler.now();
 
         if (user.getRole().equals(User.Role.TEACHER)) {
             this.clarificationRequest.setStatus(ClarificationRequest.Status.ANSWERED);
@@ -80,4 +86,16 @@ public class ClarificationRequestAnswer {
     public String getContent() { return content; }
 
     public void setContent(String content) { this.content = content; }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        if (this.creationDate == null) {
+            this.creationDate = DateHandler.now();
+        } else {
+            this.creationDate = creationDate;
+        }
+    }
 }
