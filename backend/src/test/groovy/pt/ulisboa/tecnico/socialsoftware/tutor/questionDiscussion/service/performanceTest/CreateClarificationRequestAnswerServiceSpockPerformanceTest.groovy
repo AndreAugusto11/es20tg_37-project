@@ -103,6 +103,7 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
         user_teacher.getCourseExecutions().add(courseExecution)
         user_student.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user_teacher)
+        courseExecution.getUsers().add(user_student)
         userRepository.save(user_teacher)
         userRepository.save(user_student)
 
@@ -150,7 +151,7 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
         questionAnswerRepository.save(questionAnswer)
     }
 
-    def "performance testing to create 1000 clarification request answers"() {
+    def "performance testing to create 1000 clarification request answers by the teacher"() {
         given: "a clarification request dto"
         def clarificationRequestDto = new ClarificationRequestDto()
         clarificationRequestDto.setContent(CLARIFICATION_CONTENT)
@@ -165,6 +166,36 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
         clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
         clarificationRequestAnswerDto.setName(user_teacher.getName())
         clarificationRequestAnswerDto.setUsername(user_teacher.getUsername())
+
+        and: "1000 clarification requests"
+        1.upto(NUMBER_OF_ITERATIONS, {
+            questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
+        })
+        List<ClarificationRequest> clarificationRequestList = clarificationRequestRepository.findAll()
+
+        when: "10000 clarification request answers are created"
+        1.upto(NUMBER_OF_ITERATIONS, {
+            questionDiscussionService.createClarificationRequestAnswer(clarificationRequestList.pop().getId(), clarificationRequestAnswerDto)
+        })
+
+        then: true
+    }
+
+    def "performance testing to create 1000 clarification request answers by the student"() {
+        given: "a clarification request dto"
+        def clarificationRequestDto = new ClarificationRequestDto()
+        clarificationRequestDto.setContent(CLARIFICATION_CONTENT)
+        clarificationRequestDto.setName(user_student.getName())
+        clarificationRequestDto.setUsername(user_student.getUsername())
+        def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
+        clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
+
+        and: "a clarification request answer dto"
+        def clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
+        clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.STUDENT_ANSWER)
+        clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
+        clarificationRequestAnswerDto.setName(user_student.getName())
+        clarificationRequestAnswerDto.setUsername(user_student.getUsername())
 
         and: "1000 clarification requests"
         1.upto(NUMBER_OF_ITERATIONS, {
