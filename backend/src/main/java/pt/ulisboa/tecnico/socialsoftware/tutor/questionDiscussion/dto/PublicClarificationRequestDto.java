@@ -8,11 +8,15 @@ public class PublicClarificationRequestDto {
     private ClarificationRequestDto clarificationRequestDto;
 
     public PublicClarificationRequestDto() {
-
     }
 
     public PublicClarificationRequestDto(PublicClarificationRequest publicClarificationRequest) {
+        this.id = publicClarificationRequest.getId();
         this.clarificationRequestDto = new ClarificationRequestDto(publicClarificationRequest.getClarificationRequest());
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public ClarificationRequestDto getClarificationRequestDto() {
