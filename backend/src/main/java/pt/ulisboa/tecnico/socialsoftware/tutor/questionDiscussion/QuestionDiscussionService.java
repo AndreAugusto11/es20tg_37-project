@@ -22,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.Clarificat
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.PublicClarificationRequestDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.PublicClarificationRequestRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -48,6 +49,9 @@ public class QuestionDiscussionService {
 
     @Autowired
     ClarificationRequestAnswerRepository clarificationRequestAnswerRepository;
+
+    @Autowired
+    PublicClarificationRequestRepository publicClarificationRequestRepository;
 
     @Autowired
     QuestionRepository questionRepository;
@@ -109,20 +113,6 @@ public class QuestionDiscussionService {
         return questionAnswer.getClarificationRequest().stream()
                 .map(ClarificationRequestDto::new)
                 .collect(Collectors.toList()).get(0);
-    }
-
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PublicClarificationRequestDto createPublicClarificationRequest(ClarificationRequestDto clarificationRequestDto) {
-
-        ClarificationRequest clarificationRequest = this.getClarificationRequest(clarificationRequestDto.getId());
-        Course course = clarificationRequest.getQuestion().getCourse();
-
-        PublicClarificationRequest publicClarificationRequest = new PublicClarificationRequest(clarificationRequest, course);
-
-        clarificationRequest.setPublicClarificationRequest(publicClarificationRequest);
-        course.addPublicClarificationRequests(publicClarificationRequest);
-
-        return new PublicClarificationRequestDto(publicClarificationRequest);
     }
 
     private Question getQuestion(ClarificationRequestDto clarificationRequestDto) {
@@ -193,5 +183,20 @@ public class QuestionDiscussionService {
         if (clarificationRequestAnswerDto.getType() == null) {
             throw new TutorException(CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED);
         }
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PublicClarificationRequestDto createPublicClarificationRequest(ClarificationRequestDto clarificationRequestDto) {
+
+        ClarificationRequest clarificationRequest = this.getClarificationRequest(clarificationRequestDto.getId());
+        Course course = clarificationRequest.getQuestion().getCourse();
+
+        PublicClarificationRequest publicClarificationRequest = new PublicClarificationRequest(course, clarificationRequest);
+
+        clarificationRequest.setPublicClarificationRequest(publicClarificationRequest);
+        course.addPublicClarificationRequests(publicClarificationRequest);
+
+        entityManager.persist(publicClarificationRequest);
+        return new PublicClarificationRequestDto(publicClarificationRequest);
     }
 }

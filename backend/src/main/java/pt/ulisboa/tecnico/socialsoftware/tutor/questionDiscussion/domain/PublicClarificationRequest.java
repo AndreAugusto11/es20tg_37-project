@@ -23,9 +23,13 @@ public class PublicClarificationRequest {
     public PublicClarificationRequest() {
     }
 
-    public PublicClarificationRequest(ClarificationRequest clarificationRequest, Course course) {
+    public PublicClarificationRequest(Course course, ClarificationRequest clarificationRequest) {
         this.course = course;
         this.clarificationRequest = clarificationRequest;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public Course getCourse() {
