@@ -36,7 +36,7 @@
           </elementProp>
           <elementProp name="clarificationRequestId" elementType="Argument">
             <stringProp name="Argument.name">clarificationRequestId</stringProp>
-            <stringProp name="Argument.value"></stringProp>
+            <stringProp name="Argument.value">12</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="executionId" elementType="Argument">
@@ -553,8 +553,12 @@ WHERE id = ${clarificationRequestId};</stringProp>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">DELETE FROM clarification_requests;
-DELETE FROM clarification_request_answers;</stringProp>
+          <stringProp name="query">UPDATE clarification_request_answers
+SET clarification_request_id = null;
+UPDATE clarification_requests
+SET clarification_request_answer_id = null;
+DELETE FROM clarification_request_answers;
+DELETE FROM clarification_requests;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
