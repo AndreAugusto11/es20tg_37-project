@@ -700,6 +700,21 @@ export default class RemoteServices {
         });
   }
 
+  static async getClarificationRequestAnswers(clarificationRequestId: number): Promise<ClarificationRequestAnswer[]> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests/${clarificationRequestId}/clarificationRequestAnswers`
+      )
+      .then(response => {
+        return response.data.map((clarificationRequestAnswer: any) => {
+          return new ClarificationRequestAnswer(clarificationRequestAnswer);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async errorMessage(error: any): Promise<string> {
     if (error.message === 'Network Error') {
       return 'Unable to connect to server';

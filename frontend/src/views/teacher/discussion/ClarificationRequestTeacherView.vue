@@ -1,9 +1,12 @@
 <template>
-    <div class="container" :key="clarificationRequest.clarificationRequestAnswerDto.id">
+    <div class="container">
         <clarification-request :clarification-request="clarificationRequest" />
-        <clarification-request-answer :clarification-request="clarificationRequest" />
+        <clarification-request-answer
+                v-for="clarificationRequestAnswer in clarificationRequestAnswers" :clarification-request-answer="clarificationRequestAnswer"
+                :key="clarificationRequestAnswer.id"
+        />
         <v-container>
-            <v-btn v-if="!this.clarificationRequest.clarificationRequestAnswerDto.content" color="primary" dark @click="newClarificationRequestAnswer" data-cy="answerButton">
+            <v-btn v-if="this.clarificationRequest.status !== 'CLOSED'" color="primary" dark @click="newClarificationRequestAnswer" data-cy="answerButton">
                 Answer
             </v-btn>
         </v-container>
@@ -26,6 +29,7 @@
     import ClarificationRequestComponent from '@/components/discussion/ClarificationRequestComponent.vue';
     import {ClarificationRequestAnswer} from '@/models/discussion/ClarificationRequestAnswer';
     import ClarificationRequestAnswerComponent from '@/components/discussion/ClarificationRequestAnswerComponent.vue';
+    import RemoteServices from '@/services/RemoteServices';
 
     @Component({
       components: {
@@ -39,14 +43,24 @@
         clarificationRequest!: ClarificationRequest;
         currentClarificationRequestAnswer: ClarificationRequestAnswer | null = null;
         createClarificationRequestAnswerDialog: boolean = false;
+        clarificationRequestAnswers: ClarificationRequestAnswer[] = [];
 
         headers: object = [
             { text: 'Clarification', value: 'content', align: 'left' },
             { text: 'Status', value: 'status', align: 'center' }
         ];
 
-        created() {
+        async created() {
             this.clarificationRequest = new ClarificationRequest(JSON.parse(this.$route.params.clarificationRequest));
+              if (this.clarificationRequest.id !== null) {
+                await this.$store.dispatch('loading');
+                try {
+                  this.clarificationRequestAnswers = await RemoteServices.getClarificationRequestAnswers(this.clarificationRequest.id);
+                } catch (error) {
+                  await this.$store.dispatch('error', error);
+                }
+                await this.$store.dispatch('clearLoading');
+              }
         }
 
         newClarificationRequestAnswer() {
@@ -55,7 +69,6 @@
         }
 
         async onCreateClarificationRequestAnswer(clarificationRequestAnswer: ClarificationRequestAnswer) {
-            this.clarificationRequest.clarificationRequestAnswerDto = clarificationRequestAnswer;
             this.createClarificationRequestAnswerDialog = false;
             this.currentClarificationRequestAnswer = null;
         }

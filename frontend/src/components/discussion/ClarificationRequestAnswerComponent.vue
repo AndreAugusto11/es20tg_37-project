@@ -1,6 +1,6 @@
 <template>
     <v-card
-            v-if="this.clarificationRequest.clarificationRequestAnswerDto.content"
+            v-if="this.clarificationRequestAnswer.content"
             class="mx-auto mt-10"
             max-width="1000"
             outlined
@@ -15,7 +15,7 @@
                     sm="2"
                     md="9"
             >
-                <h2 class="mb-1 post-text">{{ this.clarificationRequest.clarificationRequestAnswerDto.name }}</h2>
+                <h2 class="mb-1 post-text">{{ this.clarificationRequestAnswer.name }}</h2>
             </v-col>
         </v-row>
 
@@ -25,7 +25,7 @@
                 no-gutters
         >
             <v-col class="post-text">
-                <span v-html="convertMarkDown(this.clarificationRequest.clarificationRequestAnswerDto.content, null)" />
+                <span v-html="convertMarkDown(this.clarificationRequestAnswer.content, null)" />
             </v-col>
         </v-row>
     </v-card>
@@ -35,11 +35,11 @@
     import { Component, Prop, Vue } from 'vue-property-decorator';
     import { convertMarkDown } from '@/services/ConvertMarkdownService';
     import Image from '@/models/management/Image';
-    import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
+    import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 
     @Component
-    export default class ClarificationRequestComponent extends Vue {
-        @Prop(ClarificationRequest) readonly clarificationRequest!: ClarificationRequest;
+    export default class ClarificationRequestAnswerComponent extends Vue {
+        @Prop(ClarificationRequestAnswer) readonly clarificationRequestAnswer!: ClarificationRequestAnswer;
 
       convertMarkDown(text: string, image: Image | null = null): string {
             return convertMarkDown(text, image);
