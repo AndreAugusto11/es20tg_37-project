@@ -162,6 +162,15 @@ public class QuestionDiscussionService {
         return new ClarificationRequestAnswerDto(clarificationRequestAnswer);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<ClarificationRequestAnswerDto> getClarificationRequestAnswers(Integer clarificationRequestId) {
+        ClarificationRequest clarificationRequest = getClarificationRequest(clarificationRequestId);
+
+        return clarificationRequest.getClarificationRequestAnswer().stream()
+                .map(ClarificationRequestAnswerDto::new)
+                .collect(Collectors.toList());
+    }
+
     private ClarificationRequest getClarificationRequest(Integer clarificationRequestId) {
         if (clarificationRequestId == null) {
             throw new TutorException(CLARIFICATION_REQUEST_NOT_DEFINED);

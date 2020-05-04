@@ -18,7 +18,8 @@ public class ClarificationRequestAnswer {
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @OneToOne(mappedBy = "clarificationRequestAnswer")
+    @ManyToOne
+    @JoinColumn(name = "clarification_request_id")
     private ClarificationRequest clarificationRequest;
 
     @ManyToOne(fetch=FetchType.LAZY)
@@ -49,7 +50,7 @@ public class ClarificationRequestAnswer {
         this.user = user;
         this.content = content;
         this.type = type;
-        clarificationRequest.setClarificationRequestAnswer(this);
+        clarificationRequest.addClarificationRequestAnswer(this);
         user.addClarificationRequestAnswers(this);
 
         if (user.getRole().equals(User.Role.TEACHER)) {

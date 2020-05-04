@@ -116,7 +116,8 @@
 
     getStatusColor(status: string) {
       if (status === 'CLOSED') return 'red';
-      else return 'green';
+      else if (status === 'ANSWERED') return 'yellow';
+      else return 'green'
     }
 
     chosen(content: string) {

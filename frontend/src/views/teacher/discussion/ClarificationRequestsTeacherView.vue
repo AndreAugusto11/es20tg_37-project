@@ -87,8 +87,9 @@
         }
 
         getStatusColor(status: string) {
-            if (status === 'CLOSED') return 'red';
-            else return 'green';
+          if (status === 'CLOSED') return 'red';
+          else if (status === 'ANSWERED') return 'yellow';
+          else return 'green'
         }
 
         async openClarificationRequest(value: ClarificationRequest) {

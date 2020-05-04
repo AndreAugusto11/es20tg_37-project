@@ -57,4 +57,11 @@ public class QuestionDiscussionController {
                                                                           @Valid @RequestBody ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
         return questionDiscussionService.createClarificationRequestAnswer(clarificationRequestId, clarificationRequestAnswerDto);
     }
+
+    @GetMapping("/executions/{executionId}/clarificationRequests/{clarificationRequestId}/clarificationRequestAnswers")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<ClarificationRequestAnswerDto> getClarificationRequestAnswers(@PathVariable Integer executionId,
+                                                                          @PathVariable Integer clarificationRequestId) {
+        return questionDiscussionService.getClarificationRequestAnswers(clarificationRequestId);
+    }
 }
