@@ -12,7 +12,7 @@ describe('Accept a suggestion', () => {
 
     cy.createQuestionSuggestion('TestAccept','Question','a', 'b', 'c', 'd', 'No');
     cy.contains('Logout').click();
-    cy.wait(10000);
+    cy.wait(5000);
     cy.demoTeacherLogin();
     cy.contains('Management').click();
     cy.contains('Suggestions').click();
@@ -27,7 +27,7 @@ describe('Accept a suggestion', () => {
 
     cy.createQuestionSuggestion('TestAcceptShow','Question','a', 'b', 'c', 'd', 'No');
     cy.contains('Logout').click();
-    cy.wait(10000);
+    cy.wait(5000);
     cy.demoTeacherLogin();
     cy.contains('Management').click();
     cy.contains('Suggestions').click();

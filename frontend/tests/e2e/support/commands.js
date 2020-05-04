@@ -33,7 +33,7 @@ Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
   cy.get('[data-cy="saveButton"]').click();
 });
 
-Cypress.Commands.add('closeErrorMessage', (name, acronym, academicTerm) => {
+Cypress.Commands.add('closeErrorMessage', () => {
   cy.get('[data-cy="error"]')
     .parent()
     .find('button')

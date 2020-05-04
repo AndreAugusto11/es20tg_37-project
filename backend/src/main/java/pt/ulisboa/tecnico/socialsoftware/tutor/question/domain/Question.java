@@ -104,7 +104,7 @@ public class Question implements DomainEntity {
         return key;
     }
 
-   public void setKey(Integer key) {
+    public void setKey(Integer key) {
         this.key = key;
     }
 
