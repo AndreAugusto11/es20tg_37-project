@@ -120,6 +120,7 @@ public enum ErrorMessage {
     QUESTION_SUGGESTION_ALREADY_ACCEPTED("This suggested question was already accepted"),
     QUESTION_SUGGESTION_ALREADY_REJECTED("This suggested question was already rejected"),
     QUESTION_SUGGESTION_NOT_FOUND("Question suggestion not found with id %d"),
+    QUESTION_SUGGESTION_NOT_REJECTED("This question suggestion is not rejected"),
     JUSTIFICATION_MISSING_DATA("Missing information for justification");
 
     public final String label;
