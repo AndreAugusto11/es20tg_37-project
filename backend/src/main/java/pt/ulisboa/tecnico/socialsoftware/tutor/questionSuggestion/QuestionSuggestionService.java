@@ -132,7 +132,7 @@ public class QuestionSuggestionService {
         Justification justification = new Justification(user, suggestion, justificationDto);
 
         suggestion.setJustification(justification);
-        suggestion.setStatus(QuestionSuggestion.Status.PENDING);
+        suggestion.setStatus(QuestionSuggestion.Status.REJECTED);
 
         this.entityManager.persist(justification);
     }
