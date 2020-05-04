@@ -14,7 +14,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Table(name = "clarification_requests")
 public class ClarificationRequest {
     public enum Status {
-        CLOSED, OPEN
+        CLOSED, OPEN, ANSWERED
     }
 
     @Id
