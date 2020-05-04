@@ -11,9 +11,10 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NAME_FOR_COURSE;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_TYPE_FOR_COURSE;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "courses")
@@ -134,5 +135,17 @@ public class Course implements DomainEntity {
 
     public void addPublicClarificationRequests(PublicClarificationRequest publicClarificationRequest) {
         this.publicClarificationRequests.add(publicClarificationRequest);
+    }
+
+    public void removePublicClarificationRequests(Integer clarificationRequestId) {
+
+        PublicClarificationRequest publicClarificationRequest = this.publicClarificationRequests.stream()
+                .filter(pCrReq -> pCrReq.getClarificationRequest()
+                        .getId()
+                        .equals(clarificationRequestId))
+                .findFirst()
+                .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_IS_ALREADY_PRIVATE, clarificationRequestId));
+
+        this.publicClarificationRequests.remove(publicClarificationRequest);
     }
 }

@@ -192,10 +192,27 @@ public class QuestionDiscussionService {
 
         PublicClarificationRequest publicClarificationRequest = new PublicClarificationRequest(course, clarificationRequest);
 
+        if (clarificationRequest.getPublicClarificationRequest() != null)
+            throw new TutorException(CLARIFICATION_REQUEST_IS_ALREADY_PUBLIC);
+
         clarificationRequest.setPublicClarificationRequest(publicClarificationRequest);
         course.addPublicClarificationRequests(publicClarificationRequest);
 
         entityManager.persist(publicClarificationRequest);
         return new PublicClarificationRequestDto(publicClarificationRequest);
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ClarificationRequestDto removePublicClarificationRequest(Integer clarificationRequestId) {
+
+        ClarificationRequest clarificationRequest = this.getClarificationRequest(clarificationRequestId);
+        Course course = clarificationRequest.getQuestion().getCourse();
+
+        course.removePublicClarificationRequests(clarificationRequestId);
+
+        publicClarificationRequestRepository.delete(clarificationRequest.getPublicClarificationRequest());
+        clarificationRequest.setPublicClarificationRequest(null);
+
+        return new ClarificationRequestDto(clarificationRequest);
     }
 }

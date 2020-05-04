@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -59,12 +60,17 @@ public class QuestionDiscussionController {
         return questionDiscussionService.createClarificationRequestAnswer(clarificationRequestId, clarificationRequestAnswerDto);
     }
 
-    @PostMapping("/executions/{executionId}/publicClarificationRequest")
+    @PostMapping("/executions/{executionId}/publicClarificationRequest/public")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public PublicClarificationRequestDto createPublicClarificationRequest(@PathVariable Integer executionId,
                                                                           @Valid @RequestBody ClarificationRequestDto clarificationRequestDto) {
         return  questionDiscussionService.createPublicClarificationRequest(clarificationRequestDto);
     }
 
-    
+    @PostMapping("/executions/{executionId}/{clarificationRequestId}/publicClarificationRequest/private")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public ClarificationRequestDto removePublicClarificationRequest(@PathVariable Integer executionId,
+                                                           @PathVariable Integer clarificationRequestId) {
+        return questionDiscussionService.removePublicClarificationRequest(clarificationRequestId);
+    }
 }

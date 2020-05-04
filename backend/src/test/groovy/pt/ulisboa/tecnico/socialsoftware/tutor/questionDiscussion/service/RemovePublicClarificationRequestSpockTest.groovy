@@ -1,47 +1,42 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.service;
+package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.service
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService;
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.PublicClarificationRequest;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.PublicClarificationRequestRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
-import spock.lang.Shared;
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.PublicClarificationRequestRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import spock.lang.Shared
+import spock.lang.Specification
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_IS_EMPTY;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_IS_ALREADY_PRIVATE;
 
 @DataJpaTest
-class createPublicClarificationRequestSpockTest extends Specification {
+class RemovePublicClarificationRequestSpockTest extends Specification {
+    public static final Integer WRONG_ID = 5454654
     public static final String COURSE_NAME = "Software Architecture"
     public static final String CLARIFICATION_CONTENT = "clarification request content"
     public static final String ACRONYM = "AS1"
@@ -53,7 +48,6 @@ class createPublicClarificationRequestSpockTest extends Specification {
     public static final String OPTION_CONTENT = "optionId content"
     public static final Integer SEQUENCE = 0
     public static final String URL = 'URL'
-    private Random rand = new Random();
 
     @Autowired
     QuestionDiscussionService questionDiscussionService
@@ -148,7 +142,7 @@ class createPublicClarificationRequestSpockTest extends Specification {
         quizAnswerRepository.save(quizAnswer)
     }
 
-    def "create public clarification request"() {
+    def "remove a public clarification request"() {
         given: "a question answer answered"
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
         quizAnswer.addQuestionAnswer(questionAnswer)
@@ -156,30 +150,19 @@ class createPublicClarificationRequestSpockTest extends Specification {
 
         and: "a clarification request"
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
-        clarificationRequestRepository.save(clarificationRequest)
+        def clReq = clarificationRequestRepository.findAll().get(0)
 
-        and: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
+        and: "a public clarification request"
+        questionDiscussionService.createPublicClarificationRequest(new ClarificationRequestDto(clarificationRequest))
 
         when:
-        questionDiscussionService.createPublicClarificationRequest(clarificationRequestDto)
+        questionDiscussionService.removePublicClarificationRequest(clReq.getId())
 
-        then: "the correct public clarification request is inside the repository"
-        publicClarificationRequestRepository.findAll().size() == 1
-        def result = publicClarificationRequestRepository.findAll().get(0)
-        result != null
-
-        and: "has the correct values"
-        result.getId() != null
-        result.getCourse() == course
-        result.getClarificationRequest() == clarificationRequest
-
-        and: "is associated correctly"
-        clarificationRequest.getPublicClarificationRequest() == result
-        course.getPublicClarificationRequests().contains(result)
+        then: "the public clarification request is not in the repository"
+        publicClarificationRequestRepository.findAll().size() == 0
     }
 
-    def "create public clarification request to a non existing clarification request"() {
+    def "remove a private clarification request"() {
         given: "a question answer answered"
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
         quizAnswer.addQuestionAnswer(questionAnswer)
@@ -187,19 +170,26 @@ class createPublicClarificationRequestSpockTest extends Specification {
 
         and: "a clarification request"
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
-        clarificationRequestRepository.save(clarificationRequest)
-
-        and: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
-        clarificationRequestDto.setId(rand.nextInt(1000000))
+        def clReq = clarificationRequestRepository.findAll().get(0)
 
         when:
-        questionDiscussionService.createPublicClarificationRequest(clarificationRequestDto)
+        questionDiscussionService.removePublicClarificationRequest(clReq.getId())
 
-        then: "the repository is empty"
-        publicClarificationRequestRepository.findAll().size() == 0
+        then: "the public clarification request is not in the repository"
+        def error = thrown(TutorException)
+        error.errorMessage == CLARIFICATION_REQUEST_IS_ALREADY_PRIVATE
+    }
 
-        and: "an exception is thrown"
+    def "remove a public clarification request with a wrong clarification request Id"() {
+        given: "a question answer answered"
+        questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
+        quizAnswer.addQuestionAnswer(questionAnswer)
+        questionAnswerRepository.save(questionAnswer)
+
+        when:
+        questionDiscussionService.removePublicClarificationRequest(WRONG_ID)
+
+        then: "the public clarification request is not in the repository"
         def error = thrown(TutorException)
         error.errorMessage == CLARIFICATION_REQUEST_NOT_FOUND
     }
