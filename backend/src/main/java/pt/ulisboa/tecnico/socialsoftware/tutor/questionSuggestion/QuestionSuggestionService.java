@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
@@ -139,7 +140,7 @@ public class QuestionSuggestionService {
         Justification justification = new Justification(user, suggestion, justificationDto);
 
         suggestion.setJustification(justification);
-        suggestion.setStatus(QuestionSuggestion.Status.REJECTED);
+        suggestion.setStatus(QuestionSuggestion.Status.PENDING);
 
         this.entityManager.persist(justification);
     }
@@ -188,5 +189,22 @@ public class QuestionSuggestionService {
                 .map(QuestionSuggestion::getCourse)
                 .map(CourseDto::new)
                 .orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public QuestionSuggestionDto
+    updateRejectedQuestionSuggestion(Integer questionSuggestionId, QuestionSuggestionDto questionSuggestionDto) {
+        QuestionSuggestion questionSuggestion = questionSuggestionRepository.findById(questionSuggestionId).
+                orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionSuggestionId));
+
+        if(!questionSuggestion.getStatus().equals(QuestionSuggestion.Status.REJECTED)){
+            throw  new TutorException(QUESTION_SUGGESTION_NOT_REJECTED);
+        }
+
+        questionSuggestion.update(questionSuggestionDto);
+        return new QuestionSuggestionDto(questionSuggestion);
     }
 }
