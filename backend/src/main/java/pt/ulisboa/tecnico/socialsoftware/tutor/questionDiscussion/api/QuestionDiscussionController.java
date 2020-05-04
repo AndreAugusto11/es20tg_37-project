@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.PublicClarificationRequestDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
@@ -56,5 +57,12 @@ public class QuestionDiscussionController {
                                                                           @PathVariable Integer clarificationRequestId,
                                                                           @Valid @RequestBody ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
         return questionDiscussionService.createClarificationRequestAnswer(clarificationRequestId, clarificationRequestAnswerDto);
+    }
+
+    @PostMapping("/executions/{executionId}/publicClarificationRequest")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public PublicClarificationRequestDto createPublicClarificationRequest(@PathVariable Integer executionId,
+                                                                          @Valid @RequestBody ClarificationRequestDto clarificationRequestDto) {
+        return  questionDiscussionService.createPublicClarificationRequest(clarificationRequestDto);
     }
 }
