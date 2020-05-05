@@ -167,7 +167,7 @@ class RemovePublicClarificationRequestServiceSpockPerformanceTest extends Specif
 
         and: "1000 public clarification requests are created"
         1.upto(NUMBER_OF_ITERATIONS, {
-            questionDiscussionService.createPublicClarificationRequest(new ClarificationRequestDto(clarificationRequestList.pop()))
+            questionDiscussionService.createPublicClarificationRequest(clarificationRequestList.pop().getId())
         })
         clarificationRequestList = clarificationRequestRepository.findAll()
 

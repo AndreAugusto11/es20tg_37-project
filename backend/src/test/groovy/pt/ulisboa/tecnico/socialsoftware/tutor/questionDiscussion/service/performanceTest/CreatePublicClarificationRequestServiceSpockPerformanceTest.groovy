@@ -171,7 +171,7 @@ class CreatePublicClarificationRequestServiceSpockPerformanceTest extends Specif
 
         when: "1000 public clarification requests are created"
         1.upto(NUMBER_OF_ITERATIONS, {
-            questionDiscussionService.createPublicClarificationRequest(new ClarificationRequestDto(clarificationRequestList.pop()))
+            questionDiscussionService.createPublicClarificationRequest(clarificationRequestList.pop().getId())
         })
 
         then: true

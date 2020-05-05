@@ -60,17 +60,17 @@ public class QuestionDiscussionController {
         return questionDiscussionService.createClarificationRequestAnswer(clarificationRequestId, clarificationRequestAnswerDto);
     }
 
-    @PostMapping("/executions/{executionId}/publicClarificationRequest/public")
+    @PostMapping("/executions/{executionId}/clarificationRequests/{clarificationRequestId}/public")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public PublicClarificationRequestDto createPublicClarificationRequest(@PathVariable Integer executionId,
-                                                                          @Valid @RequestBody ClarificationRequestDto clarificationRequestDto) {
-        return  questionDiscussionService.createPublicClarificationRequest(clarificationRequestDto);
+                                                                          @PathVariable Integer clarificationRequestId) {
+        return  questionDiscussionService.createPublicClarificationRequest(clarificationRequestId);
     }
 
-    @PostMapping("/executions/{executionId}/{clarificationRequestId}/publicClarificationRequest/private")
+    @PostMapping("/executions/{executionId}/clarificationRequests/{clarificationRequestId}/private")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public ClarificationRequestDto removePublicClarificationRequest(@PathVariable Integer executionId,
-                                                           @PathVariable Integer clarificationRequestId) {
+                                                                    @PathVariable Integer clarificationRequestId) {
         return questionDiscussionService.removePublicClarificationRequest(clarificationRequestId);
     }
 }

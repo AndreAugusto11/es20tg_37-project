@@ -152,11 +152,8 @@ class CreatePublicClarificationRequestSpockTest extends Specification {
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
         clarificationRequestRepository.save(clarificationRequest)
 
-        and: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
-
         when:
-        questionDiscussionService.createPublicClarificationRequest(clarificationRequestDto)
+        questionDiscussionService.createPublicClarificationRequest(clarificationRequest.getId())
 
         then: "the correct public clarification request is inside the repository"
         publicClarificationRequestRepository.findAll().size() == 1
@@ -183,12 +180,8 @@ class CreatePublicClarificationRequestSpockTest extends Specification {
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
         clarificationRequestRepository.save(clarificationRequest)
 
-        and: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
-        clarificationRequestDto.setId(rand.nextInt(1000000))
-
         when:
-        questionDiscussionService.createPublicClarificationRequest(clarificationRequestDto)
+        questionDiscussionService.createPublicClarificationRequest(rand.nextInt(1000000))
 
         then: "the repository is empty"
         publicClarificationRequestRepository.findAll().size() == 0
@@ -208,12 +201,9 @@ class CreatePublicClarificationRequestSpockTest extends Specification {
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
         clarificationRequestRepository.save(clarificationRequest)
 
-        and: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
-
         when:
-        questionDiscussionService.createPublicClarificationRequest(clarificationRequestDto)
-        questionDiscussionService.createPublicClarificationRequest(clarificationRequestDto)
+        questionDiscussionService.createPublicClarificationRequest(clarificationRequest.getId())
+        questionDiscussionService.createPublicClarificationRequest(clarificationRequest.getId())
 
         then: "an exception is thrown"
         def error = thrown(TutorException)

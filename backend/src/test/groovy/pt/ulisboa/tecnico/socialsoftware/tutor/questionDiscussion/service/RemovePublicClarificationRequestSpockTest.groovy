@@ -19,6 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionReposit
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.PublicClarificationRequest
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.PublicClarificationRequestRepository
@@ -153,13 +154,17 @@ class RemovePublicClarificationRequestSpockTest extends Specification {
         def clReq = clarificationRequestRepository.findAll().get(0)
 
         and: "a public clarification request"
-        questionDiscussionService.createPublicClarificationRequest(new ClarificationRequestDto(clarificationRequest))
+        PublicClarificationRequest publicClarificationRequest = new PublicClarificationRequest(course, clarificationRequest)
+        clarificationRequest.setPublicClarificationRequest(publicClarificationRequest)
+        course.addPublicClarificationRequests(publicClarificationRequest)
 
         when:
         questionDiscussionService.removePublicClarificationRequest(clReq.getId())
 
         then: "the public clarification request is not in the repository"
         publicClarificationRequestRepository.findAll().size() == 0
+        !course.getPublicClarificationRequests().contains(publicClarificationRequest)
+        clarificationRequest.getPublicClarificationRequest() == null
     }
 
     def "remove a private clarification request"() {

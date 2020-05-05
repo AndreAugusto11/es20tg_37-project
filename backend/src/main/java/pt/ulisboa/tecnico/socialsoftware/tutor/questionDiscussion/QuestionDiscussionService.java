@@ -185,15 +185,15 @@ public class QuestionDiscussionService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PublicClarificationRequestDto createPublicClarificationRequest(ClarificationRequestDto clarificationRequestDto) {
+    public PublicClarificationRequestDto createPublicClarificationRequest(Integer clarificationRequestId) {
 
-        ClarificationRequest clarificationRequest = this.getClarificationRequest(clarificationRequestDto.getId());
+        ClarificationRequest clarificationRequest = this.getClarificationRequest(clarificationRequestId);
         Course course = clarificationRequest.getQuestion().getCourse();
 
         PublicClarificationRequest publicClarificationRequest = new PublicClarificationRequest(course, clarificationRequest);
 
         if (clarificationRequest.getPublicClarificationRequest() != null)
-            throw new TutorException(CLARIFICATION_REQUEST_IS_ALREADY_PUBLIC);
+            throw new TutorException(CLARIFICATION_REQUEST_IS_ALREADY_PUBLIC, clarificationRequestId);
 
         clarificationRequest.setPublicClarificationRequest(publicClarificationRequest);
         course.addPublicClarificationRequests(publicClarificationRequest);
