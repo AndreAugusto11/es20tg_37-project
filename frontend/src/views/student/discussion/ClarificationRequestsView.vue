@@ -45,12 +45,19 @@
             </template>
 
             <template v-slot:item.public="{ item }">
-              <v-icon v-if="item.public == true" color="green">
-                fas fa-lock-open
-              </v-icon>
-              <v-icon v-else color="red">
-                fas fa-lock
-              </v-icon>
+              <v-tooltip v-if="item.public" left>
+                  <template v-slot:activator="{ on }">
+                    <v-icon class="mr-2" color="green" v-on="on">fas fa-lock-open</v-icon>
+                  </template>
+                  <span>Public</span>
+                </v-tooltip>
+
+                <v-tooltip v-else left>
+                  <template v-slot:activator="{ on }">
+                    <v-icon class="mr-2" color="red" v-on="on">fas fa-lock</v-icon>
+                  </template>
+                  <span>Private</span>
+                </v-tooltip>
             </template>
 
         </v-data-table>
