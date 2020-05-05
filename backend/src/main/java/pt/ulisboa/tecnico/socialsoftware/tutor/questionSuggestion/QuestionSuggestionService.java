@@ -68,7 +68,6 @@ public class QuestionSuggestionService {
         }
 
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
-
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         if (user.getRole() != User.Role.STUDENT) {
@@ -79,12 +78,8 @@ public class QuestionSuggestionService {
             throw new TutorException(USER_NOT_IN_COURSE, userId);
         }
 
-        questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name());
-
         QuestionSuggestion questionSuggestion = new QuestionSuggestion(user, course, questionSuggestionDto);
-        questionSuggestion.setCreationDate(LocalDateTime.now());
-        this.entityManager.persist(questionSuggestion);
-
+        questionSuggestionRepository.save(questionSuggestion);
         return new QuestionSuggestionDto(questionSuggestion);
     }
 
@@ -92,17 +87,25 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void acceptQuestionSuggestion(Integer questionSuggestionId) {
+    public QuestionDto acceptQuestionSuggestion(Integer questionSuggestionId) {
 
         if (questionSuggestionId == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
         }
 
         QuestionSuggestion suggestion = checkForQuestionSuggestion(questionSuggestionId);
+        QuestionSuggestionDto questionSuggestionDto = new QuestionSuggestionDto(suggestion);
+
+        questionSuggestionDto.getQuestionDto().setType(Question.Type.NORMAL.name());
+        questionSuggestionDto.getQuestionDto().setStatus(Question.Status.DISABLED.name());
+        questionSuggestionDto.getQuestionDto().setOptions(suggestion.dupOptions());
+
+        Question question = new Question(suggestion.getCourse(), questionSuggestionDto.getQuestionDto());
+        question.setCreationDate(LocalDateTime.now());
+        questionRepository.save(question);
 
         suggestion.setStatus(QuestionSuggestion.Status.ACCEPTED);
-        suggestion.getQuestion().setStatus(Question.Status.AVAILABLE);
-        suggestion.getQuestion().setCreationDate(LocalDateTime.now());
+        return new QuestionDto(question);
     }
 
     @Retryable(

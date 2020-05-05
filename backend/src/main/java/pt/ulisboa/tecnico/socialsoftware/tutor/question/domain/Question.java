@@ -22,8 +22,10 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "questions")
 public class Question implements DomainEntity {
+    public enum Type {NORMAL, SUGGESTION}
+
     public enum Status {
-        DISABLED, REMOVED, AVAILABLE, PENDING
+        DISABLED, REMOVED, AVAILABLE
     }
 
     @Id
@@ -50,7 +52,11 @@ public class Question implements DomainEntity {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
     private Image image;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
+    @Enumerated(EnumType.STRING)
+    private Type type = Type.NORMAL;
+
+    @OneToOne
+    @JoinColumn(name="suggestion_id")
     private QuestionSuggestion questionSuggestion;
 
     @Column(name = "creation_date")
@@ -80,6 +86,7 @@ public class Question implements DomainEntity {
         setKey(questionDto.getKey());
         setContent(questionDto.getContent());
         setStatus(Status.valueOf(questionDto.getStatus()));
+        setType(Type.valueOf(questionDto.getType()));
         setCreationDate(DateHandler.toLocalDateTime(questionDto.getCreationDate()));
         setCourse(course);
         setOptions(questionDto.getOptions());
@@ -125,6 +132,17 @@ public class Question implements DomainEntity {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Question.Type getType() {
+        return type;
+    }
+
+    public void setType(Question.Type type) {
+        if (type == null)
+            throw new TutorException(INVALID_TYPE_FOR_QUESTION);
+
+        this.type = type;
     }
 
     public List<Option> getOptions() {
@@ -251,6 +269,7 @@ public class Question implements DomainEntity {
                 ", key=" + key +
                 ", content='" + content + '\'' +
                 ", title='" + title + '\'' +
+                ", type='" + type + '\'' +
                 ", numberOfAnswers=" + numberOfAnswers +
                 ", numberOfCorrect=" + numberOfCorrect +
                 ", status=" + status +

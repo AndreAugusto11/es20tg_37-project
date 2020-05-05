@@ -20,6 +20,7 @@ public enum ErrorMessage {
     INVALID_RESULTS_DATE_FOR_QUIZ("Invalid results date for quiz"),
     INVALID_TITLE_FOR_QUIZ("Invalid title for quiz"),
     INVALID_TYPE_FOR_QUIZ("Invalid type for quiz"),
+    INVALID_TYPE_FOR_QUESTION("Invalid type for question"),
     INVALID_QUESTION_SEQUENCE_FOR_QUIZ("Invalid question sequence for quiz"),
 
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),

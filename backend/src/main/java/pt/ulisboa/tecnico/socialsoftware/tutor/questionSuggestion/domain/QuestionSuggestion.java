@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CANNOT_CHANGE_ANSWERED_QUESTION;
@@ -36,8 +37,7 @@ public class QuestionSuggestion {
     @Enumerated(EnumType.STRING)
     private QuestionSuggestion.Status status = Status.PENDING;
 
-    @OneToOne
-    @JoinColumn(name="question_id")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "questionSuggestion")
     private Question question;
 
     @OneToOne
@@ -54,7 +54,6 @@ public class QuestionSuggestion {
     public QuestionSuggestion(User user, Course course, QuestionSuggestionDto questionSuggestionDto) {
 
         this.question = new Question(course, questionSuggestionDto.getQuestionDto());
-        this.question.setStatus(Question.Status.PENDING);
         setCreationDate(DateHandler.toLocalDateTime(questionSuggestionDto.getCreationDate()));
 
         this.user = user;
@@ -64,7 +63,6 @@ public class QuestionSuggestion {
     }
 
     public void update(QuestionSuggestionDto questionSuggestionDto) {
-
         this.getQuestion().update(questionSuggestionDto.getQuestionDto());
         this.setStatus(Status.PENDING);
     }
@@ -72,6 +70,10 @@ public class QuestionSuggestion {
     public Integer getId() { return id; }
 
     public void setId(Integer id) { this.id = id; }
+
+    public Integer getKey() {
+        return this.question.getKey();
+    }
 
     public String getTitle(){ return question.getTitle(); }
 
@@ -88,8 +90,6 @@ public class QuestionSuggestion {
     public Image getImage(){ return question.getImage(); }
 
     public void setImage(Image image){ this.question.setImage(image);}
-
-    public List<Option> getOptions(){ return question.getOptions(); }
 
     public LocalDateTime getCreationDate(){ return creationDate; }
 
@@ -119,7 +119,32 @@ public class QuestionSuggestion {
 
     public void addOption(Option option){ question.addOption(option); }
 
+    public List<Option> getOptions(){ return question.getOptions(); }
+
     public void setOptions(List<OptionDto> options){ this.question.setOptions(options); }
+
+    public List<OptionDto> dupOptions() {
+        List<OptionDto> options = new ArrayList<>();
+
+        for (Option op : getOptions()) {
+            OptionDto option = new OptionDto();
+            option.setContent(op.getContent());
+            option.setCorrect(op.getCorrect());
+            options.add(option);
+        }
+        return options;
+    }
+
+    @Override
+    public String toString() {
+        return "Suggestion{" +
+                "id=" + id +
+                ", status=" + status +
+                ", user=" + user +
+                ", question=" + question +
+                ", justification=" + justification +
+                '}';
+    }
 }
 
 
