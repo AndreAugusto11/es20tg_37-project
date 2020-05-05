@@ -402,6 +402,8 @@ public class User implements UserDetails, DomainEntity {
 
     public Set<Tournament> getTournaments() { return this.tournaments; }
 
+    public void removeTournament (Tournament tournament) { this.tournaments.remove(tournament); }
+
     public Set<ClarificationRequest> getClarificationRequests() { return clarificationRequests; }
 
     public void addClarificationRequest(ClarificationRequest clarificationRequest) {
@@ -517,4 +519,6 @@ public class User implements UserDetails, DomainEntity {
     {
         return createdTournaments;
     }
+
+    public void removeCreatedTournament(Tournament tournament) { createdTournaments.remove(tournament); }
 }

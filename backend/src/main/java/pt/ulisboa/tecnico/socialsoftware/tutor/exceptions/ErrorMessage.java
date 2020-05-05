@@ -36,7 +36,9 @@ public enum ErrorMessage {
     TOURNAMENT_NOT_OPEN("Tournament with id %d not open"),
     TOURNAMENT_NOT_STUDENT("Tournament only allows students to enroll"),
     TOURNAMENT_STUDENT_ALREADY_ENROLLED("Tournament already enrolled student with id %d"),
+    TOURNAMENT_NON_CREATOR("Tournament %d was not created by User with id %d"),
 
+    TOURNAMENT_NULL_ID("Tournament ID is null"),
     TOURNAMENT_NULL_USER("User is null"),
     TOURNAMENT_NULL_TOURNAMENT("Tournament is null"),
     TOURNAMENT_NULL_TOPIC("Topic is null in Tournament Creation"),

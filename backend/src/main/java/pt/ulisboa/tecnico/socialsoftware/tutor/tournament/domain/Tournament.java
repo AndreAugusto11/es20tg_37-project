@@ -14,6 +14,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "tournaments")
 public class Tournament {
+
 	public enum Status {
 		OPEN, ONGOING, CLOSED
 	}
@@ -41,7 +42,7 @@ public class Tournament {
 	private LocalDateTime endTime;
 
 	@Enumerated(EnumType.STRING)
-	private Status status;
+	private Status status = Status.OPEN;
 
 	public Tournament(){}
 
@@ -52,7 +53,6 @@ public class Tournament {
 
 		users.add(creator);
 		this.creator = creator;
-		status = Status.OPEN;
 	}
 
 	public Tournament(User student, Set<Topic> topics, int number_of_questions, LocalDateTime startTimeArg, LocalDateTime endTimeArg)
@@ -181,6 +181,10 @@ public class Tournament {
 	public void setstatus(Status stat)
 	{
 		status = stat;
+	}
+
+
+	public void deleteQuiz() {
 	}
 
 }

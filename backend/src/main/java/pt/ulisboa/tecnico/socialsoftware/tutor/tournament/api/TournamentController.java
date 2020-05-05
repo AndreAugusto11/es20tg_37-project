@@ -56,4 +56,12 @@ public class TournamentController {
         User user = (User) ((Authentication) principal).getPrincipal();
         return tournamentService.enrollStudentInTournament(user.getId(),tournamentId);
     }
+
+    @DeleteMapping("/tournaments/{tournamentId}/cancel")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public void cancelTournament(Principal principal, @PathVariable Integer tournamentId)
+    {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        tournamentService.cancelTournament(user.getId(), tournamentId);
+    }
 }

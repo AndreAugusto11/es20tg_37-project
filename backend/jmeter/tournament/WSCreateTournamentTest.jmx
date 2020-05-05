@@ -271,7 +271,7 @@
           <stringProp name="checkQuery"></stringProp>
           <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
           <stringProp name="driver">org.postgresql.Driver</stringProp>
-          <stringProp name="username">manel</stringProp>
+          <stringProp name="username">jgalamba</stringProp>
           <stringProp name="password">1234</stringProp>
           <stringProp name="connectionProperties"></stringProp>
         </JDBCDataSource>
@@ -280,6 +280,9 @@
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="queryType">Callable Statement</stringProp>
           <stringProp name="query">DELETE FROM tournaments_topics;
+DELETE FROM tournaments_users;
+DELETE FROM users_created_tournaments;
+DELETE FROM users_tournaments;
 DELETE FROM tournaments;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
