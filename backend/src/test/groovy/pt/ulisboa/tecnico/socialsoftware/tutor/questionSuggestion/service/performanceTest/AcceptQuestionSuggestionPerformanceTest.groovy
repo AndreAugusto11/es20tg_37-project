@@ -45,7 +45,8 @@ class AcceptQuestionSuggestionPerformanceTest extends Specification {
         question.setKey(1)
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
-        question.setStatus(Question.Status.PENDING)
+        question.setType(Question.Type.SUGGESTION)
+        question.setStatus(Question.Status.DISABLED)
         questionRepository.save(question)
     }
 

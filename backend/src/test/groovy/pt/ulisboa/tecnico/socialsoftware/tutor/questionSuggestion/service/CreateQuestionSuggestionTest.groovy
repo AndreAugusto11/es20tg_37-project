@@ -62,8 +62,8 @@ class CreateQuestionSuggestionTest extends Specification {
     def user1
     def user2
     def user3
-    def questionDto1
-    def questionDto2
+    def questionDto1 = new QuestionDto()
+    def questionDto2 = new QuestionDto()
 
     def setup() {
         course1 = new Course(COURSE_NAME1, Course.Type.TECNICO)
@@ -88,16 +88,16 @@ class CreateQuestionSuggestionTest extends Specification {
         user3 = new User("name3", "username3", 3, User.Role.TEACHER)
         userRepository.save(user3)
 
-        questionDto1 = new QuestionDto()
         questionDto1.setContent("content")
         questionDto1.setKey(1)
-        questionDto1.setStatus(Question.Status.PENDING.name())
+        questionDto1.setStatus(Question.Status.DISABLED.name())
+        questionDto1.setType(Question.Type.SUGGESTION.name())
         questionDto1.setCreationDate("2020-04-16 17:51")
 
-        questionDto2 = new QuestionDto()
         questionDto2.setContent("content")
         questionDto2.setKey(2)
-        questionDto2.setStatus(Question.Status.PENDING.name())
+        questionDto2.setStatus(Question.Status.DISABLED.name())
+        questionDto2.setType(Question.Type.SUGGESTION.name())
         questionDto2.setCreationDate("2020-03-16 17:51")
     }
 
@@ -124,6 +124,7 @@ class CreateQuestionSuggestionTest extends Specification {
         def result = questionSuggestionRepository.findAll().get(0)
         result.getId() != null
         result.getStatus() == QuestionSuggestion.Status.PENDING
+        result.getQuestion().getType() == Question.Type.SUGGESTION
         result.getTitle() == SUGGESTION_TITLE1
         result.getContent() == SUGGESTION_CONTENT
         result.getUser().getName() == "name1"
@@ -169,6 +170,7 @@ class CreateQuestionSuggestionTest extends Specification {
         def result = questionSuggestionRepository.findAll().get(0)
         result.getId() != null
         result.getStatus() == QuestionSuggestion.Status.PENDING
+        result.getQuestion().getType() == Question.Type.SUGGESTION
         result.getTitle() == SUGGESTION_TITLE
         result.getContent() == SUGGESTION_CONTENT
         result.getImage().getId() != null

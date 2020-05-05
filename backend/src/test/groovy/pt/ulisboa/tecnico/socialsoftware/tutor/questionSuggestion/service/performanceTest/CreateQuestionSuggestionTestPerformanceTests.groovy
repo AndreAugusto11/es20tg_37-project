@@ -67,7 +67,8 @@ class CreateQuestionSuggestionTestPerformanceTests extends Specification {
         questionDto1 = new QuestionDto();
         questionDto1.setContent("content")
         questionDto1.setKey(1)
-        questionDto1.setStatus(Question.Status.PENDING.name())
+        questionDto1.setType(Question.Type.SUGGESTION.name())
+        questionDto1.setStatus(Question.Status.DISABLED.name())
         questionDto1.setCreationDate("2020-03-16 17:51")
     }
 

@@ -47,14 +47,14 @@ class RejectQuestionSuggestionPerformanceTest extends Specification {
     @Autowired
     UserRepository userRepository
 
-    def question
+    def question = new Question()
 
     def setup() {
-        question = new Question()
         question.setKey(1)
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
-        question.setStatus(Question.Status.PENDING)
+        question.setType(Question.Type.SUGGESTION)
+        question.setStatus(Question.Status.DISABLED)
         questionRepository.save(question)
     }
 

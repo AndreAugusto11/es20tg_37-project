@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.JustificationDto
@@ -31,10 +33,12 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.US
 @DataJpaTest
 class RejectQuestionSuggestionTest extends Specification {
 
+    public static final String COURSE_NAME = "Software Architecture"
     public static final String QUESTION_TITLE = "question_title"
     public static final String QUESTION_CONTENT = "question_content"
     public static final String JUSTIFICATION_CONTENT = "justification_content"
     public static final String IMAGE_URL = "image_url"
+    public static final String OPTION_CONTENT = "option content"
 
     @Autowired
     QuestionSuggestionService questionSuggestionService
@@ -57,18 +61,28 @@ class RejectQuestionSuggestionTest extends Specification {
     @Autowired
     UserRepository userRepository
 
-    def question
-    def questionSuggestion
+    def course = new Course()
+    def question = new Question()
+    def questionSuggestion = new QuestionSuggestion()
 
     def setup() {
-        question = new Question()
+        course.setName(COURSE_NAME)
+        course.setType(Course.Type.TECNICO)
+        courseRepository.save(course)
+
+        def option = new Option()
+        option.setContent(OPTION_CONTENT)
+        option.setCorrect(true)
+        option.setSequence(0)
+
         question.setKey(1)
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
-        question.setStatus(Question.Status.PENDING)
-        questionRepository.save(question)
+        question.addOption(option)
+        question.setType(Question.Type.SUGGESTION)
+        question.setStatus(Question.Status.DISABLED)
+        question.setCourse(course)
 
-        questionSuggestion = new QuestionSuggestion()
         questionSuggestion.setQuestion(question)
         questionSuggestion.setStatus(QuestionSuggestion.Status.PENDING)
         questionSuggestionRepository.save(questionSuggestion)
@@ -94,8 +108,11 @@ class RejectQuestionSuggestionTest extends Specification {
         result != null
         result.getStatus() == QuestionSuggestion.Status.REJECTED
 
-        and: "the question status does not change"
-        result.getQuestion().getStatus() == Question.Status.PENDING
+        and: "the underlying question status does not change"
+        result.getQuestion().getStatus() == Question.Status.DISABLED
+
+        and: "no new question is created"
+        questionRepository.count() == 1L
 
         and: "a justification exists"
         result.getJustification() != null
@@ -133,8 +150,8 @@ class RejectQuestionSuggestionTest extends Specification {
         result != null
         result.getStatus() == QuestionSuggestion.Status.REJECTED
 
-        and: "the question status does not change"
-        result.getQuestion().getStatus() == Question.Status.PENDING
+        and: "the underlying question status does not change"
+        result.getQuestion().getStatus() == Question.Status.DISABLED
 
         and: "a justification exists"
         result.getJustification() != null
