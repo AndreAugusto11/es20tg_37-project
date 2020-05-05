@@ -248,7 +248,7 @@
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">/executions/${executionId}/${clarificationRequestId}/publicClarificationRequest/private</stringProp>
+            <stringProp name="HTTPSampler.path">/executions/${executionId}/clarificationRequests/${clarificationRequestId}/private</stringProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -370,8 +370,18 @@
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">DELETE FROM clarification_requests;
-DELETE FROM public_clarification_requests;</stringProp>
+          <stringProp name="query">UPDATE public_clarification_requests
+SET clarification_request_id = null;
+
+UPDATE clarification_requests
+SET public_clarification_request_id = null;
+
+UPDATE clarification_requests
+SET clarification_request_answer_id = null;
+
+DELETE FROM public_clarification_requests;
+DELETE FROM clarification_requests;
+DELETE FROM clarification_request_answers;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
