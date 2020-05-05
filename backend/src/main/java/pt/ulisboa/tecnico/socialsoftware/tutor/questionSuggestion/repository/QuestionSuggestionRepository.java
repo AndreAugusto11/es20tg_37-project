@@ -14,7 +14,3 @@ public interface QuestionSuggestionRepository extends JpaRepository <QuestionSug
     @Query(value = "SELECT * FROM question_suggestions qs WHERE qs.user_id = :userId", nativeQuery = true)
     List<QuestionSuggestion> findQuestionSuggestions(int userId);
 }
-
-
-
-
