@@ -5,25 +5,25 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.PublicC
 
 public class PublicClarificationRequestDto {
     private Integer id;
-    private ClarificationRequestDto clarificationRequestDto;
+    private Integer clarificationRequestId;
 
     public PublicClarificationRequestDto() {
     }
 
     public PublicClarificationRequestDto(PublicClarificationRequest publicClarificationRequest) {
         this.id = publicClarificationRequest.getId();
-        this.clarificationRequestDto = new ClarificationRequestDto(publicClarificationRequest.getClarificationRequest());
+        this.clarificationRequestId = publicClarificationRequest.getClarificationRequest().getId();
     }
 
     public Integer getId() {
         return id;
     }
 
-    public ClarificationRequestDto getClarificationRequestDto() {
-        return clarificationRequestDto;
+    public Integer getClarificationRequestId() {
+        return clarificationRequestId;
     }
 
-    public void setClarificationRequestDto(ClarificationRequestDto clarificationRequestDto) {
-        this.clarificationRequestDto = clarificationRequestDto;
+    public void setClarificationRequestId(Integer clarificationRequestDto) {
+        this.clarificationRequestId = clarificationRequestDto;
     }
 }
