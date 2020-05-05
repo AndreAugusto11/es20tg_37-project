@@ -10,15 +10,52 @@
                 no-gutters
         >
             <v-col
-                    sm="2"
-                    md="9"
+                    sm="1"
+                    md="10"
             >
                 <h2 class="mb-1 post-text">{{ this.clarificationRequest.name }}</h2>
             </v-col>
+
             <v-col>
                 <v-chip :color="getStatusColor(this.clarificationRequest.status)" small>
                     <span>{{ this.clarificationRequest.status }}</span>
                 </v-chip>
+            </v-col>
+
+            <v-col v-if="this.$store.getters.isTeacher">
+                <v-tooltip v-if="this.clarificationRequest.public" bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon @click="changePrivatePublic()">
+                            <v-icon class="mr-2" color="green" v-on="on">fas fa-lock-open</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>This clarification is public</span>
+                </v-tooltip>
+
+                <v-tooltip v-else bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon @click="changePrivatePublic()">
+                            <v-icon class="mr-2" color="red" v-on="on">fas fa-lock</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>This clarification is private</span>
+                </v-tooltip>
+            </v-col>
+
+            <v-col v-if="this.$store.getters.isStudent">
+                <v-tooltip v-if="this.clarificationRequest.public" bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-icon class="mr-2" color="green" v-on="on">fas fa-lock-open</v-icon>
+                    </template>
+                    <span>This clarification is public</span>
+                </v-tooltip>
+
+                <v-tooltip v-else bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-icon class="mr-2" color="red" v-on="on">fas fa-lock</v-icon>
+                    </template>
+                    <span>This clarification is private</span>
+                </v-tooltip>
             </v-col>
         </v-row>
         <v-row
@@ -103,12 +140,14 @@
 <script lang="ts">
   import { Component, Prop, Vue } from 'vue-property-decorator';
   import { convertMarkDown } from '@/services/ConvertMarkdownService';
+  import RemoteServices from '@/services/RemoteServices';
   import Image from '@/models/management/Image';
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
+  import ResultComponent from '../../views/student/quiz/ResultComponent.vue';
 
   @Component
   export default class ClarificationRequestComponent extends Vue {
-    @Prop(ClarificationRequest) readonly clarificationRequest!: ClarificationRequest;
+    @Prop(ClarificationRequest) clarificationRequest!: ClarificationRequest;
 
     convertMarkDown(text: string, image: Image | null = null): string {
       return convertMarkDown(text, image);
@@ -121,6 +160,20 @@
 
     chosen(content: string) {
       return content === this.clarificationRequest.questionAnswerDto.option.content;
+    }
+
+    async changePrivatePublic() {
+        var result;
+        
+        if (this.clarificationRequest.public && this.clarificationRequest.id != null)
+            result = await RemoteServices.makeClarificationRequestPrivate(this.clarificationRequest.id);
+
+        if (!this.clarificationRequest.public && this.clarificationRequest.id != null)
+            result = await RemoteServices.makeClarificationRequestPublic(this.clarificationRequest.id);
+
+        console.log(result);
+
+        this.$emit('change-availability', result);
     }
   }
 </script>
