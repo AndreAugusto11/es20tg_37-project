@@ -18,7 +18,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.Clarifi
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.PublicClarificationRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.PublicClarificationRequestDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.PublicClarificationRequestRepository;
@@ -185,7 +184,7 @@ public class QuestionDiscussionService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PublicClarificationRequestDto createPublicClarificationRequest(Integer clarificationRequestId) {
+    public ClarificationRequestDto createPublicClarificationRequest(Integer clarificationRequestId) {
 
         ClarificationRequest clarificationRequest = this.getClarificationRequest(clarificationRequestId);
         Course course = clarificationRequest.getQuestion().getCourse();
@@ -199,7 +198,7 @@ public class QuestionDiscussionService {
         course.addPublicClarificationRequests(publicClarificationRequest);
 
         entityManager.persist(publicClarificationRequest);
-        return new PublicClarificationRequestDto(publicClarificationRequest);
+        return new ClarificationRequestDto(clarificationRequest);
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
