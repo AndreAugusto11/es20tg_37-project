@@ -1,8 +1,6 @@
 <template>
     <div>
-        <clarification-request
-        :clarification-request="clarificationRequest"
-        v-on:change-availability="changeAvailability"/>
+        <clarification-request :clarification-request="clarificationRequest"/>
         <clarification-request-answer :clarification-request="clarificationRequest" />
     </div>
 </template>
@@ -24,10 +22,6 @@
 
     created() {
         this.clarificationRequest = new ClarificationRequest(JSON.parse(this.$route.params.clarificationRequest));
-    }
-
-    changeAvailability() {
-        this.clarificationRequest.public = this.clarificationRequest.public ? false : true;
     }
   }
 </script>

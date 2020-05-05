@@ -1,8 +1,6 @@
 <template>
     <div class="container" :key="clarificationRequest.clarificationRequestAnswerDto.id">
-        <clarification-request
-            :clarification-request="clarificationRequest"
-            v-on:change-availability="changeAvailability" />
+        <clarification-request :clarification-request="clarificationRequest"/>
         <clarification-request-answer :clarification-request="clarificationRequest" />
         <v-container>
             <v-btn v-if="!this.clarificationRequest.clarificationRequestAnswerDto.content" color="primary" dark @click="newClarificationRequestAnswer" data-cy="answerButton">
@@ -65,10 +63,6 @@
         onCloseDialog() {
             this.createClarificationRequestAnswerDialog = false;
             this.currentClarificationRequestAnswer = null;
-        }
-
-        changeAvailability() {
-            this.clarificationRequest.public = this.clarificationRequest.public ? false : true;
         }
     }
 </script>

@@ -1,5 +1,6 @@
 <template>
     <v-card
+            :key="this.clarificationRequest.public"
             class="mx-auto mt-10"
             max-width="1000"
             outlined
@@ -191,13 +192,19 @@
     async changePrivatePublic() {
         var result;
         
-        if (this.clarificationRequest.public && this.clarificationRequest.id != null)
-            result = await RemoteServices.makeClarificationRequestPrivate(this.clarificationRequest.id);
+        try {
+            if (this.clarificationRequest.public && this.clarificationRequest.id != null)
+                result = await RemoteServices.makeClarificationRequestPrivate(this.clarificationRequest.id);
 
-        if (!this.clarificationRequest.public && this.clarificationRequest.id != null)
-            result = await RemoteServices.makeClarificationRequestPublic(this.clarificationRequest.id);
+            if (!this.clarificationRequest.public && this.clarificationRequest.id != null)
+                result = await RemoteServices.makeClarificationRequestPublic(this.clarificationRequest.id);
 
-        this.$emit('change-availability');
+            if (result != null)
+                this.clarificationRequest = result;
+
+        } catch (error) {
+          await this.$store.dispatch('error', error);
+        }
     }
   }
 </script>
