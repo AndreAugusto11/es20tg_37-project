@@ -26,7 +26,7 @@
                 <v-tooltip v-if="this.clarificationRequest.public" bottom>
                     <template v-slot:activator="{ on }">
                         <v-btn icon @click="changePrivatePublic()">
-                            <v-icon class="mr-2" color="green" v-on="on">fas fa-lock-open</v-icon>
+                            <v-icon class="mr-2" color="green" v-on="on" data-cy="buttonPublic">fas fa-lock-open</v-icon>
                         </v-btn>
                     </template>
                     <span>This discussion is public</span>
@@ -35,7 +35,7 @@
                 <v-tooltip v-else bottom>
                     <template v-slot:activator="{ on }">
                         <v-btn icon @click="changePrivatePublic()">
-                            <v-icon class="mr-2" color="red" v-on="on">fas fa-lock</v-icon>
+                            <v-icon class="mr-2" color="red" v-on="on" data-cy="buttonPrivate">fas fa-lock</v-icon>
                         </v-btn>
                     </template>
                     <span>This discussion is private</span>
@@ -45,14 +45,14 @@
             <v-col v-if="this.$store.getters.isStudent">
                 <v-tooltip v-if="this.clarificationRequest.public" bottom>
                     <template v-slot:activator="{ on }">
-                        <v-icon class="mr-2" color="green" v-on="on">fas fa-lock-open</v-icon>
+                        <v-icon class="mr-2" color="green" v-on="on" data-cy="iconPublic" >fas fa-lock-open</v-icon>
                     </template>
                     <span>This discussion is public</span>
                 </v-tooltip>
 
                 <v-tooltip v-else bottom>
                     <template v-slot:activator="{ on }">
-                        <v-icon class="mr-2" color="red" v-on="on">fas fa-lock</v-icon>
+                        <v-icon class="mr-2" color="red" v-on="on" data-cy="iconPrivate" >fas fa-lock</v-icon>
                     </template>
                     <span>This discussion is private</span>
                 </v-tooltip>
