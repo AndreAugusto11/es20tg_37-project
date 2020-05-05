@@ -6,11 +6,18 @@
     >
         <v-row
                 align="center"
-                class="spacer ml-5 mt-5"
+                class="spacer ml-5 mr-5 mt-5"
                 no-gutters
         >
-            <v-col
-                    sm="1"
+            <v-col v-if="this.$store.getters.isTeacher"
+                    sm="2"
+                    md="8"
+            >
+                <h2 class="mb-1 post-text">{{ this.clarificationRequest.name }}</h2>
+            </v-col>
+
+            <v-col v-if="this.$store.getters.isStudent"
+                    sm="2"
                     md="10"
             >
                 <h2 class="mb-1 post-text">{{ this.clarificationRequest.name }}</h2>
@@ -25,34 +32,50 @@
             <v-col v-if="this.$store.getters.isTeacher">
                 <v-tooltip v-if="this.clarificationRequest.public" bottom>
                     <template v-slot:activator="{ on }">
-                        <v-btn icon @click="changePrivatePublic()">
-                            <v-icon class="mr-2" color="green" v-on="on" data-cy="buttonPublic">fas fa-lock-open</v-icon>
-                        </v-btn>
+                        <v-icon class="mr-2" color="green" v-on="on" data-cy="buttonPublic">fas fa-lock-open</v-icon>
                     </template>
                     <span>This discussion is public</span>
                 </v-tooltip>
 
                 <v-tooltip v-else bottom>
                     <template v-slot:activator="{ on }">
-                        <v-btn icon @click="changePrivatePublic()">
-                            <v-icon class="mr-2" color="red" v-on="on" data-cy="buttonPrivate">fas fa-lock</v-icon>
-                        </v-btn>
+                        <v-icon class="mr-2" color="red" v-on="on" data-cy="buttonPrivate">fas fa-lock</v-icon>
                     </template>
                     <span>This discussion is private</span>
+                </v-tooltip>
+
+                <v-icon big>mdi-arrow-right-bold</v-icon>
+
+                <v-tooltip v-if="this.clarificationRequest.public" bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn class="mx-2" fab dark color="red" @click="changePrivatePublic()">
+                            <v-icon class="mr-2" color="white" v-on="on" data-cy="buttonPrivate">fas fa-lock</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Click to make private</span>
+                </v-tooltip>
+
+                <v-tooltip v-else bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn class="mx-2" fab dark color="green" @click="changePrivatePublic()">
+                            <v-icon class="mr-2" color="white" v-on="on" data-cy="buttonPublic">fas fa-lock-open</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Click to make public</span>
                 </v-tooltip>
             </v-col>
 
             <v-col v-if="this.$store.getters.isStudent">
                 <v-tooltip v-if="this.clarificationRequest.public" bottom>
                     <template v-slot:activator="{ on }">
-                        <v-icon class="mr-2" color="green" v-on="on" data-cy="iconPublic" >fas fa-lock-open</v-icon>
+                        <v-icon class="mr-2" color="green" v-on="on" data-cy="iconPublic">fas fa-lock-open</v-icon>
                     </template>
                     <span>This discussion is public</span>
                 </v-tooltip>
-
+    
                 <v-tooltip v-else bottom>
                     <template v-slot:activator="{ on }">
-                        <v-icon class="mr-2" color="red" v-on="on" data-cy="iconPrivate" >fas fa-lock</v-icon>
+                        <v-icon class="mr-2" color="red" v-on="on" data-cy="iconPrivate">fas fa-lock</v-icon>
                     </template>
                     <span>This discussion is private</span>
                 </v-tooltip>
