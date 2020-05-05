@@ -10,8 +10,8 @@
                 no-gutters
         >
             <v-col v-if="this.$store.getters.isTeacher"
-                    sm="2"
-                    md="8"
+                    sm="3"
+                    md="7"
             >
                 <h2 class="mb-1 post-text">{{ this.clarificationRequest.name }}</h2>
             </v-col>
@@ -23,23 +23,25 @@
                 <h2 class="mb-1 post-text">{{ this.clarificationRequest.name }}</h2>
             </v-col>
 
+
             <v-col>
                 <v-chip :color="getStatusColor(this.clarificationRequest.status)" small>
                     <span>{{ this.clarificationRequest.status }}</span>
                 </v-chip>
             </v-col>
 
+
             <v-col v-if="this.$store.getters.isTeacher">
                 <v-tooltip v-if="this.clarificationRequest.public" bottom>
                     <template v-slot:activator="{ on }">
-                        <v-icon class="mr-2" color="green" v-on="on" data-cy="buttonPublic">fas fa-lock-open</v-icon>
+                        <v-icon class="mr-2" color="green" v-on="on">fas fa-lock-open</v-icon>
                     </template>
                     <span>This discussion is public</span>
                 </v-tooltip>
 
                 <v-tooltip v-else bottom>
                     <template v-slot:activator="{ on }">
-                        <v-icon class="mr-2" color="red" v-on="on" data-cy="buttonPrivate">fas fa-lock</v-icon>
+                        <v-icon class="mr-2" color="red" v-on="on">fas fa-lock</v-icon>
                     </template>
                     <span>This discussion is private</span>
                 </v-tooltip>
@@ -48,8 +50,8 @@
 
                 <v-tooltip v-if="this.clarificationRequest.public" bottom>
                     <template v-slot:activator="{ on }">
-                        <v-btn class="mx-2" fab dark color="red" @click="changePrivatePublic()">
-                            <v-icon class="mr-2" color="white" v-on="on" data-cy="buttonPrivate">fas fa-lock</v-icon>
+                        <v-btn class="mx-2" fab dark color="red" @click="changePrivatePublic()" data-cy="ButtonToPrivate">
+                            <v-icon class="mr-2" color="white" v-on="on">fas fa-lock</v-icon>
                         </v-btn>
                     </template>
                     <span>Click to make private</span>
@@ -57,25 +59,26 @@
 
                 <v-tooltip v-else bottom>
                     <template v-slot:activator="{ on }">
-                        <v-btn class="mx-2" fab dark color="green" @click="changePrivatePublic()">
-                            <v-icon class="mr-2" color="white" v-on="on" data-cy="buttonPublic">fas fa-lock-open</v-icon>
+                        <v-btn class="mx-2" fab dark color="green" @click="changePrivatePublic()" data-cy="ButtonToPublic">
+                            <v-icon class="mr-2" color="white" v-on="on">fas fa-lock-open</v-icon>
                         </v-btn>
                     </template>
                     <span>Click to make public</span>
                 </v-tooltip>
             </v-col>
 
+
             <v-col v-if="this.$store.getters.isStudent">
                 <v-tooltip v-if="this.clarificationRequest.public" bottom>
                     <template v-slot:activator="{ on }">
-                        <v-icon class="mr-2" color="green" v-on="on" data-cy="iconPublic">fas fa-lock-open</v-icon>
+                        <v-icon class="mr-2" color="green" v-on="on">fas fa-lock-open</v-icon>
                     </template>
                     <span>This discussion is public</span>
                 </v-tooltip>
     
                 <v-tooltip v-else bottom>
                     <template v-slot:activator="{ on }">
-                        <v-icon class="mr-2" color="red" v-on="on" data-cy="iconPrivate">fas fa-lock</v-icon>
+                        <v-icon class="mr-2" color="red" v-on="on">fas fa-lock</v-icon>
                     </template>
                     <span>This discussion is private</span>
                 </v-tooltip>

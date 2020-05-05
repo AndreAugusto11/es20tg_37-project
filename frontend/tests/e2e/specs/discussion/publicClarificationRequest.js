@@ -7,13 +7,23 @@ describe('Make Clarification Request to be public walkthrough', () => {
       cy.contains('Logout').click()
     })
   
-    it('student creates Clarification Request, teacher login to make it public, student login to confirm it is public', () => {
+    it('student creates Clarification Request, teacher login to make it public, teacher sees if it is presented public', () => {
+      var content = generateContent(5)
       cy.solveQuiz()
-      cy.createClarificationRequest(generateContent(5))
+      cy.createClarificationRequest(content)
       cy.seeClarificationRequest()
-      cy.contains('[data-cy="iconPrivate"]')
       cy.contains('Logout').click()
-    });  
+      
+      cy.demoTeacherLogin()
+      cy.goToDiscussion()
+      cy.get('[data-cy="Search"]').type(content)
+      cy.contains(content).click()
+      cy.get('[data-cy="ButtonToPublic"]').click()
+
+      cy.goToDiscussion()
+      cy.get('[data-cy="Search"]').type(content)
+      cy.contains(content).click()
+      cy.get('[data-cy="ButtonToPrivate"]').click()
   });
 
 function generateContent(length) {
