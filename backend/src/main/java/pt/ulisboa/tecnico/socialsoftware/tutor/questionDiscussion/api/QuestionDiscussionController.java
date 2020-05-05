@@ -44,6 +44,13 @@ public class QuestionDiscussionController {
         return questionDiscussionService.getClarificationRequests(user.getUsername(), executionId);
     }
 
+    @PutMapping("/executions/{executionId}/clarificationRequests/{clarificationRequestId}/close")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public ClarificationRequestDto closeClarificationRequest(@PathVariable Integer executionId,
+                                                             @PathVariable Integer clarificationRequestId) {
+        return questionDiscussionService.closeClarificationRequest(clarificationRequestId);
+    }
+
     @GetMapping("/questionAnswers/{questionAnswerId}/clarificationRequests")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionAnswerId, 'QUESTION_ANSWER.ACCESS')")
     public ClarificationRequestDto getClarificationRequest(@PathVariable Integer questionAnswerId) {

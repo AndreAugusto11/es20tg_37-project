@@ -100,4 +100,8 @@ public class ClarificationRequest {
     public void addClarificationRequestAnswer(ClarificationRequestAnswer clarificationRequestAnswer) {
         this.clarificationRequestAnswer.add(clarificationRequestAnswer);
     }
+
+    public void closeClarificationRequest() {
+        this.setStatus(Status.CLOSED);
+    }
 }

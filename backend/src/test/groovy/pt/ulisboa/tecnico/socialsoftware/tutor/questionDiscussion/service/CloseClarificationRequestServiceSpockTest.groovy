@@ -19,8 +19,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionReposit
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
@@ -33,10 +31,9 @@ import spock.lang.Specification
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_NOT_DEFINED
 
 @DataJpaTest
-class GetClarificationRequestAnswersServiceSpockTest extends Specification {
+class CloseClarificationRequestServiceSpockTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String CLARIFICATION_CONTENT = "clarification request content"
-    public static final String CLARIFICATION_ANSWER_CONTENT = "clarification answer content"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     public static final Integer TIME_TAKEN = 1234
@@ -79,9 +76,6 @@ class GetClarificationRequestAnswersServiceSpockTest extends Specification {
     @Autowired
     ClarificationRequestRepository clarificationRequestRepository
 
-    @Autowired
-    ClarificationRequestAnswerRepository clarificationRequestAnswerRepository
-
     def user_student
     def user_teacher
     def course
@@ -92,7 +86,6 @@ class GetClarificationRequestAnswersServiceSpockTest extends Specification {
     def quizAnswer
     def quiz
     def questionAnswer
-    def clarificationRequest
 
     def setup() {
 
@@ -147,49 +140,31 @@ class GetClarificationRequestAnswersServiceSpockTest extends Specification {
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
         quizAnswer.addQuestionAnswer(questionAnswer)
         questionAnswerRepository.save(questionAnswer)
-
-        clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
-        questionAnswer.addClarificationRequest(clarificationRequest)
-        question.addClarificationRequest(clarificationRequest)
-        user_student.addClarificationRequest(clarificationRequest)
-        clarificationRequestRepository.save(clarificationRequest)
     }
 
-    def "get two answers from clarification request"() {
-        given: "two clarification request answers"
-        def clarificationRequestAnswer1 = new ClarificationRequestAnswer(clarificationRequest, ClarificationRequestAnswer.Type.TEACHER_ANSWER, user_teacher, CLARIFICATION_ANSWER_CONTENT)
-        def clarificationRequestAnswer2 = new ClarificationRequestAnswer(clarificationRequest, ClarificationRequestAnswer.Type.STUDENT_ANSWER, user_student, CLARIFICATION_ANSWER_CONTENT)
-        clarificationRequestAnswerRepository.save(clarificationRequestAnswer1)
-        clarificationRequestAnswerRepository.save(clarificationRequestAnswer2)
+    def "Student creates clarification request and closes it"() {
+        given: "a clarification request"
+        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
+        clarificationRequestRepository.save(clarificationRequest)
 
         when:
-        def result = questionDiscussionService.getClarificationRequestAnswers(clarificationRequest.getId())
+        def result = questionDiscussionService.closeClarificationRequest(clarificationRequest.getId())
 
-        then: "the returned data has the correct size"
-        result.size() == 2
-        and: "there is the teacher's answer"
-        def clarificationRequestAnswerDto = result.get(0)
-        clarificationRequestAnswerDto.getId() != null
-        clarificationRequestAnswerDto.getContent() == CLARIFICATION_ANSWER_CONTENT
-        clarificationRequestAnswerDto.getType() == ClarificationRequestAnswer.Type.TEACHER_ANSWER
-        clarificationRequestAnswerDto.getName() == user_teacher.getName()
-        clarificationRequestAnswerDto.getUsername() == user_teacher.getUsername()
-        and: "there is the student's answer"
-        def clarificationRequestAnswerDtoStudent = result.get(1)
-        clarificationRequestAnswerDtoStudent.getId() != null
-        clarificationRequestAnswerDtoStudent.getContent() == CLARIFICATION_ANSWER_CONTENT
-        clarificationRequestAnswerDtoStudent.getType() == ClarificationRequestAnswer.Type.STUDENT_ANSWER
-        clarificationRequestAnswerDtoStudent.getName() == user_student.getName()
-        clarificationRequestAnswerDtoStudent.getUsername() == user_student.getUsername()
+        then: "the returned data is correct"
+        result.getId() != null
+        result.getContent() == CLARIFICATION_CONTENT
+        result.getStatus() == ClarificationRequest.Status.CLOSED.name()
+        result.getQuestionAnswerDto().getQuestion().getId() == question.getId()
+        result.getUsername() == user_student.getUsername()
     }
 
     def "invalid argument: clarification_request_id=null"() {
-        given: "a clarification request answer"
-        def clarificationRequestAnswer = new ClarificationRequestAnswer(clarificationRequest, ClarificationRequestAnswer.Type.TEACHER_ANSWER, user_teacher, CLARIFICATION_ANSWER_CONTENT)
-        clarificationRequestAnswerRepository.save(clarificationRequestAnswer)
+        given: "a clarification request"
+        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
+        clarificationRequestRepository.save(clarificationRequest)
 
         when:
-        questionDiscussionService.getClarificationRequestAnswers(null)
+        questionDiscussionService.closeClarificationRequest(null)
 
         then: "exception is thrown"
         def error = thrown(TutorException)
