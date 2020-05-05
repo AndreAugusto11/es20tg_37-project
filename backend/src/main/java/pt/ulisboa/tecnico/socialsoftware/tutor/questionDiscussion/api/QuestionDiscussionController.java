@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.PublicClarificationRequestDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
@@ -56,5 +58,19 @@ public class QuestionDiscussionController {
                                                                           @PathVariable Integer clarificationRequestId,
                                                                           @Valid @RequestBody ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
         return questionDiscussionService.createClarificationRequestAnswer(clarificationRequestId, clarificationRequestAnswerDto);
+    }
+
+    @PostMapping("/executions/{executionId}/clarificationRequests/{clarificationRequestId}/public")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public ClarificationRequestDto createPublicClarificationRequest(@PathVariable Integer executionId,
+                                                                          @PathVariable Integer clarificationRequestId) {
+        return  questionDiscussionService.createPublicClarificationRequest(clarificationRequestId);
+    }
+
+    @PostMapping("/executions/{executionId}/clarificationRequests/{clarificationRequestId}/private")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public ClarificationRequestDto removePublicClarificationRequest(@PathVariable Integer executionId,
+                                                                    @PathVariable Integer clarificationRequestId) {
+        return questionDiscussionService.removePublicClarificationRequest(clarificationRequestId);
     }
 }

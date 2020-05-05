@@ -5,10 +5,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
@@ -16,13 +12,16 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestAnswerDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.PublicClarificationRequest
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.PublicClarificationRequestRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
@@ -32,7 +31,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 @DataJpaTest
-class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specification {
+class RemovePublicClarificationRequestServiceSpockPerformanceTest extends Specification {
     public static final Integer NUMBER_OF_ITERATIONS = 1000
     public static final String USERNAME_TEACHER = "username_teacher"
     public static final String USERNAME_STUDENT = "username_student"
@@ -78,6 +77,9 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
 
     @Autowired
     ClarificationRequestRepository clarificationRequestRepository
+
+    @Autowired
+    PublicClarificationRequestRepository publicClarificationRequestRepository
 
     def user_teacher
     def user_student
@@ -150,21 +152,12 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
         questionAnswerRepository.save(questionAnswer)
     }
 
-    def "performance testing to create 1000 clarification request answers"() {
-        given: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto()
-        clarificationRequestDto.setContent(CLARIFICATION_CONTENT)
-        clarificationRequestDto.setName(user_student.getName())
-        clarificationRequestDto.setUsername(user_student.getUsername())
-        def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
-        clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
+    def "performance testing to create 1000 public clarification request"() {
+        given: "a clarification request"
+        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
 
-        and: "a clarification request answer dto"
-        def clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
-        clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER_ANSWER)
-        clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
-        clarificationRequestAnswerDto.setName(user_teacher.getName())
-        clarificationRequestAnswerDto.setUsername(user_teacher.getUsername())
+        and: "a clarification request dto"
+        def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
 
         and: "1000 clarification requests"
         1.upto(NUMBER_OF_ITERATIONS, {
@@ -172,9 +165,15 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
         })
         List<ClarificationRequest> clarificationRequestList = clarificationRequestRepository.findAll()
 
-        when: "1000 clarification request answers are created"
+        and: "1000 public clarification requests are created"
         1.upto(NUMBER_OF_ITERATIONS, {
-            questionDiscussionService.createClarificationRequestAnswer(clarificationRequestList.pop().getId(), clarificationRequestAnswerDto)
+            questionDiscussionService.createPublicClarificationRequest(clarificationRequestList.pop().getId())
+        })
+        clarificationRequestList = clarificationRequestRepository.findAll()
+
+        when: "1000 public clarification requests are removed"
+        1.upto(NUMBER_OF_ITERATIONS, {
+            questionDiscussionService.removePublicClarificationRequest(clarificationRequestList.pop().getId())
         })
 
         then: true
