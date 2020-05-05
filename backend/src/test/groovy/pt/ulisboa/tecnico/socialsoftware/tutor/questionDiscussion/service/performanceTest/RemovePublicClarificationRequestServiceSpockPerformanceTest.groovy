@@ -18,7 +18,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionReposit
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.PublicClarificationRequest
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.PublicClarificationRequestRepository
@@ -32,7 +31,7 @@ import spock.lang.Specification
 
 @DataJpaTest
 class RemovePublicClarificationRequestServiceSpockPerformanceTest extends Specification {
-    public static final Integer NUMBER_OF_ITERATIONS = 1000
+    public static final Integer NUMBER_OF_ITERATIONS = 10000
     public static final String USERNAME_TEACHER = "username_teacher"
     public static final String USERNAME_STUDENT = "username_student"
     public static final String COURSE_NAME = "Software Architecture"
@@ -159,19 +158,19 @@ class RemovePublicClarificationRequestServiceSpockPerformanceTest extends Specif
         and: "a clarification request dto"
         def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
 
-        and: "1000 clarification requests"
+        and: "10000 clarification requests"
         1.upto(NUMBER_OF_ITERATIONS, {
             questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
         })
         List<ClarificationRequest> clarificationRequestList = clarificationRequestRepository.findAll()
 
-        and: "1000 public clarification requests are created"
+        and: "10000 public clarification requests are created"
         1.upto(NUMBER_OF_ITERATIONS, {
             questionDiscussionService.createPublicClarificationRequest(clarificationRequestList.pop().getId())
         })
         clarificationRequestList = clarificationRequestRepository.findAll()
 
-        when: "1000 public clarification requests are removed"
+        when: "10000 public clarification requests are removed"
         1.upto(NUMBER_OF_ITERATIONS, {
             questionDiscussionService.removePublicClarificationRequest(clarificationRequestList.pop().getId())
         })

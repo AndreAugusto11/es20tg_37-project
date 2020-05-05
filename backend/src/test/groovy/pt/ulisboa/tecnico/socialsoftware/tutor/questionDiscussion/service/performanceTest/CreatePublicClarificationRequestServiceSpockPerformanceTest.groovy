@@ -6,7 +6,6 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
@@ -32,7 +31,7 @@ import spock.lang.Specification
 
 @DataJpaTest
 class CreatePublicClarificationRequestServiceSpockPerformanceTest extends Specification {
-    public static final Integer NUMBER_OF_ITERATIONS = 1000
+    public static final Integer NUMBER_OF_ITERATIONS = 10000
     public static final String USERNAME_TEACHER = "username_teacher"
     public static final String USERNAME_STUDENT = "username_student"
     public static final String COURSE_NAME = "Software Architecture"
@@ -159,13 +158,13 @@ class CreatePublicClarificationRequestServiceSpockPerformanceTest extends Specif
         and: "a clarification request dto"
         def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
 
-        and: "1000 clarification requests"
+        and: "10000 clarification requests"
         1.upto(NUMBER_OF_ITERATIONS, {
             questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
         })
         List<ClarificationRequest> clarificationRequestList = clarificationRequestRepository.findAll()
 
-        when: "1000 public clarification requests are created"
+        when: "10000 public clarification requests are created"
         1.upto(NUMBER_OF_ITERATIONS, {
             questionDiscussionService.createPublicClarificationRequest(clarificationRequestList.pop().getId())
         })
