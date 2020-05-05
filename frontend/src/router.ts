@@ -31,9 +31,8 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import ClarificationRequestsView from '@/views/student/discussion/ClarificationRequestsView.vue';
-import ClarificationRequestView from '@/views/student/discussion/ClarificationRequestView.vue';
+import ClarificationRequestView from '@/views/discussion/ClarificationRequestView.vue';
 import ClarificationRequestsTeacherView from '@/views/teacher/discussion/ClarificationRequestsTeacherView.vue';
-import ClarificationRequestTeacherView from '@/views/teacher/discussion/ClarificationRequestTeacherView.vue';
 
 Vue.use(Router);
 
@@ -136,7 +135,7 @@ let router = new Router({
         {
           path: 'discussionQuestion',
           name: 'discussionQuestion',
-          component: ClarificationRequestTeacherView,
+          component: ClarificationRequestView,
           props: true,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Discussion Question',

@@ -16,15 +16,20 @@
   import ClarificationRequestAnswerComponent from "@/components/discussion/ClarificationRequestAnswerComponent.vue";
   import RemoteServices from '@/services/RemoteServices';
   import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
+  import CreateClarificationRequestAnswerDialog
+    from '@/views/teacher/discussion/CreateClarificationRequestAnswerDialog.vue';
 
   @Component({
     components: {
+      'create-clarification-request-answer-dialog': CreateClarificationRequestAnswerDialog,
       'clarification-request': ClarificationRequestComponent,
       'clarification-request-answer': ClarificationRequestAnswerComponent
     }
   })
   export default class ClarificationRequestView extends Vue {
     clarificationRequest!: ClarificationRequest;
+    currentClarificationRequestAnswer: ClarificationRequestAnswer | null = null;
+    createClarificationRequestAnswerDialog: boolean = false;
     clarificationRequestAnswers: ClarificationRequestAnswer[] = [];
 
     async created() {
@@ -38,6 +43,21 @@
         }
         await this.$store.dispatch('clearLoading');
       }
+    }
+
+    newClarificationRequestAnswer() {
+      this.currentClarificationRequestAnswer = new ClarificationRequestAnswer();
+      this.createClarificationRequestAnswerDialog = true;
+    }
+
+    async onCreateClarificationRequestAnswer(clarificationRequestAnswer: ClarificationRequestAnswer) {
+      this.createClarificationRequestAnswerDialog = false;
+      this.currentClarificationRequestAnswer = null;
+    }
+
+    onCloseDialog() {
+      this.createClarificationRequestAnswerDialog = false;
+      this.currentClarificationRequestAnswer = null;
     }
   }
 </script>

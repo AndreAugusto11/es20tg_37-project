@@ -9,6 +9,9 @@
             <v-btn v-if="this.clarificationRequest.status !== 'CLOSED'" color="primary" dark @click="newClarificationRequestAnswer" data-cy="answerButton">
                 Answer
             </v-btn>
+            <v-btn v-else disabled>
+                Answer
+            </v-btn>
         </v-container>
         <create-clarification-request-answer-dialog
                 v-if="currentClarificationRequestAnswer"
