@@ -12,10 +12,10 @@
             <v-btn v-else class="mr-5" disabled>
                 Answer
             </v-btn>
-            <v-btn v-if="!this.$store.getters.isTeacher && this.clarificationRequest.status !== 'CLOSED'" color="primary" dark @click="closeClarificationRequest" data-cy="closeButton">
+            <v-btn v-if="this.$store.getters.isStudent && this.clarificationRequest.status !== 'CLOSED'" color="primary" dark @click="closeClarificationRequest" data-cy="closeButton">
                 Close Clarification
             </v-btn>
-            <v-btn v-else-if="!this.$store.getters.isTeacher" disabled>
+            <v-btn v-else-if="this.$store.getters.isStudent" disabled>
                 Close Clarification
             </v-btn>
         </v-container>
@@ -48,7 +48,7 @@
     }
   })
 
-  export default class ClarificationRequestTeacherView extends Vue {
+  export default class ClarificationRequestView extends Vue {
     clarificationRequest!: ClarificationRequest;
     currentClarificationRequestAnswer: ClarificationRequestAnswer | null = null;
     createClarificationRequestAnswerDialog: boolean = false;
