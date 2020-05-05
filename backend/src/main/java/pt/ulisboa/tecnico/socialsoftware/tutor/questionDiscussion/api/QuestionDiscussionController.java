@@ -62,7 +62,7 @@ public class QuestionDiscussionController {
 
     @PostMapping("/executions/{executionId}/clarificationRequests/{clarificationRequestId}/public")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public PublicClarificationRequestDto createPublicClarificationRequest(@PathVariable Integer executionId,
+    public ClarificationRequestDto createPublicClarificationRequest(@PathVariable Integer executionId,
                                                                           @PathVariable Integer clarificationRequestId) {
         return  questionDiscussionService.createPublicClarificationRequest(clarificationRequestId);
     }

@@ -29,7 +29,7 @@
                             <v-icon class="mr-2" color="green" v-on="on">fas fa-lock-open</v-icon>
                         </v-btn>
                     </template>
-                    <span>This clarification is public</span>
+                    <span>This discussion is public</span>
                 </v-tooltip>
 
                 <v-tooltip v-else bottom>
@@ -38,7 +38,7 @@
                             <v-icon class="mr-2" color="red" v-on="on">fas fa-lock</v-icon>
                         </v-btn>
                     </template>
-                    <span>This clarification is private</span>
+                    <span>This discussion is private</span>
                 </v-tooltip>
             </v-col>
 
@@ -47,14 +47,14 @@
                     <template v-slot:activator="{ on }">
                         <v-icon class="mr-2" color="green" v-on="on">fas fa-lock-open</v-icon>
                     </template>
-                    <span>This clarification is public</span>
+                    <span>This discussion is public</span>
                 </v-tooltip>
 
                 <v-tooltip v-else bottom>
                     <template v-slot:activator="{ on }">
                         <v-icon class="mr-2" color="red" v-on="on">fas fa-lock</v-icon>
                     </template>
-                    <span>This clarification is private</span>
+                    <span>This discussion is private</span>
                 </v-tooltip>
             </v-col>
         </v-row>
@@ -171,9 +171,7 @@
         if (!this.clarificationRequest.public && this.clarificationRequest.id != null)
             result = await RemoteServices.makeClarificationRequestPublic(this.clarificationRequest.id);
 
-        console.log(result);
-
-        this.$emit('change-availability', result);
+        this.$emit('change-availability');
     }
   }
 </script>

@@ -705,7 +705,6 @@ export default class RemoteServices {
     return httpClient
         .post(`/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests/${clarificationRequestId}/public`)
         .then(response => {
-          console.log(response)
           return new ClarificationRequest(response.data);
         })
         .catch(async error => {
@@ -717,7 +716,6 @@ export default class RemoteServices {
     return httpClient
         .post(`/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests/${clarificationRequestId}/private`)
         .then(response => {
-          console.log(response)
           return new ClarificationRequest(response.data);
         })
         .catch(async error => {

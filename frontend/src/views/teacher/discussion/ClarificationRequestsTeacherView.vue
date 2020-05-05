@@ -39,6 +39,16 @@
           <span>{{ item.status }}</span>
         </v-chip>
       </template>
+
+      <template v-slot:item.public="{ item }">
+          <v-icon v-if="item.public == true" color="green">
+            fas fa-lock-open
+          </v-icon>
+          <v-icon v-else color="red">
+            fas fa-lock
+          </v-icon>
+      </template>
+      
     </v-data-table>
   </v-card>
 </template>
@@ -57,9 +67,10 @@
         search: string = '';
 
         headers: object = [
-            { text: 'Clarification', value: 'content', align: 'left' },
-            { text: 'Student Name', value: 'name', align: 'center' },
-            { text: 'Status', value: 'status', align: 'center' }
+            { text: 'Clarification', value: 'content', align: 'left', width: '50%' },
+            { text: 'Student Name', value: 'name', align: 'center', width: '20%' },
+            { text: 'Status', value: 'status', align: 'center', width: '20%' },
+            { text: 'Availability', value: 'public', align: 'center', width: '10%'}
         ];
 
         async created() {
