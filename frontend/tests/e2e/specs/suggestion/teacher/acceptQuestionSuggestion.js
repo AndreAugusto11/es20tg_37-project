@@ -5,7 +5,7 @@ describe('Accept a suggestion', () => {
   });
 
   afterEach(() => {
-    cy.contains('Logout').click()
+    cy.contains('Logout').click();
   });
 
   it('login, creates a suggestion and accepts it through direct button', () => {
@@ -20,7 +20,7 @@ describe('Accept a suggestion', () => {
     cy.contains('Logout').click();
     cy.demoStudentLogin();
     cy.contains('Suggestions').click();
-    cy.showQuestionSuggestion('TestAccept')
+    cy.showQuestionSuggestion('TestAccept');
   });
 
   it('login, creates a suggestion and accepts it through show menu', () => {

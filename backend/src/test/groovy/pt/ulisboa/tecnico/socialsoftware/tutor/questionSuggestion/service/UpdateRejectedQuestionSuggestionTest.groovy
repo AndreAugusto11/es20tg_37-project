@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.service.performanceTest
+package pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -9,9 +9,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSuggestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.JustificationDto
@@ -48,6 +50,9 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
 
     @Autowired
     CourseRepository courseRepository
+
+    @Autowired
+    OptionRepository optionRepository
 
     @Autowired
     CourseExecutionRepository courseExecutionRepository
@@ -138,8 +143,10 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
         questionSuggestion = new QuestionSuggestion(user, course, questionSuggestionDto1)
         questionSuggestionR = new QuestionSuggestion(user, course, questionSuggestionDto1R)
         questionSuggestionRepository.save(questionSuggestion)
+        optionRepository.save(questionSuggestion.getQuestion().getOptions().get(0))
         questionSuggestionRepository.save(questionSuggestionR)
 
+        optionDto2.setId(questionSuggestion.getQuestion().getOptions().get(0).getId())
     }
 
     def "update rejected question suggestion"() {
@@ -157,9 +164,9 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
         result.getContent() == QUESTIONSUGGESTION_CONTENT2
         result.getUser().getName() == "name1"
         result.getImage() == null
-        result.getOptions().size() == 2
+        result.getOptions().size() == 1
         result.getUser().getQuestionsSuggestion().contains(result)
-        def resOption = result.getOptions().get(1)
+        def resOption = result.getOptions().get(0)
         resOption.getContent() == OPTION_CONTENT2
         resOption.getCorrect()
     }

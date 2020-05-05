@@ -62,4 +62,11 @@ public class QuestionSuggestionController {
     public List<QuestionSuggestionDto> getAllQuestionSuggestions(@PathVariable int courseId) {
         return questionSuggestionService.getAllQuestionSuggestions(courseId);
     }
+
+    @PutMapping("/questionSuggestions/{questionSuggestionId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionSuggestionId, 'QUESTION_SUGGESTION.ACCESS')")
+    public QuestionSuggestionDto updateRejectedQuestionSuggestion
+            (@PathVariable int questionSuggestionId, @Valid @RequestBody QuestionSuggestionDto questionSuggestionDto) {
+        return questionSuggestionService.updateRejectedQuestionSuggestion(questionSuggestionId, questionSuggestionDto);
+    }
 }
