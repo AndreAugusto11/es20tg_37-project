@@ -9,7 +9,11 @@
     <v-card>
       <v-card-title>
         <span class="headline">
-          New Suggestion
+          {{
+            editQuestionSuggestion && editQuestionSuggestion.id === null
+              ? 'New Suggestion'
+              : 'Edit Suggestion'
+          }}
         </span>
       </v-card-title>
 
@@ -112,9 +116,14 @@ export default class EditQuestionSuggestionDialog extends Vue {
       return;
     } else {
       try {
-        const result = await RemoteServices.createQuestionSuggestion(
-          this.editQuestionSuggestion
-        );
+        const result =
+          this.editQuestionSuggestion.id != null
+            ? await RemoteServices.updateRejectedQuestionSuggestion(
+                this.editQuestionSuggestion
+              )
+            : await RemoteServices.createQuestionSuggestion(
+                this.editQuestionSuggestion
+              );
         this.$emit('save-questionSuggestion', result);
       } catch (error) {
         await this.$store.dispatch('error', error);

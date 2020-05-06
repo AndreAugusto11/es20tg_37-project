@@ -654,9 +654,15 @@ export default class RemoteServices {
       });
   }
 
-  static async createClarificationRequest(questionAnswerId: number, clarificationRequest: ClarificationRequest): Promise<ClarificationRequest> {
+  static async createClarificationRequest(
+    questionAnswerId: number,
+    clarificationRequest: ClarificationRequest
+  ): Promise<ClarificationRequest> {
     return httpClient
-      .post(`/questionAnswers/${questionAnswerId}/clarificationRequests`, clarificationRequest)
+      .post(
+        `/questionAnswers/${questionAnswerId}/clarificationRequests`,
+        clarificationRequest
+      )
       .then(response => {
         return new ClarificationRequest(response.data);
       })
@@ -667,7 +673,9 @@ export default class RemoteServices {
 
   static async getClarificationRequests(): Promise<ClarificationRequest[]> {
     return httpClient
-      .get(`/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests`)
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests`
+      )
       .then(response => {
         return response.data.map((clarificationRequest: any) => {
           return new ClarificationRequest(clarificationRequest);
@@ -678,7 +686,9 @@ export default class RemoteServices {
       });
   }
 
-  static async getClarificationRequest(questionAnswerId: number): Promise<ClarificationRequest> {
+  static async getClarificationRequest(
+    questionAnswerId: number
+  ): Promise<ClarificationRequest> {
     return httpClient
       .get(`/questionAnswers/${questionAnswerId}/clarificationRequests`)
       .then(response => {
@@ -689,15 +699,21 @@ export default class RemoteServices {
       });
   }
 
-  static async createClarificationRequestAnswer(clarificationRequestId: number, clarificationRequestAnswer: ClarificationRequestAnswer): Promise<ClarificationRequestAnswer> {
+  static async createClarificationRequestAnswer(
+    clarificationRequestId: number,
+    clarificationRequestAnswer: ClarificationRequestAnswer
+  ): Promise<ClarificationRequestAnswer> {
     return httpClient
-        .post(`/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests/${clarificationRequestId}/clarificationRequestAnswers`, clarificationRequestAnswer)
-        .then(response => {
-          return new ClarificationRequestAnswer(response.data);
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
-        });
+      .post(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests/${clarificationRequestId}/clarificationRequestAnswers`,
+        clarificationRequestAnswer
+      )
+      .then(response => {
+        return new ClarificationRequestAnswer(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
 
@@ -755,6 +771,22 @@ export default class RemoteServices {
       });
   }
 
+  static async updateRejectedQuestionSuggestion(
+    questionSuggestion: QuestionSuggestion
+  ): Promise<QuestionSuggestion> {
+    return httpClient
+      .put(
+        `/questionSuggestions/${questionSuggestion.id}`,
+        questionSuggestion
+      )
+      .then(response => {
+        return new QuestionSuggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async acceptQuestionSuggestion(
     suggestionId: number
   ): Promise<QuestionSuggestion> {
@@ -773,10 +805,7 @@ export default class RemoteServices {
     justification: Justification
   ): Promise<QuestionSuggestion> {
     return httpClient
-      .put(
-          `/questionSuggestions/${suggestionId}/rejecting`,
-          justification
-        )
+      .put(`/questionSuggestions/${suggestionId}/rejecting`, justification)
       .then(response => {
         return new QuestionSuggestion(response.data);
       })

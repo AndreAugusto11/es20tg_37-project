@@ -34,11 +34,6 @@ public class Option implements DomainEntity {
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    private QuestionSuggestion questionSuggestion;
-
-
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", orphanRemoval=true)
     private final Set<QuestionAnswer> questionAnswers = new HashSet<>();
 
@@ -58,6 +53,8 @@ public class Option implements DomainEntity {
     public Integer getId() {
         return id;
     }
+
+    public void setId(Integer id){ this.id = id; }
 
     public Integer getSequence() {
         return sequence;
@@ -114,14 +111,6 @@ public class Option implements DomainEntity {
                 ", correct=" + correct +
                 ", content='" + content + '\'' +
                 '}';
-    }
-
-    public void setQuestionSuggestion(QuestionSuggestion questionSuggestion) {
-        this.questionSuggestion = questionSuggestion;
-    }
-
-    public QuestionSuggestion getQuestionSuggestion() {
-        return this.questionSuggestion;
     }
 
     public void remove() {
