@@ -1,6 +1,6 @@
 <template>
     <div>
-        <clarification-request :clarification-request="clarificationRequest" />
+        <clarification-request :clarification-request="clarificationRequest"/>
         <clarification-request-answer :clarification-request="clarificationRequest" />
     </div>
 </template>

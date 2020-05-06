@@ -208,7 +208,7 @@ public class StatementService {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
         return user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution.getId()))
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .filter(quizAnswer -> quizAnswer.getQuiz().getId() == quizId)
                 .map(SolvedQuizDto::new)
                 .collect(Collectors.toList()).get(0);

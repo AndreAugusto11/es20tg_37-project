@@ -14,7 +14,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Table(name = "clarification_requests")
 public class ClarificationRequest {
     public enum Status {
-        CLOSED, OPEN
+        CLOSED, OPEN, ANSWERED
     }
 
     @Id
@@ -36,6 +36,10 @@ public class ClarificationRequest {
     @OneToOne
     @JoinColumn(name = "clarification_request_answer_id")
     private ClarificationRequestAnswer clarificationRequestAnswer;
+
+    @OneToOne
+    @JoinColumn(name = "public_clarification_request_id")
+    private PublicClarificationRequest publicClarificationRequest;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -97,5 +101,13 @@ public class ClarificationRequest {
 
     public void setClarificationRequestAnswer(ClarificationRequestAnswer clarificationRequestAnswer) {
         this.clarificationRequestAnswer = clarificationRequestAnswer;
+    }
+
+    public PublicClarificationRequest getPublicClarificationRequest() {
+        return publicClarificationRequest;
+    }
+
+    public void setPublicClarificationRequest(PublicClarificationRequest publicClarificationRequest) {
+        this.publicClarificationRequest = publicClarificationRequest;
     }
 }

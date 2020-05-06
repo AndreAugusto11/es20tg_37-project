@@ -9,7 +9,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "clarification_request_answers")
 public class ClarificationRequestAnswer {
-    public enum Type {TEACHER_ANSWER}
+    public enum Type { TEACHER_ANSWER, STUDENT_ANSWER }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,8 +40,8 @@ public class ClarificationRequestAnswer {
             throw new TutorException(CLARIFICATION_REQUEST_NO_LONGER_AVAILABLE);
         }
 
-        if (!clarificationRequest.getQuestionAnswer().getQuizAnswer().getQuiz().getCourseExecution().getUsers().contains(user)) {
-            // For now assuming only the teachers in that course execution can create answers to the clarification requests
+        if ((user.getRole().equals(User.Role.STUDENT) && !clarificationRequest.getUser().getId().equals(user.getId())) ||
+                !clarificationRequest.getQuestionAnswer().getQuizAnswer().getQuiz().getCourseExecution().getUsers().contains(user)) {
             throw new TutorException(ACCESS_DENIED);
         }
 
@@ -52,7 +52,12 @@ public class ClarificationRequestAnswer {
         clarificationRequest.setClarificationRequestAnswer(this);
         user.addClarificationRequestAnswers(this);
 
-        this.clarificationRequest.setStatus(ClarificationRequest.Status.CLOSED);
+        if (user.getRole().equals(User.Role.TEACHER)) {
+            this.clarificationRequest.setStatus(ClarificationRequest.Status.ANSWERED);
+        }
+        else {
+            this.clarificationRequest.setStatus(ClarificationRequest.Status.OPEN);
+        }
     }
 
     public Integer getId() { return id; }

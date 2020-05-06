@@ -15,6 +15,7 @@ public class ClarificationRequestDto implements Serializable {
     private String status;
     private ImageDto image;
     private ClarificationRequestAnswerDto clarificationRequestAnswerDto;
+    private boolean isPublic;
 
     public ClarificationRequestDto() {
     }
@@ -26,6 +27,8 @@ public class ClarificationRequestDto implements Serializable {
         this.name = clarificationRequest.getUser().getName();
         this.username = clarificationRequest.getUser().getUsername();
         this.status = clarificationRequest.getStatus().name();
+
+        this.isPublic = clarificationRequest.getPublicClarificationRequest() != null;
 
         if (clarificationRequest.getImage() != null)
             this.image = new ImageDto(clarificationRequest.getImage());
@@ -70,5 +73,13 @@ public class ClarificationRequestDto implements Serializable {
 
     public void setClarificationRequestAnswerDto(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
         this.clarificationRequestAnswerDto = clarificationRequestAnswerDto;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 }

@@ -51,6 +51,19 @@
           </template>
           <span>Show Question</span>
         </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-3"
+              v-on="on"
+              @click="editRejectedQuestionSuggestion(item)"
+              data-cy="updateRejectedQuestion"
+              >edit</v-icon
+            >
+          </template>
+          <span>Edit Question</span>
+        </v-tooltip>
       </template>
     </v-data-table>
 
@@ -76,7 +89,6 @@ import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import ShowQuestionSuggestionDialog from '@/views/student/questionSuggestion/ShowQuestionSuggestionDialog.vue';
-
 import QuestionSuggestion from '@/models/management/QuestionSuggestion';
 import EditQuestionSuggestionDialog from '@/views/student/questionSuggestion/EditQuestionSuggestionDialog.vue';
 
@@ -127,6 +139,15 @@ export default class QuestionSuggestionView extends Vue {
     this.editQuestionSuggestionDialog = true;
   }
 
+  editRejectedQuestionSuggestion(
+    questionSuggestion: QuestionSuggestion,
+    e?: Event
+  ) {
+    if (e) e.preventDefault();
+    this.currentQuestionSuggestion = questionSuggestion;
+    this.editQuestionSuggestionDialog = true;
+  }
+
   customFilter(
     value: string,
     search: string,
@@ -152,6 +173,9 @@ export default class QuestionSuggestionView extends Vue {
   }
 
   onSaveQuestionSuggestion(questionSuggestion: QuestionSuggestion) {
+    this.questionSuggestions = this.questionSuggestions.filter(
+      q => q.id !== questionSuggestion.id
+    );
     this.questionSuggestions.unshift(questionSuggestion);
     this.editQuestionSuggestionDialog = false;
     this.currentQuestionSuggestion = null;

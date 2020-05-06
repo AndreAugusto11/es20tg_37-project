@@ -1,15 +1,18 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.QuestionSuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 
 @Entity
@@ -49,11 +52,18 @@ public class QuestionSuggestion {
 
         this.question = new Question(course, questionSuggestionDto.getQuestionDto());
         this.question.setStatus(Question.Status.PENDING);
+        setCreationDate(DateHandler.toLocalDateTime(questionSuggestionDto.getCreationDate()));
 
         this.user = user;
         user.addQuestionSuggestion(this);
 
         this.status = QuestionSuggestion.Status.valueOf(questionSuggestionDto.getStatus());
+    }
+
+    public void update(QuestionSuggestionDto questionSuggestionDto) {
+
+        this.getQuestion().update(questionSuggestionDto.getQuestionDto());
+        this.setStatus(Status.PENDING);
     }
 
     public Integer getId() { return id; }
@@ -80,7 +90,13 @@ public class QuestionSuggestion {
 
     public LocalDateTime getCreationDate(){ return creationDate; }
 
-    public void setCreationDate(LocalDateTime creationDate){ this.creationDate = creationDate; }
+    public void setCreationDate(LocalDateTime creationDate) {
+        if (this.creationDate == null) {
+            this.creationDate = DateHandler.now();
+        } else {
+            this.creationDate = creationDate;
+        }
+    }
 
     public Question getQuestion(){ return question; }
 
@@ -99,6 +115,8 @@ public class QuestionSuggestion {
     public void setJustification(Justification justification) { this.justification = justification; }
 
     public void addOption(Option option){ question.addOption(option); }
+
+    public void setOptions(List<OptionDto> options){ this.question.setOptions(options); }
 }
 
 
