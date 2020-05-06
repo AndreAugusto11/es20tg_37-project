@@ -88,7 +88,8 @@ class GetQuestionSuggestionPerformanceTest extends Specification {
             questionDto.setTitle(QUESTION_TITLE + it)
             questionDto.setContent(QUESTION_CONTENT)
             questionDto.setKey(1 + it)
-            questionDto.setStatus(Question.Status.PENDING.name())
+            questionDto.setType(Question.Type.SUGGESTION.name())
+            questionDto.setStatus(Question.Status.DISABLED.name())
             questionDto.setOptions(options)
             questionDto.setCreationDate("2020-03-16 17:51")
 
@@ -103,7 +104,7 @@ class GetQuestionSuggestionPerformanceTest extends Specification {
         })
 
         when: "10000 suggestions are retrieved"
-        1.upto(10000, {
+        1.upto(1, {
             questionSuggestionService.getQuestionSuggestions(user.getId(), course.getId())
         })
 

@@ -64,11 +64,10 @@ public class QuestionSuggestionService {
         }
 
         if (courseId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_COUSEID);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
         }
 
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
-
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         if (user.getRole() != User.Role.STUDENT) {
@@ -79,12 +78,8 @@ public class QuestionSuggestionService {
             throw new TutorException(USER_NOT_IN_COURSE, userId);
         }
 
-        questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name());
-
         QuestionSuggestion questionSuggestion = new QuestionSuggestion(user, course, questionSuggestionDto);
-        questionSuggestion.setCreationDate(LocalDateTime.now());
-        this.entityManager.persist(questionSuggestion);
-
+        questionSuggestionRepository.save(questionSuggestion);
         return new QuestionSuggestionDto(questionSuggestion);
     }
 
@@ -92,17 +87,25 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void acceptQuestionSuggestion(Integer questionSuggestionId) {
+    public QuestionDto acceptQuestionSuggestion(Integer questionSuggestionId) {
 
         if (questionSuggestionId == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
         }
 
         QuestionSuggestion suggestion = checkForQuestionSuggestion(questionSuggestionId);
+        QuestionSuggestionDto questionSuggestionDto = new QuestionSuggestionDto(suggestion);
+
+        questionSuggestionDto.getQuestionDto().setType(Question.Type.NORMAL.name());
+        questionSuggestionDto.getQuestionDto().setStatus(Question.Status.DISABLED.name());
+        questionSuggestionDto.getQuestionDto().setOptions(suggestion.dupOptions());
+
+        Question question = new Question(suggestion.getCourse(), questionSuggestionDto.getQuestionDto());
+        question.setCreationDate(LocalDateTime.now());
+        questionRepository.save(question);
 
         suggestion.setStatus(QuestionSuggestion.Status.ACCEPTED);
-        suggestion.getQuestion().setStatus(Question.Status.AVAILABLE);
-        suggestion.getQuestion().setCreationDate(LocalDateTime.now());
+        return new QuestionDto(question);
     }
 
     @Retryable(
@@ -116,7 +119,7 @@ public class QuestionSuggestionService {
         } else if (userId == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
         } else if (justificationDto == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_JUTIFICATIONDTO);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_JUSTIFICATION);
         } else if (justificationDto.getContent() == null || justificationDto.getContent().equals("   ")) {
             throw new TutorException(JUSTIFICATION_MISSING_DATA);
         }
@@ -130,8 +133,6 @@ public class QuestionSuggestionService {
         }
 
         Justification justification = new Justification(user, suggestion, justificationDto);
-
-        suggestion.setJustification(justification);
         suggestion.setStatus(QuestionSuggestion.Status.REJECTED);
 
         this.entityManager.persist(justification);
@@ -155,7 +156,14 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuestionSuggestionDto> getQuestionSuggestions(int userId, Integer courseId) {
+    public List<QuestionSuggestionDto> getQuestionSuggestions(Integer userId, Integer courseId) {
+
+        if (userId == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
+        } else if (courseId == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
+        }
+
         return questionSuggestionRepository.findQuestionSuggestions(userId).stream()
                 .filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId))
                 .map(QuestionSuggestionDto::new)
@@ -168,6 +176,11 @@ public class QuestionSuggestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSuggestionDto> getAllQuestionSuggestions(Integer courseId) {
+
+        if (courseId == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
+        }
+
         return questionSuggestionRepository.findAll().stream()
                 .filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId))
                 .map(QuestionSuggestionDto::new)
@@ -189,11 +202,18 @@ public class QuestionSuggestionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionSuggestionDto
     updateRejectedQuestionSuggestion(Integer questionSuggestionId, QuestionSuggestionDto questionSuggestionDto) {
-        QuestionSuggestion questionSuggestion = questionSuggestionRepository.findById(questionSuggestionId).
-                orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionSuggestionId));
 
-        if(!questionSuggestion.getStatus().equals(QuestionSuggestion.Status.REJECTED)){
-            throw  new TutorException(QUESTION_SUGGESTION_NOT_REJECTED);
+        if (questionSuggestionId == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
+        } else if (questionSuggestionDto == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTION);
+        }
+
+        QuestionSuggestion questionSuggestion = questionSuggestionRepository.findById(questionSuggestionId).
+                orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
+
+        if (!questionSuggestion.getStatus().equals(QuestionSuggestion.Status.REJECTED)) {
+            throw new TutorException(QUESTION_SUGGESTION_NOT_REJECTED, questionSuggestionId);
         }
 
         questionSuggestion.update(questionSuggestionDto);

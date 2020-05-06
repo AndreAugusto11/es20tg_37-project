@@ -20,7 +20,8 @@ public class Justification {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "justification")
+    @OneToOne
+    @JoinColumn(name="suggestion_id")
     private QuestionSuggestion questionSuggestion;
 
     @ManyToOne
@@ -65,7 +66,9 @@ public class Justification {
 
     public QuestionSuggestion getQuestionSuggestion() { return questionSuggestion; }
 
-    public void setQuestionSuggestion(QuestionSuggestion questionSuggestion) { this.questionSuggestion = questionSuggestion; }
+    public void setQuestionSuggestion(QuestionSuggestion questionSuggestion) {
+        this.questionSuggestion = questionSuggestion;
+    }
 
     public User getUser() { return user; }
 

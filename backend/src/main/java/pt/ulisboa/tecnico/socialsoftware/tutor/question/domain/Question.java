@@ -22,8 +22,10 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "questions")
 public class Question implements DomainEntity {
+    public enum Type {NORMAL, SUGGESTION}
+
     public enum Status {
-        DISABLED, REMOVED, AVAILABLE, PENDING
+        DISABLED, REMOVED, AVAILABLE
     }
 
     @Id
@@ -50,7 +52,11 @@ public class Question implements DomainEntity {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
     private Image image;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
+    @Enumerated(EnumType.STRING)
+    private Type type = Type.NORMAL;
+
+    @OneToOne
+    @JoinColumn(name="suggestion_id")
     private QuestionSuggestion questionSuggestion;
 
     @Column(name = "creation_date")
@@ -83,6 +89,11 @@ public class Question implements DomainEntity {
         setCreationDate(DateHandler.toLocalDateTime(questionDto.getCreationDate()));
         setCourse(course);
         setOptions(questionDto.getOptions());
+
+        if (questionDto.getType() == null)
+            setType(Type.NORMAL);
+        else
+            setType(Type.valueOf(questionDto.getType()));
 
         if (questionDto.getImage() != null)
             setImage(new Image(questionDto.getImage()));
@@ -125,6 +136,19 @@ public class Question implements DomainEntity {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Question.Type getType() {
+        if (type == null)
+            setType(Type.NORMAL);
+        return type;
+    }
+
+    public void setType(Question.Type type) {
+        if (type == null)
+            throw new TutorException(INVALID_TYPE_FOR_QUESTION);
+
+        this.type = type;
     }
 
     public List<Option> getOptions() {
@@ -229,7 +253,9 @@ public class Question implements DomainEntity {
         clarificationRequests.add(clarificationRequest);
     }
 
-    public QuestionSuggestion getQuestionSuggestion(){ return questionSuggestion; }
+    public QuestionSuggestion getQuestionSuggestion() {
+        return questionSuggestion;
+    }
 
     public void setQuestionSuggestion(QuestionSuggestion questionSuggestion) {
         this.questionSuggestion = questionSuggestion;
@@ -249,8 +275,10 @@ public class Question implements DomainEntity {
         return "Question{" +
                 "id=" + id +
                 ", key=" + key +
+                ", course=" + (course != null) +
                 ", content='" + content + '\'' +
                 ", title='" + title + '\'' +
+                ", type='" + type + '\'' +
                 ", numberOfAnswers=" + numberOfAnswers +
                 ", numberOfCorrect=" + numberOfCorrect +
                 ", status=" + status +

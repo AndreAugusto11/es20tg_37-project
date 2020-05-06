@@ -20,6 +20,7 @@ public enum ErrorMessage {
     INVALID_RESULTS_DATE_FOR_QUIZ("Invalid results date for quiz"),
     INVALID_TITLE_FOR_QUIZ("Invalid title for quiz"),
     INVALID_TYPE_FOR_QUIZ("Invalid type for quiz"),
+    INVALID_TYPE_FOR_QUESTION("Invalid type for question"),
     INVALID_QUESTION_SEQUENCE_FOR_QUIZ("Invalid question sequence for quiz"),
 
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
@@ -48,7 +49,7 @@ public enum ErrorMessage {
     TOURNAMENT_INVALID_TOPIC("A Specified Topic does not exist while Creating Tournament"),
     TOURNAMENT_INVALID_STARTTIME("Start Time is out-of-format or not a valid TimeStamp in Tournament Creation"),
     TOURNAMENT_INVALID_TIMEFRAME("The specified TimeFrame in Tournament Creation is not valid."),
-    CLARIFICATION_REQUEST_NOT_FOUND("Clarification resquest not found with id %d"),
+    CLARIFICATION_REQUEST_NOT_FOUND("Clarification request not found with id %d"),
 
     COURSE_NOT_FOUND("Course not found with name %s"),
     COURSE_NAME_IS_EMPTY("The course name is empty"),
@@ -113,16 +114,16 @@ public enum ErrorMessage {
     USER_IS_TEACHER("This operation is invalid to users of the type teacher"),
     USER_IS_STUDENT("This operation is invalid to users of the type student"),
     INVALID_NULL_ARGUMENTS_SUGGESTION("The question suggestion dto given is null"),
-    INVALID_NULL_ARGUMENTS_SUGGESTIONID("The question suggestion Id given is null"),
-    INVALID_NULL_ARGUMENTS_USERID("The User id given is null"),
-    INVALID_NULL_ARGUMENTS_COUSEID("The Course id given given is null"),
-    INVALID_NULL_ARGUMENTS_JUTIFICATIONDTO("The justification dto given given is null"),
+    INVALID_NULL_ARGUMENTS_SUGGESTIONID("The question suggestion id given is null"),
+    INVALID_NULL_ARGUMENTS_USERID("The user id given is null"),
+    INVALID_NULL_ARGUMENTS_COURSEID("The course id given is null"),
+    INVALID_NULL_ARGUMENTS_JUSTIFICATION("The justification dto given is null"),
     USER_NOT_IN_COURSE("The student is not enrolled in the given course"),
 
     QUESTION_SUGGESTION_ALREADY_ACCEPTED("This suggested question was already accepted"),
     QUESTION_SUGGESTION_ALREADY_REJECTED("This suggested question was already rejected"),
     QUESTION_SUGGESTION_NOT_FOUND("Question suggestion not found with id %d"),
-    QUESTION_SUGGESTION_NOT_REJECTED("This question suggestion was not rejected"),
+    QUESTION_SUGGESTION_NOT_REJECTED("Question suggestion with id %d cannot be updated if not rejected"),
     JUSTIFICATION_MISSING_DATA("Missing information for justification");
 
     public final String label;

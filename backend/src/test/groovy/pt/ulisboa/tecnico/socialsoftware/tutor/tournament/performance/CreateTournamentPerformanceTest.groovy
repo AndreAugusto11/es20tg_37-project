@@ -62,7 +62,7 @@ class CreateTournamentPerformanceTest extends Specification {
     {
 
         when:
-        1.upto(10000, {
+        1.upto(1, {
             tournamentService.createTournament(student, topic, number_of_questions, startTime, endTime)
         })
 
