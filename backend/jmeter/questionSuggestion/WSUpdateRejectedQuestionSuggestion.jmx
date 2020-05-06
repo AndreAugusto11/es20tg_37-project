@@ -278,7 +278,7 @@ insert into options values(4, &apos;optionold4&apos;, &apos;f&apos;, 1413, 3);
             </JSONPathAssertion>
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 0 content" enabled="true">
-              <stringProp name="JSON_PATH">$.questionDto.options.[0].content</stringProp>
+              <stringProp name="JSON_PATH">$.questionDto.options.[4].content</stringProp>
               <stringProp name="EXPECTED_VALUE">contentOption0</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
@@ -287,7 +287,7 @@ insert into options values(4, &apos;optionold4&apos;, &apos;f&apos;, 1413, 3);
             </JSONPathAssertion>
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 1 content" enabled="true">
-              <stringProp name="JSON_PATH">$.questionDto.options.[1].content</stringProp>
+              <stringProp name="JSON_PATH">$.questionDto.options.[5].content</stringProp>
               <stringProp name="EXPECTED_VALUE">contentOption1</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
@@ -296,7 +296,7 @@ insert into options values(4, &apos;optionold4&apos;, &apos;f&apos;, 1413, 3);
             </JSONPathAssertion>
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 2 content" enabled="true">
-              <stringProp name="JSON_PATH">$.questionDto.options.[2].content</stringProp>
+              <stringProp name="JSON_PATH">$.questionDto.options.[6].content</stringProp>
               <stringProp name="EXPECTED_VALUE">contentOption2</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
@@ -305,7 +305,7 @@ insert into options values(4, &apos;optionold4&apos;, &apos;f&apos;, 1413, 3);
             </JSONPathAssertion>
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 3 content" enabled="true">
-              <stringProp name="JSON_PATH">$.questionDto.options.[3].content</stringProp>
+              <stringProp name="JSON_PATH">$.questionDto.options.[7].content</stringProp>
               <stringProp name="EXPECTED_VALUE">contentOption3</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
@@ -314,7 +314,7 @@ insert into options values(4, &apos;optionold4&apos;, &apos;f&apos;, 1413, 3);
             </JSONPathAssertion>
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 0 Correct" enabled="true">
-              <stringProp name="JSON_PATH">$.questionDto.options.[0].correct</stringProp>
+              <stringProp name="JSON_PATH">$.questionDto.options.[4].correct</stringProp>
               <stringProp name="EXPECTED_VALUE">false</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
@@ -323,7 +323,7 @@ insert into options values(4, &apos;optionold4&apos;, &apos;f&apos;, 1413, 3);
             </JSONPathAssertion>
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 1 Correct" enabled="true">
-              <stringProp name="JSON_PATH">$.questionDto.options.[1].correct</stringProp>
+              <stringProp name="JSON_PATH">$.questionDto.options.[5].correct</stringProp>
               <stringProp name="EXPECTED_VALUE">true</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
@@ -332,7 +332,7 @@ insert into options values(4, &apos;optionold4&apos;, &apos;f&apos;, 1413, 3);
             </JSONPathAssertion>
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 2 Correct" enabled="true">
-              <stringProp name="JSON_PATH">$.questionDto.options.[2].correct</stringProp>
+              <stringProp name="JSON_PATH">$.questionDto.options.[6].correct</stringProp>
               <stringProp name="EXPECTED_VALUE">false</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
@@ -341,7 +341,7 @@ insert into options values(4, &apos;optionold4&apos;, &apos;f&apos;, 1413, 3);
             </JSONPathAssertion>
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 3 Correct" enabled="true">
-              <stringProp name="JSON_PATH">$.questionDto.options.[3].correct</stringProp>
+              <stringProp name="JSON_PATH">$.questionDto.options.[7].correct</stringProp>
               <stringProp name="EXPECTED_VALUE">false</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
