@@ -9,13 +9,13 @@
             <v-btn v-if="this.clarificationRequest.status !== 'CLOSED'" class="mr-5" color="primary" dark @click="newClarificationRequestAnswer" data-cy="answerButton">
                 Answer
             </v-btn>
-            <v-btn v-else class="mr-5" disabled>
+            <v-btn v-else class="mr-5" disabled data-cy="answerButtonDisabled">
                 Answer
             </v-btn>
             <v-btn v-if="this.$store.getters.isStudent && this.clarificationRequest.status !== 'CLOSED'" color="primary" dark @click="closeClarificationRequest" data-cy="closeButton">
                 Close Clarification
             </v-btn>
-            <v-btn v-else-if="this.$store.getters.isStudent" disabled>
+            <v-btn v-else-if="this.$store.getters.isStudent" disabled data-cy="closeButtonDisabled">
                 Close Clarification
             </v-btn>
         </v-container>
@@ -75,6 +75,8 @@
       this.currentClarificationRequestAnswer = null;
       if (this.$store.getters.isTeacher)
         this.clarificationRequest.status = 'ANSWERED';
+      if (this.$store.getters.isStudent)
+        this.clarificationRequest.status = 'OPEN';
       this.getClarificationRequestAnswers();
     }
 

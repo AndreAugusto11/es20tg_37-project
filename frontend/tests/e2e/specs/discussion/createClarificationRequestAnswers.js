@@ -38,7 +38,6 @@ describe('Create Clarification Request Answer walkthrough', () => {
 		cy.demoTeacherLogin()
 		cy.goToDiscussion()
 		cy.contains(contentReq).click()
-		cy.get('[data-cy="answerButton"]').should('not.exist')
 	});
 
 	it('student login creates a Clarification Request, teacher answers and then student asks further clarification', () => {
@@ -56,13 +55,14 @@ describe('Create Clarification Request Answer walkthrough', () => {
 		cy.get('[data-cy="Search"]').type(contentReq)
 		cy.contains(contentReq).click()
 		cy.createClarificationRequestAnswer(contentRes)
+		cy.contains('ANSWERED').should('exist')
 		cy.contains('Logout').click()
 
 		cy.demoStudentLogin()
 		cy.listClarificationRequest(contentReq)
 		cy.contains(contentReq).click()
 		cy.createClarificationRequestAnswer(contentStudent)
-		cy.contains('Logout').click()
+		cy.contains('OPEN').should('exist')
 	});
 
   });
