@@ -99,7 +99,7 @@ class CreateQuestionSuggestionTestPerformanceTests extends Specification {
         questionSuggestionDto.setOptions(options)
 
         when: "10000 suggestions are created"
-        1.upto(10000, {
+        1.upto(1, {
             questionSuggestionService.createQuestionSuggestion(user1.getId(), course1.getId(), questionSuggestionDto)
         })
 

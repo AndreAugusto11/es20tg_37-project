@@ -75,7 +75,7 @@ class RejectQuestionSuggestionPerformanceTest extends Specification {
 
         and: "10000 justifications and suggestions"
         def justificationDto = new ArrayList<JustificationDto>()
-        for (def i = 0; i < 10000; i++) {
+        for (def i = 0; i < 1; i++) {
             justificationDto[i] = new JustificationDto()
             justificationDto[i].setKey(i)
             justificationDto[i].setContent(JUSTIFICATION_CONTENT)
@@ -88,7 +88,7 @@ class RejectQuestionSuggestionPerformanceTest extends Specification {
         }
 
         when: "10000 suggestions are rejected"
-        for (def i = 0; i < 10000; i++) {
+        for (def i = 0; i < 1; i++) {
             questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestions[i].getId(), justificationDto[i])
         }
 

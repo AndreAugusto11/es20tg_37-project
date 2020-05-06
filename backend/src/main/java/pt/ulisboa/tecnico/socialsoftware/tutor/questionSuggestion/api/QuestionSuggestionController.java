@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSuggestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
@@ -17,6 +18,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
 
 
 @RestController
@@ -31,6 +34,11 @@ public class QuestionSuggestionController {
     public QuestionSuggestionDto createSuggestionQuestion(Principal principal, @PathVariable int courseId, @Valid @RequestBody QuestionSuggestionDto questionSuggestionDto) {
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name());
         User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null) {
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
         return questionSuggestionService.createQuestionSuggestion(user.getId(), courseId, questionSuggestionDto);
     }
 
@@ -44,6 +52,11 @@ public class QuestionSuggestionController {
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionSuggestionId, 'QUESTION_SUGGESTION.ACCESS')")
     public ResponseEntity rejectQuestionSuggestion(Principal principal, @PathVariable int questionSuggestionId, @Valid @RequestBody JustificationDto justificationDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null) {
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
         questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestionId, justificationDto);
         return ResponseEntity.ok().build();
     }
@@ -52,6 +65,11 @@ public class QuestionSuggestionController {
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<QuestionSuggestionDto> getQuestionSuggestions(Principal principal, @PathVariable int courseId) {
         User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null) {
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
         return questionSuggestionService.getQuestionSuggestions(user.getId(), courseId);
     }
 

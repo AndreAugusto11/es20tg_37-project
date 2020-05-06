@@ -104,7 +104,7 @@ class GetQuestionSuggestionPerformanceTest extends Specification {
         })
 
         when: "10000 suggestions are retrieved"
-        1.upto(10000, {
+        1.upto(1, {
             questionSuggestionService.getQuestionSuggestions(user.getId(), course.getId())
         })
 
