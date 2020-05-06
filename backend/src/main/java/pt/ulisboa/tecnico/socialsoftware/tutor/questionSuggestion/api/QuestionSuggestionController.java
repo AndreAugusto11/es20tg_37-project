@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSuggestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.JustificationDto;
@@ -35,10 +36,8 @@ public class QuestionSuggestionController {
 
     @PutMapping("/questionSuggestions/{questionSuggestionId}/accepting")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionSuggestionId, 'QUESTION_SUGGESTION.ACCESS')")
-    public ResponseEntity acceptQuestionSuggestion(@PathVariable int questionSuggestionId) {
-        questionSuggestionService.acceptQuestionSuggestion(questionSuggestionId);
-
-        return ResponseEntity.ok().build();
+    public QuestionDto acceptQuestionSuggestion(@PathVariable int questionSuggestionId) {
+        return questionSuggestionService.acceptQuestionSuggestion(questionSuggestionId);
     }
 
     @PutMapping("/questionSuggestions/{questionSuggestionId}/rejecting")
@@ -46,7 +45,6 @@ public class QuestionSuggestionController {
     public ResponseEntity rejectQuestionSuggestion(Principal principal, @PathVariable int questionSuggestionId, @Valid @RequestBody JustificationDto justificationDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
         questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestionId, justificationDto);
-
         return ResponseEntity.ok().build();
     }
 

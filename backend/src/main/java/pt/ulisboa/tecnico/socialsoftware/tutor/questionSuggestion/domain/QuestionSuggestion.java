@@ -37,11 +37,10 @@ public class QuestionSuggestion {
     @Enumerated(EnumType.STRING)
     private QuestionSuggestion.Status status = Status.PENDING;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "questionSuggestion")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "questionSuggestion", orphanRemoval=true)
     private Question question;
 
-    @OneToOne
-    @JoinColumn(name="justification_id")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "questionSuggestion")
     private Justification justification;
 
     @ManyToOne
@@ -109,13 +108,17 @@ public class QuestionSuggestion {
 
     public void setUser(User user){ this.user = user; }
 
-    public Course getCourse(){ return question.getCourse(); }
+    public Course getCourse() {
+        return question.getCourse();
+    }
 
     public void setCourse(Course course){ this.question.setCourse(course); }
 
     public Justification getJustification() { return justification; }
 
-    public void setJustification(Justification justification) { this.justification = justification; }
+    public void setJustification(Justification justification) {
+        this.justification = justification;
+    }
 
     public void addOption(Option option){ question.addOption(option); }
 
@@ -140,7 +143,7 @@ public class QuestionSuggestion {
         return "Suggestion{" +
                 "id=" + id +
                 ", status=" + status +
-                ", user=" + user +
+                ", user=" + user.getId() +
                 ", question=" + question +
                 ", justification=" + justification +
                 '}';

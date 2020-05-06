@@ -267,6 +267,7 @@ public class Question implements DomainEntity {
         return "Question{" +
                 "id=" + id +
                 ", key=" + key +
+                ", course=" + (course != null) +
                 ", content='" + content + '\'' +
                 ", title='" + title + '\'' +
                 ", type='" + type + '\'' +

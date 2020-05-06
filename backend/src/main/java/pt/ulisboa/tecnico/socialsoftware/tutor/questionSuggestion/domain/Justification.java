@@ -20,7 +20,8 @@ public class Justification {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "justification")
+    @OneToOne
+    @JoinColumn(name="suggestion_id")
     private QuestionSuggestion questionSuggestion;
 
     @ManyToOne
