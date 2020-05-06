@@ -5,14 +5,14 @@ describe('Accept a suggestion', () => {
   });
 
   afterEach(() => {
-    cy.contains('Logout').click()
+    cy.contains('Logout').click();
   });
 
   it('login, creates a suggestion and accepts it through direct button', () => {
 
     cy.createQuestionSuggestion('TestAccept','Question','a', 'b', 'c', 'd', 'No');
     cy.contains('Logout').click();
-    cy.wait(10000);
+    cy.wait(5000);
     cy.demoTeacherLogin();
     cy.contains('Management').click();
     cy.contains('Suggestions').click();
@@ -20,14 +20,14 @@ describe('Accept a suggestion', () => {
     cy.contains('Logout').click();
     cy.demoStudentLogin();
     cy.contains('Suggestions').click();
-    cy.showQuestionSuggestion('TestAccept')
+    cy.showQuestionSuggestion('TestAccept');
   });
 
   it('login, creates a suggestion and accepts it through show menu', () => {
 
     cy.createQuestionSuggestion('TestAcceptShow','Question','a', 'b', 'c', 'd', 'No');
     cy.contains('Logout').click();
-    cy.wait(10000);
+    cy.wait(5000);
     cy.demoTeacherLogin();
     cy.contains('Management').click();
     cy.contains('Suggestions').click();
