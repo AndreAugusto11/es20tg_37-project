@@ -33,7 +33,7 @@ import spock.lang.Specification
 
 @DataJpaTest
 class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specification {
-    public static final Integer NUMBER_OF_ITERATIONS = 1000
+    public static final Integer NUMBER_OF_ITERATIONS = 1
     public static final String USERNAME_TEACHER = "username_teacher"
     public static final String USERNAME_STUDENT = "username_student"
     public static final String COURSE_NAME = "Software Architecture"

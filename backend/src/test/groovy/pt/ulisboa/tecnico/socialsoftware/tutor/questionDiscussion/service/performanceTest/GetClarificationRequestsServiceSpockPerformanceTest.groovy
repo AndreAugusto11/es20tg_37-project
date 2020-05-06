@@ -141,12 +141,12 @@ class GetClarificationRequestsServiceSpockPerformanceTest extends Specification 
 
     def "performance testing to 10000 student get clarification requests"() {
         given: "1000 clarification requests"
-        1.upto(1000, {
+        1.upto(1, {
             clarificationRequestRepository.save(new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT))
         })
 
         when:
-        1.upto(10000, { questionDiscussionService.getClarificationRequests(user_student.getUsername(), courseExecution.getId())})
+        1.upto(1, { questionDiscussionService.getClarificationRequests(user_student.getUsername(), courseExecution.getId())})
 
         then:
         true
@@ -154,12 +154,12 @@ class GetClarificationRequestsServiceSpockPerformanceTest extends Specification 
 
     def "performance testing to 10000 teacher get clarification requests"() {
         given: "1000 clarification requests"
-        1.upto(1000, {
+        1.upto(1, {
             clarificationRequestRepository.save(new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT))
         })
 
         when:
-        1.upto(10000, { questionDiscussionService.getClarificationRequests(user_teacher.getUsername(), courseExecution.getId())})
+        1.upto(1, { questionDiscussionService.getClarificationRequests(user_teacher.getUsername(), courseExecution.getId())})
 
         then:
         true
