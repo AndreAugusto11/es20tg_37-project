@@ -86,11 +86,10 @@ public class QuestionDiscussionController {
         return questionDiscussionService.removePublicClarificationRequest(clarificationRequestId);
     }
 
-    @PostMapping("/executions/{executionId}/questionAnswers/{questionId}/clarificationRequests")
+    @GetMapping("/executions/{executionId}/questionAnswers/{questionId}/clarificationRequests")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<ClarificationRequestDto> getAnswerClarificationRequests(@PathVariable Integer executionId,
                                                                     @PathVariable Integer questionId) {
-
         return questionDiscussionService.getAnswerClarificationRequests(executionId, questionId);
     }
 }
