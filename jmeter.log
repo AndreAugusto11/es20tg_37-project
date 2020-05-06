@@ -1,48 +1,48 @@
-2020-05-04 14:04:32,733 INFO o.a.j.u.JMeterUtils: Setting Locale to en_EN
-2020-05-04 14:04:32,956 INFO o.a.j.JMeter: Loading user properties from: /home/goncalo/Desktop/apache-jmeter-5.2.1/bin/user.properties
-2020-05-04 14:04:32,965 INFO o.a.j.JMeter: Loading system properties from: /home/goncalo/Desktop/apache-jmeter-5.2.1/bin/system.properties
-2020-05-04 14:04:32,975 INFO o.a.j.JMeter: Copyright (c) 1998-2019 The Apache Software Foundation
-2020-05-04 14:04:32,975 INFO o.a.j.JMeter: Version 5.2.1
-2020-05-04 14:04:32,976 INFO o.a.j.JMeter: java.version=11.0.7
-2020-05-04 14:04:32,976 INFO o.a.j.JMeter: java.vm.name=OpenJDK 64-Bit Server VM
-2020-05-04 14:04:32,976 INFO o.a.j.JMeter: os.name=Linux
-2020-05-04 14:04:32,976 INFO o.a.j.JMeter: os.arch=amd64
-2020-05-04 14:04:32,976 INFO o.a.j.JMeter: os.version=4.15.0-99-generic
-2020-05-04 14:04:32,976 INFO o.a.j.JMeter: file.encoding=UTF-8
-2020-05-04 14:04:32,976 INFO o.a.j.JMeter: java.awt.headless=null
-2020-05-04 14:04:32,977 INFO o.a.j.JMeter: Max memory     =1073741824
-2020-05-04 14:04:32,977 INFO o.a.j.JMeter: Available Processors =2
-2020-05-04 14:04:33,007 INFO o.a.j.JMeter: Default Locale=English (EN)
-2020-05-04 14:04:33,008 INFO o.a.j.JMeter: JMeter  Locale=English (EN)
-2020-05-04 14:04:33,008 INFO o.a.j.JMeter: JMeterHome=/home/goncalo/Desktop/apache-jmeter-5.2.1
-2020-05-04 14:04:33,008 INFO o.a.j.JMeter: user.dir  =/home/goncalo/Desktop/git/es20tg_37-project
-2020-05-04 14:04:33,008 INFO o.a.j.JMeter: PWD       =/home/goncalo/Desktop/git/es20tg_37-project
-2020-05-04 14:04:33,009 INFO o.a.j.JMeter: IP: 127.0.1.1 Name: goncalo-VirtualBox FullName: goncalo-VirtualBox
-2020-05-04 14:04:37,696 INFO o.a.j.g.a.LookAndFeelCommand: Installing Darcula LAF
-2020-05-04 14:04:38,209 INFO o.a.j.g.a.LookAndFeelCommand: Using look and feel: com.bulenkov.darcula.DarculaLaf [Darcula]
-2020-05-04 14:04:38,210 INFO o.a.j.JMeter: Setting LAF to: com.bulenkov.darcula.DarculaLaf
-2020-05-04 14:04:38,583 INFO o.a.j.JMeter: Loaded icon properties from org/apache/jmeter/images/icon.properties
-2020-05-04 14:04:52,674 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/html is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
-2020-05-04 14:04:52,676 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xhtml+xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
-2020-05-04 14:04:52,676 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
-2020-05-04 14:04:52,676 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
-2020-05-04 14:04:52,677 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/vnd.wap.wml is org.apache.jmeter.protocol.http.parser.RegexpHTMLParser
-2020-05-04 14:04:52,677 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/css is org.apache.jmeter.protocol.http.parser.CssParser
-2020-05-04 14:04:54,712 INFO o.a.j.e.KeyToolUtils: keytool found at 'keytool'
-2020-05-04 14:04:54,713 INFO o.a.j.p.h.p.ProxyControl: HTTP(S) Test Script Recorder SSL Proxy will use keys that support embedded 3rd party resources in file /home/goncalo/Desktop/apache-jmeter-5.2.1/bin/proxyserver.jks
-2020-05-04 14:04:55,008 INFO o.a.j.s.FileServer: Default base='/home/goncalo/Desktop/git/es20tg_37-project'
-2020-05-04 14:04:56,069 INFO o.a.j.s.SampleResult: Note: Sample TimeStamps are START times
-2020-05-04 14:04:56,070 INFO o.a.j.s.SampleResult: sampleresult.default.encoding is set to ISO-8859-1
-2020-05-04 14:04:56,070 INFO o.a.j.s.SampleResult: sampleresult.useNanoTime=true
-2020-05-04 14:04:56,070 INFO o.a.j.s.SampleResult: sampleresult.nanoThreadSleep=5000
-2020-05-04 14:04:56,139 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
-2020-05-04 14:06:29,405 INFO o.a.j.g.a.Load: Loading file: /home/goncalo/Desktop/git/es20tg_37-project/backend/jmeter/questionSuggestion/WSUpdateRejectedQuestionSuggestion.jmx
-2020-05-04 14:06:29,414 INFO o.a.j.s.FileServer: Set new base='/home/goncalo/Desktop/git/es20tg_37-project/backend/jmeter/questionSuggestion'
-2020-05-04 14:06:30,033 INFO o.a.j.s.SaveService: Testplan (JMX) version: 2.2. Testlog (JTL) version: 2.2
-2020-05-04 14:06:30,132 INFO o.a.j.s.SaveService: Using SaveService properties version 5.0
-2020-05-04 14:06:30,138 INFO o.a.j.s.SaveService: Using SaveService properties file encoding UTF-8
-2020-05-04 14:06:30,149 INFO o.a.j.s.SaveService: Loading file: /home/goncalo/Desktop/git/es20tg_37-project/backend/jmeter/questionSuggestion/WSUpdateRejectedQuestionSuggestion.jmx
-2020-05-04 14:06:30,465 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
-2020-05-04 14:06:30,658 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
-2020-05-04 14:06:30,741 INFO o.a.j.s.FileServer: Set new base='/home/goncalo/Desktop/git/es20tg_37-project/backend/jmeter/questionSuggestion'
-2020-05-04 14:16:01,072 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-05-06 12:46:37,222 INFO o.a.j.u.JMeterUtils: Setting Locale to en_EN
+2020-05-06 12:46:37,432 INFO o.a.j.JMeter: Loading user properties from: /home/goncalo/Desktop/apache-jmeter-5.2.1/bin/user.properties
+2020-05-06 12:46:37,442 INFO o.a.j.JMeter: Loading system properties from: /home/goncalo/Desktop/apache-jmeter-5.2.1/bin/system.properties
+2020-05-06 12:46:37,451 INFO o.a.j.JMeter: Copyright (c) 1998-2019 The Apache Software Foundation
+2020-05-06 12:46:37,452 INFO o.a.j.JMeter: Version 5.2.1
+2020-05-06 12:46:37,453 INFO o.a.j.JMeter: java.version=11.0.7
+2020-05-06 12:46:37,453 INFO o.a.j.JMeter: java.vm.name=OpenJDK 64-Bit Server VM
+2020-05-06 12:46:37,454 INFO o.a.j.JMeter: os.name=Linux
+2020-05-06 12:46:37,454 INFO o.a.j.JMeter: os.arch=amd64
+2020-05-06 12:46:37,454 INFO o.a.j.JMeter: os.version=4.15.0-99-generic
+2020-05-06 12:46:37,454 INFO o.a.j.JMeter: file.encoding=UTF-8
+2020-05-06 12:46:37,454 INFO o.a.j.JMeter: java.awt.headless=null
+2020-05-06 12:46:37,454 INFO o.a.j.JMeter: Max memory     =1073741824
+2020-05-06 12:46:37,455 INFO o.a.j.JMeter: Available Processors =2
+2020-05-06 12:46:37,484 INFO o.a.j.JMeter: Default Locale=English (EN)
+2020-05-06 12:46:37,485 INFO o.a.j.JMeter: JMeter  Locale=English (EN)
+2020-05-06 12:46:37,485 INFO o.a.j.JMeter: JMeterHome=/home/goncalo/Desktop/apache-jmeter-5.2.1
+2020-05-06 12:46:37,486 INFO o.a.j.JMeter: user.dir  =/home/goncalo/Desktop/git/es20tg_37-project
+2020-05-06 12:46:37,486 INFO o.a.j.JMeter: PWD       =/home/goncalo/Desktop/git/es20tg_37-project
+2020-05-06 12:46:37,486 INFO o.a.j.JMeter: IP: 127.0.1.1 Name: goncalo-VirtualBox FullName: goncalo-VirtualBox
+2020-05-06 12:46:40,356 INFO o.a.j.g.a.LookAndFeelCommand: Installing Darcula LAF
+2020-05-06 12:46:40,680 INFO o.a.j.g.a.LookAndFeelCommand: Using look and feel: com.bulenkov.darcula.DarculaLaf [Darcula]
+2020-05-06 12:46:40,681 INFO o.a.j.JMeter: Setting LAF to: com.bulenkov.darcula.DarculaLaf
+2020-05-06 12:46:41,034 INFO o.a.j.JMeter: Loaded icon properties from org/apache/jmeter/images/icon.properties
+2020-05-06 12:46:54,986 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/html is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-05-06 12:46:54,988 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xhtml+xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-05-06 12:46:54,989 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-05-06 12:46:54,989 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-05-06 12:46:54,990 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/vnd.wap.wml is org.apache.jmeter.protocol.http.parser.RegexpHTMLParser
+2020-05-06 12:46:54,990 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/css is org.apache.jmeter.protocol.http.parser.CssParser
+2020-05-06 12:46:56,271 INFO o.a.j.e.KeyToolUtils: keytool found at 'keytool'
+2020-05-06 12:46:56,272 INFO o.a.j.p.h.p.ProxyControl: HTTP(S) Test Script Recorder SSL Proxy will use keys that support embedded 3rd party resources in file /home/goncalo/Desktop/apache-jmeter-5.2.1/bin/proxyserver.jks
+2020-05-06 12:46:56,696 INFO o.a.j.s.FileServer: Default base='/home/goncalo/Desktop/git/es20tg_37-project'
+2020-05-06 12:46:57,824 INFO o.a.j.s.SampleResult: Note: Sample TimeStamps are START times
+2020-05-06 12:46:57,825 INFO o.a.j.s.SampleResult: sampleresult.default.encoding is set to ISO-8859-1
+2020-05-06 12:46:57,825 INFO o.a.j.s.SampleResult: sampleresult.useNanoTime=true
+2020-05-06 12:46:57,826 INFO o.a.j.s.SampleResult: sampleresult.nanoThreadSleep=5000
+2020-05-06 12:46:57,881 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-05-06 12:47:35,941 INFO o.a.j.g.a.Load: Loading file: /home/goncalo/Desktop/git/es20tg_37-project/backend/jmeter/questionSuggestion/WSUpdateRejectedQuestionSuggestionLoadTest.jmx
+2020-05-06 12:47:35,941 INFO o.a.j.s.FileServer: Set new base='/home/goncalo/Desktop/git/es20tg_37-project/backend/jmeter/questionSuggestion'
+2020-05-06 12:47:36,390 INFO o.a.j.s.SaveService: Testplan (JMX) version: 2.2. Testlog (JTL) version: 2.2
+2020-05-06 12:47:36,445 INFO o.a.j.s.SaveService: Using SaveService properties version 5.0
+2020-05-06 12:47:36,448 INFO o.a.j.s.SaveService: Using SaveService properties file encoding UTF-8
+2020-05-06 12:47:36,452 INFO o.a.j.s.SaveService: Loading file: /home/goncalo/Desktop/git/es20tg_37-project/backend/jmeter/questionSuggestion/WSUpdateRejectedQuestionSuggestionLoadTest.jmx
+2020-05-06 12:47:36,967 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-05-06 12:47:37,120 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-05-06 12:47:37,203 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-05-06 12:47:37,277 INFO o.a.j.s.FileServer: Set new base='/home/goncalo/Desktop/git/es20tg_37-project/backend/jmeter/questionSuggestion'
