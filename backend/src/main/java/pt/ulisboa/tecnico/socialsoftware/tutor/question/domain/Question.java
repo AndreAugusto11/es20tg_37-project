@@ -86,10 +86,14 @@ public class Question implements DomainEntity {
         setKey(questionDto.getKey());
         setContent(questionDto.getContent());
         setStatus(Status.valueOf(questionDto.getStatus()));
-        setType(Type.valueOf(questionDto.getType()));
         setCreationDate(DateHandler.toLocalDateTime(questionDto.getCreationDate()));
         setCourse(course);
         setOptions(questionDto.getOptions());
+
+        if (questionDto.getType() == null)
+            setType(Type.NORMAL);
+        else
+            setType(Type.valueOf(questionDto.getType()));
 
         if (questionDto.getImage() != null)
             setImage(new Image(questionDto.getImage()));

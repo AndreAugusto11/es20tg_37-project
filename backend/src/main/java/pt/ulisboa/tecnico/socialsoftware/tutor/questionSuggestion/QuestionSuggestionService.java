@@ -64,7 +64,7 @@ public class QuestionSuggestionService {
         }
 
         if (courseId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_COUSEID);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
         }
 
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
@@ -119,7 +119,7 @@ public class QuestionSuggestionService {
         } else if (userId == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
         } else if (justificationDto == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_JUTIFICATIONDTO);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_JUSTIFICATION);
         } else if (justificationDto.getContent() == null || justificationDto.getContent().equals("   ")) {
             throw new TutorException(JUSTIFICATION_MISSING_DATA);
         }
@@ -156,7 +156,14 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuestionSuggestionDto> getQuestionSuggestions(int userId, Integer courseId) {
+    public List<QuestionSuggestionDto> getQuestionSuggestions(Integer userId, Integer courseId) {
+
+        if (userId == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
+        } else if (courseId == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
+        }
+
         return questionSuggestionRepository.findQuestionSuggestions(userId).stream()
                 .filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId))
                 .map(QuestionSuggestionDto::new)
@@ -169,6 +176,11 @@ public class QuestionSuggestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSuggestionDto> getAllQuestionSuggestions(Integer courseId) {
+
+        if (courseId == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
+        }
+
         return questionSuggestionRepository.findAll().stream()
                 .filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId))
                 .map(QuestionSuggestionDto::new)
@@ -190,11 +202,18 @@ public class QuestionSuggestionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionSuggestionDto
     updateRejectedQuestionSuggestion(Integer questionSuggestionId, QuestionSuggestionDto questionSuggestionDto) {
-        QuestionSuggestion questionSuggestion = questionSuggestionRepository.findById(questionSuggestionId).
-                orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionSuggestionId));
 
-        if(!questionSuggestion.getStatus().equals(QuestionSuggestion.Status.REJECTED)){
-            throw  new TutorException(QUESTION_SUGGESTION_NOT_REJECTED);
+        if (questionSuggestionId == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
+        } else if (questionSuggestionDto == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTION);
+        }
+
+        QuestionSuggestion questionSuggestion = questionSuggestionRepository.findById(questionSuggestionId).
+                orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
+
+        if (!questionSuggestion.getStatus().equals(QuestionSuggestion.Status.REJECTED)) {
+            throw new TutorException(QUESTION_SUGGESTION_NOT_REJECTED, questionSuggestionId);
         }
 
         questionSuggestion.update(questionSuggestionDto);

@@ -66,7 +66,9 @@ public class Justification {
 
     public QuestionSuggestion getQuestionSuggestion() { return questionSuggestion; }
 
-    public void setQuestionSuggestion(QuestionSuggestion questionSuggestion) { this.questionSuggestion = questionSuggestion; }
+    public void setQuestionSuggestion(QuestionSuggestion questionSuggestion) {
+        this.questionSuggestion = questionSuggestion;
+    }
 
     public User getUser() { return user; }
 

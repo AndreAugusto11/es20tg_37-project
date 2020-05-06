@@ -117,6 +117,7 @@ public class QuestionSuggestion {
 
     public void setJustification(Justification justification) {
         this.justification = justification;
+        this.justification.setQuestionSuggestion(this);
     }
 
     public void addOption(Option option){ question.addOption(option); }
