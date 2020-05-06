@@ -31,8 +31,8 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import ClarificationRequestsView from '@/views/student/discussion/ClarificationRequestsView.vue';
-import ClarificationRequestView from '@/views/discussion/ClarificationRequestView.vue';
 import ClarificationRequestsTeacherView from '@/views/teacher/discussion/ClarificationRequestsTeacherView.vue';
+import ClarificationRequestView from '@/views/discussion/ClarificationRequestView.vue';
 
 Vue.use(Router);
 

@@ -47,14 +47,14 @@
       <template v-slot:item.public="{ item }">
          <v-tooltip v-if="item.public" left>
             <template v-slot:activator="{ on }">
-              <v-icon class="mr-2" color="green" v-on="on">fas fa-lock-open</v-icon>
+              <v-icon class="mr-2" color="green" v-on="on">mdi-eye</v-icon>
             </template>
             <span>Public</span>
           </v-tooltip>
 
           <v-tooltip v-else left>
             <template v-slot:activator="{ on }">
-              <v-icon class="mr-2" color="red" v-on="on">fas fa-lock</v-icon>
+              <v-icon class="mr-2" color="red" v-on="on">mdi-eye-off</v-icon>
             </template>
             <span>Private</span>
           </v-tooltip>
@@ -78,11 +78,11 @@
         search: string = '';
 
         headers: object = [
-            { text: 'Clarification', value: 'content', align: 'left', width: '50%' },
+            { text: 'Clarification', value: 'content', align: 'left', width: '40%' },
             { text: 'Student Name', value: 'name', align: 'center', width: '20%' },
-            { text: 'Status', value: 'status', align: 'center', width: '20%' },
-            { text: 'Availability', value: 'public', align: 'center', width: '10%'}
-            { text: 'Number of Answers', value: 'number', align: 'left' },
+            { text: 'Number of Replies', value: 'number', align: 'center', width: '20%' },
+            { text: 'Status', value: 'status', align: 'center', width: '10%' },
+            { text: 'Availability', value: 'public', align: 'center', width: '30%'}
         ];
 
         async created() {
