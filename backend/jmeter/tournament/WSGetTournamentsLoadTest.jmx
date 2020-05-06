@@ -81,7 +81,7 @@
           <hashTree/>
           <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request to insert tounament" enabled="true">
             <stringProp name="dataSource">sampleReq</stringProp>
-            <stringProp name="query">INSERT INTO tournaments (id,creator_id,number_of_questions,start_date,end_date,status)
+            <stringProp name="query">INSERT INTO tournaments (id,user_id,number_of_questions,start_date,end_date,status)
 VALUES (${Count},651,1,null,null,&apos;OPEN&apos;);</stringProp>
             <stringProp name="queryArguments"></stringProp>
             <stringProp name="queryArgumentsTypes"></stringProp>

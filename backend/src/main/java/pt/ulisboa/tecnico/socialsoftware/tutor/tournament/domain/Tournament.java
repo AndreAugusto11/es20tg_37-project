@@ -23,10 +23,11 @@ public class Tournament {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<User> users = new HashSet<>();
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
+	@JoinColumn(name = "user_id")
 	private User creator;
 
 	@ManyToMany(cascade = CascadeType.ALL)
@@ -184,7 +185,18 @@ public class Tournament {
 	}
 
 
-	public void deleteQuiz() {
+	public void delete() {
+
+		this.deleteQuiz();
+
+		Set<User> users = this.getusers();
+		for (User u : users) {
+			u.removeTournament(this);
+		}
+		creator.removeCreatedTournament(this);
+
 	}
+
+	public void deleteQuiz(){}
 
 }

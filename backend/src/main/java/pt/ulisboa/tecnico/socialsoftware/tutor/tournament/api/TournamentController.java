@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -59,9 +60,10 @@ public class TournamentController {
 
     @DeleteMapping("/tournaments/{tournamentId}/cancel")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public void cancelTournament(Principal principal, @PathVariable Integer tournamentId)
+    public ResponseEntity cancelTournament(Principal principal, @PathVariable Integer tournamentId)
     {
         User user = (User) ((Authentication) principal).getPrincipal();
         tournamentService.cancelTournament(user.getId(), tournamentId);
+        return ResponseEntity.ok().build();
     }
 }

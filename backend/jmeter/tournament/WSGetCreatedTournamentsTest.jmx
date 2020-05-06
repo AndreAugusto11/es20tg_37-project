@@ -48,9 +48,10 @@
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="queryType">Callable Statement</stringProp>
-          <stringProp name="query">INSERT INTO tournaments (id,creator_id,number_of_questions,start_date,end_date,status)
-VALUES (100,676,1,null,null,&apos;Open&apos;);
-insert into users_created_tournaments(user_id,created_tournaments_id) values (676,100);</stringProp>
+          <stringProp name="query">INSERT INTO tournaments (id,user_id,number_of_questions,start_date,end_date,status)
+VALUES (100,676,1,null,null,&apos;OPEN&apos;);
+INSERT INTO users_created_tournaments (user_id,created_tournaments_id)
+VALUES (676,100)</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="variableNames"></stringProp>
@@ -295,7 +296,11 @@ insert into users_created_tournaments(user_id,created_tournaments_id) values (67
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="queryType">Callable Statement</stringProp>
-          <stringProp name="query"></stringProp>
+          <stringProp name="query">DELETE FROM users_tournaments;
+DELETE FROM tournaments_users;
+DELETE FROM tournaments_topics;
+DELETE FROM users_created_tournaments;
+DELETE FROM tournaments;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="variableNames"></stringProp>

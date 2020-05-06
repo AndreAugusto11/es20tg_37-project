@@ -176,17 +176,13 @@ public class TournamentService
 		if (userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
 		User user = userRepository.findById(userId).orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
 
-		if (tournament.getcreator().getId() == userId)
+		User creator = tournament.getcreator();
+		Integer creatorId = creator.getId();
+
+		if (creatorId.equals(userId))
 		{
-			tournament.deleteQuiz();
-			Set<User> users = tournament.getusers();
-			for (User u : users) {
-				u.removeTournament(tournament);
-			}
-			user.removeCreatedTournament(tournament);
-			userRepository.saveAll(users);
+			tournament.delete();
 			tournamentRepository.delete(tournament);
-			return;
 		}
 		else
 		{
