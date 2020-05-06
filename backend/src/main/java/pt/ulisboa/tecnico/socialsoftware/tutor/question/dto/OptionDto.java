@@ -54,7 +54,7 @@ public class OptionDto implements Serializable {
     public String toString() {
         return "OptionDto{" +
                 "id=" + id +
-                ", id=" + id +
+                ", sequence=" + sequence +
                 ", correct=" + correct +
                 ", content='" + content + '\'' +
                 '}';

@@ -83,7 +83,8 @@ class GetQuestionSuggestionTest extends Specification {
         questionDto.setTitle(QUESTION_TITLE)
         questionDto.setContent(QUESTION_CONTENT)
         questionDto.setKey(1)
-        questionDto.setStatus(Question.Status.PENDING.name())
+        questionDto.setType(Question.Type.SUGGESTION.name())
+        questionDto.setStatus(Question.Status.DISABLED.name())
         questionDto.setOptions(options)
         questionDto.setCreationDate("2020-04-16 17:51")
 
@@ -110,7 +111,8 @@ class GetQuestionSuggestionTest extends Specification {
         resQuestionSuggestion.getQuestionDto().getId() != null
         resQuestionSuggestion.getTitle() == QUESTION_TITLE
         resQuestionSuggestion.getContent() == QUESTION_CONTENT
-        resQuestionSuggestion.getQuestionDto().getStatus() == Question.Status.PENDING.name()
+        resQuestionSuggestion.getQuestionDto().getType() == Question.Type.SUGGESTION.name()
+        resQuestionSuggestion.getQuestionDto().getStatus() == Question.Status.DISABLED.name()
     }
 
     @TestConfiguration

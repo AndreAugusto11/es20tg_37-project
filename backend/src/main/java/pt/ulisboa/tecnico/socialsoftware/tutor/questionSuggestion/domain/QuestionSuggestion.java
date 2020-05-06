@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,12 +34,10 @@ public class QuestionSuggestion {
     @Enumerated(EnumType.STRING)
     private QuestionSuggestion.Status status = Status.PENDING;
 
-    @OneToOne
-    @JoinColumn(name="question_id")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "questionSuggestion", orphanRemoval=true)
     private Question question;
 
-    @OneToOne
-    @JoinColumn(name="justification_id")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "questionSuggestion", orphanRemoval=true)
     private Justification justification;
 
     @ManyToOne
@@ -49,19 +48,13 @@ public class QuestionSuggestion {
     }
 
     public QuestionSuggestion(User user, Course course, QuestionSuggestionDto questionSuggestionDto) {
-
-        this.question = new Question(course, questionSuggestionDto.getQuestionDto());
-        this.question.setStatus(Question.Status.PENDING);
+        setQuestion(new Question(course, questionSuggestionDto.getQuestionDto()));
         setCreationDate(DateHandler.toLocalDateTime(questionSuggestionDto.getCreationDate()));
-
-        this.user = user;
-        user.addQuestionSuggestion(this);
-
-        this.status = QuestionSuggestion.Status.valueOf(questionSuggestionDto.getStatus());
+        setStatus(QuestionSuggestion.Status.valueOf(questionSuggestionDto.getStatus()));
+        setUser(user);
     }
 
     public void update(QuestionSuggestionDto questionSuggestionDto) {
-
         this.getQuestion().update(questionSuggestionDto.getQuestionDto());
         this.setStatus(Status.PENDING);
     }
@@ -69,6 +62,10 @@ public class QuestionSuggestion {
     public Integer getId() { return id; }
 
     public void setId(Integer id) { this.id = id; }
+
+    public Integer getKey() {
+        return this.question.getKey();
+    }
 
     public String getTitle(){ return question.getTitle(); }
 
@@ -86,8 +83,6 @@ public class QuestionSuggestion {
 
     public void setImage(Image image){ this.question.setImage(image);}
 
-    public List<Option> getOptions(){ return question.getOptions(); }
-
     public LocalDateTime getCreationDate(){ return creationDate; }
 
     public void setCreationDate(LocalDateTime creationDate) {
@@ -98,25 +93,60 @@ public class QuestionSuggestion {
         }
     }
 
-    public Question getQuestion(){ return question; }
+    public Question getQuestion() { return question; }
 
-    public void setQuestion(Question question) { this.question = question;}
+    public void setQuestion(Question question) {
+        this.question = question;
+        this.question.setQuestionSuggestion(this);
+    }
 
-    public User getUser(){ return user; }
+    public User getUser() { return user; }
 
-    public void setUser(User user){ this.user = user; }
+    public void setUser(User user) {
+        this.user = user;
+        this.user.addQuestionSuggestion(this);
+    }
 
-    public Course getCourse(){ return question.getCourse(); }
+    public Course getCourse() {
+        return question.getCourse();
+    }
 
     public void setCourse(Course course){ this.question.setCourse(course); }
 
     public Justification getJustification() { return justification; }
 
-    public void setJustification(Justification justification) { this.justification = justification; }
+    public void setJustification(Justification justification) {
+        this.justification = justification;
+    }
 
     public void addOption(Option option){ question.addOption(option); }
 
+    public List<Option> getOptions(){ return question.getOptions(); }
+
     public void setOptions(List<OptionDto> options){ this.question.setOptions(options); }
+
+    public List<OptionDto> dupOptions() {
+        List<OptionDto> options = new ArrayList<>();
+
+        for (Option op : getOptions()) {
+            OptionDto option = new OptionDto();
+            option.setContent(op.getContent());
+            option.setCorrect(op.getCorrect());
+            options.add(option);
+        }
+        return options;
+    }
+
+    @Override
+    public String toString() {
+        return "Suggestion{" +
+                "id=" + id +
+                ", status=" + status +
+                ", user=" + user.getId() +
+                ", question=" + question +
+                ", justification=" + justification +
+                '}';
+    }
 }
 
 

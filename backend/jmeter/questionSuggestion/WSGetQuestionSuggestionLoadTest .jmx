@@ -61,16 +61,16 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">132</stringProp>
+          <stringProp name="password">postLeve.</stringProp>
           <stringProp name="poolMax">1</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">goncalo</stringProp>
+          <stringProp name="username">mleveist</stringProp>
         </JDBCDataSource>
         <hashTree/>
-        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Insert 5 suggestions Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">true</boolProp>
           <stringProp name="LoopController.loops">5</stringProp>
         </LoopController>
@@ -86,8 +86,7 @@
           <hashTree/>
           <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
             <stringProp name="dataSource">sampleReq</stringProp>
-            <stringProp name="query">insert into justifications values(${counter}, &apos;1&apos;, ${counter}, 676);
-
+            <stringProp name="query">INSERT INTO question_suggestions VALUES(${counter}, &apos;2020-05-0${counter} 20:00:25.205378&apos;, &apos;PENDING&apos;, 676);
 
 
 </stringProp>
@@ -102,30 +101,35 @@
           </JDBCSampler>
           <hashTree/>
         </hashTree>
-        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
-          <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">insert into question_suggestions values(1, &apos;2020-03-16 17:51:25.601205&apos;, &apos;PENDING&apos;, 1, 1413, 676);
-
-insert into question_suggestions values(2, &apos;2020-03-16 18:51:25.601205&apos;, &apos;PENDING&apos;, 2, 1330, 676);
-
-insert into question_suggestions values(3, &apos;2020-03-16 19:51:25.601205&apos;, &apos;PENDING&apos;, 3, 1764, 676);
-
-insert into question_suggestions values(4, &apos;2020-03-16 20:51:25.601205&apos;, &apos;PENDING&apos;, 4, 1431, 676);
-
-insert into question_suggestions values(5, &apos;2020-03-16 21:51:25.601205&apos;, &apos;PENDING&apos;, 5, 1721, 676);
-
-
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Insert 5 questions Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">true</boolProp>
+          <stringProp name="LoopController.loops">5</stringProp>
+        </LoopController>
+        <hashTree>
+          <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter" enabled="true">
+            <stringProp name="CounterConfig.start">1</stringProp>
+            <stringProp name="CounterConfig.end">5</stringProp>
+            <stringProp name="CounterConfig.incr">1</stringProp>
+            <stringProp name="CounterConfig.name">counter</stringProp>
+            <stringProp name="CounterConfig.format"></stringProp>
+            <boolProp name="CounterConfig.per_user">false</boolProp>
+          </CounterConfig>
+          <hashTree/>
+          <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
+            <stringProp name="dataSource">sampleReq</stringProp>
+            <stringProp name="query">INSERT INTO questions VALUES(${counter}, &apos;CONTENT&apos;, 0, 0, &apos;JMETER&apos;, &apos;DISABLED&apos;, &apos;2020-05-05 20:00:25.205378&apos;, 2, ${counter}, &apos;SUGGESTION&apos;, ${counter});
 </stringProp>
-          <stringProp name="queryArguments"></stringProp>
-          <stringProp name="queryArgumentsTypes"></stringProp>
-          <stringProp name="queryTimeout"></stringProp>
-          <stringProp name="queryType">Callable Statement</stringProp>
-          <stringProp name="resultSetHandler">Store as String</stringProp>
-          <stringProp name="resultSetMaxRows"></stringProp>
-          <stringProp name="resultVariable"></stringProp>
-          <stringProp name="variableNames"></stringProp>
-        </JDBCSampler>
-        <hashTree/>
+            <stringProp name="queryArguments"></stringProp>
+            <stringProp name="queryArgumentsTypes"></stringProp>
+            <stringProp name="queryTimeout"></stringProp>
+            <stringProp name="queryType">Callable Statement</stringProp>
+            <stringProp name="resultSetHandler">Store as String</stringProp>
+            <stringProp name="resultSetMaxRows"></stringProp>
+            <stringProp name="resultVariable"></stringProp>
+            <stringProp name="variableNames"></stringProp>
+          </JDBCSampler>
+          <hashTree/>
+        </hashTree>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
@@ -374,23 +378,16 @@ insert into question_suggestions values(5, &apos;2020-03-16 21:51:25.601205&apos
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
-          <intProp name="ActionProcessor.action">1</intProp>
-          <intProp name="ActionProcessor.target">0</intProp>
-          <stringProp name="ActionProcessor.duration">50000</stringProp>
-        </TestAction>
-        <hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
-            <stringProp name="ConstantTimer.delay">1000</stringProp>
-            <stringProp name="RandomTimer.range">100</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
-        </hashTree>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+          <stringProp name="ConstantTimer.delay">5000</stringProp>
+        </ConstantTimer>
+        <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">DELETE FROM users_question_suggestion; 
+          <stringProp name="query">DELETE FROM questions q WHERE q.type = &apos;SUGGESTION&apos;;
+DELETE FROM users_question_suggestion;
 DELETE FROM question_suggestions;
-DELETE FROM justifications;</stringProp>
+</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>

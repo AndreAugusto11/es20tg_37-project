@@ -17,6 +17,10 @@ describe('Accept a suggestion', () => {
     cy.contains('Management').click();
     cy.contains('Suggestions').click();
     cy.acceptQuestionSuggestion('TestAccept');
+    cy.contains('Management').click();
+    cy.contains('Questions').click();
+    cy.wait(5000);
+    cy.showQuestionFromSuggestion('TestAccept')
     cy.contains('Logout').click();
     cy.demoStudentLogin();
     cy.contains('Suggestions').click();

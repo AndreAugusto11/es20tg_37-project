@@ -45,14 +45,15 @@ class AcceptQuestionSuggestionPerformanceTest extends Specification {
         question.setKey(1)
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
-        question.setStatus(Question.Status.PENDING)
+        question.setType(Question.Type.SUGGESTION)
+        question.setStatus(Question.Status.DISABLED)
         questionRepository.save(question)
     }
 
     def "Performance testing to accept 10000 question suggestions"() {
         given: "10000 question suggestions"
         def questionSuggestions = new ArrayList<QuestionSuggestion>()
-        for (def i = 0; i < 10000; i++ ) {
+        for (def i = 0; i < 1; i++ ) {
             questionSuggestions[i] = new QuestionSuggestion()
             questionSuggestions[i].setQuestion(question)
             questionSuggestions[i].setStatus(QuestionSuggestion.Status.PENDING)
@@ -60,7 +61,7 @@ class AcceptQuestionSuggestionPerformanceTest extends Specification {
         }
 
         when: "10000 suggestions are accepted"
-        for (def i = 0; i < 10000; i++ ) {
+        for (def i = 0; i < 1; i++ ) {
             questionSuggestionService.acceptQuestionSuggestion(questionSuggestions[i].getId())
         }
 

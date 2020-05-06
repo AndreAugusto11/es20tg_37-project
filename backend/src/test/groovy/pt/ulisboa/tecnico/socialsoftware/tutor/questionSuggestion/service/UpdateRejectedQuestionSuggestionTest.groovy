@@ -110,7 +110,8 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
         questionDto1.setTitle(QUESTIONSUGGESTION_TITLE1)
         questionDto1.setContent(QUESTIONSUGGESTION_CONTENT1)
         questionDto1.setKey(1)
-        questionDto1.setStatus(Question.Status.PENDING.name())
+        questionDto1.setType(Question.Type.SUGGESTION.name())
+        questionDto1.setStatus(Question.Status.DISABLED.name())
         questionDto1.setCreationDate("2020-04-16 17:51")
         questionDto1.setOptions(options1)
 
@@ -118,7 +119,8 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
         questionDto2.setTitle(QUESTIONSUGGESTION_TITLE2)
         questionDto2.setContent(QUESTIONSUGGESTION_CONTENT2)
         questionDto2.setKey(2)
-        questionDto2.setStatus(Question.Status.PENDING.name())
+        questionDto2.setType(Question.Type.SUGGESTION.name())
+        questionDto2.setStatus(Question.Status.DISABLED.name())
         questionDto2.setCreationDate("2020-04-16 17:51")
         questionDto2.setOptions(options2)
 
