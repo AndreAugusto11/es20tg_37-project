@@ -24,7 +24,8 @@ describe('Make Clarification Request to be public walkthrough', () => {
       cy.get('[data-cy="Search"]').type(content)
       cy.contains(content).click()
       cy.get('[data-cy="ButtonToPrivate"]').click()
-  });
+    });
+});
 
 function generateContent(length) {
   let result           = '';
