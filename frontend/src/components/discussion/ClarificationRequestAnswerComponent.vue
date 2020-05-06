@@ -26,7 +26,7 @@
                             <span class="white--text headline">T</span>
                         </v-avatar>
                     </template>
-                    <span>Teacher's Answer</span>
+                    <span>Teacher's Reply</span>
                 </v-tooltip>
                 <v-tooltip v-else-if="this.clarificationRequestAnswer.type === 'STUDENT_ANSWER'" bottom>
                     <template v-slot:activator="{ on }">
@@ -34,7 +34,7 @@
                             <span class="white--text headline">S</span>
                         </v-avatar>
                     </template>
-                    <span>Student's Answer</span>
+                    <span>Student's Reply</span>
                 </v-tooltip>
             </v-col>
         </v-row>

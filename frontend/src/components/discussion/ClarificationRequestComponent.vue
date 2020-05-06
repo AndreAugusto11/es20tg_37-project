@@ -72,7 +72,7 @@
                     </v-tooltip>
                 </v-list-item-icon>
 
-                <v-list-item-content>
+                <v-list-item-content class="pt-5">
                     <span v-html="convertMarkDown(item.content, null)" />
                 </v-list-item-content>
             </v-list-item>
