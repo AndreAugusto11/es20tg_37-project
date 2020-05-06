@@ -442,11 +442,13 @@ insert into options values(4, &apos;optionold4&apos;, &apos;f&apos;, 1413, 3);
       <hashTree>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Delete created relationship between user and suggestion and question_suggestions " enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query"> DELETE FROM users_question_suggestion;
- DELETE FROM question_Suggestions;
- DELETE FROM justifications;
- DELETE FROM question_answers;
- DELETE FROM options;</stringProp>
+          <stringProp name="query">DELETE FROM users_question_suggestion;
+DELETE FROM question_Suggestions;
+DELETE FROM justifications;
+DELETE FROM options where options.id = 1;
+DELETE FROM options where options.id = 2;
+DELETE FROM options where options.id = 3;
+DELETE FROM options where options.id = 4;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
