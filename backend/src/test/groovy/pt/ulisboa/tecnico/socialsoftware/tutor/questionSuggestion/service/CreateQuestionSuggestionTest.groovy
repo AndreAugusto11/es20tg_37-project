@@ -21,7 +21,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSugges
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
 import spock.lang.Specification
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_COUSEID
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_COURSEID
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_SUGGESTION
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_USERID
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_IS_TEACHER
@@ -346,7 +346,7 @@ class CreateQuestionSuggestionTest extends Specification {
 
         then:
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_COUSEID
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_COURSEID
     }
 
     def "given a course that a student isn't enrolled"() {

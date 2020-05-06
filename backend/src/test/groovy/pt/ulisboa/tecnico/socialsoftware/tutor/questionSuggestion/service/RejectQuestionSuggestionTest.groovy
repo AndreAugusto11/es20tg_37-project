@@ -22,7 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Questio
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_JUTIFICATIONDTO
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_JUSTIFICATION
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_SUGGESTIONID
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_USERID
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.JUSTIFICATION_MISSING_DATA
@@ -289,7 +289,7 @@ class RejectQuestionSuggestionTest extends Specification {
 
         then: "an exception is thrown"
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_JUTIFICATIONDTO
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_JUSTIFICATION
     }
 
     @TestConfiguration
