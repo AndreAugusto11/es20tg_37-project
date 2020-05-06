@@ -39,6 +39,23 @@
           <span>{{ item.status }}</span>
         </v-chip>
       </template>
+
+      <template v-slot:item.public="{ item }">
+         <v-tooltip v-if="item.public" left>
+            <template v-slot:activator="{ on }">
+              <v-icon class="mr-2" color="green" v-on="on">fas fa-lock-open</v-icon>
+            </template>
+            <span>Public</span>
+          </v-tooltip>
+
+          <v-tooltip v-else left>
+            <template v-slot:activator="{ on }">
+              <v-icon class="mr-2" color="red" v-on="on">fas fa-lock</v-icon>
+            </template>
+            <span>Private</span>
+          </v-tooltip>
+      </template>
+      
     </v-data-table>
   </v-card>
 </template>
@@ -57,9 +74,10 @@
         search: string = '';
 
         headers: object = [
-            { text: 'Clarification', value: 'content', align: 'left' },
-            { text: 'Student Name', value: 'name', align: 'center' },
-            { text: 'Status', value: 'status', align: 'center' }
+            { text: 'Clarification', value: 'content', align: 'left', width: '50%' },
+            { text: 'Student Name', value: 'name', align: 'center', width: '20%' },
+            { text: 'Status', value: 'status', align: 'center', width: '20%' },
+            { text: 'Availability', value: 'public', align: 'center', width: '10%'}
         ];
 
         async created() {

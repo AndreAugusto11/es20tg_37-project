@@ -5,14 +5,16 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.PublicClarificationRequest;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NAME_FOR_COURSE;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_TYPE_FOR_COURSE;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "courses")
@@ -38,6 +40,9 @@ public class Course implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
     private final Set<Topic> topics = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
+    private final Set<PublicClarificationRequest> publicClarificationRequests = new HashSet<>();
+
     public Course() {}
 
     public Course(String name, Course.Type type) {
@@ -49,7 +54,6 @@ public class Course implements DomainEntity {
     public void accept(Visitor visitor) {
         visitor.visitCourse(this);
     }
-
 
     public Integer getId() {
         return id;
@@ -123,5 +127,25 @@ public class Course implements DomainEntity {
 
     public boolean existsCourseExecution(String acronym, String academicTerm, Course.Type type) {
         return getCourseExecution(acronym, academicTerm, type).isPresent();
+    }
+
+    public Set<PublicClarificationRequest> getPublicClarificationRequests() {
+        return this.publicClarificationRequests;
+    }
+
+    public void addPublicClarificationRequests(PublicClarificationRequest publicClarificationRequest) {
+        this.publicClarificationRequests.add(publicClarificationRequest);
+    }
+
+    public void removePublicClarificationRequests(Integer clarificationRequestId) {
+
+        PublicClarificationRequest publicClarificationRequest = this.publicClarificationRequests.stream()
+                .filter(pCrReq -> pCrReq.getClarificationRequest()
+                        .getId()
+                        .equals(clarificationRequestId))
+                .findFirst()
+                .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_IS_ALREADY_PRIVATE, clarificationRequestId));
+
+        this.publicClarificationRequests.remove(publicClarificationRequest);
     }
 }

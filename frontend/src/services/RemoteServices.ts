@@ -716,6 +716,29 @@ export default class RemoteServices {
       });
   }
 
+
+  static async makeClarificationRequestPublic(clarificationRequestId: number): Promise<ClarificationRequest> {
+    return httpClient
+        .post(`/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests/${clarificationRequestId}/public`)
+        .then(response => {
+          return new ClarificationRequest(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
+  static async makeClarificationRequestPrivate(clarificationRequestId: number): Promise<ClarificationRequest> {
+    return httpClient
+        .post(`/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests/${clarificationRequestId}/private`)
+        .then(response => {
+          return new ClarificationRequest(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
   static async errorMessage(error: any): Promise<string> {
     if (error.message === 'Network Error') {
       return 'Unable to connect to server';
