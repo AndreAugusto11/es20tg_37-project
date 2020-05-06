@@ -8,16 +8,19 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.PublicClarificationRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.PublicClarificationRequestRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -44,6 +47,9 @@ public class QuestionDiscussionService {
 
     @Autowired
     ClarificationRequestAnswerRepository clarificationRequestAnswerRepository;
+
+    @Autowired
+    PublicClarificationRequestRepository publicClarificationRequestRepository;
 
     @Autowired
     QuestionRepository questionRepository;
@@ -92,7 +98,7 @@ public class QuestionDiscussionService {
         }
 
         return clarificationRequests.stream()
-                .filter(clarificationRequest -> clarificationRequest.getQuestionAnswer().getQuizQuestion().getQuiz().getCourseExecution().getId() == executionId)
+                .filter(clarificationRequest -> clarificationRequest.getQuestionAnswer().getQuizQuestion().getQuiz().getCourseExecution().getId().equals(executionId))
                 .map(ClarificationRequestDto::new)
                 .sorted(Comparator.comparing(ClarificationRequestDto::getStatus))
                 .collect(Collectors.toList());
@@ -175,5 +181,37 @@ public class QuestionDiscussionService {
         if (clarificationRequestAnswerDto.getType() == null) {
             throw new TutorException(CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED);
         }
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ClarificationRequestDto createPublicClarificationRequest(Integer clarificationRequestId) {
+
+        ClarificationRequest clarificationRequest = this.getClarificationRequest(clarificationRequestId);
+        Course course = clarificationRequest.getQuestion().getCourse();
+
+        PublicClarificationRequest publicClarificationRequest = new PublicClarificationRequest(course, clarificationRequest);
+
+        if (clarificationRequest.getPublicClarificationRequest() != null)
+            throw new TutorException(CLARIFICATION_REQUEST_IS_ALREADY_PUBLIC, clarificationRequestId);
+
+        clarificationRequest.setPublicClarificationRequest(publicClarificationRequest);
+        course.addPublicClarificationRequests(publicClarificationRequest);
+
+        entityManager.persist(publicClarificationRequest);
+        return new ClarificationRequestDto(clarificationRequest);
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ClarificationRequestDto removePublicClarificationRequest(Integer clarificationRequestId) {
+
+        ClarificationRequest clarificationRequest = this.getClarificationRequest(clarificationRequestId);
+        Course course = clarificationRequest.getQuestion().getCourse();
+
+        course.removePublicClarificationRequests(clarificationRequestId);
+
+        publicClarificationRequestRepository.delete(clarificationRequest.getPublicClarificationRequest());
+        clarificationRequest.setPublicClarificationRequest(null);
+
+        return new ClarificationRequestDto(clarificationRequest);
     }
 }

@@ -1,14 +1,10 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.service.performanceTest
+package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
@@ -16,35 +12,42 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestAnswerDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.PublicClarificationRequest
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.PublicClarificationRequestRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import spock.lang.Shared
 import spock.lang.Specification
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_IS_ALREADY_PRIVATE;
+
 @DataJpaTest
-class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specification {
-    public static final Integer NUMBER_OF_ITERATIONS = 1000
-    public static final String USERNAME_TEACHER = "username_teacher"
-    public static final String USERNAME_STUDENT = "username_student"
+class RemovePublicClarificationRequestSpockTest extends Specification {
+    public static final Integer WRONG_ID = 5454654
     public static final String COURSE_NAME = "Software Architecture"
-    public static final String CLARIFICATION_CONTENT = "Test"
+    public static final String CLARIFICATION_CONTENT = "clarification request content"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
+    public static final Integer TIME_TAKEN = 1234
     public static final String QUIZ_TITLE = 'quiz title'
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
     public static final Integer SEQUENCE = 0
+    public static final String URL = 'URL'
 
     @Autowired
     QuestionDiscussionService questionDiscussionService
@@ -79,13 +82,16 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
     @Autowired
     ClarificationRequestRepository clarificationRequestRepository
 
-    def user_teacher
-    def user_student
+    @Autowired
+    PublicClarificationRequestRepository publicClarificationRequestRepository
+
+    @Shared
+    def user
     def course
     def courseExecution
     def question
-    def option
     def quizQuestion
+    def option
     def quizAnswer
     def quiz
     def questionAnswer
@@ -98,13 +104,10 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
-        user_teacher = new User("name", USERNAME_TEACHER, 1, User.Role.TEACHER)
-        user_student = new User("name", USERNAME_STUDENT, 2, User.Role.STUDENT)
-        user_teacher.getCourseExecutions().add(courseExecution)
-        user_student.getCourseExecutions().add(courseExecution)
-        courseExecution.getUsers().add(user_teacher)
-        userRepository.save(user_teacher)
-        userRepository.save(user_student)
+        user = new User('name', "username", 1, User.Role.STUDENT)
+        user.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(user)
+        userRepository.save(user)
 
         question = new Question()
         question.setCourse(course)
@@ -131,53 +134,68 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
         courseExecution.addQuiz(quiz)
         quizRepository.save(quiz)
 
-        quizQuestion = new QuizQuestion()
-        quizQuestion.setQuiz(quiz)
-        quizQuestion.setQuestion(question)
+        quizQuestion = new QuizQuestion(quiz, question, SEQUENCE)
         quiz.addQuizQuestion(quizQuestion)
         quizQuestionRepository.save(quizQuestion)
 
-        quizAnswer = new QuizAnswer()
-        quizAnswer.setQuiz(quiz)
-        quizAnswer.setUser(user_student)
-        quizAnswer.setCompleted(true)
+        quizAnswer = new QuizAnswer(user, quiz)
         quizAnswerRepository.save(quizAnswer)
-
-        questionAnswer = new QuestionAnswer()
-        quizAnswer.addQuestionAnswer(questionAnswer)
-        questionAnswer.setQuizAnswer(quizAnswer)
-        questionAnswer.setQuizQuestion(quizQuestion)
-        questionAnswerRepository.save(questionAnswer)
     }
 
-    def "performance testing to create 1000 clarification request answers"() {
-        given: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto()
-        clarificationRequestDto.setContent(CLARIFICATION_CONTENT)
-        clarificationRequestDto.setName(user_student.getName())
-        clarificationRequestDto.setUsername(user_student.getUsername())
-        def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
-        clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
+    def "remove a public clarification request"() {
+        given: "a question answer answered"
+        questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
+        quizAnswer.addQuestionAnswer(questionAnswer)
+        questionAnswerRepository.save(questionAnswer)
 
-        and: "a clarification request answer dto"
-        def clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
-        clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER_ANSWER)
-        clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
-        clarificationRequestAnswerDto.setName(user_teacher.getName())
-        clarificationRequestAnswerDto.setUsername(user_teacher.getUsername())
+        and: "a clarification request"
+        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
+        def clReq = clarificationRequestRepository.findAll().get(0)
 
-        and: "1000 clarification requests"
-        1.upto(NUMBER_OF_ITERATIONS, {
-            questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
-        })
-        List<ClarificationRequest> clarificationRequestList = clarificationRequestRepository.findAll()
+        and: "a public clarification request"
+        PublicClarificationRequest publicClarificationRequest = new PublicClarificationRequest(course, clarificationRequest)
+        clarificationRequest.setPublicClarificationRequest(publicClarificationRequest)
+        course.addPublicClarificationRequests(publicClarificationRequest)
 
-        when: "1000 clarification request answers are created"
-        1.upto(NUMBER_OF_ITERATIONS, {
-            questionDiscussionService.createClarificationRequestAnswer(clarificationRequestList.pop().getId(), clarificationRequestAnswerDto)
-        })
+        when:
+        questionDiscussionService.removePublicClarificationRequest(clReq.getId())
 
-        then: true
+        then: "the public clarification request is not in the repository"
+        publicClarificationRequestRepository.findAll().size() == 0
+        !course.getPublicClarificationRequests().contains(publicClarificationRequest)
+        clarificationRequest.getPublicClarificationRequest() == null
+    }
+
+    def "remove a private clarification request"() {
+        given: "a question answer answered"
+        questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
+        quizAnswer.addQuestionAnswer(questionAnswer)
+        questionAnswerRepository.save(questionAnswer)
+
+        and: "a clarification request"
+        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
+        def clReq = clarificationRequestRepository.findAll().get(0)
+
+        when:
+        questionDiscussionService.removePublicClarificationRequest(clReq.getId())
+
+        then: "the public clarification request is not in the repository"
+        def error = thrown(TutorException)
+        error.errorMessage == CLARIFICATION_REQUEST_IS_ALREADY_PRIVATE
+    }
+
+    def "remove a public clarification request with a wrong clarification request Id"() {
+        given: "a question answer answered"
+        questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
+        quizAnswer.addQuestionAnswer(questionAnswer)
+        questionAnswerRepository.save(questionAnswer)
+
+        when:
+        questionDiscussionService.removePublicClarificationRequest(WRONG_ID)
+
+        then: "the public clarification request is not in the repository"
+        def error = thrown(TutorException)
+        error.errorMessage == CLARIFICATION_REQUEST_NOT_FOUND
     }
 
     @TestConfiguration
