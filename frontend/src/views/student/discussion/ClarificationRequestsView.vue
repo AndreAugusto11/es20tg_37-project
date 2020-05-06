@@ -99,13 +99,6 @@
       else return 'green'
     }
 
-    getNumberOfAnswers(clarificationRequestAnswer: ClarificationRequestAnswer) {
-      if (clarificationRequestAnswer.id == null) {
-        return '0';
-      }
-      return '1';
-    }
-
     async openClarificationRequest(value: ClarificationRequest) {
       await this.$router.push({ name: 'clarification', params: { clarificationRequest: JSON.stringify(value) } });
     }

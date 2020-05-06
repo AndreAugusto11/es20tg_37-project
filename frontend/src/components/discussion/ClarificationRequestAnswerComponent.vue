@@ -19,6 +19,24 @@
             <v-col>
                 <h2 class="mb-1 post-text">{{ this.clarificationRequestAnswer.name }}</h2>
             </v-col>
+            <v-col align="right" class="mr-5">
+                <v-tooltip v-if="this.clarificationRequestAnswer.type === 'TEACHER_ANSWER'" bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-avatar v-on="on" tile color="yellow darken-2" size="36" style="border-radius: 5px;">
+                            <span class="white--text headline">T</span>
+                        </v-avatar>
+                    </template>
+                    <span>Teacher's Answer</span>
+                </v-tooltip>
+                <v-tooltip v-else-if="this.clarificationRequestAnswer.type === 'STUDENT_ANSWER'" bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-avatar v-on="on" tile color="green" size="36" style="border-radius: 5px;">
+                            <span class="white--text headline">S</span>
+                        </v-avatar>
+                    </template>
+                    <span>Student's Answer</span>
+                </v-tooltip>
+            </v-col>
         </v-row>
 
         <v-row
@@ -33,6 +51,16 @@
             </v-col>
             <v-col class="post-text">
                 <span v-html="convertMarkDown(this.clarificationRequestAnswer.content, null)" />
+            </v-col>
+        </v-row>
+
+        <v-row
+                align="center"
+                class="spacer ml-5"
+                no-gutters
+        >
+            <v-col align="right" class="mr-5" style="color: grey; font-size: 14px;">
+                <span v-html="convertMarkDown(this.getTimeDiff(this.clarificationRequestAnswer.creationDate), null)" />
             </v-col>
         </v-row>
     </v-card>
@@ -60,6 +88,54 @@
 
       getRandomVuetifyColor(name: string): string {
         return getRandomVuetifyColor(name);
+      }
+
+      getTimeDiff(dateTimeString: string) {
+        let datetime: number;
+        let now: number;
+        let milisec_diff: number;
+        let days: number;
+        let date_diff: Date;
+
+        datetime = new Date(dateTimeString).getTime();
+        now = new Date().getTime();
+
+        if (isNaN(datetime))
+          return "";
+
+        if (datetime < now) {
+          milisec_diff = now - datetime;
+        }
+        else {
+          milisec_diff = datetime - now;
+        }
+
+        days = Math.floor(milisec_diff / 1000 / 60 / (60 * 24));
+
+        date_diff = new Date(milisec_diff);
+
+        if (days > 0) {
+          return days + " Days ago";
+        }
+        else if ((date_diff.getHours() - 1) > 0) {
+          if ((date_diff.getHours() - 1) > 1) {
+            return (date_diff.getHours() - 1) + " Hours ago";
+          }
+          else {
+            return (date_diff.getHours() - 1) + " Hour ago";
+          }
+        }
+        else if (date_diff.getMinutes() > 0) {
+          if (date_diff.getMinutes() > 1) {
+            return date_diff.getMinutes() + " Minutes ago";
+          }
+          else {
+            return date_diff.getMinutes() + " Minute ago";
+          }
+        }
+        else {
+          return date_diff.getSeconds() + " Seconds ago";
+        }
       }
     }
 </script>
