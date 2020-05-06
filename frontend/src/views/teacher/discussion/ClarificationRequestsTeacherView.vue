@@ -34,6 +34,10 @@
         <p v-html="convertMarkDown(item.content, null)" />
       </template>
 
+      <template v-slot:item.number="{ item }">
+        <p v-html="convertMarkDown(item.numberOfAnswers.toString(), null)" />
+      </template>
+
       <template v-slot:item.status="{ item }">
         <v-chip :color="getStatusColor(item.status)" small>
           <span>{{ item.status }}</span>
@@ -59,6 +63,7 @@
         headers: object = [
             { text: 'Clarification', value: 'content', align: 'left' },
             { text: 'Student Name', value: 'name', align: 'center' },
+            { text: 'Number of Answers', value: 'number', align: 'left' },
             { text: 'Status', value: 'status', align: 'center' }
         ];
 
