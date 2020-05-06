@@ -40,7 +40,7 @@ public class QuestionSuggestion {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "questionSuggestion", orphanRemoval=true)
     private Question question;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "questionSuggestion")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "questionSuggestion", orphanRemoval=true)
     private Justification justification;
 
     @ManyToOne
@@ -51,14 +51,10 @@ public class QuestionSuggestion {
     }
 
     public QuestionSuggestion(User user, Course course, QuestionSuggestionDto questionSuggestionDto) {
-
-        this.question = new Question(course, questionSuggestionDto.getQuestionDto());
+        setQuestion(new Question(course, questionSuggestionDto.getQuestionDto()));
         setCreationDate(DateHandler.toLocalDateTime(questionSuggestionDto.getCreationDate()));
-
-        this.user = user;
-        user.addQuestionSuggestion(this);
-
-        this.status = QuestionSuggestion.Status.valueOf(questionSuggestionDto.getStatus());
+        setStatus(QuestionSuggestion.Status.valueOf(questionSuggestionDto.getStatus()));
+        setUser(user);
     }
 
     public void update(QuestionSuggestionDto questionSuggestionDto) {
@@ -100,13 +96,19 @@ public class QuestionSuggestion {
         }
     }
 
-    public Question getQuestion(){ return question; }
+    public Question getQuestion() { return question; }
 
-    public void setQuestion(Question question) { this.question = question;}
+    public void setQuestion(Question question) {
+        this.question = question;
+        this.question.setQuestionSuggestion(this);
+    }
 
-    public User getUser(){ return user; }
+    public User getUser() { return user; }
 
-    public void setUser(User user){ this.user = user; }
+    public void setUser(User user) {
+        this.user = user;
+        this.user.addQuestionSuggestion(this);
+    }
 
     public Course getCourse() {
         return question.getCourse();

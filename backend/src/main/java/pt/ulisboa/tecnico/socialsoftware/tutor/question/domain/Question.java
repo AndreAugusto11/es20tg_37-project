@@ -135,6 +135,8 @@ public class Question implements DomainEntity {
     }
 
     public Question.Type getType() {
+        if (type == null)
+            setType(Type.NORMAL);
         return type;
     }
 
@@ -247,7 +249,9 @@ public class Question implements DomainEntity {
         clarificationRequests.add(clarificationRequest);
     }
 
-    public QuestionSuggestion getQuestionSuggestion(){ return questionSuggestion; }
+    public QuestionSuggestion getQuestionSuggestion() {
+        return questionSuggestion;
+    }
 
     public void setQuestionSuggestion(QuestionSuggestion questionSuggestion) {
         this.questionSuggestion = questionSuggestion;
