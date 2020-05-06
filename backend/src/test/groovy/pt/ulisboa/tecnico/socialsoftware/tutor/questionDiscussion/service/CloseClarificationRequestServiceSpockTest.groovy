@@ -28,6 +28,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_ALREADY_CLOSED
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_NOT_DEFINED
 
 @DataJpaTest
@@ -156,6 +157,20 @@ class CloseClarificationRequestServiceSpockTest extends Specification {
         result.getStatus() == ClarificationRequest.Status.CLOSED.name()
         result.getQuestionAnswerDto().getQuestion().getId() == question.getId()
         result.getUsername() == user_student.getUsername()
+    }
+
+    def "Clarification request is already closed and student tries to close it"() {
+        given: "a closed clarification request"
+        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
+        clarificationRequest.setStatus(ClarificationRequest.Status.CLOSED)
+        clarificationRequestRepository.save(clarificationRequest)
+
+        when:
+        questionDiscussionService.closeClarificationRequest(clarificationRequest.getId())
+
+        then: "exception is thrown"
+        def error = thrown(TutorException)
+        error.errorMessage == CLARIFICATION_REQUEST_ALREADY_CLOSED
     }
 
     def "invalid argument: clarification_request_id=null"() {

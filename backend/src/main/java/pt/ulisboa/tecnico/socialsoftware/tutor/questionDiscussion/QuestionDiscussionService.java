@@ -176,6 +176,10 @@ public class QuestionDiscussionService {
     public ClarificationRequestDto closeClarificationRequest(Integer clarificationRequestId) {
         ClarificationRequest clarificationRequest = getClarificationRequest(clarificationRequestId);
 
+        if (clarificationRequest.getStatus().equals(ClarificationRequest.Status.CLOSED)) {
+            throw new TutorException(CLARIFICATION_REQUEST_ALREADY_CLOSED);
+        }
+
         clarificationRequest.closeClarificationRequest();
 
         return new ClarificationRequestDto(clarificationRequest);

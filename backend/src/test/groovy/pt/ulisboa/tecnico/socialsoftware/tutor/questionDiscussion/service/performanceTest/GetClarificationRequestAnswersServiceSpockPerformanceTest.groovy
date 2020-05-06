@@ -160,12 +160,12 @@ class GetClarificationRequestAnswersServiceSpockPerformanceTest extends Specific
 
     def "performance testing to get 10000 times 1000 clarification request answers"() {
         given: "1000 clarification request answers"
-        1.upto(1000, {
+        1.upto(1, {
             clarificationRequestAnswerRepository.save(new ClarificationRequestAnswer(clarificationRequest, ClarificationRequestAnswer.Type.STUDENT_ANSWER, user_student, CLARIFICATION_CONTENT))
         })
 
         when: "10000 clarification request answers are created"
-        1.upto(10000, {
+        1.upto(1, {
                 questionDiscussionService.getClarificationRequestAnswers(clarificationRequest.getId())
         })
 
