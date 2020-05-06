@@ -26,12 +26,14 @@ describe('Create a suggestion', () => {
 
   it('login and creates a suggestions without one option', () => {
     cy.createQuestionSuggestion('TestNoOption','Question','a', 'b', 'c', '', 'No');
+    cy.wait(5000)
     cy.closeErrorMessage();
     cy.get('[data-cy="cancelButton"]').click()
   });
 
   it('login and creates a suggestions without one option correct', () => {
     cy.createQuestionSuggestion('TestNoCorrect','Question','a', 'b', 'c', 'd', 'Yes');
+    cy.wait(5000)
     cy.closeErrorMessage();
     cy.get('[data-cy="cancelButton"]').click()
   });

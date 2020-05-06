@@ -39,6 +39,10 @@ public class ClarificationRequest {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clarificationRequest", orphanRemoval=true)
     private Set<ClarificationRequestAnswer> clarificationRequestAnswer = new HashSet<>();
 
+    @OneToOne
+    @JoinColumn(name = "public_clarification_request_id")
+    private PublicClarificationRequest publicClarificationRequest;
+
     @Column(columnDefinition = "TEXT")
     private String content;
 
@@ -103,5 +107,13 @@ public class ClarificationRequest {
 
     public void closeClarificationRequest() {
         this.setStatus(Status.CLOSED);
+    }
+
+    public PublicClarificationRequest getPublicClarificationRequest() {
+        return publicClarificationRequest;
+    }
+
+    public void setPublicClarificationRequest(PublicClarificationRequest publicClarificationRequest) {
+        this.publicClarificationRequest = publicClarificationRequest;
     }
 }

@@ -57,7 +57,7 @@ public class Question implements DomainEntity {
     private LocalDateTime creationDate;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval=true)
-    private final List<Option> options = new ArrayList<>();
+    private List<Option> options = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval=true)
     private final Set<QuizQuestion> quizQuestions = new HashSet<>();
@@ -104,7 +104,7 @@ public class Question implements DomainEntity {
         return key;
     }
 
-   public void setKey(Integer key) {
+    public void setKey(Integer key) {
         this.key = key;
     }
 

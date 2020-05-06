@@ -71,4 +71,18 @@ public class QuestionDiscussionController {
                                                                           @PathVariable Integer clarificationRequestId) {
         return questionDiscussionService.getClarificationRequestAnswers(clarificationRequestId);
     }
+
+    @PostMapping("/executions/{executionId}/clarificationRequests/{clarificationRequestId}/public")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public ClarificationRequestDto createPublicClarificationRequest(@PathVariable Integer executionId,
+                                                                          @PathVariable Integer clarificationRequestId) {
+        return  questionDiscussionService.createPublicClarificationRequest(clarificationRequestId);
+    }
+
+    @PostMapping("/executions/{executionId}/clarificationRequests/{clarificationRequestId}/private")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public ClarificationRequestDto removePublicClarificationRequest(@PathVariable Integer executionId,
+                                                                    @PathVariable Integer clarificationRequestId) {
+        return questionDiscussionService.removePublicClarificationRequest(clarificationRequestId);
+    }
 }

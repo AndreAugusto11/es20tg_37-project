@@ -87,6 +87,10 @@
         }
       }
     }
+
+    changeAvailability() {
+        this.clarificationRequest.public = this.clarificationRequest.public ? false : true;
+    }
   }
 
 </script>

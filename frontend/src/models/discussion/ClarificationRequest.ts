@@ -11,6 +11,7 @@ export class ClarificationRequest {
   status: string = 'OPEN';
   image: Image | null = null;
   numberOfAnswers: number | null = null;
+  public: Boolean = false;
 
   constructor(jsonObj?: ClarificationRequest) {
     if (jsonObj) {
@@ -22,6 +23,7 @@ export class ClarificationRequest {
       this.status = jsonObj.status;
       this.image = jsonObj.image;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
+      this.public = jsonObj.public;
     }
   }
 }

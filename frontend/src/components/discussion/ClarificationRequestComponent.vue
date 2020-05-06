@@ -1,24 +1,88 @@
 <template>
     <v-card
+            :key="this.clarificationRequest.public"
             class="mx-auto mt-10"
             max-width="1000"
             outlined
     >
         <v-row
                 align="center"
-                class="spacer ml-5 mt-5"
+                class="spacer ml-5 mr-5 mt-5"
                 no-gutters
         >
-            <v-col
-                    sm="2"
-                    md="9"
+            <v-col v-if="this.$store.getters.isTeacher"
+                    sm="3"
+                    md="7"
             >
                 <h2 class="mb-1 post-text">{{ this.clarificationRequest.name }}</h2>
             </v-col>
+
+            <v-col v-if="this.$store.getters.isStudent"
+                    sm="2"
+                    md="10"
+            >
+                <h2 class="mb-1 post-text">{{ this.clarificationRequest.name }}</h2>
+            </v-col>
+
+
             <v-col>
                 <v-chip :color="getStatusColor(this.clarificationRequest.status)" small>
                     <span>{{ this.clarificationRequest.status }}</span>
                 </v-chip>
+            </v-col>
+
+
+            <v-col v-if="this.$store.getters.isTeacher">
+                <v-tooltip v-if="this.clarificationRequest.public" bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-icon class="mr-2" color="green" v-on="on">fas fa-lock-open</v-icon>
+                    </template>
+                    <span>This discussion is public</span>
+                </v-tooltip>
+
+                <v-tooltip v-else bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-icon class="mr-2" color="red" v-on="on">fas fa-lock</v-icon>
+                    </template>
+                    <span>This discussion is private</span>
+                </v-tooltip>
+
+                <v-icon big>mdi-arrow-right-bold</v-icon>
+
+                <v-tooltip v-if="this.clarificationRequest.public" bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn class="mx-2" fab dark color="red" @click="changePrivatePublic()" data-cy="ButtonToPrivate">
+                            <v-icon class="mr-2" color="white" v-on="on">fas fa-lock</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Click to make private</span>
+                </v-tooltip>
+
+                <v-tooltip v-else bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn class="mx-2" fab dark color="green" @click="changePrivatePublic()" data-cy="ButtonToPublic">
+                            <v-icon class="mr-2" color="white" v-on="on">fas fa-lock-open</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Click to make public</span>
+                </v-tooltip>
+            </v-col>
+
+
+            <v-col v-if="this.$store.getters.isStudent">
+                <v-tooltip v-if="this.clarificationRequest.public" bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-icon class="mr-2" color="green" v-on="on">fas fa-lock-open</v-icon>
+                    </template>
+                    <span>This discussion is public</span>
+                </v-tooltip>
+    
+                <v-tooltip v-else bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-icon class="mr-2" color="red" v-on="on">fas fa-lock</v-icon>
+                    </template>
+                    <span>This discussion is private</span>
+                </v-tooltip>
             </v-col>
         </v-row>
         <v-row
@@ -103,12 +167,14 @@
 <script lang="ts">
   import { Component, Prop, Vue } from 'vue-property-decorator';
   import { convertMarkDown } from '@/services/ConvertMarkdownService';
+  import RemoteServices from '@/services/RemoteServices';
   import Image from '@/models/management/Image';
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
+  import ResultComponent from '../../views/student/quiz/ResultComponent.vue';
 
   @Component
   export default class ClarificationRequestComponent extends Vue {
-    @Prop(ClarificationRequest) readonly clarificationRequest!: ClarificationRequest;
+    @Prop(ClarificationRequest) clarificationRequest!: ClarificationRequest;
 
     convertMarkDown(text: string, image: Image | null = null): string {
       return convertMarkDown(text, image);
@@ -122,6 +188,24 @@
 
     chosen(content: string) {
       return content === this.clarificationRequest.questionAnswerDto.option.content;
+    }
+
+    async changePrivatePublic() {
+        var result;
+        
+        try {
+            if (this.clarificationRequest.public && this.clarificationRequest.id != null)
+                result = await RemoteServices.makeClarificationRequestPrivate(this.clarificationRequest.id);
+
+            if (!this.clarificationRequest.public && this.clarificationRequest.id != null)
+                result = await RemoteServices.makeClarificationRequestPublic(this.clarificationRequest.id);
+
+            if (result != null)
+                this.clarificationRequest = result;
+
+        } catch (error) {
+          await this.$store.dispatch('error', error);
+        }
     }
   }
 </script>
