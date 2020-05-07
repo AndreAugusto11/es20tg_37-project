@@ -1,6 +1,8 @@
-describe('Clarification Request Stats walkthrough (Make sure there are no previous ' +
-  'clarifications made by demo student before running this test)', () => {
+describe('Clarification Request Stats walkthrough', () => {
   beforeEach(() => {
+    cy.exec('psql -d tutordb -c "Delete from clarification_request_answers;"')
+    cy.exec('psql -d tutordb -c "Delete from public_clarification_requests;"')
+    cy.exec('psql -d tutordb -c "Delete from clarification_requests;"')
     cy.demoStudentLogin()
   })
 
@@ -20,16 +22,21 @@ describe('Clarification Request Stats walkthrough (Make sure there are no previo
 
     cy.demoTeacherLogin()
     cy.goToDiscussion()
+    cy.wait(1000)
     cy.get('[data-cy="Search"]').type(content1)
     cy.contains(content1).click({force: true})
+    cy.wait(1000)
     cy.get('[data-cy="ButtonToPublic"]').click({force: true})
     cy.goToDiscussion()
+    cy.wait(1000)
     cy.get('[data-cy="Search"]').type(content2)
     cy.contains(content2).click({force: true})
+    cy.wait(1000)
     cy.get('[data-cy="ButtonToPublic"]').click({force: true})
 
     cy.demoStudentLogin()
     cy.contains('Stats').click()
+    cy.wait(1000)
     cy.get('[data-cy="totalClarificationRequests"]').contains('2').should('exist')
     cy.get('[data-cy="totalPublicClarificationRequests"]').contains('2').should('exist')
   });
