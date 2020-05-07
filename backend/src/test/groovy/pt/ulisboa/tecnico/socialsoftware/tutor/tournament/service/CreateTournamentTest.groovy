@@ -4,9 +4,14 @@ import org.springframework.context.annotation.Bean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
@@ -218,27 +223,6 @@ class CreateTournamentTest extends Specification {
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_NUM_QUESTS
 	}
 
-	def "topics do not exist"()
-	{
-		// an exception should be thrown
-		given: "a non-saved topic"
-		def topicNS = new Topic();
-		topicNS.setName("Topic Not Saved")
-		def course = new Course("LEIC-A", Course.Type.TECNICO)
-		courseRepository.save(course)
-		course = courseRepository.findByNameType("LEIC-A", "TECNICO").get()
-		topicNS.setCourse(course)
-		def topicSet = new HashSet<Topic>()
-		topicSet.add(topicNS)
-
-		when:
-		tournamentService.createTournament(student, topicSet, number_of_questions, startTime, endTime)
-
-		then:
-		def exception = thrown(TutorException)
-		exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_TOPIC
-	}
-
 	def "startTime is invalid"()
 	{
 		// an exception should be thrown
@@ -281,9 +265,34 @@ class CreateTournamentTest extends Specification {
 	@TestConfiguration
     static class TournamentServiceCreatTestContextConfiguration {
 
-        @Bean
-        TournamentService tournamentService() {
-            return new TournamentService()
-        }
+		@Bean
+		QuestionService QuestionService() {
+			return new QuestionService()
+		}
+
+		@Bean
+		AnswersXmlImport AnswersXmlImport() {
+			return new AnswersXmlImport()
+		}
+
+		@Bean
+		QuizService QuizService() {
+			return new QuizService()
+		}
+
+		@Bean
+		AnswerService AnswerService() {
+			return new AnswerService()
+		}
+
+		@Bean
+		StatementService statementService() {
+			return new StatementService()
+		}
+
+		@Bean
+		TournamentService tournamentService() {
+			return new TournamentService()
+		}
     }
 }

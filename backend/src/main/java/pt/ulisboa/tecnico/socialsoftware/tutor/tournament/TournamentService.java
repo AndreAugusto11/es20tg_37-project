@@ -7,7 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
@@ -37,6 +41,9 @@ public class TournamentService
 
 	@Autowired
 	private TopicRepository topicRepository;
+
+	@Autowired
+	private StatementService statementService;
 
 	@PersistenceContext
 	EntityManager entityManager;
@@ -118,6 +125,50 @@ public class TournamentService
 		tournament.addUser(user);
 		user.addTournament(tournament);
 		return new TournamentDto(tournament);
+	}
+
+	private Tournament tournamentQuizVerification(int userId, Integer tournamentId){
+		if(tournamentId == null) throw new TutorException(TOURNAMENT_NULL_TOURNAMENT);
+
+		Tournament tournament = tournamentRepository.findById(tournamentId)
+				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND,tournamentId));
+
+		if(tournament.getstatus() != Tournament.Status.ONGOING) throw new TutorException(TOURNAMENT_NOT_ONGOING,tournamentId);
+
+		if(tournament.getquiz() == null) throw new TutorException(TOURNAMENT_NULL_QUIZ,tournamentId);
+
+		tournament.getusers().stream()
+				.filter(u->u.getId().equals(userId)).findFirst()
+				.orElseThrow( () -> new TutorException(TOURNAMENT_STUDENT_NOT_ENROLLED,userId));
+		return tournament;
+	}
+
+	@Retryable(
+			value = { SQLException.class },
+			backoff = @Backoff(delay = 5000))
+	@Transactional(isolation = Isolation.READ_COMMITTED)
+	public boolean startQuiz(int userId, Integer tournamentId) {
+		Tournament tournament = tournamentQuizVerification(userId,tournamentId);
+		statementService.startQuiz(userId, tournament.getquiz().getId());
+		return true;
+	}
+
+	@Retryable(
+			value = { SQLException.class },
+			backoff = @Backoff(delay = 5000))
+	@Transactional(isolation = Isolation.READ_COMMITTED)
+	public void submitAnswer(int userId, Integer tournamentId, StatementAnswerDto answer) {
+		Tournament tournament = tournamentQuizVerification(userId,tournamentId);
+		statementService.submitAnswer(userId, tournament.getquiz().getId(), answer);
+	}
+
+	@Retryable(
+			value = { SQLException.class },
+			backoff = @Backoff(delay = 5000))
+	@Transactional(isolation = Isolation.READ_COMMITTED)
+	public List<CorrectAnswerDto> concludeQuiz(int userId, Integer tournamentId) {
+		Tournament tournament = tournamentQuizVerification(userId,tournamentId);
+		return statementService.concludeQuiz(userId, tournament.getquiz().getId());
 	}
 
 	private boolean checkTopicsExistence(Set<Topic> topics)
