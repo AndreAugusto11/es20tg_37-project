@@ -208,7 +208,7 @@ public class TournamentService
 	}
 
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
-		public List<TournamentDto> getCreatedTournaments(Integer userId) {
+	public List<TournamentDto> getCreatedTournaments(Integer userId) {
 		if(userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
 		User user = userRepository.findById(userId)
 				.orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
@@ -219,4 +219,35 @@ public class TournamentService
 				.collect(Collectors.toList());
 	}
 
+	@Retryable(
+			value = { SQLException.class },
+			backoff = @Backoff(delay = 5000))
+	@Transactional(isolation = Isolation.REPEATABLE_READ)
+	public void cancelTournament(Integer userId, Integer tournamentId) {
+
+		if (tournamentId == null) throw new TutorException(TOURNAMENT_NULL_ID);
+		Tournament tournament = tournamentRepository.findById(tournamentId)
+				.orElseThrow( () -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+
+		if (tournament.getstatus() == Tournament.Status.CANCELLED)
+		{
+			throw new TutorException(TOURNAMENT_ALREADY_CANCELLED, tournamentId);
+		}
+
+		if (userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
+		userRepository.findById(userId).orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
+
+		User creator = tournament.getcreator();
+		Integer creatorId = creator.getId();
+
+		if (creatorId.equals(userId))
+		{
+			tournament.setstatus(Tournament.Status.CANCELLED);
+		}
+		else
+		{
+			throw new TutorException(TOURNAMENT_NON_CREATOR, tournamentId, userId);
+		}
+
+	}
 }

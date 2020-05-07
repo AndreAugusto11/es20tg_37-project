@@ -65,7 +65,7 @@
           <stringProp name="checkQuery"></stringProp>
           <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
           <stringProp name="driver">org.postgresql.Driver</stringProp>
-          <stringProp name="username">manel</stringProp>
+          <stringProp name="username">jgalamba</stringProp>
           <stringProp name="password">1234</stringProp>
           <stringProp name="connectionProperties"></stringProp>
         </JDBCDataSource>
@@ -73,7 +73,7 @@
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="queryType">Callable Statement</stringProp>
-          <stringProp name="query">INSERT INTO tournaments (id,creator_id,number_of_questions,start_date,end_date,status)
+          <stringProp name="query">INSERT INTO tournaments (id,user_id,number_of_questions,start_date,end_date,status)
 VALUES (${tournamentId},651,1,null,null,&apos;OPEN&apos;);</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
@@ -203,12 +203,27 @@ VALUES (${tournamentId},651,1,null,null,&apos;OPEN&apos;);</stringProp>
             <stringProp name="queryArguments"></stringProp>
             <stringProp name="queryArgumentsTypes"></stringProp>
             <stringProp name="variableNames"></stringProp>
-            <stringProp name="resultVariable"></stringProp>
+            <stringProp name="resultVariable">result</stringProp>
             <stringProp name="queryTimeout"></stringProp>
             <stringProp name="resultSetMaxRows"></stringProp>
             <stringProp name="resultSetHandler">Store as String</stringProp>
           </JDBCSampler>
-          <hashTree/>
+          <hashTree>
+            <BeanShellAssertion guiclass="BeanShellAssertionGui" testclass="BeanShellAssertion" testname="BeanShell Assertion" enabled="true">
+              <stringProp name="BeanShellAssertion.query">int i = vars.getObject(&quot;result&quot;).get(0).get(&quot;users_id&quot;).intValue();
+
+if(i != 67)
+{
+	Failure = true;
+	FailureMessage = i.toString();
+}
+</stringProp>
+              <stringProp name="BeanShellAssertion.filename"></stringProp>
+              <stringProp name="BeanShellAssertion.parameters"></stringProp>
+              <boolProp name="BeanShellAssertion.resetInterpreter">false</boolProp>
+            </BeanShellAssertion>
+            <hashTree/>
+          </hashTree>
         </hashTree>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
@@ -304,6 +319,8 @@ VALUES (${tournamentId},651,1,null,null,&apos;OPEN&apos;);</stringProp>
           <stringProp name="queryType">Callable Statement</stringProp>
           <stringProp name="query">DELETE FROM tournaments_users;
 DELETE FROM users_tournaments;
+DELETE FROM users_created_tournaments;
+DELETE FROM tournaments_topics;
 DELETE FROM tournaments;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>

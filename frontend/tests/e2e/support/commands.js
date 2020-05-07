@@ -86,6 +86,18 @@ Cypress.Commands.add('createTournaments', (numQ, topicName, start, finish) => {
   cy.get('[data-cy="save"]').click();
 });
 
+Cypress.Commands.add('cancelTournaments', id => {
+  cy.contains('Tournaments').click();
+  cy.contains('Create Tournaments').click();
+  cy.contains(id)
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 7)
+    .find('[data-cy="cancelTournament"]')
+    .click();
+});
+
 Cypress.Commands.add('enrollTournament', id => {
   cy.contains('Tournaments').click();
   cy.contains('All Tournaments').click();
@@ -96,7 +108,6 @@ Cypress.Commands.add('enrollTournament', id => {
     .should('have.length', 7)
     .find('[data-cy="enrollTournament"]')
     .click();
-  cy.wait(5000);
   cy.contains('Tournaments').click();
   cy.contains('Enrolled Tournaments').click();
   cy.contains(id);
@@ -228,7 +239,7 @@ Cypress.Commands.add('showQuestionFromSuggestion', (title) =>{
   cy.get('[data-cy="questionCloseButton"]').click({ force: true });
 });
 
-Cypress.Commands.add('acceptQuestionSuggestion', (title) =>{
+Cypress.Commands.add('acceptQuestionSuggestion', title => {
   cy.contains(title)
     .parent()
     .children()
@@ -348,4 +359,32 @@ Cypress.Commands.add('editQuestionAcceptedQuestion',
     .type(op3, { force: true });
   cy.get('[data-cy="questionSaveButton"]')
     .click({ force: true });
+});
+
+Cypress.Commands.add('precreateTournament', () => {
+  cy.exec(
+    'psql -d tutordb -c "INSERT INTO tournaments (id,user_id,number_of_questions,status,start_date,end_date) VALUES (23,676,5,\'OPEN\',\'2025-11-23 10:50\',\'2025-11-23 10:59\');"'
+  );
+  cy.exec(
+    'psql -d tutordb -c "INSERT INTO tournaments_topics (tournament_id,topics_id) VALUES (23,121)"'
+  );
+  cy.exec(
+    'psql -d tutordb -c "INSERT INTO tournaments_users (tournament_id,users_id) VALUES (23,676)"'
+  );
+  cy.exec(
+    'psql -d tutordb -c "INSERT INTO users_tournaments (user_id,tournaments_id) VALUES (676,23)"'
+  );
+  cy.exec(
+    'psql -d tutordb -c "INSERT INTO users_created_tournaments (user_id,created_tournaments_id) VALUES (676,23)"'
+  );
+});
+
+Cypress.Commands.add('deletePrecreatedTournament', () => {
+  cy.exec('psql -d tutordb -c "DELETE FROM tournaments_users WHERE tournament_id = 23;"');
+  cy.exec('psql -d tutordb -c "DELETE FROM users_tournaments WHERE tournaments_id = 23;"');
+  cy.exec(
+    'psql -d tutordb -c "DELETE FROM users_created_tournaments WHERE created_tournaments_id = 23;"'
+  );
+  cy.exec('psql -d tutordb -c "DELETE FROM tournaments_topics WHERE tournament_id = 23;"');
+  cy.exec('psql -d tutordb -c "DELETE FROM tournaments WHERE id = 23;"');
 });

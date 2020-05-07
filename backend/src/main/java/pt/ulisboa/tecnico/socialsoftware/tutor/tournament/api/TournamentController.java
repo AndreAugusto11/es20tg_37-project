@@ -4,10 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
@@ -120,5 +122,17 @@ public class TournamentController {
         }
 
         return tournamentService.concludeQuiz(user.getId(),tournamentId);
+    }
+    @PostMapping("/tournaments/{tournamentId}/cancel")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public ResponseEntity cancelTournament(Principal principal, @PathVariable Integer tournamentId)
+    {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        if (user == null) { throw new TutorException(AUTHENTICATION_ERROR); }
+        Integer userId = user.getId();
+
+        tournamentService.cancelTournament(userId, tournamentId);
+
+        return ResponseEntity.ok().build();
     }
 }

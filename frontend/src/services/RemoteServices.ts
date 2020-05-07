@@ -203,6 +203,15 @@ export default class RemoteServices {
       });
   }
 
+  static cancelTournament(tournament: Tournament) {
+    console.log(tournament.id);
+    return httpClient
+      .post(`/tournaments/${tournament.id}/cancel`)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async createQuestion(question: Question): Promise<Question> {
     return httpClient
       .post(
