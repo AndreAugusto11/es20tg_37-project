@@ -58,7 +58,7 @@
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="totalClarificationRequests">
+        <div class="icon-wrapper" data-cy="totalClarificationRequests" ref="totalClarificationRequests">
           <animated-number :number="stats.totalClarificationRequests" />
         </div>
         <div class="project-name">
@@ -66,7 +66,7 @@
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="totalPublicClarificationRequests">
+        <div class="icon-wrapper" data-cy="totalPublicClarificationRequests" ref="totalPublicClarificationRequests">
           <animated-number :number="stats.totalPublicClarificationRequests" />
         </div>
         <div class="project-name">

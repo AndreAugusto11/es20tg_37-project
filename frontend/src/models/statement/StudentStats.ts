@@ -22,7 +22,8 @@ export default class StudentStats {
       this.uniqueWrongAnswers = jsonObj.uniqueWrongAnswers;
       this.totalAvailableQuestions = jsonObj.totalAvailableQuestions;
       this.totalClarificationRequests = jsonObj.totalClarificationRequests;
-      this.totalPublicClarificationRequests = jsonObj.totalPublicClarificationRequests;
+      this.totalPublicClarificationRequests =
+        jsonObj.totalPublicClarificationRequests;
     }
   }
 }
