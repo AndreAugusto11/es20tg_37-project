@@ -52,8 +52,8 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectTeacherAnswers;
     private Integer numberOfCorrectInClassAnswers;
     private Integer numberOfCorrectStudentAnswers;
-    private Integer totalNumberSuggestions = 0;
-    private Integer totalNumberSuggestionsAvailable = 0;
+    private Integer totalNumberSuggestions;
+    private Integer totalNumberSuggestionsAvailable;
     private Boolean privateSuggestion = false;
 
     @Column(name = "creation_date")
@@ -180,21 +180,7 @@ public class User implements UserDetails, DomainEntity {
         return courseExecutions;
     }
 
-    public Integer getTotalNumberSuggestions() {
-        return totalNumberSuggestions;
-    }
 
-    public void setTotalNumberSuggestions(Integer totalNumberSuggestions) {
-        this.totalNumberSuggestions = totalNumberSuggestions;
-    }
-
-    public Integer getTotalNumberSuggestionsAvailable() {
-        return totalNumberSuggestionsAvailable;
-    }
-
-    public void setTotalNumberSuggestionsAvailable(Integer totalNumberSuggestionsAvailable) {
-        this.totalNumberSuggestionsAvailable = totalNumberSuggestionsAvailable;
-    }
 
     public Boolean getPrivateSuggestion() {
         return privateSuggestion;
@@ -543,5 +529,15 @@ public class User implements UserDetails, DomainEntity {
     public Set<Tournament> getCreatedTournaments()
     {
         return createdTournaments;
+    }
+
+    public Integer getTotalNumberSuggestions() {
+        return (int) questionSuggestion.stream().count();
+    }
+
+    public Integer getTotalNumberSuggestionsAvailable() {
+        return (int)questionSuggestion.stream().filter(questionSuggestion1 ->
+                questionSuggestion1.getStatus().equals(QuestionSuggestion.Status.ACCEPTED)).count();
+
     }
 }
