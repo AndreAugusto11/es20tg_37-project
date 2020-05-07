@@ -154,7 +154,7 @@ Cypress.Commands.add('listClarificationRequest', content => {
 Cypress.Commands.add(
   'createQuestionSuggestion',
   (title, question, op0, op1, op2, op3, flag) => {
-    cy.contains('New Suggestion').click();
+    cy.contains('New Suggestion').click({ force: true });
     if (title !== '') {
       cy.get('[data-cy="Title"]').type(title, { force: true });
     }
@@ -180,7 +180,7 @@ Cypress.Commands.add(
         .eq(3)
         .click({ force: true });
     }
-    cy.get('[data-cy="saveButton"]').click();
+    cy.get('[data-cy="saveButton"]').click({ force: true });
   }
 );
 
@@ -192,13 +192,13 @@ Cypress.Commands.add('showQuestionSuggestion', title => {
     .should('have.length', 5)
     .find('[data-cy="showSuggestion"]')
     .click();
-  cy.get('[data-cy="closeButton"]').click();
+  cy.get('[data-cy="closeButton"]').click({ force: true });
 });
 
 Cypress.Commands.add('showQuestionFromSuggestion', (title) =>{
-  cy.contains(title).click()
+  cy.contains(title).click({ force: true })
   cy.wait(500)
-  cy.get('[data-cy="questionCloseButton"]').click()
+  cy.get('[data-cy="questionCloseButton"]').click({ force: true })
 });
 
 Cypress.Commands.add('acceptQuestionSuggestion', (title) =>{
@@ -217,7 +217,7 @@ Cypress.Commands.add('acceptQuestionSuggestionShow', title => {
     .should('have.length', 5)
     .find('[data-cy="showButton"]')
     .click({ force: true });
-  cy.get('[data-cy="acceptQuestion"]').click();
+  cy.get('[data-cy="acceptQuestion"]').click({ force: true });
 });
 
 Cypress.Commands.add('rejectQuestionSuggestion', (title, text) => {
@@ -228,7 +228,7 @@ Cypress.Commands.add('rejectQuestionSuggestion', (title, text) => {
     .find('[data-cy="rejectButton"]')
     .click({ force: true });
   cy.get('[data-cy="justification_text"]').type(text);
-  cy.get('[data-cy="saveJustification"]').click();
+  cy.get('[data-cy="saveJustification"]').click({ force: true });
 });
 
 Cypress.Commands.add('rejectQuestionSuggestionShow', (title, text) => {
@@ -238,9 +238,9 @@ Cypress.Commands.add('rejectQuestionSuggestionShow', (title, text) => {
     .should('have.length', 5)
     .find('[data-cy="showButton"]')
     .click({ force: true });
-  cy.get('[data-cy="rejectQuestion"]').click();
+  cy.get('[data-cy="rejectQuestion"]').click({ force: true });
   cy.get('[data-cy="justification_text"]').type(text);
-  cy.get('[data-cy="saveJustification"]').click();
+  cy.get('[data-cy="saveJustification"]').click({ force: true });
 });
 
 Cypress.Commands.add(
@@ -272,7 +272,8 @@ Cypress.Commands.add(
         .eq(3)
         .type(op3, { force: true });
     }
-    cy.get('[data-cy="saveButton"]').click();
+    cy.get('[data-cy="saveButton"]')
+      .click({ force: true });
   }
 );
 
@@ -282,33 +283,34 @@ Cypress.Commands.add('editQuestionAcceptedQuestion',
     .parent()
     .parent()
     .find('[data-cy="editQuestion"]')
-    .click()
+    .click({ force: true })
   if (newTitle !== '') {
     cy.get('[data-cy="questionTitle"]')
-      .clear()
+      .clear({ force: true })
       .type(newTitle, { force: true })
   } else {
-    cy.get('[data-cy="questionTitle"]').clear()
+    cy.get('[data-cy="questionTitle"]')
+      .clear({ force: true })
   }
   cy.get('[data-cy="questionContent"]')
-    .clear()
+    .clear({ force: true })
     .type(content, { force: true })
   cy.get('[data-cy="questionOp"]')
     .eq(0)
-    .clear()
+    .clear({ force: true })
     .type(op0, { force: true })
   cy.get('[data-cy="questionOp"]')
     .eq(1)
-    .clear()
+    .clear({ force: true })
     .type(op1, { force: true })
   cy.get('[data-cy="questionOp"]')
     .eq(2)
-    .clear()
+    .clear({ force: true })
     .type(op2, { force: true })
   cy.get('[data-cy="questionOp"]')
     .eq(3)
-    .clear()
+    .clear({ force: true })
     .type(op3, { force: true })
-  cy.get('[data-cy="questionSaveButton"]').click()
-
+  cy.get('[data-cy="questionSaveButton"]')
+    .click({ force: true })
 });

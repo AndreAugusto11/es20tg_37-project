@@ -6,6 +6,18 @@ describe('Edit a question', () => {
 
   afterEach(() => {
     cy.contains('Logout').click();
+    cy.exec('psql -d tutordb -c "' +
+      'DELETE FROM options WHERE question_id IN (SELECT id FROM questions WHERE title = \'TestEdit\');"');
+    cy.exec('psql -d tutordb -c "' +
+      'DELETE FROM questions WHERE title = \'TestEdit\';"');
+    cy.exec('psql -d tutordb -c "' +
+      'DELETE FROM users_question_suggestion;"');
+    cy.exec('psql -d tutordb -c "' +
+      'DELETE FROM question_suggestions;"');
+    cy.exec('psql -d tutordb -c "' +
+      'DELETE FROM options WHERE question_id IN (SELECT id FROM questions WHERE title = \'TestEditNew\');"');
+    cy.exec('psql -d tutordb -c "' +
+      'DELETE FROM questions WHERE title = \'TestEditNew\';"');
   });
 
   it('login and create suggestion that is accepted and created question edited', () => {
@@ -23,7 +35,6 @@ describe('Edit a question', () => {
     cy.contains('Management').click();
     cy.wait(500);
     cy.contains('Questions').click();
-    cy.wait(5000);
     cy.editQuestionAcceptedQuestion(
       'TestEdit', 'TestEditNew', 'ContentNew', 'Option1New',
       'Option2New', 'Option3New', 'Option4New', 'No')
@@ -34,7 +45,7 @@ describe('Edit a question', () => {
     cy.demoStudentLogin();
     cy.contains('Suggestions').click();
     cy.wait(500);
-    cy.showQuestionSuggestion('TestEdit');
+    cy.showQuestionSuggestion('TestEdit')
   });
 
   it('login and create suggestion that is accepted and created question edited wrongly', () => {
@@ -52,12 +63,11 @@ describe('Edit a question', () => {
     cy.contains('Management').click();
     cy.wait(500);
     cy.contains('Questions').click();
-    cy.wait(5000);
     cy.editQuestionAcceptedQuestion(
       'TestEdit', '', 'ContentNew', 'Option1New',
-      'Option2New', 'Option3New', 'Option4New', 'No')
+      'Option2New', 'Option3New', 'Option4New', 'No');
     cy.wait(1000);
     cy.closeErrorMessage();
-    cy.get('[data-cy="questionCancelButton"]').click()
+    cy.get('[data-cy="questionCancelButton"]').click();
   });
 });

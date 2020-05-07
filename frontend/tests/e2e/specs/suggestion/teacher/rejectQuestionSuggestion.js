@@ -5,7 +5,19 @@ describe('Reject a suggestion', () => {
   });
 
   afterEach(() => {
-    cy.contains('Logout').click()
+    cy.contains('Logout').click();
+    cy.exec('psql -d tutordb -c "' +
+      'DELETE FROM options WHERE question_id IN (SELECT id FROM questions WHERE title = \'TestReject\');"');
+    cy.exec('psql -d tutordb -c "' +
+      'DELETE FROM questions WHERE title = \'TestReject\';"');
+    cy.exec('psql -d tutordb -c "' +
+      'DELETE FROM options WHERE question_id IN (SELECT id FROM questions WHERE title = \'TestRejectShow\');"');
+    cy.exec('psql -d tutordb -c "' +
+      'DELETE FROM questions WHERE title = \'TestRejectShow\';"');
+    cy.exec('psql -d tutordb -c "' +
+      'DELETE FROM users_question_suggestion;"');
+    cy.exec('psql -d tutordb -c "' +
+      'DELETE FROM question_suggestions;"');
   });
 
   it('login, creates a suggestion and rejects it through direct button', () => {
