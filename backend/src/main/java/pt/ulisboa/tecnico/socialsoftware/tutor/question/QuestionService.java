@@ -39,8 +39,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class QuestionService {
@@ -126,6 +125,15 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto updateQuestion(Integer questionId, QuestionDto questionDto) {
+
+        if (questionId == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_QUESTIONID);
+        }
+
+        if (questionDto == null) {
+            throw new TutorException(INVALID_NULL_ARGUMENTS_QUESTION);
+        }
+
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         question.update(questionDto);
         return new QuestionDto(question);
