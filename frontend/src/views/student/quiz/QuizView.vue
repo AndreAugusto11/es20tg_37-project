@@ -167,7 +167,10 @@ export default class QuizView extends Vue {
       await this.$router.push({ name: 'create-quiz' });
     } else {
       try {
-        await RemoteServices.startQuiz(this.statementQuiz?.id);
+        if (this.statementQuiz?.tournamentID == null)
+          await RemoteServices.startQuiz(this.statementQuiz?.id);
+        else
+          await RemoteServices.startTournamentQuiz(this.statementQuiz?.tournamentID);
       } catch (error) {
         await this.$store.dispatch('error', error);
         await this.$router.push({ name: 'available-quizzes' });
@@ -214,10 +217,18 @@ export default class QuizView extends Vue {
           this.statementQuiz.answers[this.questionOrder].optionId = optionId;
         }
 
-        await RemoteServices.submitAnswer(
-          this.statementQuiz.id,
-          this.statementQuiz.answers[this.questionOrder]
-        );
+        if(this.statementQuiz.tournamentID == null) {
+          await RemoteServices.submitAnswer(
+                  this.statementQuiz.id,
+                  this.statementQuiz.answers[this.questionOrder]
+          );
+        }
+        else{
+          await RemoteServices.submitTournamentAnswer(
+                  this.statementQuiz.tournamentID,
+                  this.statementQuiz.answers[this.questionOrder]
+          );
+        }
       } catch (error) {
         this.statementQuiz.answers[
           this.questionOrder

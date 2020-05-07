@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
@@ -27,6 +28,9 @@ public class Tournament {
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	private User creator;
+
+	@OneToOne
+	private Quiz quiz;
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	private Set<Topic> topics = new HashSet<>();
@@ -80,6 +84,7 @@ public class Tournament {
 		return creator;
 	}
 
+	public Quiz getquiz() {return quiz;}
 
 	public Set<User> getusers()
 	{
@@ -183,4 +188,5 @@ public class Tournament {
 		status = stat;
 	}
 
+	public void setquiz(Quiz quiz) {this.quiz = quiz;}
 }

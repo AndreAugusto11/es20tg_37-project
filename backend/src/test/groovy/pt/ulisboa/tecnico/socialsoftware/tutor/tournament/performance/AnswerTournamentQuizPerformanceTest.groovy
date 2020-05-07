@@ -1,9 +1,10 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.service.performanceTest
+package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
@@ -12,40 +13,46 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.PublicClarificationRequestRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
+import java.time.LocalDateTime
+
 @DataJpaTest
-class RemovePublicClarificationRequestServiceSpockPerformanceTest extends Specification {
-    public static final Integer NUMBER_OF_ITERATIONS = 1
-    public static final String USERNAME_TEACHER = "username_teacher"
-    public static final String USERNAME_STUDENT = "username_student"
+class AnswerTournamentQuizPerformanceTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
-    public static final String CLARIFICATION_CONTENT = "Test"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
+    public static final Integer TIME_TAKEN = 1234
     public static final String QUIZ_TITLE = 'quiz title'
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
     public static final Integer SEQUENCE = 0
+    public static final String URL = 'URL'
 
     @Autowired
-    QuestionDiscussionService questionDiscussionService
+    TournamentService tournamentService
+
+    @Autowired
+    TournamentRepository tournamentRepository
 
     @Autowired
     UserRepository userRepository
@@ -74,38 +81,28 @@ class RemovePublicClarificationRequestServiceSpockPerformanceTest extends Specif
     @Autowired
     QuestionAnswerRepository questionAnswerRepository
 
-    @Autowired
-    ClarificationRequestRepository clarificationRequestRepository
-
-    @Autowired
-    PublicClarificationRequestRepository publicClarificationRequestRepository
-
-    def user_teacher
-    def user_student
+    def user
+    def tournament
     def course
     def courseExecution
     def question
-    def option
     def quizQuestion
+    def option
     def quizAnswer
     def quiz
-    def questionAnswer
 
     def setup() {
+        user = new User("Manel1", "Man12", 1, User.Role.STUDENT)
 
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecution.getUsers().add(user)
         courseExecutionRepository.save(courseExecution)
 
-        user_teacher = new User("name", USERNAME_TEACHER, 1, User.Role.TEACHER)
-        user_student = new User("name", USERNAME_STUDENT, 2, User.Role.STUDENT)
-        user_teacher.getCourseExecutions().add(courseExecution)
-        user_student.getCourseExecutions().add(courseExecution)
-        courseExecution.getUsers().add(user_teacher)
-        userRepository.save(user_teacher)
-        userRepository.save(user_student)
+        user.getCourseExecutions().add(courseExecution)
+        userRepository.save(user)
 
         question = new Question()
         question.setCourse(course)
@@ -129,61 +126,74 @@ class RemovePublicClarificationRequestServiceSpockPerformanceTest extends Specif
         quiz.setTitle(QUIZ_TITLE)
         quiz.setType(Quiz.QuizType.GENERATED.name())
         quiz.setCourseExecution(courseExecution)
+        quiz.setOneWay(false)
         courseExecution.addQuiz(quiz)
         quizRepository.save(quiz)
 
-        quizQuestion = new QuizQuestion()
-        quizQuestion.setQuiz(quiz)
-        quizQuestion.setQuestion(question)
+        quizQuestion = new QuizQuestion(quiz, question, SEQUENCE)
         quiz.addQuizQuestion(quizQuestion)
         quizQuestionRepository.save(quizQuestion)
 
-        quizAnswer = new QuizAnswer()
-        quizAnswer.setQuiz(quiz)
-        quizAnswer.setUser(user_student)
-        quizAnswer.setCompleted(true)
+        quizAnswer = new QuizAnswer(user, quiz)
         quizAnswerRepository.save(quizAnswer)
-
-        questionAnswer = new QuestionAnswer()
-        quizAnswer.addQuestionAnswer(questionAnswer)
-        questionAnswer.setQuizAnswer(quizAnswer)
-        questionAnswer.setQuizQuestion(quizQuestion)
-        questionAnswerRepository.save(questionAnswer)
     }
 
-    def "performance testing to create 1000 public clarification request"() {
-        given: "a clarification request"
-        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
-
-        and: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto(clarificationRequest)
-
-        and: "10000 clarification requests"
-        1.upto(NUMBER_OF_ITERATIONS, {
-            questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
+    def "performance testing to answer quiz in 10000 tournaments"(){
+        given: "10000 tournaments"
+        1.upto(1, {
+            tournament = new Tournament(user)
+            tournament.setquiz(quiz)
+            tournament.setstartTime(LocalDateTime.now())
+            tournament.setendTime(LocalDateTime.now().plusDays(1))
+            tournament.setstatus(Tournament.Status.ONGOING)
+            tournamentRepository.save(tournament)
         })
-        List<ClarificationRequest> clarificationRequestList = clarificationRequestRepository.findAll()
+        List<Tournament> tournamentList = tournamentRepository.findAll()
 
-        and: "10000 public clarification requests are created"
-        1.upto(NUMBER_OF_ITERATIONS, {
-            questionDiscussionService.createPublicClarificationRequest(clarificationRequestList.pop().getId())
-        })
-        clarificationRequestList = clarificationRequestRepository.findAll()
+        and: "One answer"
+        def questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
+        def statementAnswer = new StatementAnswerDto(questionAnswer)
 
-        when: "10000 public clarification requests are removed"
-        1.upto(NUMBER_OF_ITERATIONS, {
-            questionDiscussionService.removePublicClarificationRequest(clarificationRequestList.pop().getId())
+        when:
+        1.upto(1, {
+            tournamentService.submitAnswer(user.getId(),tournamentList.pop().getid(),statementAnswer)
         })
 
-        then: true
+        then:
+        true
     }
+
 
     @TestConfiguration
-    static class ServiceImplTestContextConfiguration {
+    static class TournamentServiceCreatTestContextConfiguration {
+        @Bean
+        QuestionService QuestionService() {
+            return new QuestionService()
+        }
 
         @Bean
-        QuestionDiscussionService questionDiscussionService() {
-            return new QuestionDiscussionService()
+        AnswersXmlImport AnswersXmlImport() {
+            return new AnswersXmlImport()
+        }
+
+        @Bean
+        QuizService QuizService() {
+            return new QuizService()
+        }
+
+        @Bean
+        AnswerService AnswerService() {
+            return new AnswerService()
+        }
+
+        @Bean
+        StatementService statementService() {
+            return new StatementService()
+        }
+
+        @Bean
+        TournamentService tournamentService() {
+            return new TournamentService()
         }
     }
 }

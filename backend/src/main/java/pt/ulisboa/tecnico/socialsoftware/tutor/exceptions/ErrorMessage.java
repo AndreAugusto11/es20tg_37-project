@@ -37,6 +37,8 @@ public enum ErrorMessage {
     TOURNAMENT_NOT_OPEN("Tournament with id %d not open"),
     TOURNAMENT_NOT_STUDENT("Tournament only allows students to enroll"),
     TOURNAMENT_STUDENT_ALREADY_ENROLLED("Tournament already enrolled student with id %d"),
+    TOURNAMENT_STUDENT_NOT_ENROLLED("Tournament not enrolled student with id %d"),
+    TOURNAMENT_NOT_ONGOING("Tournament with id %d not yet ongoing"),
 
     TOURNAMENT_NULL_USER("User is null"),
     TOURNAMENT_NULL_TOURNAMENT("Tournament is null"),
@@ -44,6 +46,7 @@ public enum ErrorMessage {
     TOURNAMENT_NULL_NUM_QUESTS("Number of Questions is null in Tournament Creation"),
     TOURNAMENT_NULL_STARTTIME("Start Time is null in Tournament Creation"),
     TOURNAMENT_NULL_ENDTIME("End Time is null in Tournament Creation"),
+    TOURNAMENT_NULL_QUIZ("Quiz not yet generated in Tournament with id %d"),
     TOURNAMENT_NON_VALID_USER("User is not in a Student (id %d) in Tournament Creation"),
     TOURNAMENT_INVALID_NUM_QUESTS("Number of Questions is a non-positive number in Tournament Creation"),
     TOURNAMENT_INVALID_TOPIC("A Specified Topic does not exist while Creating Tournament"),

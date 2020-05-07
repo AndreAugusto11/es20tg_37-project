@@ -6,13 +6,13 @@
                 :key="clarificationRequestAnswer.id"
         />
         <v-container>
-            <v-btn v-if="this.clarificationRequest.status !== 'CLOSED'" class="mr-5" color="primary" dark @click="newClarificationRequestAnswer" data-cy="answerButton">
+            <v-btn v-if="this.clarificationRequest.status !== 'CLOSED'" class="mr-5" color="primary" @click="newClarificationRequestAnswer" data-cy="answerButton">
                 <v-icon left>mdi-reply</v-icon> Reply
             </v-btn>
             <v-btn v-else class="mr-5" disabled data-cy="answerButtonDisabled">
                 <v-icon left>mdi-reply</v-icon> Reply
             </v-btn>
-            <v-btn v-if="this.$store.getters.isStudent && this.clarificationRequest.status !== 'CLOSED'" color="primary" dark @click="closeClarificationRequest" data-cy="closeButton">
+            <v-btn v-if="this.$store.getters.isStudent && this.clarificationRequest.status !== 'CLOSED'" class="mr-5" color="primary" @click="closeClarificationRequest" data-cy="closeButton">
                 <v-icon left>mdi-close</v-icon> Close Clarification
             </v-btn>
             <v-btn v-else-if="this.$store.getters.isStudent" disabled data-cy="closeButtonDisabled">
@@ -34,7 +34,7 @@
   import {Component, Vue} from 'vue-property-decorator';
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
   import CreateClarificationRequestAnswerDialog
-    from '@/views/teacher/discussion/CreateClarificationRequestAnswerDialog.vue';
+    from '@/views/discussion/CreateClarificationRequestAnswerDialog.vue';
   import ClarificationRequestComponent from '@/components/discussion/ClarificationRequestComponent.vue';
   import {ClarificationRequestAnswer} from '@/models/discussion/ClarificationRequestAnswer';
   import ClarificationRequestAnswerComponent from '@/components/discussion/ClarificationRequestAnswerComponent.vue';

@@ -371,9 +371,23 @@ export default class RemoteServices {
     });
   }
 
+  static async startTournamentQuiz(tournamentId: number) {
+    return httpClient.get(`/tournaments/${tournamentId}/start`).catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
+  }
+
   static async submitAnswer(quizId: number, answer: StatementAnswer) {
     return httpClient
       .post(`/quizzes/${quizId}/submit`, answer)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async submitTournamentAnswer(tournamentId: number, answer: StatementAnswer) {
+    return httpClient
+      .post(`/tournaments/${tournamentId}/submit`, answer)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -384,6 +398,23 @@ export default class RemoteServices {
   ): Promise<StatementCorrectAnswer[] | void> {
     return httpClient
       .get(`/quizzes/${quizId}/conclude`)
+      .then(response => {
+        if (response.data) {
+          return response.data.map((answer: any) => {
+            return new StatementCorrectAnswer(answer);
+          });
+        }
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async concludeTournamentQuiz(
+    tournamentId: number
+  ): Promise<StatementCorrectAnswer[] | void> {
+    return httpClient
+      .get(`/tournaments/${tournamentId}/conclude`)
       .then(response => {
         if (response.data) {
           return response.data.map((answer: any) => {
@@ -675,6 +706,21 @@ export default class RemoteServices {
     return httpClient
       .get(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests`
+      )
+      .then(response => {
+        return response.data.map((clarificationRequest: any) => {
+          return new ClarificationRequest(clarificationRequest);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getQuestionClarificationRequests(questionAnswerId: number): Promise<ClarificationRequest[]> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/questionAnswers/${questionAnswerId}/clarificationRequests`
       )
       .then(response => {
         return response.data.map((clarificationRequest: any) => {

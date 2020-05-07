@@ -30,8 +30,8 @@ import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
-import ClarificationRequestsView from '@/views/student/discussion/ClarificationRequestsView.vue';
-import ClarificationRequestsTeacherView from '@/views/teacher/discussion/ClarificationRequestsTeacherView.vue';
+import ListClarificationRequestsView from '@/views/discussion/ListClarificationRequestsView.vue';
+import QuestionClarificationRequestsView from '@/views/student/discussion/QuestionClarificationRequestsView.vue';
 import ClarificationRequestView from '@/views/discussion/ClarificationRequestView.vue';
 
 Vue.use(Router);
@@ -126,7 +126,7 @@ let router = new Router({
         {
           path: 'discussion',
           name: 'clarificationRequests-management',
-          component: ClarificationRequestsTeacherView,
+          component: ListClarificationRequestsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Clarification Requests',
             requiredAuth: 'Teacher'
@@ -224,7 +224,7 @@ let router = new Router({
         {
           path: 'discussion',
           name: 'discussion',
-          component: ClarificationRequestsView,
+          component: ListClarificationRequestsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Discussion',
             requiredAuth: 'Student'
@@ -237,6 +237,16 @@ let router = new Router({
           props: true,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Clarification',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'questionClarifications',
+          name: 'questionClarifications',
+          component: QuestionClarificationRequestsView,
+          props: true,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Question Clarifications',
             requiredAuth: 'Student'
           }
         },

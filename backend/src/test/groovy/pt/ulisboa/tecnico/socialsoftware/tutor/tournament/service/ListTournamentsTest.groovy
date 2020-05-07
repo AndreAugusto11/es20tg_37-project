@@ -4,6 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
@@ -54,6 +59,31 @@ class ListTournamentsTest extends Specification {
 
     @TestConfiguration
     static class TournamentServiceListTestContextConfiguration {
+
+        @Bean
+        QuestionService QuestionService() {
+            return new QuestionService()
+        }
+
+        @Bean
+        AnswersXmlImport AnswersXmlImport() {
+            return new AnswersXmlImport()
+        }
+
+        @Bean
+        QuizService QuizService() {
+            return new QuizService()
+        }
+
+        @Bean
+        AnswerService AnswerService() {
+            return new AnswerService()
+        }
+
+        @Bean
+        StatementService statementService() {
+            return new StatementService()
+        }
 
         @Bean
         TournamentService tournamentService() {
