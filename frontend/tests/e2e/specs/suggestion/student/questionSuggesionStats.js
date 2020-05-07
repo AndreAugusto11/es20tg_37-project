@@ -8,7 +8,7 @@ describe('Show stats', () => {
     cy.contains('Logout').click();
   });
 
-  it('it creates a suggestion and see the  stats', () => {
+  it('it creates a suggestion and see the stats', () => {
     cy.createQuestionSuggestion(
       'TestNormal',
       'Question',
@@ -18,10 +18,13 @@ describe('Show stats', () => {
       'd',
       'No'
     );
+    cy.wait(10000);
     cy.contains('Stats').click();
-    cy.wait(5000);
+    cy.get('[data-cy="totalNumberSuggestions"]')
+      .contains(/^[1-9][0-9]*$/)
+      .should('exist');
   });
-  it('it creates a suggestion, this is accpeted and see the  stats', () => {
+  it('it creates a suggestion, this is accepted and see the  stats', () => {
     cy.createQuestionSuggestion(
       'TestNormal',
       'Question',
@@ -39,6 +42,8 @@ describe('Show stats', () => {
     cy.contains('Logout').click();
     cy.demoStudentLogin();
     cy.contains('Stats').click();
-    cy.wait(5000);
+    cy.get('[data-cy="totalNumberSuggestionsAvailable"]')
+      .contains(/^[1-9][0-9]*$/)
+      .should('exist');
   });
 });

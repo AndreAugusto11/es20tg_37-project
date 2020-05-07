@@ -3,7 +3,7 @@
     <h2>Statistics</h2>
     <div v-if="stats != null" class="stats-container">
       <div class="items">
-        <div class="icon-wrapper" ref="totalNumberSuggestions">
+        <div class="icon-wrapper" ref="totalNumberSuggestions" data-cy="totalNumberSuggestions">
           <animated-number :number="stats.totalNumberSuggestions" />
         </div>
         <div class="project-name">
@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="totalNumberSuggestionsAvailable">
+        <div class="icon-wrapper" ref="totalNumberSuggestionsAvailable" data-cy="totalNumberSuggestionsAvailable">
           <animated-number :number="stats.totalNumberSuggestionsAvailable" />
         </div>
         <div class="project-name">
