@@ -101,6 +101,26 @@ Cypress.Commands.add('enrollTournament', id => {
   cy.contains(id);
 });
 
+Cypress.Commands.add('answerTournament', id => {
+  cy.contains('Tournaments').click();
+  cy.contains('Enrolled Tournaments').click();
+  cy.contains(id)
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 7)
+    .find('[data-cy="answerTournament"]')
+    .click();
+  for (let i = 0; i < 5; i++) {
+    cy.get('.option')
+      .first()
+      .click();
+    cy.get('div.square').click();
+  }
+  cy.get('.end-quiz').click();
+  cy.contains('I\'m sure').click();
+});
+
 Cypress.Commands.add('demoTeacherLogin', () => {
   cy.visit('/');
   cy.get('[data-cy="demoTeacherLoginButton"]').click();
