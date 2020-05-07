@@ -76,16 +76,17 @@
   import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 
   @Component
-  export default class ClarificationRequestsView extends Vue {
+  export default class ListClarificationRequestsView extends Vue {
     clarificationRequests: ClarificationRequest[] = [];
     search: string = '';
 
     headers: object = [
-      { text: 'Clarification', value: 'content', align: 'left', width: '50%' },
-      { text: 'Creation Date', value: 'creationDate', align: 'center', width: '10%' },
-      { text: 'Number of Replies', value: 'number', align: 'center', width: '20%' },
-      { text: 'Status', value: 'status', align: 'center', width: '20%' },
-      { text: 'Availability', value: 'public', align: 'center', width: '10%'}
+        { text: 'Clarification', value: 'content', align: 'left', width: '30%' },
+        { text: 'Student Name', value: 'name', align: 'center', width: '20%' },
+        { text: 'Creation Date', value: 'creationDate', align: 'center', width: '10%' },
+        { text: 'Replies', value: 'number', align: 'center', width: '10%' },
+        { text: 'Status', value: 'status', align: 'center', width: '10%' },
+        { text: 'Availability', value: 'public', align: 'center', width: '6%'}
     ];
 
     async created() {
@@ -119,7 +120,11 @@
     }
 
     async openClarificationRequest(value: ClarificationRequest) {
-      await this.$router.push({ name: 'clarification', params: { clarificationRequest: JSON.stringify(value) } });
+        if (this.$store.getters.isTeacher)
+            await this.$router.push({ name: 'discussionQuestion', params: { clarificationRequest: JSON.stringify(value) } });
+
+        if (this.$store.getters.isStudent)
+            await this.$router.push({ name: 'clarification', params: { clarificationRequest: JSON.stringify(value) } });
     }
   }
 </script>
