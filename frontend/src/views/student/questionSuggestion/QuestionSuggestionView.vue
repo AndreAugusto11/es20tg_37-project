@@ -25,14 +25,6 @@
           >
         </v-card-title>
       </template>
-      <template v-slot:item.title="{ item }">
-        <p
-          @click="showQuestionDialog(item)"
-          style="cursor: pointer"
-        >
-          {{ item.title }}
-        </p>
-      </template>
 
       <template v-slot:item.status="{ item }">
         <v-chip :color="getStatusColor(item.status)" small>

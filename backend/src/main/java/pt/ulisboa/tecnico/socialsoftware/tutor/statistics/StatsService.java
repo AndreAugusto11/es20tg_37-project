@@ -48,8 +48,8 @@ public class StatsService {
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public StatsDto getStats(int userId, int executionId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND9, userId));
+    public StatsDto getStats(int userId, int executionId, int courseId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         StatsDto statsDto = new StatsDto();
 
@@ -98,10 +98,12 @@ public class StatsService {
 
         int totalNumberSuggestions = (int) questionSuggestionRepository.findAll().stream().
                 filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
+                filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId)).
                 count();
 
         int totalNumberSuggestionsAvailable = (int) questionSuggestionRepository.findAll().stream().
                 filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
+                filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId)).
                 filter(questionSuggestion -> questionSuggestion.getStatus().equals(QuestionSuggestion.Status.ACCEPTED)).
                 count();
 

@@ -13,6 +13,7 @@ public class StatsDto implements Serializable {
     private Integer totalAvailableQuestions = 0;
     private Integer totalNumberSuggestions = 0;
     private Integer totalNumberSuggestionsAvailable = 0;
+    Private Boolean privateSuggestion = false;
 
     public Integer getTotalNumberSuggestions() {
         return totalNumberSuggestions;
