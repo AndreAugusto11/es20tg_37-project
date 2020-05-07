@@ -6,11 +6,25 @@ describe('Update a suggestion', () => {
 
   afterEach(() => {
     cy.contains('Logout').click();
+    cy.exec('psql -d tutordb -c ' +
+      '"DELETE FROM options o WHERE question_id IN ( SELECT id FROM questions WHERE title = \'TestUpdate\');"');
+    cy.exec('psql -d tutordb -c ' +
+      '"DELETE FROM questions WHERE title = \'TestUpdate\';"');
+    cy.exec('psql -d tutordb -c ' +
+      '"DELETE FROM options o WHERE question_id IN ( SELECT id FROM questions WHERE title = \'TestUpdateNew\');"');
+    cy.exec('psql -d tutordb -c ' +
+      '"DELETE FROM questions WHERE title = \'TestUpdateNew\';"');
+    cy.exec('psql -d tutordb -c "' +
+      'DELETE FROM justifications;"');
+    cy.exec('psql -d tutordb -c ' +
+      '"DELETE FROM users_question_suggestion;"');
+    cy.exec('psql -d tutordb -c ' +
+      '"DELETE FROM question_Suggestions;"');
   });
 
   it('login, creates a suggestion and when this is rejected updates this one', () => {
     cy.createQuestionSuggestion(
-      'TestNormal',
+      'TestUpdate',
       'Question',
       'a',
       'b',
@@ -23,14 +37,14 @@ describe('Update a suggestion', () => {
     cy.demoTeacherLogin();
     cy.contains('Management').click();
     cy.contains('Suggestions').click();
-    cy.rejectQuestionSuggestion('TestNormal', 'This is bad');
+    cy.rejectQuestionSuggestion('TestUpdate', 'This is bad');
     cy.wait(1000);
     cy.contains('Logout').click();
     cy.demoStudentLogin();
     cy.contains('Suggestions').click();
     cy.updateRejectedQuestionSuggestion(
-      'TestNormal',
-      'Update',
+      'TestUpdate',
+      'TestUpdateNew',
       'QuestionUpdate',
       'e',
       'f',
@@ -43,7 +57,7 @@ describe('Update a suggestion', () => {
 
   it('login, creates a suggestion and updates this one', () => {
     cy.createQuestionSuggestion(
-      'TestNormal',
+      'TestUpdate',
       'Question',
       'a',
       'b',
@@ -53,8 +67,8 @@ describe('Update a suggestion', () => {
     );
     cy.wait(5000);
     cy.updateRejectedQuestionSuggestion(
-      'TestNormal',
-      'Update',
+      'TestUpdate',
+      'TestUpdateNew',
       'QuestionUpdate',
       'e',
       'f',

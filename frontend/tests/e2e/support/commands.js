@@ -138,7 +138,7 @@ Cypress.Commands.add('createClarificationRequest', content => {
 Cypress.Commands.add('createClarificationRequestAnswer', (content) => {
   cy.get('[data-cy="answerButton"]').click({force: true});
   cy.get('[data-cy="Content"]').type(content, {force: true});
-  cy.get('[data-cy="saveButton"]').click({force: true})
+  cy.get('[data-cy="saveButton"]').click({force: true});
 });
 
 Cypress.Commands.add('closeClarificationRequest', () => {
@@ -200,9 +200,9 @@ Cypress.Commands.add('showQuestionSuggestion', title => {
 });
 
 Cypress.Commands.add('showQuestionFromSuggestion', (title) =>{
-  cy.contains(title).click({ force: true })
-  cy.wait(500)
-  cy.get('[data-cy="questionCloseButton"]').click({ force: true })
+  cy.contains(title).click({ force: true });
+  cy.wait(500);
+  cy.get('[data-cy="questionCloseButton"]').click({ force: true });
 });
 
 Cypress.Commands.add('acceptQuestionSuggestion', (title) =>{
@@ -257,23 +257,31 @@ Cypress.Commands.add(
       .find('[data-cy="updateRejectedQuestion"]')
       .click({ force: true });
     if (newTitle !== '') {
-      cy.get('[data-cy="Title"]').type(newTitle, { force: true });
+      cy.get('[data-cy="Title"]')
+        .clear({ force: true })
+        .type(newTitle, { force: true });
     }
     if (question !== '') {
-      cy.get('[data-cy="Content"]').type(question, { force: true });
+      cy.get('[data-cy="Content"]')
+        .clear({ force: true })
+        .type(question, { force: true });
     }
     cy.get('[data-cy="Option"]')
       .eq(0)
+      .clear({ force: true })
       .type(op0, { force: true });
     cy.get('[data-cy="Option"]')
       .eq(1)
+      .clear({ force: true })
       .type(op1, { force: true });
     cy.get('[data-cy="Option"]')
       .eq(2)
+      .clear({ force: true })
       .type(op2, { force: true });
     if (op3 !== '') {
       cy.get('[data-cy="Option"]')
         .eq(3)
+        .clear({ force: true })
         .type(op3, { force: true });
     }
     cy.get('[data-cy="saveButton"]')
@@ -287,34 +295,34 @@ Cypress.Commands.add('editQuestionAcceptedQuestion',
     .parent()
     .parent()
     .find('[data-cy="editQuestion"]')
-    .click({ force: true })
+    .click({ force: true });
   if (newTitle !== '') {
     cy.get('[data-cy="questionTitle"]')
       .clear({ force: true })
-      .type(newTitle, { force: true })
+      .type(newTitle, { force: true });
   } else {
     cy.get('[data-cy="questionTitle"]')
-      .clear({ force: true })
+      .clear({ force: true });
   }
   cy.get('[data-cy="questionContent"]')
     .clear({ force: true })
-    .type(content, { force: true })
+    .type(content, { force: true });
   cy.get('[data-cy="questionOp"]')
     .eq(0)
     .clear({ force: true })
-    .type(op0, { force: true })
+    .type(op0, { force: true });
   cy.get('[data-cy="questionOp"]')
     .eq(1)
     .clear({ force: true })
-    .type(op1, { force: true })
+    .type(op1, { force: true });
   cy.get('[data-cy="questionOp"]')
     .eq(2)
     .clear({ force: true })
-    .type(op2, { force: true })
+    .type(op2, { force: true });
   cy.get('[data-cy="questionOp"]')
     .eq(3)
     .clear({ force: true })
-    .type(op3, { force: true })
+    .type(op3, { force: true });
   cy.get('[data-cy="questionSaveButton"]')
-    .click({ force: true })
+    .click({ force: true });
 });
