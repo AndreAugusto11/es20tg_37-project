@@ -52,6 +52,9 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectTeacherAnswers;
     private Integer numberOfCorrectInClassAnswers;
     private Integer numberOfCorrectStudentAnswers;
+    private Integer totalNumberSuggestions = 0;
+    private Integer totalNumberSuggestionsAvailable = 0;
+    private Boolean privateSuggestion = false;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -175,6 +178,30 @@ public class User implements UserDetails, DomainEntity {
 
     public Set<CourseExecution> getCourseExecutions() {
         return courseExecutions;
+    }
+
+    public Integer getTotalNumberSuggestions() {
+        return totalNumberSuggestions;
+    }
+
+    public void setTotalNumberSuggestions(Integer totalNumberSuggestions) {
+        this.totalNumberSuggestions = totalNumberSuggestions;
+    }
+
+    public Integer getTotalNumberSuggestionsAvailable() {
+        return totalNumberSuggestionsAvailable;
+    }
+
+    public void setTotalNumberSuggestionsAvailable(Integer totalNumberSuggestionsAvailable) {
+        this.totalNumberSuggestionsAvailable = totalNumberSuggestionsAvailable;
+    }
+
+    public Boolean getPrivateSuggestion() {
+        return privateSuggestion;
+    }
+
+    public void setPrivateSuggestion(Boolean privateSuggestion) {
+        this.privateSuggestion = privateSuggestion;
     }
 
     public void setCourseExecutions(Set<CourseExecution> courseExecutions) {

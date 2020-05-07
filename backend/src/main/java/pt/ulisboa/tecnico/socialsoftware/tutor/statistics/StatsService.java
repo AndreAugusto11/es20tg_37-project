@@ -45,8 +45,8 @@ public class StatsService {
     QuestionSuggestionRepository questionSuggestionRepository;
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatsDto getStats(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
@@ -96,11 +96,11 @@ public class StatsService {
 
         int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());
 
-        int totalNumberSuggestions = (int)questionSuggestionRepository.findAll().stream().
+        int totalNumberSuggestions = (int) questionSuggestionRepository.findAll().stream().
                 filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
                 count();
 
-        int totalNumberSuggestionsAvailable = (int)questionSuggestionRepository.findAll().stream().
+        int totalNumberSuggestionsAvailable = (int) questionSuggestionRepository.findAll().stream().
                 filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
                 filter(questionSuggestion -> questionSuggestion.getStatus().equals(QuestionSuggestion.Status.ACCEPTED)).
                 count();
@@ -113,8 +113,8 @@ public class StatsService {
         statsDto.setTotalNumberSuggestionsAvailable(totalNumberSuggestionsAvailable);
 
         if (totalAnswers != 0) {
-            statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
-            statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);
+            statsDto.setCorrectAnswers(((float) correctAnswers) * 100 / totalAnswers);
+            statsDto.setImprovedCorrectAnswers(((float) uniqueCorrectAnswers) * 100 / uniqueQuestions);
         }
         return statsDto;
     }

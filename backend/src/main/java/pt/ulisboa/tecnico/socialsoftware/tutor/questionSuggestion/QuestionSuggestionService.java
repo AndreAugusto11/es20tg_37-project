@@ -219,24 +219,4 @@ public class QuestionSuggestionService {
         questionSuggestion.update(questionSuggestionDto);
         return new QuestionSuggestionDto(questionSuggestion);
     }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public long getNumberOfQuestionSuggestionFromStudent(Integer userId){
-        return  questionSuggestionRepository.findAll().stream().
-                filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).count();
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public long getNumberOfQuestionSuggestionApprovedFromStudent(Integer userId){
-        return  questionSuggestionRepository.findAll().stream().
-                filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
-                filter(questionSuggestion -> questionSuggestion.getStatus().equals(QuestionSuggestion.Status.ACCEPTED)).
-                count();
-    }
 }
