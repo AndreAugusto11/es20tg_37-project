@@ -19,6 +19,24 @@
         </div>
       </div>
       <div class="items">
+        <div class="items">
+          <div class="icon-wrapper" ref="totalNumberCreatedTournaments" data-cy="totalNumberCreatedTournaments">
+            <animated-number :number="stats.totalNumberCreatedTournaments" />
+          </div>
+          <div class="project-name">
+            <p>Number of Tournaments created</p>
+          </div>
+        </div>
+        <div class="items">
+          <div class="icon-wrapper" ref="totalNumberEnrolledTournaments" data-cy="totalNumberEnrolledTournaments">
+            <animated-number :number="stats.totalNumberEnrolledTournaments" />
+          </div>
+          <div class="project-name">
+            <p>Number of Tournaments enrolled</p>
+          </div>
+        </div>
+      </div>
+      <div class="items">
         <div class="icon-wrapper" ref="totalQuizzes">
           <animated-number :number="stats.totalQuizzes" />
         </div>
