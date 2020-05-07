@@ -31,6 +31,7 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import ClarificationRequestsView from '@/views/student/discussion/ClarificationRequestsView.vue';
+import QuestionClarificationRequestsView from '@/views/student/discussion/QuestionClarificationRequestsView.vue';
 import ClarificationRequestsTeacherView from '@/views/teacher/discussion/ClarificationRequestsTeacherView.vue';
 import ClarificationRequestView from '@/views/discussion/ClarificationRequestView.vue';
 
@@ -237,6 +238,16 @@ let router = new Router({
           props: true,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Clarification',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'questionClarifications',
+          name: 'questionClarifications',
+          component: QuestionClarificationRequestsView,
+          props: true,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Question Clarifications',
             requiredAuth: 'Student'
           }
         },
