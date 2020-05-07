@@ -159,10 +159,14 @@ Cypress.Commands.add('createClarificationRequest', content => {
   cy.get('[data-cy="saveButton"]').click();
 });
 
-Cypress.Commands.add('createClarificationRequestAnswer', content => {
-  cy.get('[data-cy="answerButton"]').click();
-  cy.get('[data-cy="Content"]').type(content);
-  cy.get('[data-cy="saveButton"]').click();
+Cypress.Commands.add('createClarificationRequestAnswer', (content) => {
+  cy.get('[data-cy="answerButton"]').click({force: true});
+  cy.get('[data-cy="Content"]').type(content, {force: true});
+  cy.get('[data-cy="saveButton"]').click({force: true})
+});
+
+Cypress.Commands.add('closeClarificationRequest', () => {
+  cy.get('[data-cy="closeButton"]').click({force: true});
 });
 
 Cypress.Commands.add('seeClarificationRequest', () => {

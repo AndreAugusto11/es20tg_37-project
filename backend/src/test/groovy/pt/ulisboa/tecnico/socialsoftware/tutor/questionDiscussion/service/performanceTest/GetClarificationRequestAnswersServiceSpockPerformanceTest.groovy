@@ -5,7 +5,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
@@ -20,8 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestAnswerDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
@@ -32,8 +30,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 @DataJpaTest
-class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specification {
-    public static final Integer NUMBER_OF_ITERATIONS = 1
+class GetClarificationRequestAnswersServiceSpockPerformanceTest extends Specification {
     public static final String USERNAME_TEACHER = "username_teacher"
     public static final String USERNAME_STUDENT = "username_student"
     public static final String COURSE_NAME = "Software Architecture"
@@ -79,6 +76,9 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
     @Autowired
     ClarificationRequestRepository clarificationRequestRepository
 
+    @Autowired
+    ClarificationRequestAnswerRepository clarificationRequestAnswerRepository
+
     def user_teacher
     def user_student
     def course
@@ -89,6 +89,7 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
     def quizAnswer
     def quiz
     def questionAnswer
+    def clarificationRequest
 
     def setup() {
 
@@ -149,63 +150,23 @@ class CreateClarificationRequestAnswerServiceSpockPerformanceTest extends Specif
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
+
+        clarificationRequest = new ClarificationRequest(questionAnswer, question, user_student, CLARIFICATION_CONTENT)
+        questionAnswer.addClarificationRequest(clarificationRequest)
+        question.addClarificationRequest(clarificationRequest)
+        user_student.addClarificationRequest(clarificationRequest)
+        clarificationRequestRepository.save(clarificationRequest)
     }
 
-    def "performance testing to create 1000 clarification request answers by the teacher"() {
-        given: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto()
-        clarificationRequestDto.setContent(CLARIFICATION_CONTENT)
-        clarificationRequestDto.setName(user_student.getName())
-        clarificationRequestDto.setUsername(user_student.getUsername())
-        def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
-        clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
-
-        and: "a clarification request answer dto"
-        def clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
-        clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.TEACHER_ANSWER)
-        clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
-        clarificationRequestAnswerDto.setName(user_teacher.getName())
-        clarificationRequestAnswerDto.setUsername(user_teacher.getUsername())
-
-        and: "1000 clarification requests"
-        1.upto(NUMBER_OF_ITERATIONS, {
-            questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
+    def "performance testing to get 10000 times 1000 clarification request answers"() {
+        given: "1000 clarification request answers"
+        1.upto(1, {
+            clarificationRequestAnswerRepository.save(new ClarificationRequestAnswer(clarificationRequest, ClarificationRequestAnswer.Type.STUDENT_ANSWER, user_student, CLARIFICATION_CONTENT))
         })
-        List<ClarificationRequest> clarificationRequestList = clarificationRequestRepository.findAll()
-
-        when: "1000 clarification request answers are created"
-        1.upto(NUMBER_OF_ITERATIONS, {
-            questionDiscussionService.createClarificationRequestAnswer(clarificationRequestList.pop().getId(), clarificationRequestAnswerDto)
-        })
-
-        then: true
-    }
-
-    def "performance testing to create 1000 clarification request answers by the student"() {
-        given: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto()
-        clarificationRequestDto.setContent(CLARIFICATION_CONTENT)
-        clarificationRequestDto.setName(user_student.getName())
-        clarificationRequestDto.setUsername(user_student.getUsername())
-        def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
-        clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
-
-        and: "a clarification request answer dto"
-        def clarificationRequestAnswerDto = new ClarificationRequestAnswerDto()
-        clarificationRequestAnswerDto.setType(ClarificationRequestAnswer.Type.STUDENT_ANSWER)
-        clarificationRequestAnswerDto.setContent(CLARIFICATION_CONTENT)
-        clarificationRequestAnswerDto.setName(user_student.getName())
-        clarificationRequestAnswerDto.setUsername(user_student.getUsername())
-
-        and: "1000 clarification requests"
-        1.upto(NUMBER_OF_ITERATIONS, {
-            questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
-        })
-        List<ClarificationRequest> clarificationRequestList = clarificationRequestRepository.findAll()
 
         when: "10000 clarification request answers are created"
-        1.upto(NUMBER_OF_ITERATIONS, {
-            questionDiscussionService.createClarificationRequestAnswer(clarificationRequestList.pop().getId(), clarificationRequestAnswerDto)
+        1.upto(1, {
+                questionDiscussionService.getClarificationRequestAnswers(clarificationRequest.getId())
         })
 
         then: true
