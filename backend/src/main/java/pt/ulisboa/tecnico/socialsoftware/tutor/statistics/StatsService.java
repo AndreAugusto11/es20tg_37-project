@@ -129,6 +129,11 @@ public class StatsService {
         }
         statsDto.setTotalClarificationRequests(totalClarificationRequests);
         statsDto.setTotalPublicClarificationRequests(totalPublicClarificationRequests);
+
+        if (user.isPrivateClarificationStats() == null) {
+            user.setPrivateClarificationStats(false);
+        }
+
         statsDto.setPrivateClarificationStats(user.isPrivateClarificationStats());
         return statsDto;
     }
