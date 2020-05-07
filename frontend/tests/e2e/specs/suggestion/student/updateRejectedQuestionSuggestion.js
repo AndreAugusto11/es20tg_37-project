@@ -18,7 +18,7 @@ describe('Update a suggestion', () => {
       'd',
       'No'
     );
-    cy.wait(10000);
+    cy.wait(5000);
     cy.contains('Logout').click();
     cy.demoTeacherLogin();
     cy.contains('Management').click();
@@ -37,7 +37,7 @@ describe('Update a suggestion', () => {
       'h',
       'i'
     );
-    cy.wait(10000);
+    cy.wait(5000);
     cy.showQuestionSuggestion('Update');
   });
 
@@ -51,7 +51,7 @@ describe('Update a suggestion', () => {
       'd',
       'No'
     );
-    cy.wait(10000);
+    cy.wait(5000);
     cy.updateRejectedQuestionSuggestion(
       'TestNormal',
       'Update',

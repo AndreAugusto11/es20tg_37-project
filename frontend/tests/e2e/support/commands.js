@@ -198,6 +198,7 @@ Cypress.Commands.add('showQuestionSuggestion', title => {
 
 Cypress.Commands.add('showQuestionFromSuggestion', (title) =>{
   cy.contains(title).click()
+  cy.wait(500)
   cy.get('[data-cy="questionCloseButton"]').click()
 });
 
@@ -275,3 +276,40 @@ Cypress.Commands.add(
     cy.get('[data-cy="saveButton"]').click();
   }
 );
+
+Cypress.Commands.add('editQuestionAcceptedQuestion',
+  (title, newTitle, content, op0, op1, op2, op3) =>{
+  cy.contains(title)
+    .parent()
+    .parent()
+    .find('[data-cy="editQuestion"]')
+    .click()
+  if (newTitle !== '') {
+    cy.get('[data-cy="questionTitle"]')
+      .clear()
+      .type(newTitle, { force: true })
+  } else {
+    cy.get('[data-cy="questionTitle"]').clear()
+  }
+  cy.get('[data-cy="questionContent"]')
+    .clear()
+    .type(content, { force: true })
+  cy.get('[data-cy="questionOp"]')
+    .eq(0)
+    .clear()
+    .type(op0, { force: true })
+  cy.get('[data-cy="questionOp"]')
+    .eq(1)
+    .clear()
+    .type(op1, { force: true })
+  cy.get('[data-cy="questionOp"]')
+    .eq(2)
+    .clear()
+    .type(op2, { force: true })
+  cy.get('[data-cy="questionOp"]')
+    .eq(3)
+    .clear()
+    .type(op3, { force: true })
+  cy.get('[data-cy="questionSaveButton"]').click()
+
+});

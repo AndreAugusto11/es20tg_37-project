@@ -18,6 +18,7 @@ describe('Accept a suggestion', () => {
     cy.contains('Suggestions').click();
     cy.acceptQuestionSuggestion('TestAccept');
     cy.contains('Management').click();
+    cy.wait(500);
     cy.contains('Questions').click();
     cy.wait(5000);
     cy.showQuestionFromSuggestion('TestAccept')

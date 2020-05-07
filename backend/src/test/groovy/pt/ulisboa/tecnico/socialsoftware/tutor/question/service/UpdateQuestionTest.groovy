@@ -226,8 +226,6 @@ class UpdateQuestionTest extends Specification {
     }
 
     def "Update a question given no question dto"() {
-        given: 'nothing'
-
         when:
         questionService.updateQuestion(question.getId(), null)
 
