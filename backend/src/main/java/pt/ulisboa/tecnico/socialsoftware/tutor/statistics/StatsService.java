@@ -48,6 +48,14 @@ public class StatsService {
 
         StatsDto statsDto = new StatsDto();
 
+        int totalNumberEnrolledTournaments = (int) user.getTournaments().stream()
+                .filter(t ->t.canResultsBePublic(executionId))
+                .count();
+
+        int totalNumberCreatedTournaments = (int) user.getCreatedTournaments().stream()
+                .filter(t ->t.canResultsBePublic(executionId))
+                .count();
+
         int totalQuizzes = (int) user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .count();
@@ -95,6 +103,8 @@ public class StatsService {
         statsDto.setTotalAnswers(totalAnswers);
         statsDto.setTotalUniqueQuestions(uniqueQuestions);
         statsDto.setTotalAvailableQuestions(totalAvailableQuestions);
+        statsDto.setTotalNumberCreatedTournaments(totalNumberCreatedTournaments);
+        statsDto.setTotalNumberEnrolledTournaments(totalNumberEnrolledTournaments);
         if (totalAnswers != 0) {
             statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
             statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);

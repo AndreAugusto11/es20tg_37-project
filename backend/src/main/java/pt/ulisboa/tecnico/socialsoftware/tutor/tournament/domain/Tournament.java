@@ -15,7 +15,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "tournaments")
 public class Tournament {
-	public enum Status {
+
+    public enum Status {
 		OPEN, ONGOING, CLOSED
 	}
 
@@ -189,4 +190,8 @@ public class Tournament {
 	}
 
 	public void setquiz(Quiz quiz) {this.quiz = quiz;}
+
+	public boolean canResultsBePublic(int executionId) {
+		return true;
+	}
 }
