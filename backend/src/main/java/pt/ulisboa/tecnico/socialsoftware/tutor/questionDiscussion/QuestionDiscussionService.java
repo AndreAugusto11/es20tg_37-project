@@ -168,6 +168,29 @@ public class QuestionDiscussionService {
         return new ClarificationRequestAnswerDto(clarificationRequestAnswer);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<ClarificationRequestAnswerDto> getClarificationRequestAnswers(Integer clarificationRequestId) {
+        ClarificationRequest clarificationRequest = getClarificationRequest(clarificationRequestId);
+
+        return clarificationRequest.getClarificationRequestAnswer().stream()
+                .map(ClarificationRequestAnswerDto::new)
+                .sorted(Comparator.comparing(ClarificationRequestAnswerDto::getCreationDate))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ClarificationRequestDto closeClarificationRequest(Integer clarificationRequestId) {
+        ClarificationRequest clarificationRequest = getClarificationRequest(clarificationRequestId);
+
+        if (clarificationRequest.getStatus().equals(ClarificationRequest.Status.CLOSED)) {
+            throw new TutorException(CLARIFICATION_REQUEST_ALREADY_CLOSED);
+        }
+
+        clarificationRequest.closeClarificationRequest();
+
+        return new ClarificationRequestDto(clarificationRequest);
+    }
+
     private ClarificationRequest getClarificationRequest(Integer clarificationRequestId) {
         if (clarificationRequestId == null) {
             throw new TutorException(CLARIFICATION_REQUEST_NOT_DEFINED);

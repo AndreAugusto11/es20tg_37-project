@@ -209,7 +209,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
 
         and: "is associated correctly"
         user_teacher.getClarificationRequestAnswers().contains(result)
-        clarificationRequest.getClarificationRequestAnswer() == result
+        clarificationRequest.getClarificationRequestAnswer().contains(result)
         result.getClarificationRequest().getStatus() == ClarificationRequest.Status.ANSWERED
     }
 
@@ -290,7 +290,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
 
         and: "is associated correctly"
         user_student.getClarificationRequestAnswers().contains(result)
-        clarificationRequest.getClarificationRequestAnswer() == result
+        clarificationRequest.getClarificationRequestAnswer().contains(result)
         result.getClarificationRequest().getStatus() == ClarificationRequest.Status.OPEN
     }
 
