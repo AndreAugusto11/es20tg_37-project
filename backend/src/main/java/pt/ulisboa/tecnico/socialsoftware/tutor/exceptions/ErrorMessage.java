@@ -118,6 +118,8 @@ public enum ErrorMessage {
     INVALID_NULL_ARGUMENTS_USERID("The user id given is null"),
     INVALID_NULL_ARGUMENTS_COURSEID("The course id given is null"),
     INVALID_NULL_ARGUMENTS_JUSTIFICATION("The justification dto given is null"),
+    INVALID_NULL_ARGUMENTS_QUESTION("The question dto given is null"),
+    INVALID_NULL_ARGUMENTS_QUESTIONID("The question id given is null"),
     USER_NOT_IN_COURSE("The student is not enrolled in the given course"),
 
     QUESTION_SUGGESTION_ALREADY_ACCEPTED("This suggested question was already accepted"),

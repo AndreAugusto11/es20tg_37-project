@@ -213,6 +213,29 @@ class UpdateQuestionTest extends Specification {
 
     }
 
+    def "Update a question given no question id"() {
+        given: 'a question'
+        def questionDto = new QuestionDto(question)
+
+        when:
+        questionService.updateQuestion(null, questionDto)
+
+        then: "the question an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.INVALID_NULL_ARGUMENTS_QUESTIONID
+    }
+
+    def "Update a question given no question dto"() {
+        given: 'nothing'
+
+        when:
+        questionService.updateQuestion(question.getId(), null)
+
+        then: "the question an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.INVALID_NULL_ARGUMENTS_QUESTION
+    }
+
     @TestConfiguration
     static class QuestionServiceImplTestContextConfiguration {
 
