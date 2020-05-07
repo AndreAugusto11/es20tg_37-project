@@ -10,7 +10,7 @@ export class ClarificationRequest {
   username: string | null = null;
   status: string = 'OPEN';
   image: Image | null = null;
-  clarificationRequestAnswerDto!: ClarificationRequestAnswer;
+  numberOfAnswers: number | null = null;
   public: Boolean = false;
 
   constructor(jsonObj?: ClarificationRequest) {
@@ -22,7 +22,7 @@ export class ClarificationRequest {
       this.username = jsonObj.username;
       this.status = jsonObj.status;
       this.image = jsonObj.image;
-      this.clarificationRequestAnswerDto = new ClarificationRequestAnswer(jsonObj.clarificationRequestAnswerDto);
+      this.numberOfAnswers = jsonObj.numberOfAnswers;
       this.public = jsonObj.public;
     }
   }

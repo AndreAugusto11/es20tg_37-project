@@ -9,7 +9,7 @@
         <v-card>
             <v-card-title>
                 <span class="headline">
-                  New Clarification Request Answer
+                  New Reply
                 </span>
             </v-card-title>
 
@@ -51,7 +51,6 @@
   import RemoteServices from '@/services/RemoteServices';
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
   import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
-  import { TYPE } from '@/models/discussion/ClarificationRequestAnswer';
 
   @Component
   export default class CreateClarificationRequestAnswerDialog extends Vue {
@@ -80,9 +79,8 @@
         try {
           this.createClarificationRequestAnswer.name = this.$store.getters.getUser.name;
           this.createClarificationRequestAnswer.username = this.$store.getters.getUser.username;
-          this.createClarificationRequestAnswer.type = this.$store.getters.isTeacher ? TYPE.TEACHER : TYPE.STUDENT;
+          this.createClarificationRequestAnswer.type = this.$store.getters.isTeacher ? 'TEACHER_ANSWER' : 'STUDENT_ANSWER';
           const result = await RemoteServices.createClarificationRequestAnswer(this.clarificationRequest.id, this.createClarificationRequestAnswer);
-          this.clarificationRequest.clarificationRequestAnswerDto = this.createClarificationRequestAnswer
           this.$emit('new-clarification-request-answer', result);
         } catch (error) {
           await this.$store.dispatch('error', error);
