@@ -82,6 +82,7 @@
 
     headers: object = [
       { text: 'Clarification', value: 'content', align: 'left', width: '50%' },
+      { text: 'Creation Date', value: 'creationDate', align: 'center', width: '10%' },
       { text: 'Number of Replies', value: 'number', align: 'center', width: '20%' },
       { text: 'Status', value: 'status', align: 'center', width: '20%' },
       { text: 'Availability', value: 'public', align: 'center', width: '10%'}

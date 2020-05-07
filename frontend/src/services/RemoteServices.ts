@@ -686,6 +686,21 @@ export default class RemoteServices {
       });
   }
 
+  static async getQuestionClarificationRequests(questionAnswerId: number): Promise<ClarificationRequest[]> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/questionAnswers/${questionAnswerId}/clarificationRequests`
+      )
+      .then(response => {
+        return response.data.map((clarificationRequest: any) => {
+          return new ClarificationRequest(clarificationRequest);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getClarificationRequest(
     questionAnswerId: number
   ): Promise<ClarificationRequest> {

@@ -88,8 +88,8 @@ public class QuestionDiscussionController {
 
     @GetMapping("/executions/{executionId}/questionAnswers/{questionId}/clarificationRequests")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<ClarificationRequestDto> getAnswerClarificationRequests(@PathVariable Integer executionId,
+    public List<ClarificationRequestDto> getQuestionClarificationRequests(@PathVariable Integer executionId,
                                                                     @PathVariable Integer questionId) {
-        return questionDiscussionService.getAnswerClarificationRequests(executionId, questionId);
+        return questionDiscussionService.getQuestionClarificationRequests(executionId, questionId);
     }
 }

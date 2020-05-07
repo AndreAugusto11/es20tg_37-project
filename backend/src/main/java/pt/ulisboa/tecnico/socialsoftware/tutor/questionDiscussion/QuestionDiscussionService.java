@@ -243,7 +243,7 @@ public class QuestionDiscussionService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<ClarificationRequestDto> getAnswerClarificationRequests(Integer executionId, Integer questionId) {
+    public List<ClarificationRequestDto> getQuestionClarificationRequests(Integer executionId, Integer questionId) {
         return this.getCourse(executionId).getPublicClarificationRequests().stream()
                 .filter(publicClarificationRequest -> publicClarificationRequest
                         .getClarificationRequest()

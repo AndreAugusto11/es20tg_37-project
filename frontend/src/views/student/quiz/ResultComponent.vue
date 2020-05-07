@@ -74,7 +74,7 @@
         See My clarification
       </v-btn>
       <v-btn class="ml-5" color="primary" @click="seeOtherClarifications" data-cy="seeOtherClarificationsButton">
-        See Other Clarifications
+        See Clarifications On This Question
       </v-btn>
     </v-container>
     <create-clarification-request-dialog

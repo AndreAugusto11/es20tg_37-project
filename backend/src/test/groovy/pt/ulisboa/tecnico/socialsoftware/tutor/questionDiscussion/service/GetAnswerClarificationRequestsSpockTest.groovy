@@ -219,7 +219,7 @@ class GetAnswerClarificationRequestsSpockTest extends Specification {
         course.addPublicClarificationRequests(publicClarificationRequest3)
 
         when:
-        def list = questionDiscussionService.getAnswerClarificationRequests(courseExecution.getId(), question1.getId())
+        def list = questionDiscussionService.getQuestionClarificationRequests(courseExecution.getId(), question1.getId())
 
         then: "the public clarification request is not in the repository"
         list.size() == 3
@@ -262,7 +262,7 @@ class GetAnswerClarificationRequestsSpockTest extends Specification {
         course.addPublicClarificationRequests(publicClarificationRequest1)
 
         when:
-        def list = questionDiscussionService.getAnswerClarificationRequests(courseExecution.getId(), question1.getId())
+        def list = questionDiscussionService.getQuestionClarificationRequests(courseExecution.getId(), question1.getId())
 
         then: "the public clarification request is not in the repository"
         list.size() == 1
@@ -296,7 +296,7 @@ class GetAnswerClarificationRequestsSpockTest extends Specification {
         course.addPublicClarificationRequests(publicClarificationRequest2)
 
         when:
-        def list = questionDiscussionService.getAnswerClarificationRequests(courseExecution.getId(), question1.getId())
+        def list = questionDiscussionService.getQuestionClarificationRequests(courseExecution.getId(), question1.getId())
 
         then: "the public clarification request is not in the repository"
         list.size() == 1
@@ -326,7 +326,7 @@ class GetAnswerClarificationRequestsSpockTest extends Specification {
         course.addPublicClarificationRequests(publicClarificationRequest1)
 
         when:
-        def list = questionDiscussionService.getAnswerClarificationRequests(rand.nextInt(1000000), question1.getId())
+        def list = questionDiscussionService.getQuestionClarificationRequests(rand.nextInt(1000000), question1.getId())
 
         then: "the public clarification request is not in the repository"
         def error = thrown(TutorException)
@@ -355,7 +355,7 @@ class GetAnswerClarificationRequestsSpockTest extends Specification {
         course.addPublicClarificationRequests(publicClarificationRequest2)
 
         when:
-        def list = questionDiscussionService.getAnswerClarificationRequests(courseExecution2.getId(), question1.getId())
+        def list = questionDiscussionService.getQuestionClarificationRequests(courseExecution2.getId(), question1.getId())
 
         then: "the public clarification request is not in the repository"
         list.size() == 2
@@ -393,7 +393,7 @@ class GetAnswerClarificationRequestsSpockTest extends Specification {
         println courseExecution3.getId()
 
         when:
-        def list = questionDiscussionService.getAnswerClarificationRequests(courseExecution3.getId(), question1.getId())
+        def list = questionDiscussionService.getQuestionClarificationRequests(courseExecution3.getId(), question1.getId())
 
         then: "the public clarification request is not in the repository"
         list.size() == 0

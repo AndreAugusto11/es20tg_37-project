@@ -88,23 +88,25 @@
     search: string = '';
 
     headers: object = [
-      { text: 'Clarification', value: 'content', align: 'left', width: '50%' },
-      { text: 'Number of Replies', value: 'number', align: 'center', width: '20%' },
-      { text: 'Status', value: 'status', align: 'center', width: '20%' },
+      { text: 'Clarification', value: 'content', align: 'left', width: '30%' },
+      { text: 'User', value: 'username', align: 'left', width: '10%' },
+      { text: 'Creation Date', value: 'creationDate', align: 'center', width: '10%' },
+      { text: 'Number of Replies', value: 'number', align: 'center', width: '10%' },
+      { text: 'Status', value: 'status', align: 'center', width: '5%' },
       { text: 'Availability', value: 'public', align: 'center', width: '10%'}
     ];
 
     async created() {
+      this.question = new Question(JSON.parse(this.$route.params.question));
+
       await this.$store.dispatch('loading');
       try {
-        this.clarificationRequests = await RemoteServices.getClarificationRequests();
+        if (this.question.id != null)
+          this.clarificationRequests = await RemoteServices.getQuestionClarificationRequests(this.question.id);
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
       await this.$store.dispatch('clearLoading');
-
-      this.question = new Question(JSON.parse(this.$route.params.question));
-      console.log(this.question);
     }
 
     customFilter(value: string, search: string, question1: Question) {
