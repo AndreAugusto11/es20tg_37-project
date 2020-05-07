@@ -218,27 +218,6 @@ class CreateTournamentTest extends Specification {
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_NUM_QUESTS
 	}
 
-	def "topics do not exist"()
-	{
-		// an exception should be thrown
-		given: "a non-saved topic"
-		def topicNS = new Topic();
-		topicNS.setName("Topic Not Saved")
-		def course = new Course("LEIC-A", Course.Type.TECNICO)
-		courseRepository.save(course)
-		course = courseRepository.findByNameType("LEIC-A", "TECNICO").get()
-		topicNS.setCourse(course)
-		def topicSet = new HashSet<Topic>()
-		topicSet.add(topicNS)
-
-		when:
-		tournamentService.createTournament(student, topicSet, number_of_questions, startTime, endTime)
-
-		then:
-		def exception = thrown(TutorException)
-		exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_TOPIC
-	}
-
 	def "startTime is invalid"()
 	{
 		// an exception should be thrown

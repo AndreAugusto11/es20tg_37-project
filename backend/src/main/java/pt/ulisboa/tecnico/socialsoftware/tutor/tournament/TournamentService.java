@@ -178,6 +178,11 @@ public class TournamentService
 		Tournament tournament = tournamentRepository.findById(tournamentId)
 				.orElseThrow( () -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
 
+		if (tournament.getstatus() == Tournament.Status.CANCELLED)
+		{
+			throw new TutorException(TOURNAMENT_ALREADY_CANCELLED, tournamentId);
+		}
+
 		if (userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
 		userRepository.findById(userId).orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
 

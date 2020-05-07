@@ -97,6 +97,16 @@ class CancelTournamentTest extends Specification{
         t.getstatus() == Tournament.Status.CANCELLED
     }
 
+    def "tournament was already cancelled"()
+    {
+        when:
+        tournamentService.cancelTournament(userID,tournamentId)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_ALREADY_CANCELLED
+    }
+
     def "non-valid user"()
     {
         given: "a user ID"
@@ -151,7 +161,6 @@ class CancelTournamentTest extends Specification{
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NOT_FOUND
     }
-
 
     @TestConfiguration
     static class TournamentServiceCancelTestContextConfiguration {
