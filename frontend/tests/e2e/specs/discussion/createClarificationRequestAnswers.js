@@ -55,6 +55,7 @@ describe('Create Clarification Request Answer walkthrough', () => {
 		cy.get('[data-cy="Search"]').type(contentReq)
 		cy.contains(contentReq).click()
 		cy.createClarificationRequestAnswer(contentRes)
+		cy.wait(1000)
 		cy.contains('ANSWERED').should('exist')
 		cy.contains('Logout').click()
 
@@ -62,6 +63,7 @@ describe('Create Clarification Request Answer walkthrough', () => {
 		cy.listClarificationRequest(contentReq)
 		cy.contains(contentReq).click()
 		cy.createClarificationRequestAnswer(contentStudent)
+		cy.wait(1000)
 		cy.contains('OPEN').should('exist')
 	});
 

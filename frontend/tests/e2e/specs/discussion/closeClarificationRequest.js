@@ -15,9 +15,11 @@ describe('Close Clarification Request walkthrough', () => {
     cy.createClarificationRequest(content)
     cy.wait(1000)
     cy.listClarificationRequest(content)
+    cy.wait(1000)
     cy.contains(content).click()
     cy.contains('OPEN').should('exist')
     cy.closeClarificationRequest()
+    cy.wait(1000)
     cy.contains('CLOSED').should('exist')
     cy.get('[data-cy="answerButtonDisabled"]').should('exist');
     cy.get('[data-cy="closeButtonDisabled"]').should('exist');
@@ -37,14 +39,17 @@ describe('Close Clarification Request walkthrough', () => {
     cy.get('[data-cy="Search"]').type(contentReq)
     cy.contains(contentReq).click()
     cy.createClarificationRequestAnswer(contentRes)
+    cy.wait(1000)
     cy.contains('ANSWERED').should('exist')
     cy.contains('Logout').click()
 
     cy.demoStudentLogin()
     cy.listClarificationRequest(contentReq)
+    cy.wait(1000)
     cy.contains(contentReq).click()
     cy.contains('ANSWERED').should('exist')
     cy.closeClarificationRequest()
+    cy.wait(1000)
     cy.contains('CLOSED').should('exist')
     cy.get('[data-cy="answerButtonDisabled"]').should('exist');
     cy.get('[data-cy="closeButtonDisabled"]').should('exist');
