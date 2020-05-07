@@ -111,6 +111,7 @@ Cypress.Commands.add('answerTournament', id => {
     .should('have.length', 7)
     .find('[data-cy="answerTournament"]')
     .click();
+  cy.wait(5000);
   for (let i = 0; i < 5; i++) {
     cy.get('.option')
       .first()
