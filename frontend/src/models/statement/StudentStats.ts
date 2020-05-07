@@ -7,6 +7,8 @@ export default class StudentStats {
   totalAvailableQuestions!: number;
   totalClarificationRequests!: number;
   totalPublicClarificationRequests!: number;
+  totalNumberSuggestions!: number;
+  totalNumberSuggestionsAvailable!: number;
 
   uniqueCorrectAnswers!: number;
   uniqueWrongAnswers!: number;
@@ -24,6 +26,9 @@ export default class StudentStats {
       this.totalClarificationRequests = jsonObj.totalClarificationRequests;
       this.totalPublicClarificationRequests =
         jsonObj.totalPublicClarificationRequests;
+      this.totalNumberSuggestions = jsonObj.totalNumberSuggestions;
+      this.totalNumberSuggestionsAvailable = jsonObj.totalNumberSuggestionsAvailable;
+
     }
   }
 }

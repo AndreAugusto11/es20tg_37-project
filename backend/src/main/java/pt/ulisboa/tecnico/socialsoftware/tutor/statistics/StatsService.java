@@ -14,6 +14,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.QuestionSuggestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -38,6 +40,9 @@ public class StatsService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    QuestionSuggestionRepository questionSuggestionRepository;
 
     @Retryable(
       value = { SQLException.class },
@@ -97,10 +102,22 @@ public class StatsService {
                 .filter(clarificationRequest -> clarificationRequest.getPublicClarificationRequest() != null)
                 .count();
 
+        int totalNumberSuggestions = (int)questionSuggestionRepository.findAll().stream().
+                filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
+                count();
+
+        int totalNumberSuggestionsAvailable = (int)questionSuggestionRepository.findAll().stream().
+                filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
+                filter(questionSuggestion -> questionSuggestion.getStatus().equals(QuestionSuggestion.Status.ACCEPTED)).
+                count();
+
         statsDto.setTotalQuizzes(totalQuizzes);
         statsDto.setTotalAnswers(totalAnswers);
         statsDto.setTotalUniqueQuestions(uniqueQuestions);
         statsDto.setTotalAvailableQuestions(totalAvailableQuestions);
+        statsDto.setTotalNumberSuggestions(totalNumberSuggestions);
+        statsDto.setTotalNumberSuggestionsAvailable(totalNumberSuggestionsAvailable);
+
         if (totalAnswers != 0) {
             statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
             statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);

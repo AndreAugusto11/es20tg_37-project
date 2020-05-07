@@ -13,6 +13,24 @@ public class StatsDto implements Serializable {
     private Integer totalAvailableQuestions = 0;
     private Integer totalClarificationRequests = 0;
     private Integer totalPublicClarificationRequests = 0;
+    private Integer totalNumberSuggestions = 0;
+    private Integer totalNumberSuggestionsAvailable = 0;
+
+    public Integer getTotalNumberSuggestions() {
+        return totalNumberSuggestions;
+    }
+
+    public void setTotalNumberSuggestions(Integer totalNumberSuggestions) {
+        this.totalNumberSuggestions = totalNumberSuggestions;
+    }
+
+    public Integer getTotalNumberSuggestionsAvailable() {
+        return totalNumberSuggestionsAvailable;
+    }
+
+    public void setTotalNumberSuggestionsAvailable(Integer totalNumberSuggestionsAvailable) {
+        this.totalNumberSuggestionsAvailable = totalNumberSuggestionsAvailable;
+    }
 
     public Integer getTotalQuizzes() {
         return totalQuizzes;
