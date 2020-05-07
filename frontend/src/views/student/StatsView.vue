@@ -57,6 +57,22 @@
           <p>Percentage of questions seen</p>
         </div>
       </div>
+      <div class="items">
+        <div class="icon-wrapper" ref="totalClarificationRequests">
+          <animated-number :number="stats.totalClarificationRequests" />
+        </div>
+        <div class="project-name">
+          <p>Total Clarification Requests</p>
+        </div>
+      </div>
+      <div class="items">
+        <div class="icon-wrapper" ref="totalPublicClarificationRequests">
+          <animated-number :number="stats.totalPublicClarificationRequests" />
+        </div>
+        <div class="project-name">
+          <p>Total Public Clarification Requests</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
