@@ -88,6 +88,7 @@
               class="mr-2"
               v-on="on"
               @click="showQuestionDialog(item)"
+              data-cy="questionShowButton"
               >visibility</v-icon
             >
           </template>

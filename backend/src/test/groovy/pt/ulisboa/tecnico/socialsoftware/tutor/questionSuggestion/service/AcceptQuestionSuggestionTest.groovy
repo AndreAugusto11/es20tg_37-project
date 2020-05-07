@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.QuestionSuggestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
@@ -23,8 +26,10 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 @DataJpaTest
 class AcceptQuestionSuggestionTest extends Specification {
 
+    public static final String COURSE_NAME = "Software Architecture"
     public static final String QUESTION_TITLE = "title"
     public static final String QUESTION_CONTENT = "Is Math Related to Science?"
+    public static final String OPTION_CONTENT = "option content"
 
     @Autowired
     QuestionSuggestionService questionSuggestionService
@@ -42,17 +47,30 @@ class AcceptQuestionSuggestionTest extends Specification {
     QuestionRepository questionRepository
 
     @Autowired
+    OptionRepository optionRepository
+
+    @Autowired
     UserRepository userRepository
 
-    def question
+    def course = new Course()
+    def question = new Question()
 
     def setup() {
-        question = new Question()
+        course.setName(COURSE_NAME)
+        course.setType(Course.Type.TECNICO)
+        courseRepository.save(course)
+
+        def option = new Option()
+        option.setContent(OPTION_CONTENT)
+        option.setCorrect(true)
+        option.setSequence(0)
+
         question.setKey(1)
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
-        question.setStatus(Question.Status.DISABLED)
-        questionRepository.save(question)
+        question.addOption(option)
+        question.setType(Question.Type.SUGGESTION)
+        question.setCourse(course)
     }
 
     def "A pending question suggestion is accepted"() {
@@ -69,8 +87,23 @@ class AcceptQuestionSuggestionTest extends Specification {
         def result = questionSuggestionRepository.findAll().get(0)
         result != null
         result.getStatus() == QuestionSuggestion.Status.ACCEPTED
-        and: "the question becomes available"
-        result.getQuestion().getStatus() == Question.Status.AVAILABLE
+
+        and: "a new question is created"
+        def questionResult = questionRepository.findAll().get(1)
+        questionRepository.count() == 2L
+        questionResult.getId() != null
+        questionResult.getKey() != 1
+        questionResult.getStatus() == Question.Status.DISABLED
+        questionResult.getType() == Question.Type.NORMAL
+        questionResult.getTitle() == QUESTION_TITLE
+        questionResult.getContent() == QUESTION_CONTENT
+        questionResult.getImage() == null
+        questionResult.getOptions().size() == 1
+        questionResult.getCourse().getName() == COURSE_NAME
+        course.getQuestions().contains(questionResult)
+        def resOption = questionResult.getOptions().get(0)
+        resOption.getContent() == OPTION_CONTENT
+        resOption.getCorrect()
     }
 
     @Unroll

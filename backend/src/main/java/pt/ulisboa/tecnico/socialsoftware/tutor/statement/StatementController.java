@@ -64,11 +64,11 @@ public class StatementController {
     public SolvedQuizDto getSolvedQuiz(Principal principal, @PathVariable int executionId, @PathVariable int quizId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        if(user == null){
+        if (user == null) {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        return statementService.getSolvedQuiz(user.getUsername(), executionId, quizId);
+        return statementService.getSolvedQuiz(user.getId(), executionId, quizId);
     }
 
     @GetMapping("/quizzes/{quizId}/byqrcode")

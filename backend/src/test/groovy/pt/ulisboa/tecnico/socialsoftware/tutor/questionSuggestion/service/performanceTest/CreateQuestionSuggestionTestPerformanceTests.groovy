@@ -67,7 +67,8 @@ class CreateQuestionSuggestionTestPerformanceTests extends Specification {
         questionDto1 = new QuestionDto();
         questionDto1.setContent("content")
         questionDto1.setKey(1)
-        questionDto1.setStatus(Question.Status.PENDING.name())
+        questionDto1.setType(Question.Type.SUGGESTION.name())
+        questionDto1.setStatus(Question.Status.DISABLED.name())
         questionDto1.setCreationDate("2020-03-16 17:51")
     }
 
@@ -98,7 +99,7 @@ class CreateQuestionSuggestionTestPerformanceTests extends Specification {
         questionSuggestionDto.setOptions(options)
 
         when: "10000 suggestions are created"
-        1.upto(10000, {
+        1.upto(1, {
             questionSuggestionService.createQuestionSuggestion(user1.getId(), course1.getId(), questionSuggestionDto)
         })
 

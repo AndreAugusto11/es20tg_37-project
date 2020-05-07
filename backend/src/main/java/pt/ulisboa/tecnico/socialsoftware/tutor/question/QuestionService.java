@@ -94,7 +94,9 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionDto> findQuestions(int courseId) {
-        return questionRepository.findQuestions(courseId).stream().map(QuestionDto::new).collect(Collectors.toList());
+        return questionRepository.findQuestions(courseId).stream().map(QuestionDto::new)
+                .filter(questionDto -> questionDto.getType().equals(Question.Type.NORMAL.name()))
+                .collect(Collectors.toList());
     }
 
     @Retryable(
@@ -102,7 +104,9 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionDto> findAvailableQuestions(int courseId) {
-        return questionRepository.findAvailableQuestions(courseId).stream().map(QuestionDto::new).collect(Collectors.toList());
+        return questionRepository.findAvailableQuestions(courseId).stream().map(QuestionDto::new)
+                .filter(questionDto -> questionDto.getType().equals(Question.Type.NORMAL.name()))
+                .collect(Collectors.toList());
     }
 
     @Retryable(

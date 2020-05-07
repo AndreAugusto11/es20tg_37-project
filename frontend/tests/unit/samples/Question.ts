@@ -12,6 +12,7 @@ export const questionWithFigure = new Question({
   numberOfCorrect: 51,
   creationDate: null,
   status: 'AVAILABLE',
+  type: 'NORMAL',
   options: [
     {
       id: 1578,
@@ -72,6 +73,7 @@ export const questionWithoutFigure = new Question({
   numberOfCorrect: 51,
   creationDate: null,
   status: 'AVAILABLE',
+  type: 'NORMAL',
   options: [
     {
       id: 1578,

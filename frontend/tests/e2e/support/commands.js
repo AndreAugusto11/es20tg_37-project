@@ -200,7 +200,12 @@ Cypress.Commands.add('showQuestionSuggestion', title => {
   cy.get('[data-cy="closeButton"]').click();
 });
 
-Cypress.Commands.add('acceptQuestionSuggestion', title => {
+Cypress.Commands.add('showQuestionFromSuggestion', (title) =>{
+  cy.contains(title).click()
+  cy.get('[data-cy="questionCloseButton"]').click()
+});
+
+Cypress.Commands.add('acceptQuestionSuggestion', (title) =>{
   cy.contains(title)
     .parent()
     .children()
