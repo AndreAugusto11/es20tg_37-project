@@ -187,7 +187,7 @@
         </hashTree>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request to create clarification request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">INSERT INTO clarification_requests (content, status, question_id, question_answer_id, user_id, public_clarification_request_id) VALUES (&apos;CONTENT&apos;, &apos;OPEN&apos;, ${questionId}, ${questionAnswerId}, ${userId}, null);
+          <stringProp name="query">INSERT INTO clarification_requests (content, status, question_id, question_answer_id, user_id) VALUES (&apos;CONTENT&apos;, &apos;OPEN&apos;, ${questionId}, ${questionAnswerId}, ${userId});
 </stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
