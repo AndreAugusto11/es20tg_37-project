@@ -206,7 +206,7 @@ export default class RemoteServices {
   static cancelTournament(tournament: Tournament) {
     console.log(tournament.id);
     return httpClient
-      .patch(`/tournaments/${tournament.id}/cancel`)
+      .post(`/tournaments/${tournament.id}/cancel`)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });

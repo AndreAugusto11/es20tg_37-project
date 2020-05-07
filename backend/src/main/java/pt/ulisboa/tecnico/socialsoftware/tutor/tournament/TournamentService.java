@@ -168,7 +168,11 @@ public class TournamentService
 				.collect(Collectors.toList());
 	}
 
-	public TournamentDto cancelTournament(Integer userId, Integer tournamentId) {
+	@Retryable(
+			value = { SQLException.class },
+			backoff = @Backoff(delay = 5000))
+	@Transactional(isolation = Isolation.REPEATABLE_READ)
+	public void cancelTournament(Integer userId, Integer tournamentId) {
 
 		if (tournamentId == null) throw new TutorException(TOURNAMENT_NULL_ID);
 		Tournament tournament = tournamentRepository.findById(tournamentId)
@@ -177,20 +181,12 @@ public class TournamentService
 		if (userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
 		userRepository.findById(userId).orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
 
-		System.out.println("Starting with uid = " + userId.toString() + " and tid = " + tournamentId.toString());
-
 		User creator = tournament.getcreator();
 		Integer creatorId = creator.getId();
 
-		System.out.println("Creator ID = " + creatorId.toString());
-
 		if (creatorId.equals(userId))
 		{
-			System.out.println("Calling CancelTournament");
 			tournament.setstatus(Tournament.Status.CANCELLED);
-			System.out.println("MERDA? com userID = " + userId.toString() + " e tournamentID = " + tournamentId.toString());
-			System.out.println(tournament.getstatus());
-			return new TournamentDto(tournament);
 		}
 		else
 		{

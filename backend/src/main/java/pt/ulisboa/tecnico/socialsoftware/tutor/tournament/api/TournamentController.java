@@ -62,16 +62,16 @@ public class TournamentController {
         return tournamentService.enrollStudentInTournament(user.getId(),tournamentId);
     }
 
-    @GetMapping("/tournaments/{tournamentId}/cancel")
+    @PostMapping("/tournaments/{tournamentId}/cancel")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public TournamentDto cancelTournament(Principal principal, @PathVariable Integer tournamentId)
+    public ResponseEntity cancelTournament(Principal principal, @PathVariable Integer tournamentId)
     {
         User user = (User) ((Authentication) principal).getPrincipal();
         if (user == null) { throw new TutorException(AUTHENTICATION_ERROR); }
-
         Integer userId = user.getId();
-        System.out.println("iniciating with uid = " + userId.toString() + " and tid = " + tournamentId.toString());
 
-        return tournamentService.cancelTournament(userId, tournamentId);
+        tournamentService.cancelTournament(userId, tournamentId);
+
+        return ResponseEntity.ok().build();
     }
 }
