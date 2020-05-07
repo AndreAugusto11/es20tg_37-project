@@ -43,6 +43,7 @@ class GetAnswerClarificationRequestsSpockTest extends Specification {
     public static final String COURSE_NAME2 = "Software Engineering"
     public static final String CLARIFICATION_CONTENT_1 = "clarification request content 1"
     public static final String CLARIFICATION_CONTENT_2 = "clarification request content 2"
+    public static final String CLARIFICATION_CONTENT_3 = "clarification request content 3"
     public static final String ACRONYM = "AS1"
     public static final String ACRONYM1 = "AS2"
     public static final String ACRONYM2 = "AS3"
@@ -107,9 +108,11 @@ class GetAnswerClarificationRequestsSpockTest extends Specification {
     def option
     def quizAnswer1
     def quizAnswer2
+    def quizAnswer3
     def quiz
     def questionAnswer1
     def questionAnswer2
+    def questionAnswer3
 
     def setup() {
 
@@ -181,38 +184,48 @@ class GetAnswerClarificationRequestsSpockTest extends Specification {
 
         quizAnswer1 = new QuizAnswer(user_student, quiz)
         quizAnswer2 = new QuizAnswer(user_student_1, quiz)
+        quizAnswer3 = new QuizAnswer(user_student_1, quiz)
         quizAnswerRepository.save(quizAnswer1)
         quizAnswerRepository.save(quizAnswer2)
+        quizAnswerRepository.save(quizAnswer3)
     }
 
     def "get public clarification requests associated to a question when there are no more clarification requests associated with the question"() {
         given: "a question answer answered"
         questionAnswer1 = new QuestionAnswer(quizAnswer1, quizQuestion, TIME_TAKEN, option, SEQUENCE)
         questionAnswer2 = new QuestionAnswer(quizAnswer2, quizQuestion, TIME_TAKEN, option, SEQUENCE)
+        questionAnswer3 = new QuestionAnswer(quizAnswer3, quizQuestion, TIME_TAKEN, option, SEQUENCE)
         quizAnswer1.addQuestionAnswer(questionAnswer1)
         quizAnswer2.addQuestionAnswer(questionAnswer2)
+        quizAnswer2.addQuestionAnswer(questionAnswer3)
         questionAnswerRepository.save(questionAnswer1)
         questionAnswerRepository.save(questionAnswer2)
+        questionAnswerRepository.save(questionAnswer3)
 
         and: "one clarification request of each student"
         def clarificationRequest1 = new ClarificationRequest(questionAnswer1, question1, user_student, CLARIFICATION_CONTENT_1)
         def clarificationRequest2 = new ClarificationRequest(questionAnswer2, question1, user_student_1, CLARIFICATION_CONTENT_2)
+        def clarificationRequest3 = new ClarificationRequest(questionAnswer3, question1, user_student_1, CLARIFICATION_CONTENT_3)
 
         and: "make the clarification requests public"
         PublicClarificationRequest publicClarificationRequest1 = new PublicClarificationRequest(course, clarificationRequest1)
         PublicClarificationRequest publicClarificationRequest2 = new PublicClarificationRequest(course, clarificationRequest2)
+        PublicClarificationRequest publicClarificationRequest3 = new PublicClarificationRequest(course, clarificationRequest3)
         clarificationRequest1.setPublicClarificationRequest(publicClarificationRequest1)
         clarificationRequest2.setPublicClarificationRequest(publicClarificationRequest2)
+        clarificationRequest2.setPublicClarificationRequest(publicClarificationRequest3)
         course.addPublicClarificationRequests(publicClarificationRequest1)
         course.addPublicClarificationRequests(publicClarificationRequest2)
+        course.addPublicClarificationRequests(publicClarificationRequest3)
 
         when:
         def list = questionDiscussionService.getAnswerClarificationRequests(courseExecution.getId(), question1.getId())
 
         then: "the public clarification request is not in the repository"
-        list.size() == 2
+        list.size() == 3
         ClarificationRequestDto clarificationRequestDto1 = new ClarificationRequestDto(clarificationRequest1);
         ClarificationRequestDto clarificationRequestDto2 = new ClarificationRequestDto(clarificationRequest2);
+        ClarificationRequestDto clarificationRequestDto3 = new ClarificationRequestDto(clarificationRequest3);
 
         list.get(0).getId() == clarificationRequestDto1.getId()
         list.get(0).getContent() == clarificationRequestDto1.getContent()
@@ -223,6 +236,11 @@ class GetAnswerClarificationRequestsSpockTest extends Specification {
         list.get(1).getContent() == clarificationRequestDto2.getContent()
         list.get(1).getName() == clarificationRequestDto2.getName()
         list.get(1).getStatus() == clarificationRequestDto2.getStatus()
+
+        list.get(2).getId() == clarificationRequestDto3.getId()
+        list.get(2).getContent() == clarificationRequestDto3.getContent()
+        list.get(2).getName() == clarificationRequestDto3.getName()
+        list.get(2).getStatus() == clarificationRequestDto3.getStatus()
     }
 
     def "get public clarification request associated to a question when there are more clarification requests associated with the question"() {

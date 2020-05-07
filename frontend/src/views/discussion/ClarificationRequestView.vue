@@ -34,7 +34,7 @@
   import {Component, Vue} from 'vue-property-decorator';
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
   import CreateClarificationRequestAnswerDialog
-    from '@/views/teacher/discussion/CreateClarificationRequestAnswerDialog.vue';
+    from '@/views/discussion/CreateClarificationRequestAnswerDialog.vue';
   import ClarificationRequestComponent from '@/components/discussion/ClarificationRequestComponent.vue';
   import {ClarificationRequestAnswer} from '@/models/discussion/ClarificationRequestAnswer';
   import ClarificationRequestAnswerComponent from '@/components/discussion/ClarificationRequestAnswerComponent.vue';
