@@ -105,35 +105,36 @@
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
                     <stringProp name="Argument.value">{&#xd;
 	&quot;id&quot;: null,&#xd;
-	 &quot;questionDto&quot;:{ &#xd;
+	&quot;status&quot;: &quot;PENDING&quot;,&#xd;
+	&quot;questionDto&quot;:{ &#xd;
 	 	&quot;id&quot;: null,&#xd;
 		&quot;title&quot;: &quot;TITLE&quot;,&#xd;
-		&quot;status&quot;: &quot;PENDING&quot;,&#xd;
+		&quot;status&quot;: &quot;DISABLED&quot;,&#xd;
+		&quot;type&quot;: &quot;SUGGESTION&quot;,&#xd;
 		&quot;content&quot;: &quot;CONTENT&quot;,&#xd;
 		&quot;image&quot;: null,&#xd;
 		&quot;sequence&quot;: null,&#xd;
-		&quot;creationDate&quot;:&quot;2020-03-16 17:51&quot;,&#xd;
+		&quot;creationDate&quot;: &quot;2020-03-16 17:51&quot;,&#xd;
+		&quot;topics&quot;: [],&#xd;
 		&quot;options&quot;:[&#xd;
 		      {&#xd;
-		         &quot;content&quot;:&quot;contentOption0&quot;,&#xd;
-		         &quot;correct&quot;:false&#xd;
+		         &quot;content&quot;: &quot;contentOption0&quot;,&#xd;
+		         &quot;correct&quot;: false&#xd;
 		      },&#xd;
 		      {&#xd;
-		         &quot;content&quot;:&quot;contentOption1&quot;,&#xd;
-		         &quot;correct&quot;:true&#xd;
+		         &quot;content&quot;: &quot;contentOption1&quot;,&#xd;
+		         &quot;correct&quot;: true&#xd;
 		      },&#xd;
 		      {&#xd;
-		         &quot;content&quot;:&quot;contentOption2&quot;,&#xd;
-		         &quot;correct&quot;:false&#xd;
+		         &quot;content&quot;: &quot;contentOption2&quot;,&#xd;
+		         &quot;correct&quot;: false&#xd;
 		      },&#xd;
 		      {&#xd;
-		         &quot;content&quot;:&quot;contentOption3&quot;,&#xd;
-		         &quot;correct&quot;:false&#xd;
+		         &quot;content&quot;: &quot;contentOption3&quot;,&#xd;
+		         &quot;correct&quot;: false&#xd;
 		      }&#xd;
-	   	],&#xd;
-   		&quot;topics&quot;:[ ] &#xd;
-   	},&#xd;
-	&quot;status&quot;: &quot;PENDING&quot; &#xd;
+	   	]&#xd;
+   	} &#xd;
 }&#xd;
 </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
@@ -175,7 +176,16 @@
               <hashTree/>
               <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Question Status" enabled="true">
                 <stringProp name="JSON_PATH">$.questionDto.status</stringProp>
-                <stringProp name="EXPECTED_VALUE">PENDING</stringProp>
+                <stringProp name="EXPECTED_VALUE">DISABLED</stringProp>
+                <boolProp name="JSONVALIDATION">true</boolProp>
+                <boolProp name="EXPECT_NULL">false</boolProp>
+                <boolProp name="INVERT">false</boolProp>
+                <boolProp name="ISREGEX">false</boolProp>
+              </JSONPathAssertion>
+              <hashTree/>
+              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Question Type" enabled="true">
+                <stringProp name="JSON_PATH">$.questionDto.type</stringProp>
+                <stringProp name="EXPECTED_VALUE">SUGGESTION</stringProp>
                 <boolProp name="JSONVALIDATION">true</boolProp>
                 <boolProp name="EXPECT_NULL">false</boolProp>
                 <boolProp name="INVERT">false</boolProp>
@@ -341,7 +351,7 @@
         </ResultCollector>
         <hashTree/>
       </hashTree>
-      <PostThreadGroup guiclass="PostThreadGroupGui" testclass="PostThreadGroup" testname="tearDown Thread Group" enabled="true">
+      <PostThreadGroup guiclass="PostThreadGroupGui" testclass="PostThreadGroup" testname="Taer Down Thread Group" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
@@ -365,19 +375,21 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">132</stringProp>
+          <stringProp name="password">postLeve.</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">goncalo</stringProp>
+          <stringProp name="username">mleveist</stringProp>
         </JDBCDataSource>
         <hashTree/>
-        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
+        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request delete suggestions" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query"> DELETE FROM users_question_suggestion;
- DELETE FROM question_Suggestions;</stringProp>
+          <stringProp name="query">DELETE FROM options o WHERE question_id IN ( SELECT id FROM questions q WHERE q.type = &apos;SUGGESTION&apos; );
+DELETE FROM questions q WHERE q.type = &apos;SUGGESTION&apos;;
+DELETE FROM users_question_suggestion;
+DELETE FROM question_Suggestions;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>

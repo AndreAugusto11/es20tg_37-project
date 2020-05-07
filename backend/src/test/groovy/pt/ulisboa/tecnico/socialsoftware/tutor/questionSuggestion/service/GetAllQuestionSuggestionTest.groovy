@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
@@ -18,6 +19,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.Que
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_COURSEID
 
 @DataJpaTest
 class GetAllQuestionSuggestionTest extends Specification {
@@ -83,7 +86,8 @@ class GetAllQuestionSuggestionTest extends Specification {
         questionDto.setTitle(QUESTION_TITLE)
         questionDto.setContent(QUESTION_CONTENT)
         questionDto.setKey(1)
-        questionDto.setStatus(Question.Status.PENDING.name())
+        questionDto.setStatus(Question.Status.DISABLED.name())
+        questionDto.setType(Question.Type.SUGGESTION.name())
         questionDto.setOptions(options)
         questionDto.setCreationDate("2020-04-16 17:51")
 
@@ -110,7 +114,21 @@ class GetAllQuestionSuggestionTest extends Specification {
         resQuestionSuggestion.getQuestionDto().getId() != null
         resQuestionSuggestion.getTitle() == QUESTION_TITLE
         resQuestionSuggestion.getContent() == QUESTION_CONTENT
-        resQuestionSuggestion.getQuestionDto().getStatus() == Question.Status.PENDING.name()
+        resQuestionSuggestion.getQuestionDto().getType() == Question.Type.SUGGESTION.name()
+        resQuestionSuggestion.getQuestionDto().getStatus() == Question.Status.DISABLED.name()
+    }
+
+    def "retrieve all question suggestions with no given course"() {
+        given: "a question suggestion"
+        def questionSuggestion = new QuestionSuggestion(user, course, questionSuggestionDto)
+        questionSuggestionRepository.save(questionSuggestion)
+
+        when:
+        questionSuggestionService.getQuestionSuggestions(user.getId(), null)
+
+        then: "an exception is thrown"
+        TutorException exception = thrown()
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_COURSEID
     }
 
     @TestConfiguration

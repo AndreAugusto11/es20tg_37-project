@@ -9,8 +9,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
@@ -22,6 +24,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.time.LocalDateTime
 
@@ -31,6 +34,10 @@ class GetSolvedQuizTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
+    public static final String QUIZ_TITLE = "Quiz title"
+    public static final LocalDateTime BEFORE = DateHandler.now().minusDays(2)
+    public static final LocalDateTime YESTERDAY = DateHandler.now().minusDays(1)
+    public static final LocalDateTime TODAY = DateHandler.now()
 
     @Autowired
     QuizService quizService
@@ -68,12 +75,14 @@ class GetSolvedQuizTest extends Specification {
     def option
     def quiz
     def quizQuestion
+    def course
+    def courseExecution
 
     def setup() {
-        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
         courseDto = new CourseDto(courseExecution)
@@ -85,55 +94,54 @@ class GetSolvedQuizTest extends Specification {
         question = new Question()
         question.setKey(1)
         question.setCourse(course)
-        course.addQuestion(question)
+        question.setContent("Question Content")
+        question.setTitle("Question Title")
 
         option = new Option()
+        option.setContent("Option Content")
         option.setCorrect(true)
+        option.setSequence(0)
         option.setQuestion(question)
-        question.addOption(option)
 
+        userRepository.save(user)
+        questionRepository.save(question)
+    }
+
+    @Unroll
+    def "returns solved quiz with: quizType=#quizType | conclusionDate=#conclusionDate | resultsDate=#resultsDate"() {
+        given: 'a quiz answered by the user'
         quiz = new Quiz()
         quiz.setKey(1)
-        quiz.setType(Quiz.QuizType.PROPOSED)
-        quiz.setAvailableDate(LocalDateTime.now().minusDays(1))
+        quiz.setTitle(QUIZ_TITLE)
+        quiz.setType(quizType.toString())
+        quiz.setAvailableDate(BEFORE)
+        quiz.setConclusionDate(conclusionDate)
+        quiz.setResultsDate(resultsDate)
         quiz.setCourseExecution(courseExecution)
-        courseExecution.addQuiz(quiz)
 
         quizQuestion = new QuizQuestion()
         quizQuestion.setSequence(1)
-
-        quiz.addQuizQuestion(quizQuestion)
         quizQuestion.setQuiz(quiz)
-        question.addQuizQuestion(quizQuestion)
         quizQuestion.setQuestion(question)
 
         def quizAnswer = new QuizAnswer()
-        quizAnswer.setAnswerDate(LocalDateTime.now())
+        quizAnswer.setAnswerDate(DateHandler.now())
         quizAnswer.setCompleted(true)
         quizAnswer.setUser(user)
-        user.addQuizAnswer(quizAnswer)
         quizAnswer.setQuiz(quiz)
-        quiz.addQuizAnswer(quizAnswer)
 
         def questionAnswer = new QuestionAnswer()
         questionAnswer.setSequence(0)
         questionAnswer.setQuizAnswer(quizAnswer)
-        quizAnswer.addQuestionAnswer(questionAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
-        quizQuestion.addQuestionAnswer(questionAnswer)
         questionAnswer.setOption(option)
-        option.addQuestionAnswer(questionAnswer)
 
-        userRepository.save(user)
         quizRepository.save(quiz)
-        questionRepository.save(question)
         quizAnswerRepository.save(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
-    }
 
-    def 'get solved quiz for the student'() {
         when:
-        def solvedQuizDto = statementService.getSolvedQuiz(USERNAME, courseDto.getCourseExecutionId(), quiz.getId())
+        def solvedQuizDto = statementService.getSolvedQuiz(user.getId(), courseDto.getCourseExecutionId(), quiz.getId())
 
         then: 'returns correct data'
         def statementQuizDto = solvedQuizDto.getStatementQuiz()
@@ -146,6 +154,12 @@ class GetSolvedQuizTest extends Specification {
         def correct = solvedQuizDto.getCorrectAnswers().get(0)
         correct.getSequence() == 0
         correct.getCorrectOptionId() == option.getId()
+
+        where:
+        quizType                | conclusionDate | resultsDate
+        Quiz.QuizType.PROPOSED  | YESTERDAY      | TODAY.minusHours(1)
+        Quiz.QuizType.IN_CLASS  | YESTERDAY      | TODAY.minusHours(1)
+        Quiz.QuizType.IN_CLASS  | YESTERDAY      | null
     }
 
     @TestConfiguration
@@ -166,6 +180,9 @@ class GetSolvedQuizTest extends Specification {
         QuizService quizService() {
             return new QuizService()
         }
+        @Bean
+        QuestionService questionService() {
+            return new QuestionService()
+        }
     }
-
 }

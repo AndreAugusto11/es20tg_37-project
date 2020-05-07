@@ -41,8 +41,7 @@ public class ClarificationRequest {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clarificationRequest", orphanRemoval=true)
     private Set<ClarificationRequestAnswer> clarificationRequestAnswer = new HashSet<>();
 
-    @OneToOne
-    @JoinColumn(name = "public_clarification_request_id")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "clarificationRequest")
     private PublicClarificationRequest publicClarificationRequest;
 
     @Column(columnDefinition = "TEXT")
