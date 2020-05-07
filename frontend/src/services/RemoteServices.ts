@@ -18,6 +18,7 @@ import QuestionSuggestion from '@/models/management/QuestionSuggestion';
 import Justification from '@/models/management/Justification';
 import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
 import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
+import User from '@/models/user/User';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 50000;
@@ -716,27 +717,34 @@ export default class RemoteServices {
       });
   }
 
-
-  static async makeClarificationRequestPublic(clarificationRequestId: number): Promise<ClarificationRequest> {
+  static async makeClarificationRequestPublic(
+    clarificationRequestId: number
+  ): Promise<ClarificationRequest> {
     return httpClient
-        .post(`/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests/${clarificationRequestId}/public`)
-        .then(response => {
-          return new ClarificationRequest(response.data);
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
-        });
+      .post(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests/${clarificationRequestId}/public`
+      )
+      .then(response => {
+        return new ClarificationRequest(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
-  static async makeClarificationRequestPrivate(clarificationRequestId: number): Promise<ClarificationRequest> {
+  static async makeClarificationRequestPrivate(
+    clarificationRequestId: number
+  ): Promise<ClarificationRequest> {
     return httpClient
-        .post(`/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests/${clarificationRequestId}/private`)
-        .then(response => {
-          return new ClarificationRequest(response.data);
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
-        });
+      .post(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests/${clarificationRequestId}/private`
+      )
+      .then(response => {
+        return new ClarificationRequest(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async errorMessage(error: any): Promise<string> {
@@ -776,10 +784,7 @@ export default class RemoteServices {
     questionSuggestion: QuestionSuggestion
   ): Promise<QuestionSuggestion> {
     return httpClient
-      .put(
-        `/questionSuggestions/${questionSuggestion.id}`,
-        questionSuggestion
-      )
+      .put(`/questionSuggestions/${questionSuggestion.id}`, questionSuggestion)
       .then(response => {
         return new QuestionSuggestion(response.data);
       })
@@ -839,6 +844,17 @@ export default class RemoteServices {
         return response.data.map((questionSuggestion: any) => {
           return new QuestionSuggestion(questionSuggestion);
         });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async changeSuggestionPrivacy(): Promise<Student> {
+    return httpClient
+      .put('/executions/stats')
+      .then(response => {
+        return new Student(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

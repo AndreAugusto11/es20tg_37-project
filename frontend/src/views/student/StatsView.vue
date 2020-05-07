@@ -74,6 +74,11 @@
         </div>
       </div>
     </div>
+    <div class="toggle-btn">
+      <div class="inner-circle">
+        onclick= "this.classList.toggle('active')">
+      </div>
+    </div>
   </div>
 </template>
 
@@ -158,6 +163,32 @@ export default class StatsView extends Vue {
   }
   & .icon-wrapper i {
     transform: translateY(5px);
+  }
+
+  .toggle-btn {
+    width: 80px;
+    height: 40px;
+    background: gray;
+    border-radius: 30px;
+    padding: 5px;
+    transition: all 300ms ease-in-out;
+  }
+
+  .toggle-btn > .inner-circle {
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border-radius: 50%;
+    padding: 5px;
+    transition: all 300ms ease-in-out;
+  }
+
+  .toggle-btn.active {
+    background: #00acee;
+  }
+
+  .toggle-btn.active > .inner-circle {
+    margin-left: 40px;
   }
 }
 </style>

@@ -118,4 +118,11 @@ public class StatsService {
         }
         return statsDto;
     }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void changeSuggestionPrivacy(Integer userId){
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        user.setPrivateSuggestion(!user.getPrivateSuggestion());
+    }
 }
