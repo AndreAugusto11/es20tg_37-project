@@ -365,7 +365,16 @@
       <hashTree>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">DELETE FROM clarification_requests;</stringProp>
+          <stringProp name="query">UPDATE clarification_request_answers
+SET clarification_request_id = null;
+
+UPDATE clarification_requests
+SET clarification_request_answer_id = null;
+
+UPDATE public_clarification_requests
+SET clarification_request_id = null;
+
+DELETE FROM clarification_requests;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
