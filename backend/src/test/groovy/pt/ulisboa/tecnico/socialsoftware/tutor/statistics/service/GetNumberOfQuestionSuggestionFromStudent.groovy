@@ -127,9 +127,8 @@ class GetNumberOfQuestionSuggestionFromStudent extends Specification {
     }
 
     def "Get the number of question suggestion from a student"() {
-        given: "nothing"
 
-        when: "nothing"
+        when:
         def result = statsService.getStats(user.getId(), courseExecution.getId())
 
         then: "the result should be the number of suggestion that the student made"
@@ -137,9 +136,8 @@ class GetNumberOfQuestionSuggestionFromStudent extends Specification {
     }
 
     def "Get the number of question suggestion accepted from a student"() {
-        given: "nothing"
 
-        when: "nothing"
+        when: 
         def result = statsService.getStats(user.getId(), courseExecution.getId())
 
         then: "the result should be the number of suggestion accepted that the student made"
