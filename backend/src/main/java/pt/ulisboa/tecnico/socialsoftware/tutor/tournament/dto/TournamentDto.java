@@ -1,14 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import java.util.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class TournamentDto implements Serializable {
 
@@ -17,6 +14,7 @@ public class TournamentDto implements Serializable {
     private int creatorID;
     private Set<Integer> topics = new HashSet<>();
     private int numQuests = 1;
+    private Integer quizID = null;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Set<String> topicsName = new HashSet<>();
@@ -32,6 +30,7 @@ public class TournamentDto implements Serializable {
         enrolledStudentsIds.add(creatorID);
         settopicsTour(tournament.gettopics());
         numQuests = tournament.getnumQuests();
+        if(tournament.getquiz() != null) quizID = tournament.getquiz().getId();
         startTime = tournament.getstartTime();
         endTime = tournament.getendTime();
         status = tournament.getstatus().name();
@@ -55,6 +54,8 @@ public class TournamentDto implements Serializable {
         return numQuests;
     }
 
+    public Integer getquizID() {return quizID;}
+
     public Set<Integer> gettopics() {
         return topics;
     }
@@ -62,6 +63,7 @@ public class TournamentDto implements Serializable {
     public Set<String> gettopicsName() {
         return topicsName;
     }
+
     public LocalDateTime getstartTime() {
         return startTime;
     }
@@ -85,6 +87,8 @@ public class TournamentDto implements Serializable {
     public void setnumQuests(int numQuests) {
         this.numQuests = numQuests;
     }
+
+    public void setquizID(Integer quizID){this.quizID = quizID;}
 
     public void settopics(Set<Integer> topics)
     {

@@ -6,6 +6,7 @@ export default class StatementQuiz {
   id!: number;
   courseName!: string;
   quizAnswerId!: number;
+  tournamentID: number | null = null;
   title!: string;
   qrCodeOnly!: boolean;
   oneWay!: boolean;
@@ -24,6 +25,7 @@ export default class StatementQuiz {
       this.id = jsonObj.id;
       this.courseName = jsonObj.courseName;
       this.quizAnswerId = jsonObj.quizAnswerId;
+      this.tournamentID = jsonObj.tournamentID;
       this.title = jsonObj.title;
       this.qrCodeOnly = jsonObj.qrCodeOnly;
       this.oneWay = jsonObj.oneWay;

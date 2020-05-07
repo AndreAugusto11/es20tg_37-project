@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -77,6 +78,9 @@ public class Quiz implements DomainEntity {
     @ManyToOne
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
+
+    @OneToOne
+    private Tournament tournament;
 
     public Quiz() {}
 
@@ -152,6 +156,8 @@ public class Quiz implements DomainEntity {
     public String getTitle() {
     return title;
     }
+
+    public void settournament(Tournament tournament){this.tournament = tournament;}
 
     public void setTitle(String title) {
         if (title == null || title.isBlank())
@@ -254,6 +260,8 @@ public class Quiz implements DomainEntity {
     public Set<QuizAnswer> getQuizAnswers() {
         return quizAnswers;
     }
+
+    public Tournament gettournament(){return tournament;}
 
     public CourseExecution getCourseExecution() {
         return courseExecution;
