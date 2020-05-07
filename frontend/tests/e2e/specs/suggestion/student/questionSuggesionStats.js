@@ -1,5 +1,13 @@
 describe('Show stats', () => {
   beforeEach(() => {
+    cy.exec(
+      'psql -d tutordb -c "DELETE FROM options o WHERE question_id IN ( SELECT id FROM questions q WHERE q.type = \'SUGGESTION\');"'
+    );
+    cy.exec(
+      'psql -d tutordb -c "DELETE FROM questions q WHERE q.type = \'SUGGESTION\';"'
+    );
+    cy.exec('psql -d tutordb -c "DELETE FROM users_question_suggestion;"');
+    cy.exec('psql -d tutordb -c "DELETE FROM question_Suggestions;"');
     cy.demoStudentLogin();
     cy.contains('Suggestions').click();
   });
@@ -21,7 +29,7 @@ describe('Show stats', () => {
     cy.wait(10000);
     cy.contains('Stats').click();
     cy.get('[data-cy="totalNumberSuggestions"]')
-      .contains(/^[1-9][0-9]*$/)
+      .contains(1)
       .should('exist');
   });
   it('it creates a suggestion, this is accepted and see the  stats', () => {
@@ -43,7 +51,7 @@ describe('Show stats', () => {
     cy.demoStudentLogin();
     cy.contains('Stats').click();
     cy.get('[data-cy="totalNumberSuggestionsAvailable"]')
-      .contains(/^[1-9][0-9]*$/)
+      .contains(1)
       .should('exist');
   });
 });
