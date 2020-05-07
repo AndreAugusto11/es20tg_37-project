@@ -96,6 +96,12 @@ public class StatsService {
 
         int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());
 
+        int totalClarificationRequests = user.getClarificationRequests().size();
+
+        int totalPublicClarificationRequests = (int) user.getClarificationRequests().stream()
+                .filter(clarificationRequest -> clarificationRequest.getPublicClarificationRequest() != null)
+                .count();
+
         int totalNumberSuggestions = (int)questionSuggestionRepository.findAll().stream().
                 filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
                 count();
@@ -116,6 +122,8 @@ public class StatsService {
             statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
             statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);
         }
+        statsDto.setTotalClarificationRequests(totalClarificationRequests);
+        statsDto.setTotalPublicClarificationRequests(totalPublicClarificationRequests);
         return statsDto;
     }
 }
