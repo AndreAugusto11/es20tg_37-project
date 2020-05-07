@@ -757,7 +757,8 @@ export default class RemoteServices {
   static async createQuestionSuggestion(
     questionSuggestion: QuestionSuggestion
   ): Promise<QuestionSuggestion> {
-    questionSuggestion.questionDto.status = 'PENDING';
+    questionSuggestion.questionDto.status = 'DISABLED';
+    questionSuggestion.questionDto.type = 'SUGGESTION';
     return httpClient
       .post(
         `/courses/${Store.getters.getCurrentCourse.courseId}/questionSuggestions/`,

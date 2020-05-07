@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
@@ -18,6 +19,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.Que
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_COURSEID
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_USERID
 
 @DataJpaTest
 class GetQuestionSuggestionTest extends Specification {
@@ -79,11 +83,12 @@ class GetQuestionSuggestionTest extends Specification {
         optionDto2.setCorrect(false)
         options.add(optionDto2)
 
-        questionDto = new QuestionDto();
+        questionDto = new QuestionDto()
         questionDto.setTitle(QUESTION_TITLE)
         questionDto.setContent(QUESTION_CONTENT)
         questionDto.setKey(1)
-        questionDto.setStatus(Question.Status.PENDING.name())
+        questionDto.setType(Question.Type.SUGGESTION.name())
+        questionDto.setStatus(Question.Status.DISABLED.name())
         questionDto.setOptions(options)
         questionDto.setCreationDate("2020-04-16 17:51")
 
@@ -110,7 +115,34 @@ class GetQuestionSuggestionTest extends Specification {
         resQuestionSuggestion.getQuestionDto().getId() != null
         resQuestionSuggestion.getTitle() == QUESTION_TITLE
         resQuestionSuggestion.getContent() == QUESTION_CONTENT
-        resQuestionSuggestion.getQuestionDto().getStatus() == Question.Status.PENDING.name()
+        resQuestionSuggestion.getQuestionDto().getType() == Question.Type.SUGGESTION.name()
+        resQuestionSuggestion.getQuestionDto().getStatus() == Question.Status.DISABLED.name()
+    }
+
+    def "retrieve question suggestion with no given user"() {
+        given: "a question suggestion"
+        def questionSuggestion = new QuestionSuggestion(user, course, questionSuggestionDto)
+        questionSuggestionRepository.save(questionSuggestion)
+
+        when:
+        questionSuggestionService.getQuestionSuggestions(null, course.getId())
+
+        then: "an exception is thrown"
+        TutorException exception = thrown()
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_USERID
+    }
+
+    def "retrieve question suggestion with no given course"() {
+        given: "a question suggestion"
+        def questionSuggestion = new QuestionSuggestion(user, course, questionSuggestionDto)
+        questionSuggestionRepository.save(questionSuggestion)
+
+        when:
+        questionSuggestionService.getQuestionSuggestions(user.getId(), null)
+
+        then: "an exception is thrown"
+        TutorException exception = thrown()
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_COURSEID
     }
 
     @TestConfiguration

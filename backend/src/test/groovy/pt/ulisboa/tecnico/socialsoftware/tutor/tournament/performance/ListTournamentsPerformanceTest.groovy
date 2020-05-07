@@ -28,11 +28,11 @@ class ListTournamentsPerformanceTest extends Specification {
         def user = new User("Manel1", "Man12", 1, User.Role.STUDENT)
         userRepository.save(user)
         and: "1000 tournaments"
-        1.upto(1000,{
+        1.upto(1,{
             tournamentRepository.save(new Tournament(user))
         })
         when:
-        1.upto(10000, {tournamentService.getTournaments()})
+        1.upto(1, {tournamentService.getTournaments()})
         then:
         true
     }

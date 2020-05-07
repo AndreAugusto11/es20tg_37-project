@@ -24,6 +24,7 @@ public class QuestionDto implements Serializable {
     private int numberOfCorrect;
     private String creationDate;
     private String status;
+    private String type;
     private List<OptionDto> options = new ArrayList<>();
     private ImageDto image;
     private List<TopicDto> topics = new ArrayList<>();
@@ -41,6 +42,7 @@ public class QuestionDto implements Serializable {
         this.numberOfNonGeneratedQuizzes = question.getQuizQuestions().size() - this.numberOfGeneratedQuizzes;
         this.numberOfCorrect = question.getNumberOfCorrect();
         this.status = question.getStatus().name();
+        this.type = question.getType().name();
         this.options = question.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
         this.topics = question.getTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
         this.creationDate = DateHandler.toISOString(question.getCreationDate());
@@ -134,6 +136,14 @@ public class QuestionDto implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public List<OptionDto> getOptions() {

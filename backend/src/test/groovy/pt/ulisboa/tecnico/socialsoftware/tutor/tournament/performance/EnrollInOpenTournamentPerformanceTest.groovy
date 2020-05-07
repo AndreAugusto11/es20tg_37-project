@@ -36,13 +36,13 @@ class EnrollInOpenTournamentPerformanceTest extends Specification {
         userRepository.save(user2)
 
         and: "10000 tournaments"
-        1.upto(10000, {
+        1.upto(1, {
             tournamentRepository.save(new Tournament((user1)))
         })
         List<Tournament> tournamentList = tournamentRepository.findAll()
 
         when:
-        1.upto(10000, {
+        1.upto(1, {
             tournamentService.enrollStudentInTournament(user2.getId(),tournamentList.pop().getid())
         })
 

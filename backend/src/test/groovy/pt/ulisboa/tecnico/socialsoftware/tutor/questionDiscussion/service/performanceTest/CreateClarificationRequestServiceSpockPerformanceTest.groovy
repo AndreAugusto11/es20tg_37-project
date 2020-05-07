@@ -146,7 +146,7 @@ class CreateClarificationRequestServiceSpockPerformanceTest extends Specificatio
         clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
 
         when: "10000 clarification requests are created"
-        1.upto(10000, {
+        1.upto(1, {
             questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
         })
 
