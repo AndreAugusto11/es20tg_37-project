@@ -64,14 +64,17 @@
       <v-btn v-if="this.answer.questionAnswerDto.hasClarificationRequest" disabled>
         Ask clarification
       </v-btn>
-      <v-btn v-else color="primary" dark @click="newClarificationRequest" data-cy="createClarificationButton">
+      <v-btn v-else color="primary" @click="newClarificationRequest" data-cy="createClarificationButton">
         Ask clarification
       </v-btn>
-      <v-btn class="ml-5" v-if="this.answer.questionAnswerDto.hasClarificationRequest" color="primary" dark @click="openClarificationRequest" data-cy="seeClarificationButton">
-        See clarification
+      <v-btn class="ml-5" v-if="this.answer.questionAnswerDto.hasClarificationRequest" color="primary" @click="openClarificationRequest" data-cy="seeClarificationButton">
+        See My clarification
       </v-btn>
       <v-btn class="ml-5" v-else disabled>
-        See clarification
+        See My clarification
+      </v-btn>
+      <v-btn class="ml-5" color="primary" @click="seeOtherClarifications" data-cy="seeOtherClarificationsButton">
+        See Clarifications On This Question
       </v-btn>
     </v-container>
     <create-clarification-request-dialog
@@ -150,6 +153,18 @@ export default class ResultComponent extends Vue {
       try {
         this.clarification = await RemoteServices.getClarificationRequest(this.answer.questionAnswerId);
         await this.$router.push({ name: 'clarification', params: { clarificationRequest: JSON.stringify(this.clarification) } });
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+      await this.$store.dispatch('clearLoading');
+    }
+  }
+
+  async seeOtherClarifications() {
+    await this.$store.dispatch('loading');
+    if (this.answer.questionAnswerId) {
+      try {
+        await this.$router.push({ name: 'questionClarifications', params: {question: JSON.stringify(this.answer.questionAnswerDto.question) }});
       } catch (error) {
         await this.$store.dispatch('error', error);
       }

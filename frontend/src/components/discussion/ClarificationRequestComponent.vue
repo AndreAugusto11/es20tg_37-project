@@ -152,6 +152,15 @@
                 </v-list-item-content>
             </v-list-item>
         </v-list>
+        <v-row
+            align="center"
+            class="spacer ml-5"
+            no-gutters
+        >
+            <v-col align="right" class="mr-5" style="color: grey; font-size: 14px;">
+                <span v-html="convertMarkDown(this.getTimeDiff(this.clarificationRequest.creationDate), null)" />
+            </v-col>
+        </v-row>
     </v-card>
 </template>
 
@@ -207,6 +216,54 @@
     getRandomVuetifyColor(name: string): string {
       return getRandomVuetifyColor(name);
     }
+
+          getTimeDiff(dateTimeString: string) {
+        let datetime: number;
+        let now: number;
+        let milisec_diff: number;
+        let days: number;
+        let date_diff: Date;
+
+        datetime = new Date(dateTimeString).getTime();
+        now = new Date().getTime();
+
+        if (isNaN(datetime))
+          return "";
+
+        if (datetime < now) {
+          milisec_diff = now - datetime;
+        }
+        else {
+          milisec_diff = datetime - now;
+        }
+
+        days = Math.floor(milisec_diff / 1000 / 60 / (60 * 24));
+
+        date_diff = new Date(milisec_diff);
+
+        if (days > 0) {
+          return days + " Days ago";
+        }
+        else if ((date_diff.getHours() - 1) > 0) {
+          if ((date_diff.getHours() - 1) > 1) {
+            return (date_diff.getHours() - 1) + " Hours ago";
+          }
+          else {
+            return (date_diff.getHours() - 1) + " Hour ago";
+          }
+        }
+        else if (date_diff.getMinutes() > 0) {
+          if (date_diff.getMinutes() > 1) {
+            return date_diff.getMinutes() + " Minutes ago";
+          }
+          else {
+            return date_diff.getMinutes() + " Minute ago";
+          }
+        }
+        else {
+          return date_diff.getSeconds() + " Seconds ago";
+        }
+      }
   }
 </script>
 

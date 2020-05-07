@@ -185,6 +185,5 @@ class RemovePublicClarificationRequestServiceSpockPerformanceTest extends Specif
         QuestionDiscussionService questionDiscussionService() {
             return new QuestionDiscussionService()
         }
-
     }
 }
