@@ -29,11 +29,6 @@
             <stringProp name="Argument.value">8080</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="tournamentId" elementType="Argument">
-            <stringProp name="Argument.name">tournamentId</stringProp>
-            <stringProp name="Argument.value">15</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
         </collectionProp>
       </Arguments>
       <hashTree/>
@@ -69,20 +64,6 @@
           <stringProp name="password">1234</stringProp>
           <stringProp name="connectionProperties"></stringProp>
         </JDBCDataSource>
-        <hashTree/>
-        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
-          <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="queryType">Callable Statement</stringProp>
-          <stringProp name="query">INSERT INTO tournaments (id,user_id,number_of_questions,start_date,end_date,status)
-VALUES (${tournamentId},676,1,null,null,&apos;OPEN&apos;);</stringProp>
-          <stringProp name="queryArguments"></stringProp>
-          <stringProp name="queryArgumentsTypes"></stringProp>
-          <stringProp name="variableNames"></stringProp>
-          <stringProp name="resultVariable"></stringProp>
-          <stringProp name="queryTimeout"></stringProp>
-          <stringProp name="resultSetMaxRows"></stringProp>
-          <stringProp name="resultSetHandler">Store as String</stringProp>
-        </JDBCSampler>
         <hashTree/>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
@@ -174,9 +155,99 @@ VALUES (${tournamentId},676,1,null,null,&apos;OPEN&apos;);</stringProp>
                 <stringProp name="Header.name">Content-Type</stringProp>
                 <stringProp name="Header.value">application/json</stringProp>
               </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">id</stringProp>
+                <stringProp name="Header.value">${tournamentId}</stringProp>
+              </elementProp>
             </collectionProp>
           </HeaderManager>
           <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request to create tournament" enabled="true">
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+	&quot;creatorID&quot;: 676,&#xd;
+	&quot;topics&quot;: [82],&#xd;
+	&quot;numQuests&quot;: 10,&#xd;
+	&quot;startTime&quot;: [2020, 5, 24, 0, 0],&#xd;
+	&quot;endTime&quot;: [2020, 5, 26, 0, 0],&#xd;
+	&quot;status&quot;: &quot;OPEN&quot;&#xd;
+}&#xd;
+</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain">${server}</stringProp>
+            <stringProp name="HTTPSampler.port">${port}</stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">/tournaments</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+            <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Creator" enabled="true">
+              <stringProp name="JSON_PATH">$.creatorID</stringProp>
+              <stringProp name="EXPECTED_VALUE">676</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Topics" enabled="true">
+              <stringProp name="JSON_PATH">$.topics</stringProp>
+              <stringProp name="EXPECTED_VALUE">[82]</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Number of Questions" enabled="true">
+              <stringProp name="JSON_PATH">$.numQuests</stringProp>
+              <stringProp name="EXPECTED_VALUE">10</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Start Time" enabled="true">
+              <stringProp name="JSON_PATH">$.startTime</stringProp>
+              <stringProp name="EXPECTED_VALUE">[2020,5,24,0,0]</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert End Time" enabled="true">
+              <stringProp name="JSON_PATH">$.endTime</stringProp>
+              <stringProp name="EXPECTED_VALUE">[2020,5,26,0,0]</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">tournamentId</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+          </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request to cancelTournament" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
@@ -186,7 +257,7 @@ VALUES (${tournamentId},676,1,null,null,&apos;OPEN&apos;);</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
             <stringProp name="HTTPSampler.path">/tournaments/${tournamentId}/cancel</stringProp>
-            <stringProp name="HTTPSampler.method">DELETE</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -195,20 +266,45 @@ VALUES (${tournamentId},676,1,null,null,&apos;OPEN&apos;);</stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
-          <hashTree/>
+          <hashTree>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="JSON Assertion" enabled="true">
+              <stringProp name="JSON_PATH">$.status</stringProp>
+              <stringProp name="EXPECTED_VALUE">CANCELLED</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+            </JSONPathAssertion>
+            <hashTree/>
+          </hashTree>
           <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
             <stringProp name="dataSource">sampleReq</stringProp>
             <stringProp name="queryType">Select Statement</stringProp>
-            <stringProp name="query">SELECT users_id FROM tournaments_users WHERE tournament_id = ${tournamentId};</stringProp>
+            <stringProp name="query">SELECT status FROM tournaments WHERE id = ${tournamentId};</stringProp>
             <stringProp name="queryArguments"></stringProp>
             <stringProp name="queryArgumentsTypes"></stringProp>
             <stringProp name="variableNames"></stringProp>
-            <stringProp name="resultVariable"></stringProp>
+            <stringProp name="resultVariable">result</stringProp>
             <stringProp name="queryTimeout"></stringProp>
             <stringProp name="resultSetMaxRows"></stringProp>
             <stringProp name="resultSetHandler">Store as String</stringProp>
           </JDBCSampler>
-          <hashTree/>
+          <hashTree>
+            <BeanShellAssertion guiclass="BeanShellAssertionGui" testclass="BeanShellAssertion" testname="BeanShell Assertion" enabled="true">
+              <stringProp name="BeanShellAssertion.query">String str = vars.getObject(&quot;result&quot;).get(0).get(&quot;status&quot;);
+
+if(!str.equals(&quot;CANCELLED&quot;))
+{
+	Failure = true;
+	FailureMessage = &quot;Tournament does not have status set to CANCELLED but &quot; + str;
+}
+</stringProp>
+              <stringProp name="BeanShellAssertion.filename"></stringProp>
+              <stringProp name="BeanShellAssertion.parameters"></stringProp>
+              <boolProp name="BeanShellAssertion.resetInterpreter">false</boolProp>
+            </BeanShellAssertion>
+            <hashTree/>
+          </hashTree>
         </hashTree>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
@@ -302,11 +398,10 @@ VALUES (${tournamentId},676,1,null,null,&apos;OPEN&apos;);</stringProp>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="queryType">Callable Statement</stringProp>
-          <stringProp name="query">|DELETE FROM tournaments_users;
-|DELETE FROM users_tournaments;
-|DELETE FROM users_created_tournaments;
-|DELETE FROM tournaments_topics;
-|DELETE FROM tournaments;</stringProp>
+          <stringProp name="query">DELETE FROM users_created_tournaments WHERE created_tournaments_id = ${tournamentId};
+DELETE FROM users_tournaments WHERE tournaments_id = ${tournamentId};
+DELETE FROM tournaments_users WHERE tournament_id = ${tournamentId};
+DELETE FROM tournaments WHERE id = ${tournamentId};</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="variableNames"></stringProp>

@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
@@ -16,14 +18,14 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class Tournament {
 
 	public enum Status {
-		OPEN, ONGOING, CLOSED
+		OPEN, ONGOING, CLOSED, CANCELLED
 	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	private Set<User> users = new HashSet<>();
 
 	@ManyToOne
@@ -183,20 +185,5 @@ public class Tournament {
 	{
 		status = stat;
 	}
-
-
-	public void delete() {
-
-		this.deleteQuiz();
-
-		Set<User> users = this.getusers();
-		for (User u : users) {
-			u.removeTournament(this);
-		}
-		creator.removeCreatedTournament(this);
-
-	}
-
-	public void deleteQuiz(){}
 
 }

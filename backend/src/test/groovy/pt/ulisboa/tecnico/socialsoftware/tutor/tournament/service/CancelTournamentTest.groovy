@@ -1,7 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Specification
@@ -13,6 +17,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
+
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NON_CREATOR
 
@@ -28,6 +35,12 @@ class CancelTournamentTest extends Specification{
     @Autowired
     UserRepository userRepository
 
+    @Autowired
+    TopicRepository topicRepository
+
+    @Autowired
+    CourseRepository courseRepository
+
     def user
     def tournament
     def userID
@@ -35,16 +48,43 @@ class CancelTournamentTest extends Specification{
 
     def setup()
     {
-        user = new User("name", "username", 1, User.Role.STUDENT)
-        userRepository.save(user)
-        tournament = new Tournament(user)
-        tournamentRepository.save(tournament)
-        user.addCreatedTournament(tournament)
+        user = new User('student', "istStu", 1, User.Role.STUDENT)
         userRepository.save(user)
         user = userRepository.findByKey(1)
-        tournament = tournamentService.getCreatedTournaments(user.getId()).get(0)
-        userID = user.getId()
+
+        def topicOne = new Topic()
+        topicOne.setName("TOPIC1")
+        def topicTwo = new Topic()
+        topicTwo.setName("TOPIC2")
+        def topicThree = new Topic()
+        topicThree.setName("TOPIC3")
+
+        def course = new Course("LEIC", Course.Type.TECNICO)
+        courseRepository.save(course)
+        course = courseRepository.findByNameType("LEIC", "TECNICO").get()
+        topicOne.setCourse(course)
+        topicTwo.setCourse(course)
+        topicThree.setCourse(course)
+
+        def topics = new HashSet<Topic>()
+        topics.add(topicOne)
+        topics.add(topicTwo)
+        topics.add(topicThree)
+
+        topicRepository.save(topicOne)
+        topicRepository.save(topicTwo)
+        topicRepository.save(topicThree)
+
+        def formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
+        def startTime = LocalDateTime.now().plusDays(1)
+        startTime.format(formatter)
+        def endTime = LocalDateTime.now().plusDays(2)
+        endTime.format(formatter)
+
+        tournament = new Tournament(user, topics, 5, startTime, endTime)
+        tournamentRepository.save(tournament)
         tournamentId = tournament.getid()
+        userID = user.getId()
     }
 
     def "cancel a tournament previously created"()
@@ -52,7 +92,9 @@ class CancelTournamentTest extends Specification{
         when:
         tournamentService.cancelTournament(userID, tournamentId)
         then: "the tournament is removed"
-        tournamentRepository.count() == 0L
+        def t = tournamentRepository.findById(tournamentId).get()
+        t.getcreator().getId() == userID
+        t.getstatus() == Tournament.Status.CANCELLED
     }
 
     def "non-valid user"()

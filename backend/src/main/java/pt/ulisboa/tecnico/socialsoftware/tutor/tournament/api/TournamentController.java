@@ -8,12 +8,16 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.security.Principal;
 import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
 
 @RestController
 public class TournamentController {
@@ -58,12 +62,16 @@ public class TournamentController {
         return tournamentService.enrollStudentInTournament(user.getId(),tournamentId);
     }
 
-    @DeleteMapping("/tournaments/{tournamentId}/cancel")
+    @GetMapping("/tournaments/{tournamentId}/cancel")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public ResponseEntity cancelTournament(Principal principal, @PathVariable Integer tournamentId)
+    public TournamentDto cancelTournament(Principal principal, @PathVariable Integer tournamentId)
     {
         User user = (User) ((Authentication) principal).getPrincipal();
-        tournamentService.cancelTournament(user.getId(), tournamentId);
-        return ResponseEntity.ok().build();
+        if (user == null) { throw new TutorException(AUTHENTICATION_ERROR); }
+
+        Integer userId = user.getId();
+        System.out.println("iniciating with uid = " + userId.toString() + " and tid = " + tournamentId.toString());
+
+        return tournamentService.cancelTournament(userId, tournamentId);
     }
 }
