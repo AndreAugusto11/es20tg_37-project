@@ -35,7 +35,7 @@
             </template>
 
             <template v-slot:item.number="{ item }">
-                <p v-html="convertMarkDown(getNumberOfAnswers(item.clarificationRequestAnswerDto), null)" />
+                <p v-html="convertMarkDown(item.numberOfAnswers.toString(), null)" />
             </template>
 
             <template v-slot:item.status="{ item }">
@@ -47,14 +47,14 @@
             <template v-slot:item.public="{ item }">
               <v-tooltip v-if="item.public" left>
                   <template v-slot:activator="{ on }">
-                    <v-icon class="mr-2" color="green" v-on="on">fas fa-lock-open</v-icon>
+                    <v-icon class="mr-2" color="green" v-on="on">mdi-eye</v-icon>
                   </template>
                   <span>Public</span>
                 </v-tooltip>
 
                 <v-tooltip v-else left>
                   <template v-slot:activator="{ on }">
-                    <v-icon class="mr-2" color="red" v-on="on">fas fa-lock</v-icon>
+                    <v-icon class="mr-2" color="red" v-on="on">mdi-eye-off</v-icon>
                   </template>
                   <span>Private</span>
                 </v-tooltip>
@@ -82,7 +82,7 @@
 
     headers: object = [
       { text: 'Clarification', value: 'content', align: 'left', width: '50%' },
-      { text: 'Number of Answers', value: 'number', align: 'center', width: '20%' },
+      { text: 'Number of Replies', value: 'number', align: 'center', width: '20%' },
       { text: 'Status', value: 'status', align: 'center', width: '20%' },
       { text: 'Availability', value: 'public', align: 'center', width: '10%'}
     ];
@@ -113,14 +113,8 @@
 
     getStatusColor(status: string) {
       if (status === 'CLOSED') return 'red';
-      else return 'green';
-    }
-
-    getNumberOfAnswers(clarificationRequestAnswer: ClarificationRequestAnswer) {
-      if (clarificationRequestAnswer.id == null) {
-        return '0';
-      }
-      return '1';
+      else if (status === 'ANSWERED') return 'yellow';
+      else return 'green'
     }
 
     async openClarificationRequest(value: ClarificationRequest) {
