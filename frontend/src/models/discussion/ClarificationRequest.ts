@@ -1,6 +1,6 @@
 import { QuestionAnswer } from '@/models/management/QuestionAnswer';
 import Image from '@/models/management/Image';
-import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
+import { ISOtoString } from '@/services/ConvertDateService';
 
 export class ClarificationRequest {
   id: number | null = null;
@@ -12,6 +12,7 @@ export class ClarificationRequest {
   image: Image | null = null;
   numberOfAnswers: number | null = null;
   public: Boolean = false;
+  creationDate!: string | null;
 
   constructor(jsonObj?: ClarificationRequest) {
     if (jsonObj) {
@@ -24,6 +25,8 @@ export class ClarificationRequest {
       this.image = jsonObj.image;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
       this.public = jsonObj.public;
+      this.creationDate = ISOtoString(jsonObj.creationDate);
+
     }
   }
 }

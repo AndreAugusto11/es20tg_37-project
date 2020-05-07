@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -8,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,6 +53,9 @@ public class ClarificationRequest {
     @Enumerated(EnumType.STRING)
     private Status status = Status.OPEN;
 
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
+
     public ClarificationRequest() {
     }
 
@@ -66,6 +71,7 @@ public class ClarificationRequest {
         this.user = user;
         user.addClarificationRequest(this);
         this.content = content;
+        this.creationDate = DateHandler.now();
     }
 
     public Integer getId() {
@@ -97,6 +103,10 @@ public class ClarificationRequest {
     public Image getImage() { return image; }
 
     public void setImage(Image image) { this.image = image; }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
 
     public Set<ClarificationRequestAnswer> getClarificationRequestAnswer() { return this.clarificationRequestAnswer; }
 

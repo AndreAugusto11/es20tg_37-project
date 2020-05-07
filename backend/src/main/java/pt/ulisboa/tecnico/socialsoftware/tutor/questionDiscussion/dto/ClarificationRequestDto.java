@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 
@@ -16,6 +17,7 @@ public class ClarificationRequestDto implements Serializable {
     private ImageDto image;
     private Integer numberOfAnswers;
     private boolean isPublic;
+    private String creationDate;
 
     public ClarificationRequestDto() {
     }
@@ -28,6 +30,7 @@ public class ClarificationRequestDto implements Serializable {
         this.username = clarificationRequest.getUser().getUsername();
         this.status = clarificationRequest.getStatus().name();
         this.numberOfAnswers = clarificationRequest.getClarificationRequestAnswer().size();
+        this.creationDate = DateHandler.toISOString(clarificationRequest.getCreationDate());
 
         this.isPublic = clarificationRequest.getPublicClarificationRequest() != null;
 
@@ -77,7 +80,15 @@ public class ClarificationRequestDto implements Serializable {
         return isPublic;
     }
 
-    public void setPublic(boolean aPublic) {
-        isPublic = aPublic;
+    public void setPublic(boolean isPublic) {
+        isPublic = isPublic;
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
     }
 }
