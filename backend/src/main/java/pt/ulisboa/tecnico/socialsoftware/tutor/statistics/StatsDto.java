@@ -19,6 +19,7 @@ public class StatsDto implements Serializable {
     private Integer totalNumberSuggestionsAvailable = 0;
     private Boolean privateClarificationStats = false;
     private Boolean privateSuggestion = false;
+    private Boolean privateTournamentStats = false;
 
     public Integer getTotalNumberCreatedTournaments() {
         return totalNumberCreatedTournaments;
@@ -147,6 +148,10 @@ public class StatsDto implements Serializable {
     public void setPrivateSuggestion(Boolean privateSuggestion) {
         this.privateSuggestion = privateSuggestion;
     }
+
+    public Boolean isPrivateTournamentsStats() { return privateTournamentStats; }
+
+    public void setPrivateTournamentStats(Boolean privateTournamentStats) { this.privateTournamentStats = privateTournamentStats; }
 
     @Override
     public String toString() {

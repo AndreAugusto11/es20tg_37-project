@@ -58,4 +58,16 @@ public class StatsController {
 
         statsService.changeClarificationStatsPrivacy(user.getId());
     }
+
+    @PutMapping("/executions/{executionId}/stats/tournaments")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public void changeTournamentsStatsPrivacy(Principal principal, @PathVariable int executionId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null) {
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        statsService.changeTournamentsStatsPrivacy(user.getId());
+    }
 }
