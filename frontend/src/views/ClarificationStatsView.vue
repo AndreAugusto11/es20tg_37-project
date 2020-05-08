@@ -28,6 +28,7 @@
                             color="orange darken-3"
                             v-on="on"
                             @click="changeClarificationStatsPrivacy"
+                            data-cy="publicClarificationStatsBtn"
                     >
                         <v-icon class="mr-2">mdi-eye-off</v-icon>
                     </v-btn>
@@ -45,6 +46,7 @@
                             color="orange darken-2"
                             v-on="on"
                             @click="changeClarificationStatsPrivacy"
+                            data-cy="privateClarificationStatsBtn"
                     >
                         <v-icon class="mr-2">mdi-eye</v-icon>
                     </v-btn>
