@@ -860,4 +860,14 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+
+  static async changeSuggestionStatsPrivacy(): Promise<void> {
+    httpClient
+        .put(
+            `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/stats/suggestion`
+        )
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
 }
