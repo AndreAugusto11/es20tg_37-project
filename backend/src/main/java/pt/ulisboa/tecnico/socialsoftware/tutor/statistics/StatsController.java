@@ -34,9 +34,9 @@ public class StatsController {
         return statsService.getStats(user.getId(), executionId, courseId);
     }
 
-    @PutMapping("/executions/stats")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public ResponseEntity changeSuggestionPrivacy(Principal principal){
+    @PutMapping("/executions/{executionId}/stats")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public void changeSuggestionPrivacy(Principal principal, @PathVariable int executionId){
 
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -45,8 +45,5 @@ public class StatsController {
         }
 
         statsService.changeSuggestionPrivacy(user.getId());
-
-        return ResponseEntity.ok().build();
-
     }
 }

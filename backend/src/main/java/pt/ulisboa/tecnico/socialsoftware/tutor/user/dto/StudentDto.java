@@ -35,7 +35,6 @@ public class StudentDto implements Serializable {
         this.numberOfStudentAnswers = user.getNumberOfStudentAnswers();
         this.lastAccess = DateHandler.toISOString(user.getLastAccess());
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
-        this.privateSuggestion = user.getPrivateSuggestion();
 
         if (this.numberOfTeacherAnswers != 0)
             this.percentageOfCorrectTeacherAnswers = user.getNumberOfCorrectTeacherAnswers() * 100 / this.numberOfTeacherAnswers;

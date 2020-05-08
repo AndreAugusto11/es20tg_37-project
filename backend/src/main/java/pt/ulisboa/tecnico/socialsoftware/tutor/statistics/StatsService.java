@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statistics;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -121,10 +122,13 @@ public class StatsService {
         return statsDto;
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void changeSuggestionPrivacy(Integer userId){
-
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        user.setPrivateSuggestion(!user.getPrivateSuggestion());
+
+        user.setPrivateSuggestion(!user.isPrivateSuggestion());
     }
 }

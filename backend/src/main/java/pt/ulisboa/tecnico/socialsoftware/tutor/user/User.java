@@ -179,7 +179,7 @@ public class User implements UserDetails, DomainEntity {
         return courseExecutions;
     }
 
-    public Boolean getPrivateSuggestion() {
+    public Boolean isPrivateSuggestion() {
         return privateSuggestion;
     }
 
