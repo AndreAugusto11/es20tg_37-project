@@ -52,7 +52,7 @@
           </template>
           <span>Show Question</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="item.status === 'REJECTED'">
           <template v-slot:activator="{ on }">
             <v-icon
               large
