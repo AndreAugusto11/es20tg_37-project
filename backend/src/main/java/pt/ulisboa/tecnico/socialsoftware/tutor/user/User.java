@@ -53,6 +53,8 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectInClassAnswers;
     private Integer numberOfCorrectStudentAnswers;
 
+    private Boolean privateClarificationStats = false;
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
@@ -516,5 +518,13 @@ public class User implements UserDetails, DomainEntity {
     public Set<Tournament> getCreatedTournaments()
     {
         return createdTournaments;
+    }
+
+    public Boolean isPrivateClarificationStats() {
+        return privateClarificationStats;
+    }
+
+    public void setPrivateClarificationStats(Boolean privateClarificationStats) {
+        this.privateClarificationStats = privateClarificationStats;
     }
 }

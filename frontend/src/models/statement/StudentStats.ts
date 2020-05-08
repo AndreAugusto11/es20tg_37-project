@@ -9,6 +9,7 @@ export default class StudentStats {
   totalPublicClarificationRequests!: number;
   totalNumberSuggestions!: number;
   totalNumberSuggestionsAvailable!: number;
+  privateClarificationStats!: boolean;
 
   uniqueCorrectAnswers!: number;
   uniqueWrongAnswers!: number;
@@ -28,7 +29,7 @@ export default class StudentStats {
         jsonObj.totalPublicClarificationRequests;
       this.totalNumberSuggestions = jsonObj.totalNumberSuggestions;
       this.totalNumberSuggestionsAvailable = jsonObj.totalNumberSuggestionsAvailable;
-
+      this.privateClarificationStats = jsonObj.privateClarificationStats;
     }
   }
 }
