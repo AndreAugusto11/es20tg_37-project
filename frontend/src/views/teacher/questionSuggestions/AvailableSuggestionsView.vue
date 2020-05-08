@@ -31,7 +31,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="showSuggestionDialog(item)"
@@ -44,7 +44,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="accepted(item.id)"
@@ -57,7 +57,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="showRejectionDialog(item)"
@@ -102,11 +102,11 @@ export default class SuggestionsTView extends Vue {
   search: string = '';
 
   headers: object = [
+    { text: 'Actions', value: 'action', align: 'center', sortable: false },
     { text: 'Title', value: 'questionDto.title', align: 'center' },
     { text: 'Content', value: 'questionDto.content', align: 'left' },
     { text: 'Status', value: 'status', align: 'center' },
-    { text: 'Creation Date', value: 'creationDate', align: 'center' },
-    { text: 'Actions', value: 'action', align: 'center', sortable: false }
+    { text: 'Creation Date', value: 'creationDate', align: 'center' }
   ];
 
   async created() {

@@ -17,7 +17,7 @@
           <v-tab>
             Clarifications
           </v-tab>
-          <v-tab>
+          <v-tab data-cy="sugge">
             Suggestions
           </v-tab>
           <v-tab>

@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statistics;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
@@ -45,11 +47,15 @@ public class StatsService {
     QuestionSuggestionRepository questionSuggestionRepository;
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatsDto getStats(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).
+                orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
+        Integer courseId = courseExecution.getCourse().getId();
 
         StatsDto statsDto = new StatsDto();
 
@@ -109,10 +115,12 @@ public class StatsService {
 
         int totalNumberSuggestions = (int) questionSuggestionRepository.findAll().stream().
                 filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
+                filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId)).
                 count();
 
         int totalNumberSuggestionsAvailable = (int) questionSuggestionRepository.findAll().stream().
                 filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
+                filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId)).
                 filter(questionSuggestion -> questionSuggestion.getStatus().equals(QuestionSuggestion.Status.ACCEPTED)).
                 count();
 
@@ -124,8 +132,8 @@ public class StatsService {
         statsDto.setTotalNumberSuggestionsAvailable(totalNumberSuggestionsAvailable);
 
         if (totalAnswers != 0) {
-            statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
-            statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);
+            statsDto.setCorrectAnswers(((float) correctAnswers) * 100 / totalAnswers);
+            statsDto.setImprovedCorrectAnswers(((float) uniqueCorrectAnswers) * 100 / uniqueQuestions);
         }
         statsDto.setTotalClarificationRequests(totalClarificationRequests);
         statsDto.setTotalPublicClarificationRequests(totalPublicClarificationRequests);
@@ -147,4 +155,19 @@ public class StatsService {
 
         user.setPrivateClarificationStats(!user.isPrivateClarificationStats());
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void changeSuggestionPrivacy(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        if(user.isPrivateSuggestion() == null){
+            user.setPrivateSuggestion(false);
+        }
+
+        user.setPrivateSuggestion(!user.isPrivateSuggestion());
+    }
+
 }
