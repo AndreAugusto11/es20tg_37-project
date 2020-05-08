@@ -59,6 +59,14 @@ public class StatsService {
 
         StatsDto statsDto = new StatsDto();
 
+        int totalNumberEnrolledTournaments = (int) user.getTournaments().stream()
+                .filter(t ->t.canResultsBePublic(executionId))
+                .count();
+
+        int totalNumberCreatedTournaments = (int) user.getCreatedTournaments().stream()
+                .filter(t ->t.canResultsBePublic(executionId))
+                .count();
+
         int totalQuizzes = (int) user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .count();
@@ -128,9 +136,10 @@ public class StatsService {
         statsDto.setTotalAnswers(totalAnswers);
         statsDto.setTotalUniqueQuestions(uniqueQuestions);
         statsDto.setTotalAvailableQuestions(totalAvailableQuestions);
+        statsDto.setTotalNumberCreatedTournaments(totalNumberCreatedTournaments);
+        statsDto.setTotalNumberEnrolledTournaments(totalNumberEnrolledTournaments);
         statsDto.setTotalNumberSuggestions(totalNumberSuggestions);
         statsDto.setTotalNumberSuggestionsAvailable(totalNumberSuggestionsAvailable);
-
         if (totalAnswers != 0) {
             statsDto.setCorrectAnswers(((float) correctAnswers) * 100 / totalAnswers);
             statsDto.setImprovedCorrectAnswers(((float) uniqueCorrectAnswers) * 100 / uniqueQuestions);
@@ -169,5 +178,20 @@ public class StatsService {
 
         user.setPrivateSuggestion(!user.isPrivateSuggestion());
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void changeTournamentsStatsPrivacy(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        if(user.isPrivateTournamentsStats() == null){
+            user.setPrivateTournamentsStats(false);
+        }
+
+        user.setPrivateTournamentsStats(!user.isPrivateTournamentsStats());
+    }
+
 
 }

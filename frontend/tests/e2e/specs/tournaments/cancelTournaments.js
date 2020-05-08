@@ -1,5 +1,10 @@
 describe('Tournament Cancel', () => {
   beforeEach(() => {
+    cy.exec('psql -d tutordb -c "Delete from tournaments_users;"')
+    cy.exec('psql -d tutordb -c "Delete from users_tournaments;"')
+    cy.exec('psql -d tutordb -c "Delete from users_created_tournaments;"')
+    cy.exec('psql -d tutordb -c "Delete from tournaments_topics;"')
+    cy.exec('psql -d tutordb -c "Delete from tournaments ;"')
     cy.precreateTournament();
     cy.demoStudentLogin();
   });

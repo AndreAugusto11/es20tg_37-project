@@ -963,4 +963,14 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+
+  static async changeTournamentsStatsPrivacy(): Promise<void> {
+    httpClient
+      .put(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/stats/tournaments`
+      )
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
 }

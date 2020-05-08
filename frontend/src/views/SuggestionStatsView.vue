@@ -9,7 +9,7 @@
         <animated-number :number="stats.totalNumberSuggestions" />
       </div>
       <div class="project-name">
-        <p>Number of suggestions made</p>
+        <p>Total Suggestions Made</p>
       </div>
     </div>
     <div class="items">
@@ -21,7 +21,7 @@
         <animated-number :number="stats.totalNumberSuggestionsAvailable" />
       </div>
       <div class="project-name">
-        <p>Number of suggestions accepted</p>
+        <p>Total Suggestions Accepted</p>
       </div>
     </div>
     <v-card-text style="height: 50px; position: relative">
@@ -74,7 +74,7 @@ import AnimatedNumber from '@/components/AnimatedNumber.vue';
 @Component({
   components: { AnimatedNumber }
 })
-export default class QuizStatsView extends Vue {
+export default class SuggestionsStatsView extends Vue {
   @Prop(StudentStats) readonly stats!: StudentStats;
 
   async changeSuggestionStatsPrivacy() {

@@ -66,7 +66,7 @@
   @Component({
     components: { AnimatedNumber }
   })
-  export default class QuizStatsView extends Vue {
+  export default class ClarificationStatsView extends Vue {
     @Prop(StudentStats) readonly stats!: StudentStats;
 
     async changeClarificationStatsPrivacy() {
