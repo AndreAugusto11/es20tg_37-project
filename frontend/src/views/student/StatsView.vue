@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <v-card>
-      <v-card dark color="orange">
+      <v-card dark color="primary">
         <v-card-title class="text-center justify-center py-6">
           <h1 class="font-weight-bold display-3 basil--text">Statistics</h1>
         </v-card-title>
@@ -9,7 +9,7 @@
                 v-model="tabs"
                 centered
                 dark
-                background-color="orange"
+                background-color="primary"
         >
           <v-tab>
             Quizzes

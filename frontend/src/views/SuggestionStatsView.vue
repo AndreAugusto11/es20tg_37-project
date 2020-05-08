@@ -25,14 +25,14 @@
                             fab
                             top
                             right
-                            color="orange darken-3"
+                            color="red"
                             v-on="on"
                             @click="changeClarificationStatsPrivacy"
                     >
                         <v-icon class="mr-2">mdi-eye-off</v-icon>
                     </v-btn>
                 </template>
-                <span>Click here to make quiz stats public</span>
+                <span>Click here to make suggestion stats public</span>
             </v-tooltip>
             <v-tooltip v-else bottom>
                 <template v-slot:activator="{ on }">
@@ -42,14 +42,14 @@
                             fab
                             top
                             right
-                            color="orange darken-2"
+                            color="green"
                             v-on="on"
                             @click="changeClarificationStatsPrivacy"
                     >
                         <v-icon class="mr-2">mdi-eye</v-icon>
                     </v-btn>
                 </template>
-                <span>Click here to make quiz stats private</span>
+                <span>Click here to make suggestion stats private</span>
             </v-tooltip>
         </v-card-text>
     </div>
