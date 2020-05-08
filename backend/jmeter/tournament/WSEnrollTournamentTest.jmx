@@ -208,22 +208,7 @@ VALUES (${tournamentId},651,1,null,null,&apos;OPEN&apos;);</stringProp>
             <stringProp name="resultSetMaxRows"></stringProp>
             <stringProp name="resultSetHandler">Store as String</stringProp>
           </JDBCSampler>
-          <hashTree>
-            <BeanShellAssertion guiclass="BeanShellAssertionGui" testclass="BeanShellAssertion" testname="BeanShell Assertion" enabled="true">
-              <stringProp name="BeanShellAssertion.query">int i = vars.getObject(&quot;result&quot;).get(0).get(&quot;users_id&quot;).intValue();
-
-if(i != 67)
-{
-	Failure = true;
-	FailureMessage = i.toString();
-}
-</stringProp>
-              <stringProp name="BeanShellAssertion.filename"></stringProp>
-              <stringProp name="BeanShellAssertion.parameters"></stringProp>
-              <boolProp name="BeanShellAssertion.resetInterpreter">false</boolProp>
-            </BeanShellAssertion>
-            <hashTree/>
-          </hashTree>
+          <hashTree/>
         </hashTree>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
