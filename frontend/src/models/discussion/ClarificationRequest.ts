@@ -1,6 +1,6 @@
 import { QuestionAnswer } from '@/models/management/QuestionAnswer';
 import Image from '@/models/management/Image';
-import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
+import { ISOtoString } from '@/services/ConvertDateService';
 
 export class ClarificationRequest {
   id: number | null = null;
@@ -10,8 +10,9 @@ export class ClarificationRequest {
   username: string | null = null;
   status: string = 'OPEN';
   image: Image | null = null;
-  clarificationRequestAnswerDto!: ClarificationRequestAnswer;
+  numberOfAnswers: number | null = null;
   public: Boolean = false;
+  creationDate!: string | null;
 
   constructor(jsonObj?: ClarificationRequest) {
     if (jsonObj) {
@@ -22,8 +23,10 @@ export class ClarificationRequest {
       this.username = jsonObj.username;
       this.status = jsonObj.status;
       this.image = jsonObj.image;
-      this.clarificationRequestAnswerDto = new ClarificationRequestAnswer(jsonObj.clarificationRequestAnswerDto);
+      this.numberOfAnswers = jsonObj.numberOfAnswers;
       this.public = jsonObj.public;
+      this.creationDate = ISOtoString(jsonObj.creationDate);
+
     }
   }
 }

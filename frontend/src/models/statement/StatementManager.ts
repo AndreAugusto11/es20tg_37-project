@@ -23,9 +23,24 @@ export default class StatementManager {
     this.statementQuiz = await RemoteServices.generateStatementQuiz(params);
   }
 
+  async getTournamentQuiz(quizId:number) {
+    let quiz = await RemoteServices.getAvailableQuizzes()
+                .then(res => res.find(q=>q.id == quizId));
+    if(quiz != null) this.statementQuiz = quiz;
+    else {
+      throw Error('No quiz');
+    }
+  }
+
   async concludeQuiz() {
     if (this.statementQuiz) {
-      let answers = await RemoteServices.concludeQuiz(this.statementQuiz.id);
+      let answers;
+      if(this.statementQuiz.tournamentID == null) {
+        answers = await RemoteServices.concludeQuiz(this.statementQuiz.id);
+      }
+      else{
+        answers = await RemoteServices.concludeTournamentQuiz(this.statementQuiz.tournamentID);
+      }
       if (answers) {
         this.correctAnswers = answers;
       }

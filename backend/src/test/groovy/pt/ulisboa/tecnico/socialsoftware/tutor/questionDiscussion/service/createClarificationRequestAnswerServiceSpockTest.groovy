@@ -21,7 +21,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscus
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestAnswerDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -209,7 +208,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
 
         and: "is associated correctly"
         user_teacher.getClarificationRequestAnswers().contains(result)
-        clarificationRequest.getClarificationRequestAnswer() == result
+        clarificationRequest.getClarificationRequestAnswer().contains(result)
         result.getClarificationRequest().getStatus() == ClarificationRequest.Status.ANSWERED
     }
 
@@ -290,7 +289,7 @@ class createClarificationRequestAnswerServiceSpockTest extends Specification {
 
         and: "is associated correctly"
         user_student.getClarificationRequestAnswers().contains(result)
-        clarificationRequest.getClarificationRequestAnswer() == result
+        clarificationRequest.getClarificationRequestAnswer().contains(result)
         result.getClarificationRequest().getStatus() == ClarificationRequest.Status.OPEN
     }
 

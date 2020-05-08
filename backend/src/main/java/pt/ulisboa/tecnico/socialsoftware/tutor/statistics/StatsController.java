@@ -34,7 +34,7 @@ public class StatsController {
         return statsService.getStats(user.getId(), executionId, courseId);
     }
 
-    @PutMapping("/executions/{executionId}/stats")
+    @PutMapping("/executions/{executionId}/stats/suggestion")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public void changeSuggestionPrivacy(Principal principal, @PathVariable int executionId){
 
@@ -45,5 +45,17 @@ public class StatsController {
         }
 
         statsService.changeSuggestionPrivacy(user.getId());
+    }
+
+    @PutMapping("/executions/{executionId}/stats/clarification")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public void changeClarificationStatsPrivacy(Principal principal, @PathVariable int executionId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null) {
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        statsService.changeClarificationStatsPrivacy(user.getId());
     }
 }

@@ -1,12 +1,17 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -33,12 +38,10 @@ public class ClarificationRequest {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne
-    @JoinColumn(name = "clarification_request_answer_id")
-    private ClarificationRequestAnswer clarificationRequestAnswer;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clarificationRequest", orphanRemoval=true)
+    private Set<ClarificationRequestAnswer> clarificationRequestAnswer = new HashSet<>();
 
-    @OneToOne
-    @JoinColumn(name = "public_clarification_request_id")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "clarificationRequest")
     private PublicClarificationRequest publicClarificationRequest;
 
     @Column(columnDefinition = "TEXT")
@@ -49,6 +52,9 @@ public class ClarificationRequest {
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.OPEN;
+
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
 
     public ClarificationRequest() {
     }
@@ -65,6 +71,7 @@ public class ClarificationRequest {
         this.user = user;
         user.addClarificationRequest(this);
         this.content = content;
+        this.creationDate = DateHandler.now();
     }
 
     public Integer getId() {
@@ -97,10 +104,18 @@ public class ClarificationRequest {
 
     public void setImage(Image image) { this.image = image; }
 
-    public ClarificationRequestAnswer getClarificationRequestAnswer() { return clarificationRequestAnswer; }
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
 
-    public void setClarificationRequestAnswer(ClarificationRequestAnswer clarificationRequestAnswer) {
-        this.clarificationRequestAnswer = clarificationRequestAnswer;
+    public Set<ClarificationRequestAnswer> getClarificationRequestAnswer() { return this.clarificationRequestAnswer; }
+
+    public void addClarificationRequestAnswer(ClarificationRequestAnswer clarificationRequestAnswer) {
+        this.clarificationRequestAnswer.add(clarificationRequestAnswer);
+    }
+
+    public void closeClarificationRequest() {
+        this.setStatus(Status.CLOSED);
     }
 
     public PublicClarificationRequest getPublicClarificationRequest() {

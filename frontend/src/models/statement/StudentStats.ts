@@ -5,8 +5,12 @@ export default class StudentStats {
   correctAnswers!: number;
   improvedCorrectAnswers!: number;
   totalAvailableQuestions!: number;
+  totalClarificationRequests!: number;
+  totalPublicClarificationRequests!: number;
   totalNumberSuggestions!: number;
   totalNumberSuggestionsAvailable!: number;
+  privateClarificationStats!: boolean;
+  privateSuggestion!:boolean;
 
   uniqueCorrectAnswers!: number;
   uniqueWrongAnswers!: number;
@@ -21,9 +25,13 @@ export default class StudentStats {
       this.uniqueCorrectAnswers = jsonObj.uniqueCorrectAnswers;
       this.uniqueWrongAnswers = jsonObj.uniqueWrongAnswers;
       this.totalAvailableQuestions = jsonObj.totalAvailableQuestions;
+      this.totalClarificationRequests = jsonObj.totalClarificationRequests;
+      this.totalPublicClarificationRequests =
+        jsonObj.totalPublicClarificationRequests;
       this.totalNumberSuggestions = jsonObj.totalNumberSuggestions;
       this.totalNumberSuggestionsAvailable = jsonObj.totalNumberSuggestionsAvailable;
-
+      this.privateClarificationStats = jsonObj.privateClarificationStats;
+      this.privateSuggestion = jsonObj.privateSuggestion;
     }
   }
 }

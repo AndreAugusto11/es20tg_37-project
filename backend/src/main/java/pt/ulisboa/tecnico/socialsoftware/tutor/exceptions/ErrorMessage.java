@@ -37,6 +37,8 @@ public enum ErrorMessage {
     TOURNAMENT_NOT_OPEN("Tournament with id %d not open"),
     TOURNAMENT_NOT_STUDENT("Tournament only allows students to enroll"),
     TOURNAMENT_STUDENT_ALREADY_ENROLLED("Tournament already enrolled student with id %d"),
+    TOURNAMENT_STUDENT_NOT_ENROLLED("Tournament not enrolled student with id %d"),
+    TOURNAMENT_NOT_ONGOING("Tournament with id %d not yet ongoing"),
 
     TOURNAMENT_NULL_USER("User is null"),
     TOURNAMENT_NULL_TOURNAMENT("Tournament is null"),
@@ -44,6 +46,7 @@ public enum ErrorMessage {
     TOURNAMENT_NULL_NUM_QUESTS("Number of Questions is null in Tournament Creation"),
     TOURNAMENT_NULL_STARTTIME("Start Time is null in Tournament Creation"),
     TOURNAMENT_NULL_ENDTIME("End Time is null in Tournament Creation"),
+    TOURNAMENT_NULL_QUIZ("Quiz not yet generated in Tournament with id %d"),
     TOURNAMENT_NON_VALID_USER("User is not in a Student (id %d) in Tournament Creation"),
     TOURNAMENT_INVALID_NUM_QUESTS("Number of Questions is a non-positive number in Tournament Creation"),
     TOURNAMENT_INVALID_TOPIC("A Specified Topic does not exist while Creating Tournament"),
@@ -87,6 +90,7 @@ public enum ErrorMessage {
     QUIZ_NO_LONGER_AVAILABLE("This quiz is no longer available"),
     QUIZ_NOT_YET_AVAILABLE("This quiz is not yet available"),
     CLARIFICATION_REQUEST_NO_LONGER_AVAILABLE("This clarification request is no longer available"),
+    CLARIFICATION_REQUEST_ALREADY_CLOSED("This clarification request is already closed"),
 
     NO_CORRECT_OPTION("Question does not have a correct option"),
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
@@ -118,6 +122,8 @@ public enum ErrorMessage {
     INVALID_NULL_ARGUMENTS_USERID("The user id given is null"),
     INVALID_NULL_ARGUMENTS_COURSEID("The course id given is null"),
     INVALID_NULL_ARGUMENTS_JUSTIFICATION("The justification dto given is null"),
+    INVALID_NULL_ARGUMENTS_QUESTION("The question dto given is null"),
+    INVALID_NULL_ARGUMENTS_QUESTIONID("The question id given is null"),
     USER_NOT_IN_COURSE("The student is not enrolled in the given course"),
 
     QUESTION_SUGGESTION_ALREADY_ACCEPTED("This suggested question was already accepted"),

@@ -13,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.JustificationDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.QuestionSuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.QuestionSuggestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statistics.StatsService
@@ -29,7 +28,6 @@ class GetNumberOfQuestionSuggestionFromStudent extends Specification {
     public static final String ACADEMIC_TERM = "1 SEM"
     public static final String OPTION_CONTENT = "optionId content"
     public static final String URL = "URL"
-    public static final String JUSTIFICATION_CONTENT = "justification_content"
     public static final String QUESTIONSUGGESTION_TITLE1 = "question suggestion title 1"
     public static final String QUESTIONSUGGESTION_TITLE2 = "question suggestion title 2"
     public static final String QUESTIONSUGGESTION_CONTENT1 = "question suggestion content 1"
@@ -129,20 +127,18 @@ class GetNumberOfQuestionSuggestionFromStudent extends Specification {
     }
 
     def "Get the number of question suggestion from a student"() {
-        given: "nothing"
 
-        when: "nothing"
-        def result = statsService.getStats(user.getId(), courseExecution.getId(), course.getId())
+        when:
+        def result = statsService.getStats(user.getId(), courseExecution.getId())
 
         then: "the result should be the number of suggestion that the student made"
         result.getTotalNumberSuggestions() == 2;
     }
 
     def "Get the number of question suggestion accepted from a student"() {
-        given: "nothing"
 
         when: "nothing"
-        def result = statsService.getStats(user.getId(), courseExecution.getId(), course.getId())
+        def result = statsService.getStats(user.getId(), courseExecution.getId())
 
         then: "the result should be the number of suggestion accepted that the student made"
         result.getTotalNumberSuggestionsAvailable() == 1;

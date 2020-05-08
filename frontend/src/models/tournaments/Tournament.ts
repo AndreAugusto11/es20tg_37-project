@@ -2,6 +2,7 @@ export class Tournament {
   id: number | null = null;
   creatorID: number | null = null;
   numQuests: number | null = null;
+  quizID: number | null = null;
   topics: number[] | null = null;
   topicsName: string[] | null = null;
   enrolledStudentsIds!: number[];
@@ -16,6 +17,7 @@ export class Tournament {
       this.id = jsonObj.id;
       this.creatorID = jsonObj.creatorID;
       this.numQuests = jsonObj.numQuests;
+      this.quizID = jsonObj.quizID;
       this.enrolledStudentsIds = jsonObj.enrolledStudentsIds;
       this.topics = jsonObj.topics;
       this.topicsName = jsonObj.topicsName;

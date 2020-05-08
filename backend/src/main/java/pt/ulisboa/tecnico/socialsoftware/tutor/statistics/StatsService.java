@@ -97,6 +97,17 @@ public class StatsService {
 
         int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());
 
+        int totalClarificationRequests = (int) user.getClarificationRequests().stream()
+                .filter(clarificationRequest -> clarificationRequest.getQuestionAnswer().getQuizAnswer().getQuiz()
+                        .getCourseExecution().getId().equals(executionId))
+                .count();
+
+        int totalPublicClarificationRequests = (int) user.getClarificationRequests().stream()
+                .filter(clarificationRequest -> clarificationRequest.getQuestionAnswer().getQuizAnswer().getQuiz()
+                        .getCourseExecution().getId().equals(executionId) &&
+                        clarificationRequest.getPublicClarificationRequest() != null)
+                .count();
+
         int totalNumberSuggestions = (int) questionSuggestionRepository.findAll().stream().
                 filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
                 filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId)).
@@ -119,6 +130,14 @@ public class StatsService {
             statsDto.setCorrectAnswers(((float) correctAnswers) * 100 / totalAnswers);
             statsDto.setImprovedCorrectAnswers(((float) uniqueCorrectAnswers) * 100 / uniqueQuestions);
         }
+        statsDto.setTotalClarificationRequests(totalClarificationRequests);
+        statsDto.setTotalPublicClarificationRequests(totalPublicClarificationRequests);
+
+        if (user.isPrivateClarificationStats() == null) {
+            user.setPrivateClarificationStats(false);
+        }
+
+        statsDto.setPrivateClarificationStats(user.isPrivateClarificationStats());
         return statsDto;
     }
 
@@ -126,9 +145,9 @@ public class StatsService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void changeSuggestionPrivacy(Integer userId){
+    public void changeClarificationStatsPrivacy(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        user.setPrivateSuggestion(!user.isPrivateSuggestion());
+        user.setPrivateClarificationStats(!user.isPrivateClarificationStats());
     }
 }

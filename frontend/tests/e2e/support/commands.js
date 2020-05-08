@@ -68,6 +68,7 @@ Cypress.Commands.add(
 Cypress.Commands.add('allTournaments', () => {
   cy.contains('Tournaments').click();
   cy.contains('All Tournaments').click();
+  cy.wait(5000);
 });
 
 Cypress.Commands.add('createTournaments', (numQ, topicName, start, finish) => {
@@ -95,9 +96,31 @@ Cypress.Commands.add('enrollTournament', id => {
     .should('have.length', 7)
     .find('[data-cy="enrollTournament"]')
     .click();
+  cy.wait(5000);
   cy.contains('Tournaments').click();
   cy.contains('Enrolled Tournaments').click();
   cy.contains(id);
+});
+
+Cypress.Commands.add('answerTournament', id => {
+  cy.contains('Tournaments').click();
+  cy.contains('Enrolled Tournaments').click();
+  cy.contains(id)
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 7)
+    .find('[data-cy="answerTournament"]')
+    .click();
+  cy.wait(5000);
+  for (let i = 0; i < 5; i++) {
+    cy.get('.option')
+      .first()
+      .click();
+    cy.get('div.square').click();
+  }
+  cy.get('.end-quiz').click();
+  cy.contains('I\'m sure').click();
 });
 
 Cypress.Commands.add('demoTeacherLogin', () => {
@@ -135,10 +158,14 @@ Cypress.Commands.add('createClarificationRequest', content => {
   cy.get('[data-cy="saveButton"]').click();
 });
 
-Cypress.Commands.add('createClarificationRequestAnswer', content => {
-  cy.get('[data-cy="answerButton"]').click();
-  cy.get('[data-cy="Content"]').type(content);
-  cy.get('[data-cy="saveButton"]').click();
+Cypress.Commands.add('createClarificationRequestAnswer', (content) => {
+  cy.get('[data-cy="answerButton"]').click({force: true});
+  cy.get('[data-cy="Content"]').type(content, {force: true});
+  cy.get('[data-cy="saveButton"]').click({force: true});
+});
+
+Cypress.Commands.add('closeClarificationRequest', () => {
+  cy.get('[data-cy="closeButton"]').click({force: true});
 });
 
 Cypress.Commands.add('seeClarificationRequest', () => {
@@ -154,7 +181,7 @@ Cypress.Commands.add('listClarificationRequest', content => {
 Cypress.Commands.add(
   'createQuestionSuggestion',
   (title, question, op0, op1, op2, op3, flag) => {
-    cy.contains('New Suggestion').click();
+    cy.contains('New Suggestion').click({ force: true });
     if (title !== '') {
       cy.get('[data-cy="Title"]').type(title, { force: true });
     }
@@ -180,7 +207,7 @@ Cypress.Commands.add(
         .eq(3)
         .click({ force: true });
     }
-    cy.get('[data-cy="saveButton"]').click();
+    cy.get('[data-cy="saveButton"]').click({ force: true });
   }
 );
 
@@ -192,12 +219,13 @@ Cypress.Commands.add('showQuestionSuggestion', title => {
     .should('have.length', 5)
     .find('[data-cy="showSuggestion"]')
     .click();
-  cy.get('[data-cy="closeButton"]').click();
+  cy.get('[data-cy="closeButton"]').click({ force: true });
 });
 
 Cypress.Commands.add('showQuestionFromSuggestion', (title) =>{
-  cy.contains(title).click()
-  cy.get('[data-cy="questionCloseButton"]').click()
+  cy.contains(title).click({ force: true });
+  cy.wait(500);
+  cy.get('[data-cy="questionCloseButton"]').click({ force: true });
 });
 
 Cypress.Commands.add('acceptQuestionSuggestion', (title) =>{
@@ -216,7 +244,7 @@ Cypress.Commands.add('acceptQuestionSuggestionShow', title => {
     .should('have.length', 5)
     .find('[data-cy="showButton"]')
     .click({ force: true });
-  cy.get('[data-cy="acceptQuestion"]').click();
+  cy.get('[data-cy="acceptQuestion"]').click({ force: true });
 });
 
 Cypress.Commands.add('rejectQuestionSuggestion', (title, text) => {
@@ -227,7 +255,7 @@ Cypress.Commands.add('rejectQuestionSuggestion', (title, text) => {
     .find('[data-cy="rejectButton"]')
     .click({ force: true });
   cy.get('[data-cy="justification_text"]').type(text);
-  cy.get('[data-cy="saveJustification"]').click();
+  cy.get('[data-cy="saveJustification"]').click({ force: true });
 });
 
 Cypress.Commands.add('rejectQuestionSuggestionShow', (title, text) => {
@@ -237,9 +265,9 @@ Cypress.Commands.add('rejectQuestionSuggestionShow', (title, text) => {
     .should('have.length', 5)
     .find('[data-cy="showButton"]')
     .click({ force: true });
-  cy.get('[data-cy="rejectQuestion"]').click();
+  cy.get('[data-cy="rejectQuestion"]').click({ force: true });
   cy.get('[data-cy="justification_text"]').type(text);
-  cy.get('[data-cy="saveJustification"]').click();
+  cy.get('[data-cy="saveJustification"]').click({ force: true });
 });
 
 Cypress.Commands.add(
@@ -252,25 +280,72 @@ Cypress.Commands.add(
       .find('[data-cy="updateRejectedQuestion"]')
       .click({ force: true });
     if (newTitle !== '') {
-      cy.get('[data-cy="Title"]').type(newTitle, { force: true });
+      cy.get('[data-cy="Title"]')
+        .clear({ force: true })
+        .type(newTitle, { force: true });
     }
     if (question !== '') {
-      cy.get('[data-cy="Content"]').type(question, { force: true });
+      cy.get('[data-cy="Content"]')
+        .clear({ force: true })
+        .type(question, { force: true });
     }
     cy.get('[data-cy="Option"]')
       .eq(0)
+      .clear({ force: true })
       .type(op0, { force: true });
     cy.get('[data-cy="Option"]')
       .eq(1)
+      .clear({ force: true })
       .type(op1, { force: true });
     cy.get('[data-cy="Option"]')
       .eq(2)
+      .clear({ force: true })
       .type(op2, { force: true });
     if (op3 !== '') {
       cy.get('[data-cy="Option"]')
         .eq(3)
+        .clear({ force: true })
         .type(op3, { force: true });
     }
-    cy.get('[data-cy="saveButton"]').click();
+    cy.get('[data-cy="saveButton"]')
+      .click({ force: true });
   }
 );
+
+Cypress.Commands.add('editQuestionAcceptedQuestion',
+  (title, newTitle, content, op0, op1, op2, op3) =>{
+  cy.contains(title)
+    .parent()
+    .parent()
+    .find('[data-cy="editQuestion"]')
+    .click({ force: true });
+  if (newTitle !== '') {
+    cy.get('[data-cy="questionTitle"]')
+      .clear({ force: true })
+      .type(newTitle, { force: true });
+  } else {
+    cy.get('[data-cy="questionTitle"]')
+      .clear({ force: true });
+  }
+  cy.get('[data-cy="questionContent"]')
+    .clear({ force: true })
+    .type(content, { force: true });
+  cy.get('[data-cy="questionOp"]')
+    .eq(0)
+    .clear({ force: true })
+    .type(op0, { force: true });
+  cy.get('[data-cy="questionOp"]')
+    .eq(1)
+    .clear({ force: true })
+    .type(op1, { force: true });
+  cy.get('[data-cy="questionOp"]')
+    .eq(2)
+    .clear({ force: true })
+    .type(op2, { force: true });
+  cy.get('[data-cy="questionOp"]')
+    .eq(3)
+    .clear({ force: true })
+    .type(op3, { force: true });
+  cy.get('[data-cy="questionSaveButton"]')
+    .click({ force: true });
+});

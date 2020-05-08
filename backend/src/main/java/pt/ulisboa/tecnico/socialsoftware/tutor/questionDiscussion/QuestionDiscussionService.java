@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -47,6 +48,9 @@ public class QuestionDiscussionService {
 
     @Autowired
     ClarificationRequestAnswerRepository clarificationRequestAnswerRepository;
+
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository;
 
     @Autowired
     PublicClarificationRequestRepository publicClarificationRequestRepository;
@@ -100,7 +104,7 @@ public class QuestionDiscussionService {
         return clarificationRequests.stream()
                 .filter(clarificationRequest -> clarificationRequest.getQuestionAnswer().getQuizQuestion().getQuiz().getCourseExecution().getId().equals(executionId))
                 .map(ClarificationRequestDto::new)
-                .sorted(Comparator.comparing(ClarificationRequestDto::getStatus))
+                .sorted(Comparator.comparing(ClarificationRequestDto::getCreationDate))
                 .collect(Collectors.toList());
     }
 
@@ -168,6 +172,29 @@ public class QuestionDiscussionService {
         return new ClarificationRequestAnswerDto(clarificationRequestAnswer);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<ClarificationRequestAnswerDto> getClarificationRequestAnswers(Integer clarificationRequestId) {
+        ClarificationRequest clarificationRequest = getClarificationRequest(clarificationRequestId);
+
+        return clarificationRequest.getClarificationRequestAnswer().stream()
+                .map(ClarificationRequestAnswerDto::new)
+                .sorted(Comparator.comparing(ClarificationRequestAnswerDto::getCreationDate))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ClarificationRequestDto closeClarificationRequest(Integer clarificationRequestId) {
+        ClarificationRequest clarificationRequest = getClarificationRequest(clarificationRequestId);
+
+        if (clarificationRequest.getStatus().equals(ClarificationRequest.Status.CLOSED)) {
+            throw new TutorException(CLARIFICATION_REQUEST_ALREADY_CLOSED);
+        }
+
+        clarificationRequest.closeClarificationRequest();
+
+        return new ClarificationRequestDto(clarificationRequest);
+    }
+
     private ClarificationRequest getClarificationRequest(Integer clarificationRequestId) {
         if (clarificationRequestId == null) {
             throw new TutorException(CLARIFICATION_REQUEST_NOT_DEFINED);
@@ -213,5 +240,23 @@ public class QuestionDiscussionService {
         clarificationRequest.setPublicClarificationRequest(null);
 
         return new ClarificationRequestDto(clarificationRequest);
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<ClarificationRequestDto> getQuestionClarificationRequests(Integer executionId, Integer questionId) {
+        return this.getCourse(executionId).getPublicClarificationRequests().stream()
+                .filter(publicClarificationRequest -> publicClarificationRequest
+                        .getClarificationRequest()
+                        .getQuestion().getId().equals(questionId))
+                .map(PublicClarificationRequest::getClarificationRequest)
+                .map(ClarificationRequestDto::new)
+                .sorted(Comparator.comparing(ClarificationRequestDto::getCreationDate))
+                .collect(Collectors.toList());
+    }
+
+    private Course getCourse(Integer executionId) {
+        return courseExecutionRepository.findById(executionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId))
+                .getCourse();
     }
 }

@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 
@@ -14,8 +15,9 @@ public class ClarificationRequestDto implements Serializable {
     private String username;
     private String status;
     private ImageDto image;
-    private ClarificationRequestAnswerDto clarificationRequestAnswerDto;
+    private Integer numberOfAnswers;
     private boolean isPublic;
+    private String creationDate;
 
     public ClarificationRequestDto() {
     }
@@ -27,14 +29,13 @@ public class ClarificationRequestDto implements Serializable {
         this.name = clarificationRequest.getUser().getName();
         this.username = clarificationRequest.getUser().getUsername();
         this.status = clarificationRequest.getStatus().name();
+        this.numberOfAnswers = clarificationRequest.getClarificationRequestAnswer().size();
+        this.creationDate = DateHandler.toISOString(clarificationRequest.getCreationDate());
 
         this.isPublic = clarificationRequest.getPublicClarificationRequest() != null;
 
         if (clarificationRequest.getImage() != null)
             this.image = new ImageDto(clarificationRequest.getImage());
-
-        if (clarificationRequest.getClarificationRequestAnswer() != null)
-            this.clarificationRequestAnswerDto = new ClarificationRequestAnswerDto(clarificationRequest.getClarificationRequestAnswer());
     }
 
     public Integer getId() { return id; }
@@ -67,19 +68,27 @@ public class ClarificationRequestDto implements Serializable {
 
     public void setImage(ImageDto image) { this.image = image; }
 
-    public ClarificationRequestAnswerDto getClarificationRequestAnswerDto() {
-        return clarificationRequestAnswerDto;
+    public Integer getNumberOfAnswers() {
+        return numberOfAnswers;
     }
 
-    public void setClarificationRequestAnswerDto(ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
-        this.clarificationRequestAnswerDto = clarificationRequestAnswerDto;
+    public void setNumberOfAnswers(Integer numberOfAnswers) {
+        this.numberOfAnswers = numberOfAnswers;
     }
 
     public boolean isPublic() {
         return isPublic;
     }
 
-    public void setPublic(boolean aPublic) {
-        isPublic = aPublic;
+    public void setPublic(boolean isPublic) {
+        isPublic = isPublic;
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
     }
 }
