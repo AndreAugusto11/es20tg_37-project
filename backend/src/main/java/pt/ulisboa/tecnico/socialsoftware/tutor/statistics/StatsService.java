@@ -150,4 +150,19 @@ public class StatsService {
 
         user.setPrivateClarificationStats(!user.isPrivateClarificationStats());
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void changeSuggestionPrivacy(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        if(user.isPrivateSuggestion() == null){
+            user.setPrivateSuggestion(false);
+        }
+
+        user.setPrivateSuggestion(!user.isPrivateSuggestion());
+    }
+
 }

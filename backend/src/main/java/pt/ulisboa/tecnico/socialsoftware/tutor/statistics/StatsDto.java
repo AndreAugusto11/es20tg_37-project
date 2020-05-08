@@ -98,6 +98,38 @@ public class StatsDto implements Serializable {
         this.totalAvailableQuestions = totalAvailableQuestions;
     }
 
+    public Integer getTotalClarificationRequests() {
+        return totalClarificationRequests;
+    }
+
+    public void setTotalClarificationRequests(Integer totalClarificationRequests) {
+        this.totalClarificationRequests = totalClarificationRequests;
+    }
+
+    public Integer getTotalPublicClarificationRequests() {
+        return totalPublicClarificationRequests;
+    }
+
+    public void setTotalPublicClarificationRequests(Integer totalPublicClarificationRequests) {
+        this.totalPublicClarificationRequests = totalPublicClarificationRequests;
+    }
+
+    public Boolean isPrivateClarificationStats() {
+        return privateClarificationStats;
+    }
+
+    public void setPrivateClarificationStats(Boolean privateClarificationStats) {
+        this.privateClarificationStats = privateClarificationStats;
+    }
+
+    public Boolean isPrivateSuggestion() {
+        return privateSuggestion;
+    }
+
+    public void setPrivateSuggestion(Boolean privateSuggestion) {
+        this.privateSuggestion = privateSuggestion;
+    }
+
     @Override
     public String toString() {
         return "StatsDto{" +
