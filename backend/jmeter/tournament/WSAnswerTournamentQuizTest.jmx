@@ -73,7 +73,7 @@
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="queryType">Callable Statement</stringProp>
-          <stringProp name="query">INSERT INTO tournaments (id,creator_id,number_of_questions,start_date,end_date,status,quiz_id)
+          <stringProp name="query">INSERT INTO tournaments (id,user_id,number_of_questions,start_date,end_date,status,quiz_id)
 VALUES (${tournamentId},651,1,null,null,&apos;ONGOING&apos;,5370);
 INSERT INTO tournaments_users(tournament_id,users_id)
 VALUES (${tournamentId},676);
