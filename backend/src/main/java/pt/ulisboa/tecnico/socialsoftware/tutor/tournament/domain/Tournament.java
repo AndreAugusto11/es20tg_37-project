@@ -1,6 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
@@ -9,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import java.util.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.stream.IntStream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -30,7 +35,7 @@ public class Tournament {
 	@JoinColumn(name = "user_id")
 	private User creator;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private Quiz quiz;
 
 	@ManyToMany(cascade = CascadeType.ALL)
@@ -63,7 +68,7 @@ public class Tournament {
 	{
 		creator = student;
 		users.add(creator);
-		topics.addAll(topics);
+		this.topics.addAll(topics);
 		numQuests = number_of_questions;
 		startTime = startTimeArg;
 		endTime = endTimeArg;
@@ -123,6 +128,7 @@ public class Tournament {
 		if (user.getRole() == User.Role.STUDENT)
 		{
 			creator = user;
+			users.add(user);
 		}
 		else
 		{
@@ -133,6 +139,13 @@ public class Tournament {
 	public void addUser(User user)
 	{
 		users.add(user);
+		if (quiz == null) { generateQuiz(); }
+		/*else
+		{
+			QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
+			quiz.addQuizAnswer(quizAnswer);
+			user.addQuizAnswer(quizAnswer);
+		}*/
 	}
 
 	public void setnumQuests(Integer num)
@@ -183,6 +196,22 @@ public class Tournament {
 		}
 	}
 
+	public void statusUpdate()
+	{
+		if (startTime == null || endTime == null) { return; }
+		if (status == Status.CANCELLED) { return; }
+		if (LocalDateTime.now().isAfter(endTime))
+		{
+			status = Status.CLOSED;
+		}
+		else if(LocalDateTime.now().isAfter(startTime))
+		{
+			status = Status.ONGOING;
+		}
+		else status = Status.OPEN;
+
+	}
+
 	public void setstatus(Status stat)
 	{
 		status = stat;
@@ -192,5 +221,72 @@ public class Tournament {
 
 	public boolean canResultsBePublic(int executionId) {
 		return true;
+	}
+
+	private void generateQuiz()
+	{
+		Quiz quiz = new Quiz();
+
+		Random random = new Random();
+		int randLimit = topics.size();
+		if (randLimit <= 0) { return; }
+		List<Question> qst = new ArrayList<>();
+
+
+		for(int i = 0; i < numQuests; i++)
+		{
+			int rand = random.nextInt(randLimit);
+			int j = 0;
+
+			Iterator<Topic> iterator = topics.iterator();
+			while(iterator.hasNext() && j != rand)
+			{
+				iterator.next();
+				j++;
+			}
+
+			Topic topic = iterator.next();
+			Set<Question> questions = topic.getQuestions();
+			int questionidx = random.nextInt(questions.size());
+			j = 0;
+
+			Iterator<Question> iter = questions.iterator();
+			while (iter.hasNext() && j != questionidx)
+			{
+				iter.next();
+				j++;
+			}
+			qst.add(iter.next());
+		}
+
+		quiz.setAvailableDate(startTime);
+		quiz.setCreationDate(LocalDateTime.now());
+		quiz.setConclusionDate(endTime);
+		quiz.setResultsDate(endTime);
+
+
+		IntStream.range(0,qst.size())
+				.forEach(index -> quiz.addQuizQuestion(new QuizQuestion(quiz, qst.get(index), index)));
+
+		quiz.setType(Quiz.QuizType.PROPOSED.toString());
+		quiz.setTitle("Generated Quiz");
+
+		for (User u : users)
+		{
+			QuizAnswer quizAnswer = new QuizAnswer(u, quiz);
+			quiz.addQuizAnswer(quizAnswer);
+
+			//Line commented to avoid psql BD errors
+			//u.addQuizAnswer(quizAnswer);
+		}
+
+		CourseExecution courseExecution = topics.iterator().next().getCourse().getCourseExecutions().iterator().next();
+		quiz.setCourseExecution(courseExecution);
+		courseExecution.addQuiz(quiz);
+
+
+
+		quiz.setKey(quiz.getId());
+		setquiz(quiz);
 	}
 }

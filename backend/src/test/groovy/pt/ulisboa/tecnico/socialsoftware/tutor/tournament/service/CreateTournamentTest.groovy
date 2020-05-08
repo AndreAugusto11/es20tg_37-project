@@ -290,9 +290,9 @@ class CreateTournamentTest extends Specification {
 			return new StatementService()
 		}
 
-		@Bean
-		TournamentService tournamentService() {
-			return new TournamentService()
-		}
+        @Bean
+        TournamentService tournamentService() {
+            return new TournamentService()
+        }
     }
 }
