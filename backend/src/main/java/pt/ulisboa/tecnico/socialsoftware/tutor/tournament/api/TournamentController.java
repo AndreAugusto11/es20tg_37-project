@@ -121,4 +121,16 @@ public class TournamentController {
 
         return tournamentService.concludeQuiz(user.getId(),tournamentId);
     }
+    @PostMapping("/tournaments/{tournamentId}/cancel")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public ResponseEntity cancelTournament(Principal principal, @PathVariable Integer tournamentId)
+    {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        if (user == null) { throw new TutorException(AUTHENTICATION_ERROR); }
+        Integer userId = user.getId();
+
+        tournamentService.cancelTournament(userId, tournamentId);
+
+        return ResponseEntity.ok().build();
+    }
 }
