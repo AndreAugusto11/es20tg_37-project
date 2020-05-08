@@ -18,12 +18,12 @@ describe('Make Clarification Request to be public walkthrough', () => {
       cy.goToDiscussion()
       cy.get('[data-cy="Search"]').type(content)
       cy.contains(content).click()
-      cy.get('[data-cy="ButtonToPublic"]').click()
+      cy.get('[data-cy="ButtonToPublic"]').click({force: true})
 
       cy.goToDiscussion()
       cy.get('[data-cy="Search"]').type(content)
       cy.contains(content).click()
-      cy.get('[data-cy="ButtonToPrivate"]').click()
+      cy.get('[data-cy="ButtonToPrivate"]').click({force: true})
     });
 });
 
