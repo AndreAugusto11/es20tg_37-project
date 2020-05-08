@@ -167,13 +167,13 @@
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>
               Tournaments
-              <v-icon>fas fa-file-alt</v-icon>
+              <v-icon>mdi-trophy</v-icon>
             </v-btn>
           </template>
           <v-list dense>
             <v-list-item to="/student/tournaments">
               <v-list-item-action>
-                <v-icon>mdi-trophy</v-icon>
+                <v-icon>fas fa-file-alt</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>All Tournaments</v-list-item-title>
