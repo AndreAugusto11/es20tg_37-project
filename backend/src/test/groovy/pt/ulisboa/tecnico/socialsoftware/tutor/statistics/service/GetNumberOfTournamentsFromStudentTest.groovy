@@ -76,7 +76,10 @@ class GetNumberOfTournamentsFromStudentTest extends Specification {
     def "Get the number of enrolled tournaments from student"() {
         given: "Student enrolled in 1 tournament"
         def user2 = new User("name12", "username12", 2, User.Role.STUDENT)
-        userRepository.save(user)
+        user2.getCourseExecutions().add(courseExecution)
+        user2.setEnrolledCoursesAcronyms(ACRONYM)
+        courseExecution.getUsers().add(user2)
+        userRepository.save(user2)
         def tournament1 = new Tournament(user2)
         tournamentRepository.save(tournament1)
         user.addTournament(tournament1)
