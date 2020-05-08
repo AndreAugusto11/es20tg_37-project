@@ -18,6 +18,7 @@ describe('Show stats', () => {
     cy.createTournaments('6', 'GitHub', '2025-11-23 10:50', '2025-11-23 10:59')
     cy.wait(5000);
     cy.contains('Stats').click();
+    cy.get('[data-cy="torn"]').click();
     cy.get('[data-cy="totalNumberCreatedTournaments"]')
       .contains(2)
       .should('exist');
@@ -28,6 +29,7 @@ describe('Show stats', () => {
     cy.enrollTournament('1234')
     cy.demoStudentLogin();
     cy.contains('Stats').click();
+    cy.get('[data-cy="torn"]').click();
     cy.get('[data-cy="totalNumberEnrolledTournaments"]')
       .contains(1)
       .should('exist');
