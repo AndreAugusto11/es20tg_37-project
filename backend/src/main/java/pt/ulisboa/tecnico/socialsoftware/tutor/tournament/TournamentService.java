@@ -69,7 +69,6 @@ public class TournamentService
 		tournament.setstatus(Tournament.Status.OPEN);
 
 		student.addCreatedTournament(tournament);
-		tournament.addUser(student);
 
 		this.entityManager.persist(tournament);
 		return new TournamentDto(tournament);
@@ -158,6 +157,7 @@ public class TournamentService
 	@Transactional(isolation = Isolation.READ_COMMITTED)
 	public void submitAnswer(int userId, Integer tournamentId, StatementAnswerDto answer) {
 		Tournament tournament = tournamentQuizVerification(userId,tournamentId);
+		System.out.println(tournament.getquiz().toString());
 		statementService.submitAnswer(userId, tournament.getquiz().getId(), answer);
 	}
 
@@ -187,6 +187,7 @@ public class TournamentService
 
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
 	public List<TournamentDto> getTournaments() {
+		tournamentRepository.findAll().forEach(Tournament::statusUpdate);
 		return tournamentRepository.findAll().stream()
 				.map(TournamentDto::new)
 				.sorted(Comparator
@@ -199,6 +200,7 @@ public class TournamentService
 		if(userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
 		User user = userRepository.findById(userId)
 				.orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
+		tournamentRepository.findAll().forEach(Tournament::statusUpdate);
 		return user.getTournaments().stream()
 				.map(TournamentDto::new)
 				.sorted(Comparator
@@ -211,6 +213,7 @@ public class TournamentService
 		if(userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
 		User user = userRepository.findById(userId)
 				.orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
+		tournamentRepository.findAll().forEach(Tournament::statusUpdate);
 		return user.getCreatedTournaments().stream()
 				.map(TournamentDto::new)
 				.sorted(Comparator

@@ -62,7 +62,7 @@
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">manel</stringProp>
+          <stringProp name="username">jgalamba</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop 50 times" enabled="true">
