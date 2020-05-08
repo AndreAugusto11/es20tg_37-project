@@ -1,5 +1,6 @@
 describe('Clarification Request Stats walkthrough', () => {
   beforeEach(() => {
+    cy.exec('psql -d tutordb -c "UPDATE users SET private_clarification_stats = false;"')
     cy.exec('psql -d tutordb -c "Delete from clarification_request_answers;"')
     cy.exec('psql -d tutordb -c "Delete from public_clarification_requests;"')
     cy.exec('psql -d tutordb -c "Delete from clarification_requests;"')
@@ -10,7 +11,7 @@ describe('Clarification Request Stats walkthrough', () => {
     cy.contains('Logout').click()
   })
 
-  it('student login creates two Clarification Requests, teacher makes them public and student checks stats', () => {
+  it('student login creates two Clarification Requests, teacher makes them public, student checks stats and makes them private', () => {
     var content1 = generateContent(6)
     var content2 = generateContent(6)
 
@@ -37,8 +38,12 @@ describe('Clarification Request Stats walkthrough', () => {
     cy.demoStudentLogin()
     cy.contains('Stats').click()
     cy.wait(1000)
+    cy.contains('Clarification').click()
     cy.get('[data-cy="totalClarificationRequests"]').contains('2').should('exist')
     cy.get('[data-cy="totalPublicClarificationRequests"]').contains('2').should('exist')
+    cy.get('[data-cy="privateClarificationStatsBtn"]').click({force: true})
+    cy.wait(1000)
+    cy.get('[data-cy="publicClarificationStatsBtn"]').should('exist')
   });
 
 });
