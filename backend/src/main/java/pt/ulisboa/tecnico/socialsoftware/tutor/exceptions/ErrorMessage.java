@@ -39,7 +39,10 @@ public enum ErrorMessage {
     TOURNAMENT_STUDENT_ALREADY_ENROLLED("Tournament already enrolled student with id %d"),
     TOURNAMENT_STUDENT_NOT_ENROLLED("Tournament not enrolled student with id %d"),
     TOURNAMENT_NOT_ONGOING("Tournament with id %d not yet ongoing"),
+    TOURNAMENT_NON_CREATOR("Tournament %d was not created by User with id %d"),
+    TOURNAMENT_ALREADY_CANCELLED("Tournament %d was already cancelled"),
 
+    TOURNAMENT_NULL_ID("Tournament ID is null"),
     TOURNAMENT_NULL_USER("User is null"),
     TOURNAMENT_NULL_TOURNAMENT("Tournament is null"),
     TOURNAMENT_NULL_TOPIC("Topic is null in Tournament Creation"),
@@ -122,6 +125,8 @@ public enum ErrorMessage {
     INVALID_NULL_ARGUMENTS_USERID("The user id given is null"),
     INVALID_NULL_ARGUMENTS_COURSEID("The course id given is null"),
     INVALID_NULL_ARGUMENTS_JUSTIFICATION("The justification dto given is null"),
+    INVALID_NULL_ARGUMENTS_QUESTION("The question dto given is null"),
+    INVALID_NULL_ARGUMENTS_QUESTIONID("The question id given is null"),
     USER_NOT_IN_COURSE("The student is not enrolled in the given course"),
 
     QUESTION_SUGGESTION_ALREADY_ACCEPTED("This suggested question was already accepted"),

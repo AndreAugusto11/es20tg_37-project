@@ -104,17 +104,22 @@ public class StatsService {
 
         int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());
 
-        int totalClarificationRequests = user.getClarificationRequests().size();
-
-        int totalPublicClarificationRequests = (int) user.getClarificationRequests().stream()
-                .filter(clarificationRequest -> clarificationRequest.getPublicClarificationRequest() != null)
+        int totalClarificationRequests = (int) user.getClarificationRequests().stream()
+                .filter(clarificationRequest -> clarificationRequest.getQuestionAnswer().getQuizAnswer().getQuiz()
+                        .getCourseExecution().getId().equals(executionId))
                 .count();
 
-        int totalNumberSuggestions = (int)questionSuggestionRepository.findAll().stream().
+        int totalPublicClarificationRequests = (int) user.getClarificationRequests().stream()
+                .filter(clarificationRequest -> clarificationRequest.getQuestionAnswer().getQuizAnswer().getQuiz()
+                        .getCourseExecution().getId().equals(executionId) &&
+                        clarificationRequest.getPublicClarificationRequest() != null)
+                .count();
+
+        int totalNumberSuggestions = (int) questionSuggestionRepository.findAll().stream().
                 filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
                 count();
 
-        int totalNumberSuggestionsAvailable = (int)questionSuggestionRepository.findAll().stream().
+        int totalNumberSuggestionsAvailable = (int) questionSuggestionRepository.findAll().stream().
                 filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
                 filter(questionSuggestion -> questionSuggestion.getStatus().equals(QuestionSuggestion.Status.ACCEPTED)).
                 count();
@@ -133,6 +138,22 @@ public class StatsService {
         }
         statsDto.setTotalClarificationRequests(totalClarificationRequests);
         statsDto.setTotalPublicClarificationRequests(totalPublicClarificationRequests);
+
+        if (user.isPrivateClarificationStats() == null) {
+            user.setPrivateClarificationStats(false);
+        }
+
+        statsDto.setPrivateClarificationStats(user.isPrivateClarificationStats());
         return statsDto;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void changeClarificationStatsPrivacy(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        user.setPrivateClarificationStats(!user.isPrivateClarificationStats());
     }
 }

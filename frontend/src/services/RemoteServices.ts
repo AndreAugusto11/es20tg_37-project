@@ -96,6 +96,16 @@ export default class RemoteServices {
       });
   }
 
+  static async changeClarificationStatsPrivacy(): Promise<void> {
+    httpClient
+      .put(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/stats/clarification`
+      )
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getQuestions(): Promise<Question[]> {
     return httpClient
       .get(`/courses/${Store.getters.getCurrentCourse.courseId}/questions`)
@@ -198,6 +208,15 @@ export default class RemoteServices {
       .then(response => {
         return new Tournament(response.data);
       })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static cancelTournament(tournament: Tournament) {
+    console.log(tournament.id);
+    return httpClient
+      .post(`/tournaments/${tournament.id}/cancel`)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });

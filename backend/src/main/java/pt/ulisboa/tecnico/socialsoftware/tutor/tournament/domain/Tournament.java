@@ -15,19 +15,19 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "tournaments")
 public class Tournament {
-
-    public enum Status {
-		OPEN, ONGOING, CLOSED
+	public enum Status {
+		OPEN, ONGOING, CLOSED, CANCELLED
 	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	private Set<User> users = new HashSet<>();
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
+	@JoinColumn(name = "user_id")
 	private User creator;
 
 	@OneToOne
@@ -46,7 +46,7 @@ public class Tournament {
 	private LocalDateTime endTime;
 
 	@Enumerated(EnumType.STRING)
-	private Status status;
+	private Status status = Status.OPEN;
 
 	public Tournament(){}
 
@@ -57,7 +57,6 @@ public class Tournament {
 
 		users.add(creator);
 		this.creator = creator;
-		status = Status.OPEN;
 	}
 
 	public Tournament(User student, Set<Topic> topics, int number_of_questions, LocalDateTime startTimeArg, LocalDateTime endTimeArg)

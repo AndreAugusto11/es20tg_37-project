@@ -167,13 +167,13 @@
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>
               Tournaments
-              <v-icon>fas fa-file-alt</v-icon>
+              <v-icon>mdi-trophy</v-icon>
             </v-btn>
           </template>
           <v-list dense>
             <v-list-item to="/student/tournaments">
               <v-list-item-action>
-                <v-icon>assignment</v-icon>
+                <v-icon>fas fa-file-alt</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>All Tournaments</v-list-item-title>
@@ -181,7 +181,7 @@
             </v-list-item>
             <v-list-item to="/student/createTournament">
               <v-list-item-action>
-                <v-icon>assignment</v-icon>
+                <v-icon>mdi-pencil</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Create Tournaments</v-list-item-title>
@@ -189,7 +189,7 @@
             </v-list-item>
             <v-list-item to="/student/enrolled">
               <v-list-item-action>
-                <v-icon>assignment</v-icon>
+                <v-icon>mdi-clipboard-account</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Enrolled Tournaments</v-list-item-title>

@@ -151,7 +151,8 @@ export default class CreateTournamentsView extends Vue {
       confirm('Are you sure you want to cancel?\nThis action in non-reversible')
     ) {
       try {
-        /*await RemoteServices.cancelTournament(tournamentToCancel);*/
+        await RemoteServices.cancelTournament(tournamentToCancel);
+        this.tournaments = await RemoteServices.getCreatedTournaments();
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
