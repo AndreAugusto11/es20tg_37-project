@@ -48,18 +48,4 @@ describe('Accept a suggestion', () => {
     cy.contains('Suggestions').click();
     cy.showQuestionSuggestion('TestAccept')
   });
-
-  it('login, accepts accepted suggestion and rejects accepted suggestion and fails both times', () => {
-    cy.createQuestionSuggestion('TestAccept','Question','a', 'b', 'c', 'd', 'No');
-    cy.contains('Logout').click();
-    cy.wait(5000);
-    cy.demoTeacherLogin();
-    cy.contains('Management').click();
-    cy.contains('Suggestions').click();
-    cy.acceptQuestionSuggestion('TestAccept');
-    cy.acceptQuestionSuggestion('TestAccept');
-    cy.closeErrorMessage();
-    cy.rejectQuestionSuggestion('TestAccept', 'Some justification Rejected');
-    cy.closeErrorMessage();
-  });
 });

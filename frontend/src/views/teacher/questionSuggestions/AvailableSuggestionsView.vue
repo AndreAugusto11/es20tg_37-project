@@ -41,7 +41,7 @@
           </template>
           <span>Show Suggestion</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="item.status === 'PENDING'">
           <template v-slot:activator="{ on }">
             <v-icon
               large
@@ -54,7 +54,7 @@
           </template>
           <span>Accept Suggestion</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="item.status === 'PENDING'">
           <template v-slot:activator="{ on }">
             <v-icon
               large
