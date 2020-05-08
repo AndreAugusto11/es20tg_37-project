@@ -24,6 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 /// <reference types="Cypress" />
+
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
   cy.get('[data-cy="createButton"]').click();
   cy.get('[data-cy="courseExecutionNameInput"]').type(name);
@@ -234,7 +235,11 @@ Cypress.Commands.add('showQuestionSuggestion', title => {
 });
 
 Cypress.Commands.add('showQuestionFromSuggestion', (title) =>{
-  cy.contains(title).click({ force: true });
+  cy.contains(title)
+    .parent()
+    .parent()
+    .find('[data-cy="questionShowButton"]')
+    .click({ force: true });
   cy.wait(500);
   cy.get('[data-cy="questionCloseButton"]').click({ force: true });
 });

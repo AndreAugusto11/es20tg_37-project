@@ -41,7 +41,6 @@ public class Justification {
         this.user = user;
         user.addJustification(this);
 
-        this.questionSuggestion = questionSuggestion;
         questionSuggestion.setJustification(this);
 
         if (justificationDto.getImage() != null) {

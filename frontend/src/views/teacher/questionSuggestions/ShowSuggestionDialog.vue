@@ -15,14 +15,14 @@
       </v-card-text>
 
       <v-card-actions v-if="!rejected">
-        <v-btn
+        <v-btn v-if="questionSuggestion.status === 'PENDING'"
           dark
           color="green darken-1"
           @click="acceptSuggestionDialog"
           data-cy="acceptQuestion"
           >Accept</v-btn
         >
-        <v-btn
+        <v-btn v-if="questionSuggestion.status === 'PENDING'"
           dark
           color="red darken-1"
           @click="rejectSuggestionDialog"
