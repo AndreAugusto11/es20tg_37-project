@@ -12,6 +12,7 @@ export default class StudentStats {
   totalNumberCreatedTournaments!: number;
   totalNumberEnrolledTournaments!: number;
   privateClarificationStats!: boolean;
+  privateSuggestion!:boolean;
   uniqueCorrectAnswers!: number;
   uniqueWrongAnswers!: number;
 
@@ -33,6 +34,7 @@ export default class StudentStats {
       this.totalNumberCreatedTournaments= jsonObj.totalNumberCreatedTournaments;
       this.totalNumberEnrolledTournaments = jsonObj.totalNumberEnrolledTournaments;
       this.privateClarificationStats = jsonObj.privateClarificationStats;
+      this.privateSuggestion = jsonObj.privateSuggestion;
     }
   }
 }

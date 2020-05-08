@@ -61,13 +61,13 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">postLeve.</stringProp>
+          <stringProp name="password">132</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">mleveist</stringProp>
+          <stringProp name="username">goncalo</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Insert suggestion" enabled="true">
@@ -249,78 +249,6 @@ INSERT INTO options VALUES(4, &apos;OPTION4_CONTENT&apos;, false, 1, 3);
               <boolProp name="ISREGEX">false</boolProp>
             </JSONPathAssertion>
             <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 1 Content" enabled="true">
-              <stringProp name="JSON_PATH">$.options.[0].content</stringProp>
-              <stringProp name="EXPECTED_VALUE">OPTION1_CONTENT</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 2 Content" enabled="true">
-              <stringProp name="JSON_PATH">$.options.[1].content</stringProp>
-              <stringProp name="EXPECTED_VALUE">OPTION2_CONTENT</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 3 Content" enabled="true">
-              <stringProp name="JSON_PATH">$.options.[2].content</stringProp>
-              <stringProp name="EXPECTED_VALUE">OPTION3_CONTENT</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 4 Content" enabled="true">
-              <stringProp name="JSON_PATH">$.options.[3].content</stringProp>
-              <stringProp name="EXPECTED_VALUE">OPTION4_CONTENT</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 1 Correct" enabled="true">
-              <stringProp name="JSON_PATH">$.options.[0].correct</stringProp>
-              <stringProp name="EXPECTED_VALUE">true</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 2 Correct" enabled="true">
-              <stringProp name="JSON_PATH">$.options.[1].correct</stringProp>
-              <stringProp name="EXPECTED_VALUE">false</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 3 Correct" enabled="true">
-              <stringProp name="JSON_PATH">$.options.[2].correct</stringProp>
-              <stringProp name="EXPECTED_VALUE">false</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Option 4 Correct" enabled="true">
-              <stringProp name="JSON_PATH">$.options.[3].correct</stringProp>
-              <stringProp name="EXPECTED_VALUE">false</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
           </hashTree>
           <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Check accepted suggestion" enabled="true">
             <stringProp name="dataSource">sampleReq</stringProp>
@@ -339,6 +267,20 @@ INSERT INTO options VALUES(4, &apos;OPTION4_CONTENT&apos;, false, 1, 3);
           <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Check underlying suggestion question" enabled="true">
             <stringProp name="dataSource">sampleReq</stringProp>
             <stringProp name="query">SELECT * FROM questions q WHERE q.id = 1 AND q.type = &apos;SUGGESTION&apos;;
+</stringProp>
+            <stringProp name="queryArguments"></stringProp>
+            <stringProp name="queryArgumentsTypes"></stringProp>
+            <stringProp name="queryTimeout"></stringProp>
+            <stringProp name="queryType">Select Statement</stringProp>
+            <stringProp name="resultSetHandler">Store as String</stringProp>
+            <stringProp name="resultSetMaxRows">1</stringProp>
+            <stringProp name="resultVariable"></stringProp>
+            <stringProp name="variableNames"></stringProp>
+          </JDBCSampler>
+          <hashTree/>
+          <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Check underlying options" enabled="true">
+            <stringProp name="dataSource">sampleReq</stringProp>
+            <stringProp name="query">SELECT * FROM options WHERE options.id = 1;
 </stringProp>
             <stringProp name="queryArguments"></stringProp>
             <stringProp name="queryArgumentsTypes"></stringProp>

@@ -6,14 +6,16 @@ describe('Show stats', () => {
 
   afterEach(() => {
     cy.contains('Logout').click();
-    cy.exec('psql -d tutordb -c ' +
-      '"DELETE FROM options o WHERE question_id IN ( SELECT id FROM questions WHERE title = \'TestStats\');"');
-    cy.exec('psql -d tutordb -c ' +
-      '"DELETE FROM questions WHERE title = \'TestStats\';"');
-    cy.exec('psql -d tutordb -c ' +
-      '"DELETE FROM users_question_suggestion;"');
-    cy.exec('psql -d tutordb -c ' +
-      '"DELETE FROM question_Suggestions;"');
+    cy.exec(
+      'psql -d tutordb -c ' +
+        '"DELETE FROM options o WHERE question_id IN ( SELECT id FROM questions WHERE title = \'TestStats\');"'
+    );
+    cy.exec(
+      'psql -d tutordb -c ' +
+        '"DELETE FROM questions WHERE title = \'TestStats\';"'
+    );
+    cy.exec('psql -d tutordb -c ' + '"DELETE FROM users_question_suggestion;"');
+    cy.exec('psql -d tutordb -c ' + '"DELETE FROM question_Suggestions;"');
   });
 
   it('it creates a suggestion and see the stats', () => {
@@ -28,6 +30,7 @@ describe('Show stats', () => {
     );
     cy.wait(10000);
     cy.contains('Stats').click();
+    cy.get('[data-cy="sugge"]').click();
     cy.get('[data-cy="totalNumberSuggestions"]')
       .contains(1)
       .should('exist');
@@ -51,8 +54,16 @@ describe('Show stats', () => {
     cy.contains('Logout').click();
     cy.demoStudentLogin();
     cy.contains('Stats').click();
+    cy.get('[data-cy="sugge"]').click();
     cy.get('[data-cy="totalNumberSuggestionsAvailable"]')
       .contains(1)
       .should('exist');
+  });
+
+  it('And switch suggestions from private to public and then to public again', () => {
+    cy.contains('Stats').click();
+    cy.get('[data-cy="sugge"]').click();
+    cy.get('[data-cy="privateSuggestionStatsBtn"]').click();
+    cy.get('[data-cy="publicSuggestionStatsBtn"]').click();
   });
 });

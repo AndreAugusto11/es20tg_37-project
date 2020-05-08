@@ -5,6 +5,7 @@
       :custom-filter="customFilter"
       :items="questionSuggestions"
       :search="search"
+      :sort-by="['creationDate']"
       multi-sort
       :mobile-breakpoint="0"
       :items-per-page="15"
@@ -41,7 +42,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="showQuestionSuggestionDialog(item)"
@@ -54,8 +55,8 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              small
-              class="mr-3"
+              large
+              class="mr-2"
               v-on="on"
               @click="editRejectedQuestionSuggestion(item)"
               data-cy="updateRejectedQuestion"
@@ -106,6 +107,12 @@ export default class QuestionSuggestionView extends Vue {
   search: string = '';
 
   headers: object = [
+    {
+      text: 'Actions',
+      value: 'action',
+      align: 'center',
+      sortable: false
+    },
     { text: 'Title', value: 'questionDto.title', align: 'center' },
     { text: 'Content', value: 'questionDto.content', align: 'left' },
     { text: 'Status', value: 'status', align: 'center' },
@@ -113,12 +120,6 @@ export default class QuestionSuggestionView extends Vue {
       text: 'Creation Date',
       value: 'creationDate',
       align: 'center'
-    },
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'center',
-      sortable: false
     }
   ];
 

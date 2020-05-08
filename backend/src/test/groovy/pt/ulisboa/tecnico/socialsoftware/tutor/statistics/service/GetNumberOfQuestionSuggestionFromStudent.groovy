@@ -137,7 +137,7 @@ class GetNumberOfQuestionSuggestionFromStudent extends Specification {
 
     def "Get the number of question suggestion accepted from a student"() {
 
-        when: 
+        when:
         def result = statsService.getStats(user.getId(), courseExecution.getId())
 
         then: "the result should be the number of suggestion accepted that the student made"
