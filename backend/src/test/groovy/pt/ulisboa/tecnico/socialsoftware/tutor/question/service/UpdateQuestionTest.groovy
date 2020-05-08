@@ -210,7 +210,6 @@ class UpdateQuestionTest extends Specification {
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.CANNOT_CHANGE_ANSWERED_QUESTION
-
     }
 
     def "Update a question given no question id"() {

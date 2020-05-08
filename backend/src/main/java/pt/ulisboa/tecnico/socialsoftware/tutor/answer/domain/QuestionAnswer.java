@@ -14,6 +14,8 @@ import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_SEQUENCE_FOR_QUESTION_ANSWER;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_SEQUENCE_FOR_QUESTION_ANSWER;
+
 @Entity
 @Table(name = "question_answers")
 public class QuestionAnswer implements DomainEntity {
@@ -133,6 +135,7 @@ public class QuestionAnswer implements DomainEntity {
     public void addClarificationRequest(ClarificationRequest clarificationRequest) {
         this.clarificationRequest.add(clarificationRequest);
     }
+
     public void remove() {
         quizAnswer.getQuestionAnswers().remove(this);
         quizAnswer = null;
