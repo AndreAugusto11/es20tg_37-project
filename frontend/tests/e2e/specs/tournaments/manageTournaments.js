@@ -26,7 +26,7 @@ describe('Tournaments walkthrough', () => {
   });
 
   it('login,checks Enrolled Tournaments,solves quiz', () => {
-    cy.exec('psql -d tutordb -c "insert into tournaments(id,end_date,number_of_questions,start_date,status,creator_id,quiz_id) values (1234,\'2019-05-26 00:00:00\',1,\'2021-05-24 00:00:00\',\'ONGOING\',676,5376);"')
+    cy.exec('psql -d tutordb -c "insert into tournaments(id,end_date,number_of_questions,start_date,status,user_id,quiz_id) values (1234,\'2019-05-26 00:00:00\',1,\'2021-05-24 00:00:00\',\'ONGOING\',676,5376);"')
     cy.exec('psql -d tutordb -c "insert into tournaments_topics(tournament_id,topics_id) values (1234,82);"')
     cy.exec('psql -d tutordb -c "insert into tournaments_users (tournament_id,users_id) values(1234,676);"')
     cy.exec('psql -d tutordb -c "insert into users_tournaments (user_id,tournaments_id) values(676,1234);"')

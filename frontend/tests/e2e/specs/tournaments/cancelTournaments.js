@@ -14,8 +14,7 @@ describe('Tournament Cancel', () => {
   });
 
   it('Cancelling a previously cancelled Tournament and failing', () => {
-    cy.contains('Tournaments').click();
-    cy.contains('Create Tournaments').click();
+    cy.cancelTournaments(23);
     cy.contains(23)
       .parent()
       .should('have.length', 1)
