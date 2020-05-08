@@ -9,9 +9,10 @@ export default class StudentStats {
   totalPublicClarificationRequests!: number;
   totalNumberSuggestions!: number;
   totalNumberSuggestionsAvailable!: number;
+  totalNumberCreatedTournaments!: number;
+  totalNumberEnrolledTournaments!: number;
   privateClarificationStats!: boolean;
   privateSuggestion!:boolean;
-
   uniqueCorrectAnswers!: number;
   uniqueWrongAnswers!: number;
 
@@ -30,6 +31,8 @@ export default class StudentStats {
         jsonObj.totalPublicClarificationRequests;
       this.totalNumberSuggestions = jsonObj.totalNumberSuggestions;
       this.totalNumberSuggestionsAvailable = jsonObj.totalNumberSuggestionsAvailable;
+      this.totalNumberCreatedTournaments= jsonObj.totalNumberCreatedTournaments;
+      this.totalNumberEnrolledTournaments = jsonObj.totalNumberEnrolledTournaments;
       this.privateClarificationStats = jsonObj.privateClarificationStats;
       this.privateSuggestion = jsonObj.privateSuggestion;
     }

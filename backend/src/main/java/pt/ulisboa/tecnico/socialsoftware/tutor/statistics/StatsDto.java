@@ -11,12 +11,30 @@ public class StatsDto implements Serializable {
     private Integer uniqueCorrectAnswers = 0;
     private Integer uniqueWrongAnswers = 0;
     private Integer totalAvailableQuestions = 0;
+    private Integer totalNumberCreatedTournaments = 0;
+    private Integer totalNumberEnrolledTournaments = 0;
     private Integer totalClarificationRequests = 0;
     private Integer totalPublicClarificationRequests = 0;
     private Integer totalNumberSuggestions = 0;
     private Integer totalNumberSuggestionsAvailable = 0;
     private Boolean privateClarificationStats = false;
     private Boolean privateSuggestion = false;
+
+    public Integer getTotalNumberCreatedTournaments() {
+        return totalNumberCreatedTournaments;
+    }
+
+    public void setTotalNumberCreatedTournaments(Integer totalNumberCreatedTournaments) {
+        this.totalNumberCreatedTournaments = totalNumberCreatedTournaments;
+    }
+
+    public Integer getTotalNumberEnrolledTournaments() {
+        return totalNumberEnrolledTournaments;
+    }
+
+    public void setTotalNumberEnrolledTournaments(Integer totalNumberEnrolledTournaments) {
+        this.totalNumberEnrolledTournaments = totalNumberEnrolledTournaments;
+    }
 
     public Integer getTotalNumberSuggestions() {
         return totalNumberSuggestions;
