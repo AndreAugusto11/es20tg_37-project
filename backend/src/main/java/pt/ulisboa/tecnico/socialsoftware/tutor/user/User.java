@@ -53,7 +53,7 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectInClassAnswers;
     private Integer numberOfCorrectStudentAnswers;
 
-    private Boolean privateClarificationStats = false;
+    private Boolean privateClarificationStats;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -103,6 +103,7 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfCorrectTeacherAnswers = 0;
         this.numberOfCorrectInClassAnswers = 0;
         this.numberOfCorrectStudentAnswers = 0;
+        this.privateClarificationStats = false;
     }
 
     @Override
