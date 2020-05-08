@@ -73,10 +73,10 @@ public class User implements UserDetails, DomainEntity {
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Tournament> tournaments = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Tournament> createdTournaments = new HashSet<>();
   
     @OneToMany
@@ -407,6 +407,8 @@ public class User implements UserDetails, DomainEntity {
 
     public Set<Tournament> getTournaments() { return this.tournaments; }
 
+    public void removeTournament (Tournament tournament) { this.tournaments.remove(tournament); }
+
     public Set<ClarificationRequest> getClarificationRequests() { return clarificationRequests; }
 
     public void addClarificationRequest(ClarificationRequest clarificationRequest) {
@@ -523,6 +525,8 @@ public class User implements UserDetails, DomainEntity {
         return createdTournaments;
     }
 
+    public void removeCreatedTournament(Tournament tournament) { createdTournaments.remove(tournament); }
+
     public Boolean isPrivateClarificationStats() {
         return privateClarificationStats;
     }
@@ -531,6 +535,7 @@ public class User implements UserDetails, DomainEntity {
         this.privateClarificationStats = privateClarificationStats;
     }
 
+
     public Boolean isPrivateSuggestion() {
         return privateSuggestion;
     }
@@ -538,4 +543,5 @@ public class User implements UserDetails, DomainEntity {
     public void setPrivateSuggestion(Boolean privateSuggestion) {
         this.privateSuggestion = privateSuggestion;
     }
+
 }
