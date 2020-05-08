@@ -87,7 +87,7 @@ export default class RemoteServices {
   static async getUserStats(): Promise<StudentStats> {
     return httpClient
       .get(
-        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/${Store.getters.getCurrentCourse.courseId}/stats`
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/stats`
       )
       .then(response => {
         return new StudentStats(response.data);
