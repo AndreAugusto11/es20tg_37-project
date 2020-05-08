@@ -152,9 +152,6 @@ export default class CreateTournamentsView extends Vue {
     ) {
       try {
         await RemoteServices.cancelTournament(tournamentToCancel);
-        /*this.tournaments = this.tournaments.filter(
-          tournament => tournament.id != tournamentToCancel.id
-        );*/
         this.tournaments = await RemoteServices.getCreatedTournaments();
       } catch (error) {
         await this.$store.dispatch('error', error);
