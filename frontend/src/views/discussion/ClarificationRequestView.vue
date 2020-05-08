@@ -12,7 +12,7 @@
             <v-btn v-else class="mr-5" disabled data-cy="answerButtonDisabled">
                 <v-icon left>mdi-reply</v-icon> Reply
             </v-btn>
-            <v-btn v-if="this.$store.getters.isStudent && this.clarificationRequest.status !== 'CLOSED'" class="mr-5" color="primary" @click="closeClarificationRequest" data-cy="closeButton">
+            <v-btn v-if="this.$store.getters.isStudent && this.clarificationRequest.status !== 'CLOSED'" class="mr-5" dark color="red" @click="closeClarificationRequest" data-cy="closeButton">
                 <v-icon left>mdi-close</v-icon> Close Clarification
             </v-btn>
             <v-btn v-else-if="this.$store.getters.isStudent" disabled data-cy="closeButtonDisabled">
