@@ -18,24 +18,27 @@
       </v-card-title>
 
       <v-card-text class="text-left" v-if="editQuestion">
-        <v-text-field v-model="editQuestion.title" label="Title" />
+        <v-text-field v-model="editQuestion.title" label="Title" data-cy="questionTitle"/>
         <v-textarea
           outline
           rows="10"
           v-model="editQuestion.content"
           label="Question"
+          data-cy="questionContent"
         ></v-textarea>
         <div v-for="index in editQuestion.options.length" :key="index">
           <v-switch
             v-model="editQuestion.options[index - 1].correct"
             class="ma-4"
             label="Correct"
+            data-cy="questionCorrectOp"
           />
           <v-textarea
             outline
             rows="10"
             v-model="editQuestion.options[index - 1].content"
             :label="`Option ${index}`"
+            data-cy="questionOp"
           ></v-textarea>
         </div>
       </v-card-text>
@@ -43,9 +46,10 @@
       <v-card-actions>
         <v-spacer />
         <v-btn color="blue darken-1" @click="$emit('dialog', false)"
+               data-cy="questionCancelButton"
           >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" @click="saveQuestion">Save</v-btn>
+        <v-btn color="blue darken-1" @click="saveQuestion" data-cy="questionSaveButton">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
