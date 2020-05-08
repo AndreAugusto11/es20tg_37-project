@@ -9,7 +9,7 @@
         <animated-number :number="stats.totalNumberCreatedTournaments" />
       </div>
       <div class="project-name">
-        <p>Number of Tournaments created</p>
+        <p>Total Tournaments Created</p>
       </div>
     </div>
     <div class="items">
@@ -21,9 +21,47 @@
         <animated-number :number="stats.totalNumberEnrolledTournaments" />
       </div>
       <div class="project-name">
-        <p>Number of Tournaments enrolled</p>
+        <p>Total Tournaments Enrolled</p>
       </div>
     </div>
+	  <v-card-text style="height: 50px; position: relative">
+		  <v-tooltip v-if="stats.privateTournamentsStats" bottom>
+			  <template v-slot:activator="{ on }">
+				  <v-btn
+						  absolute
+						  dark
+						  fab
+						  top
+						  right
+						  color="red"
+						  v-on="on"
+						  @click="changeTournamentsStatsPrivacy"
+						  data-cy="publicTournamentsStatsBtn"
+				  >
+					  <v-icon class="mr-2">mdi-eye-off</v-icon>
+				  </v-btn>
+			  </template>
+			  <span>Click here to make tournaments stats public</span>
+		  </v-tooltip>
+		  <v-tooltip v-else bottom>
+			  <template v-slot:activator="{ on }">
+				  <v-btn
+						  absolute
+						  dark
+						  fab
+						  top
+						  right
+						  color="green"
+						  v-on="on"
+						  @click="changeTournamentsStatsPrivacy"
+						  data-cy="privateTournamentsStatsBtn"
+				  >
+					  <v-icon class="mr-2">mdi-eye</v-icon>
+				  </v-btn>
+			  </template>
+			  <span>Click here to make tournaments stats private</span>
+		  </v-tooltip>
+	  </v-card-text>
   </div>
 </template>
 
@@ -36,8 +74,19 @@ import AnimatedNumber from '@/components/AnimatedNumber.vue';
 @Component({
   components: { AnimatedNumber }
 })
-export default class QuizStatsView extends Vue {
+export default class TournamentsStatsView extends Vue {
   @Prop(StudentStats) readonly stats!: StudentStats;
+
+    async changeTournamentsStatsPrivacy() {
+        await this.$store.dispatch('loading');
+        try {
+            await RemoteServices.changeTournamentsStatsPrivacy();
+            this.stats.privateTournamentsStats = !this.stats.privateTournamentsStats;
+        } catch (error) {
+            await this.$store.dispatch('error', error);
+        }
+        await this.$store.dispatch('clearLoading');
+    }
 }
 </script>
 
