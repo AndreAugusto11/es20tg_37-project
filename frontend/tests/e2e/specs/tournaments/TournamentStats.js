@@ -4,7 +4,10 @@ describe('Show stats', () => {
     cy.exec('psql -d tutordb -c "Delete from users_tournaments;"')
     cy.exec('psql -d tutordb -c "Delete from users_created_tournaments;"')
     cy.exec('psql -d tutordb -c "Delete from tournaments_topics;"')
-    cy.exec('psql -d tutordb -c "Delete from tournaments ;"')
+    cy.exec('psql -d tutordb -c "Delete from tournaments ;"');
+    cy.exec(
+      'psql -d tutordb -c "UPDATE users SET private_tournaments_stats = false;"'
+    );
     cy.demoStudentLogin();
     cy.contains('Tournaments').click();
   });
@@ -34,4 +37,12 @@ describe('Show stats', () => {
       .contains(1)
       .should('exist');
   });
+  it('Changing Tournament Stats from public to private', () => {
+      cy.contains('Stats').click()
+      cy.wait(1000)
+      cy.get('[data-cy="torn"]').click();
+      cy.get('[data-cy="privateTournamentsStatsBtn"]').click({force: true})
+      cy.wait(1000)
+      cy.get('[data-cy="publicTournamentsStatsBtn"]').should('exist')
+  })
 });
