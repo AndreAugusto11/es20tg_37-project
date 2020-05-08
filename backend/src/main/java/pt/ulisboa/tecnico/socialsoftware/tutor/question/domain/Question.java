@@ -64,7 +64,7 @@ public class Question implements DomainEntity {
     private LocalDateTime creationDate;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval=true)
-    private List<Option> options = new ArrayList<>();
+    private final List<Option> options = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval=true)
     private final Set<QuizQuestion> quizQuestions = new HashSet<>();
@@ -248,7 +248,6 @@ public class Question implements DomainEntity {
         topics.add(topic);
         topic.getQuestions().add(this);
     }
-
 
     public void addClarificationRequest(ClarificationRequest clarificationRequest) {
         clarificationRequests.add(clarificationRequest);
