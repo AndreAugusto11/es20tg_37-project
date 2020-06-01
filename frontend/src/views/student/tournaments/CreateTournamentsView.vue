@@ -1,56 +1,116 @@
 <template>
   <v-card class="table">
-    <div>
-      <h1>Created Tournaments</h1>
-    </div>
     <v-data-table
       :headers="headers"
-      :items="tournaments"
+      :items="allTournaments ? tournaments : myTournaments"
       :search="search"
-      disable-pagination
-      :hide-default-footer="true"
-      :mobile-breakpoint="0"
       multi-sort
+      :mobile-breakpoint="0"
+      :items-per-page="15"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
     >
       <template v-slot:top>
-        <v-card-title>
-          <v-text-field
-            v-model="search"
-            append-icon="search"
-            label="Search"
-            class="mx-2"
-          />
-          <v-spacer />
-          <v-btn
-            color="primary"
-            dark
-            @click="newTournament"
-            data-cy="createButton"
-            >Create New Tournament</v-btn
-          >
-        </v-card-title>
+        <v-subheader class="font-weight-bold" style="font-size: 20px; color:black;">Tournaments</v-subheader>
+        <v-row align="left">
+          <v-col class="d-flex" cols="12" sm="4">
+            <v-text-field
+                    v-model="search"
+                    append-icon="search"
+                    label="Search"
+                    class="mx-2"
+            />
+          </v-col>
+          <v-col class="mt-3 d-flex" cols="12" sm="4">
+            <v-select
+                    :items="tournamentsFilters"
+                    label="Tournaments"
+                    dense
+                    outlined
+                    class="ml-5"
+                    style="max-width: 300px;"
+                    value="All Tournaments"
+                    v-on:change="changeTournamentsFilter"
+            />
+          </v-col>
+          <v-col class="mt-3" cols="12" sm="4" align="right">
+            <v-btn
+                    color="primary"
+                    dark
+                    @click="newTournament"
+                    data-cy="createButton"
+            >
+              New Tournament
+            </v-btn>
+          </v-col>
+        </v-row>
       </template>
+
+      <template v-slot:item.topicsName="{ item }">
+        <v-chip v-for="topic in item.topics" style="margin: 5px;">
+          {{ topic.name }}
+        </v-chip>
+      </template>
+
       <template v-slot:item.action="{ item }">
-        <v-tooltip bottom>
+        <v-tooltip v-if="myTournaments.includes(item) && item.status === 'CREATED'" bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              x-medium
+              x-large
               class="mr-2"
               color="red"
               dark
               v-on="on"
               @click="cancelTournament(item)"
               data-cy="cancelTournament"
-              >mdi-cancel</v-icon
-            >
+              >
+              mdi-cancel
+            </v-icon>
           </template>
           <span>Cancel Tournament</span>
         </v-tooltip>
+
+        <v-tooltip v-else bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+                    x-large
+                    class="mr-2"
+                    v-on="on"
+                    disabled
+            >
+              mdi-cancel
+            </v-icon>
+          </template>
+          <span>Cancel Tournament</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+                    x-large
+                    class="mr-2"
+                    color="primary"
+                    dark
+                    v-on="on"
+                    @click="enrollTournament(item)"
+                    data-cy="enrollTournament"
+            >
+              mdi-location-enter
+            </v-icon>
+          </template>
+          <span>Enroll Tournament</span>
+        </v-tooltip>
+      </template>
+
+      <template v-slot:item.status="{ item }">
+        <v-chip :color="getStatusColor(item.status)" small>
+          <span>{{ item.status }}</span>
+        </v-chip>
       </template>
     </v-data-table>
-    <edit-tournament-dialog
+
+    <create-tournament-dialog
       v-if="currentTournament"
-      v-model="editTournamentDialog"
+      v-model="createTournamentDialog"
       v-on:new-tournament="onCreateTournament"
       v-on:close-dialog="onCloseDialog"
       :tournament="currentTournament"
@@ -62,36 +122,41 @@
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { Tournament } from '@/models/tournaments/Tournament';
-import EditTournamentDialog from '@/views/student/tournaments/EditTournamentDialog.vue';
+import CreateTournamentDialog from '@/views/student/tournaments/CreateTournamentDialog.vue';
+import Image from '@/models/management/Image';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
 
 @Component({
   components: {
-    'edit-tournament-dialog': EditTournamentDialog
+    'create-tournament-dialog': CreateTournamentDialog
   }
 })
 export default class CreateTournamentsView extends Vue {
   tournaments: Tournament[] = [];
+  myTournaments: Tournament[] = [];
+  allTournaments: boolean = true;
   currentTournament: Tournament | null = null;
-  editTournamentDialog: boolean = false;
+  createTournamentDialog: boolean = false;
   search: string = '';
+  tournamentsFilters: string[] = ['All Tournaments', 'My Tournaments'];
   headers: object = [
     {
-      text: 'Tournament ID',
-      value: 'id',
+      text: 'Creator',
+      value: 'creatorName',
       align: 'center',
       width: '10%'
     },
     {
       text: 'Number of Questions',
-      value: 'numQuests',
+      value: 'numberQuestions',
       align: 'center',
       width: '10%'
     },
     {
-      text: 'Tournament Topics',
+      text: 'Topics',
       value: 'topicsName',
       align: 'center',
-      width: '20%'
+      width: '30%'
     },
     {
       text: 'Start Date',
@@ -123,7 +188,8 @@ export default class CreateTournamentsView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = await RemoteServices.getCreatedTournaments();
+      this.tournaments = await RemoteServices.getTournaments();
+      this.myTournaments = this.tournaments.filter(tournament => tournament.creatorName === this.$store.getters.getUser.name)
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -132,17 +198,18 @@ export default class CreateTournamentsView extends Vue {
 
   async newTournament() {
     this.currentTournament = new Tournament();
-    this.editTournamentDialog = true;
+    this.createTournamentDialog = true;
   }
 
   async onCreateTournament(tournament: Tournament) {
     this.tournaments.unshift(tournament);
-    this.editTournamentDialog = false;
+    this.myTournaments.unshift(tournament);
+    this.createTournamentDialog = false;
     this.currentTournament = null;
   }
 
   async onCloseDialog() {
-    this.editTournamentDialog = false;
+    this.createTournamentDialog = false;
     this.currentTournament = null;
   }
 
@@ -157,6 +224,30 @@ export default class CreateTournamentsView extends Vue {
         await this.$store.dispatch('error', error);
       }
     }
+  }
+
+  async enrollTournament(tournamentToEnroll: Tournament) {
+    if (confirm('Are you sure you want to enroll?')) {
+      try {
+        await RemoteServices.enrollTournament(tournamentToEnroll);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
+  }
+
+  getStatusColor(status: string): string {
+    if (status === 'CREATED') return 'green';
+    else if (status === 'ONGOING') return 'yellow';
+    else return 'red'
+  }
+
+  changeTournamentsFilter(value: string) {
+    this.allTournaments = value === 'All Tournaments';
+  }
+
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
   }
 }
 </script>

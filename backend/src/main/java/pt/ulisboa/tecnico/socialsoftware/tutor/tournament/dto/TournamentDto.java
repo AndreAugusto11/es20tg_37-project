@@ -15,6 +15,7 @@ public class TournamentDto implements Serializable {
     private int creatorID;
     private Set<TopicDto> topics = new HashSet<>();
     private Integer numberQuestions = 1;
+    private String creatorName;
     private Integer quizID = null;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -35,6 +36,7 @@ public class TournamentDto implements Serializable {
         this.startTime = tournament.getStartTime();
         this.endTime = tournament.getEndTime();
         this.status = tournament.getStatus().name();
+        creatorName = tournament.getCreator().getName();
     }
 
     public int getCreatorID()
@@ -103,4 +105,11 @@ public class TournamentDto implements Serializable {
 
     public void setStatus(Tournament.Status status) {this.status = status.name();}
 
+    public String getCreatorName() {
+        return creatorName;
+    }
+
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
+    }
 }

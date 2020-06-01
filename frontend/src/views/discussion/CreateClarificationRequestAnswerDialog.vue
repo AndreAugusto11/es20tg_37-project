@@ -35,10 +35,11 @@
                         color="blue darken-1"
                         @click="$emit('close-dialog')"
                         data-cy="cancelButton"
+                        dark
                 >
                     Cancel
                 </v-btn>
-                <v-btn color="blue darken-1" @click="saveClarificationRequestAnswer" data-cy="saveButton">
+                <v-btn dark color="blue darken-1" @click="saveClarificationRequestAnswer" data-cy="saveButton">
                     Send
                 </v-btn>
             </v-card-actions>
