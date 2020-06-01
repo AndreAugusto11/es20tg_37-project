@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
@@ -19,8 +20,8 @@ public class TournamentDto implements Serializable {
     private Integer numberQuestions = 1;
     private String creatorName;
     private Integer quizID = null;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private String startTime;
+    private String endTime;
 
     private String status;
 
@@ -36,8 +37,8 @@ public class TournamentDto implements Serializable {
         this.numberQuestions = tournament.getNumberQuestions();
         if (tournament.getQuiz() != null)
             this.quizID = tournament.getQuiz().getId();
-        this.startTime = tournament.getStartTime();
-        this.endTime = tournament.getEndTime();
+        this.startTime = DateHandler.toISOString(tournament.getStartTime());
+        this.endTime = DateHandler.toISOString(tournament.getEndTime());
         this.status = tournament.getStatus().name();
         creatorName = tournament.getCreator().getName();
     }
@@ -66,11 +67,11 @@ public class TournamentDto implements Serializable {
         return this.topics;
     }
 
-    public LocalDateTime getStartTime() {
+    public String getStartTime() {
         return this.startTime;
     }
 
-    public LocalDateTime getEndTime() {
+    public String getEndTime() {
         return this.endTime;
     }
 
@@ -96,15 +97,15 @@ public class TournamentDto implements Serializable {
         this.topics = topics;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 
-    public String getStatus() { return this.status;}
+    public String getStatus() { return this.status; }
 
     public void setStatus(Tournament.Status status) {this.status = status.name();}
 

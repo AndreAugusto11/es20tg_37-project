@@ -405,7 +405,7 @@ public class User implements UserDetails, DomainEntity {
         this.courseExecutions.add(course);
     }
 
-    public void addTournament(Tournament tournament) {this.enrolledTournaments.add(tournament);}
+    public void addTournament(Tournament tournament) { this.enrolledTournaments.add(tournament); }
 
     public Set<Tournament> getEnrolledTournaments() { return this.enrolledTournaments; }
 

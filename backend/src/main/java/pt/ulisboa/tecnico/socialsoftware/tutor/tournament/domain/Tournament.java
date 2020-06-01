@@ -53,10 +53,10 @@ public class Tournament {
 	@Enumerated(EnumType.STRING)
 	private Status status = Status.CREATED;
 
-	public Tournament(){}
+	public Tournament() {}
 
-	public Tournament(User student, Set<Topic> topics, Integer numberQuestions, LocalDateTime startTime, LocalDateTime endTime) {
-		this.setCreator(student);
+	public Tournament(User user, Set<Topic> topics, int numberQuestions, LocalDateTime startTime, LocalDateTime endTime) {
+		this.setCreator(user);
 		this.setTopics(topics);
 		this.setNumberQuestions(numberQuestions);
 		this.setTimeframe(startTime, endTime);
@@ -96,37 +96,27 @@ public class Tournament {
 		return this.status;
 	}
 
-	public void setCreator(User user) {
-		if (user == null) 
+	public void setCreator(User creator) {
+		if (creator == null)
 			throw new TutorException(TOURNAMENT_NULL_USER);
 
-		if (user.getRole() == User.Role.STUDENT) {
-			this.creator = user;
-			this.users.add(user);
-		}
-		else {
-			throw new TutorException(ErrorMessage.TOURNAMENT_NON_VALID_USER, user.getId());
-		}
+		if (creator.getRole() != User.Role.STUDENT)
+			throw new TutorException(ErrorMessage.TOURNAMENT_NON_VALID_USER, creator.getId());
+
+		this.creator = creator;
+		this.users.add(creator);
 	}
 
 	public void addUser(User user) {
 		this.users.add(user);
-		if (this.quiz == null) { generateQuiz(); }
-		/*else
-		{
-			QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
-			quiz.addQuizAnswer(quizAnswer);
-			user.addQuizAnswer(quizAnswer);
-		}*/
+		user.addTournament(this);
 	}
 
-	public void setNumberQuestions(Integer numberQuestions) {
-		if (numberQuestions == null)
-			throw new TutorException(TOURNAMENT_NULL_NUM_QUESTS);
-
+	public void setNumberQuestions(int numberQuestions) {
 		if (numberQuestions <= 0) {
 			throw new TutorException(ErrorMessage.TOURNAMENT_INVALID_NUM_QUESTS, numberQuestions);
 		}
+
 		this.numberQuestions = numberQuestions;
 	}
 

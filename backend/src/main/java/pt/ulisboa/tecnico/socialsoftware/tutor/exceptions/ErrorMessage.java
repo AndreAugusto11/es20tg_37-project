@@ -34,13 +34,14 @@ public enum ErrorMessage {
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
     
     TOURNAMENT_NOT_FOUND("Tournament not found with id %d"),
-    TOURNAMENT_NOT_OPEN("Tournament with id %d not open"),
+    TOURNAMENT_NOT_CREATED("Tournament with id %d not created"),
     TOURNAMENT_NOT_STUDENT("Tournament only allows students to enroll"),
     TOURNAMENT_STUDENT_ALREADY_ENROLLED("Tournament already enrolled student with id %d"),
     TOURNAMENT_STUDENT_NOT_ENROLLED("Tournament not enrolled student with id %d"),
     TOURNAMENT_NOT_ONGOING("Tournament with id %d not yet ongoing"),
     TOURNAMENT_NON_CREATOR("Tournament %d was not created by User with id %d"),
     TOURNAMENT_ALREADY_CANCELLED("Tournament %d was already cancelled"),
+    TOURNAMENT_ALREADY_ONGOING("Tournament %d is ongoing, cannot be cancelled"),
 
     TOURNAMENT_NULL_ID("Tournament ID is null"),
     TOURNAMENT_NULL_USER("User ID is not defined"),

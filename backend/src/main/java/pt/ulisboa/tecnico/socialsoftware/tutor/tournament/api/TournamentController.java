@@ -27,12 +27,15 @@ public class TournamentController {
     @Autowired
     private TournamentService tournamentService;
 
+    //TODO Add executionId to path: "/{executionId}/tournaments"
+
     @GetMapping("/tournaments")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<TournamentDto> getTournaments() {
         return tournamentService.getTournaments();
     }
 
+    @Deprecated
     @GetMapping("/tournaments/enrolled")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<TournamentDto> getEnrolledTournaments(Principal principal) {
@@ -45,6 +48,7 @@ public class TournamentController {
         return tournamentService.getEnrolledTournaments(user.getId());
     }
 
+    @Deprecated
     @GetMapping("/tournaments/created")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<TournamentDto> getCreatedTournaments(Principal principal) {
@@ -71,14 +75,14 @@ public class TournamentController {
 
     @PostMapping("/tournaments/{tournamentId}/enroll")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public TournamentDto enrollTournament(Principal principal, @PathVariable Integer tournamentId) {
+    public TournamentDto enrollTournament(Principal principal, @PathVariable int tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        return tournamentService.enrollStudentInTournament(user.getId(),tournamentId);
+        return tournamentService.enrollStudentInTournament(user.getId(), tournamentId);
     }
 
     @PostMapping("/tournaments/{tournamentId}/submit")
@@ -123,7 +127,9 @@ public class TournamentController {
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public ResponseEntity cancelTournament(Principal principal, @PathVariable Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
-        if (user == null) { throw new TutorException(AUTHENTICATION_ERROR); }
+        if (user == null) {
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
         Integer userId = user.getId();
 
         tournamentService.cancelTournament(userId, tournamentId);
