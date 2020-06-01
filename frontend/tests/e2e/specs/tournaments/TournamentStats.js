@@ -4,6 +4,7 @@ describe('Show stats', () => {
     cy.exec('psql -d tutordb -c "Delete from users_tournaments;"')
     cy.exec('psql -d tutordb -c "Delete from users_created_tournaments;"')
     cy.exec('psql -d tutordb -c "Delete from tournaments_topics;"')
+    cy.exec('psql -d tutordb -c "Delete from users_enrolled_tournaments;"')
     cy.exec('psql -d tutordb -c "Delete from tournaments ;"');
     cy.exec(
       'psql -d tutordb -c "UPDATE users SET private_tournaments_stats = false;"'

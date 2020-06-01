@@ -8,6 +8,7 @@ export class Tournament {
   quizID: number | null = null;
   topics: Topic[] = [];
   enrolledStudentsIds!: number[];
+  enrolledStudentsNames!: string[];
   startTime!: number[];
   endTime!: number[];
   startTimeString!: string;
@@ -22,6 +23,7 @@ export class Tournament {
       this.numberQuestions = jsonObj.numberQuestions;
       this.quizID = jsonObj.quizID;
       this.enrolledStudentsIds = jsonObj.enrolledStudentsIds;
+      this.enrolledStudentsNames = jsonObj.enrolledStudentsNames;
       this.topics = jsonObj.topics;
       this.startTime = jsonObj.startTime;
       this.endTime = jsonObj.endTime;

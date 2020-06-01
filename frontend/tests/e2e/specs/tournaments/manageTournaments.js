@@ -4,6 +4,7 @@ describe('Tournaments walkthrough', () => {
     cy.exec('psql -d tutordb -c "Delete from users_tournaments;"')
     cy.exec('psql -d tutordb -c "Delete from users_created_tournaments;"')
     cy.exec('psql -d tutordb -c "Delete from tournaments_topics;"')
+    cy.exec('psql -d tutordb -c "Delete from users_enrolled_tournaments;"')
     cy.exec('psql -d tutordb -c "Delete from tournaments ;"')
     cy.exec(
       'psql -d tutordb -c "insert into tournaments(id,end_date,number_of_questions,start_date,status,user_id,quiz_id) values (1234,\'2019-05-26 00:00:00\',1,\'2021-05-24 00:00:00\',\'ONGOING\',676,5376);"'
@@ -16,22 +17,6 @@ describe('Tournaments walkthrough', () => {
 
   afterEach(() => {
     cy.contains('Logout').click();
-    cy.exec(
-      'psql -d tutordb -c "Delete from tournaments_users where tournament_id = 1234;"'
-    );
-    cy.exec(
-      'psql -d tutordb -c "Delete from users_tournaments where tournaments_id = 1234;"'
-    );
-    cy.exec(
-      'psql -d tutordb -c "Delete from tournaments_topics where tournament_id = 1234;"'
-    );
-
-    cy.exec('psql -d tutordb -c "Delete from tournaments where id = 1234;"');
-  });
-
-  it('login and checks all tournaments', () => {
-    cy.allTournaments();
-    cy.demoStudentLogin();
   });
 
   it('login enroll in tournament and checks it Enrolled Tournaments', () => {

@@ -71,9 +71,6 @@
   import Question from '@/models/management/Question';
   import Image from '@/models/management/Image';
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
-  import StatementQuiz from '@/models/statement/StatementQuiz';
-  import StatementManager from '@/models/statement/StatementManager';
-  import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 
   @Component
   export default class ListClarificationRequestsView extends Vue {
@@ -115,7 +112,7 @@
 
     getStatusColor(status: string) {
       if (status === 'CLOSED') return 'red';
-      else if (status === 'ANSWERED') return 'yellow';
+      else if (status === 'ANSWERED') return 'orange';
       else return 'green'
     }
 

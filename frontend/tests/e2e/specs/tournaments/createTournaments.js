@@ -4,18 +4,13 @@ describe('Tournaments walkthrough', () => {
     cy.exec('psql -d tutordb -c "Delete from users_tournaments;"')
     cy.exec('psql -d tutordb -c "Delete from users_created_tournaments;"')
     cy.exec('psql -d tutordb -c "Delete from tournaments_topics;"')
-    cy.exec('psql -d tutordb -c "Delete from tournaments ;"')
+    cy.exec('psql -d tutordb -c "Delete from users_enrolled_tournaments;"')
+    cy.exec('psql -d tutordb -c "Delete from tournaments;"')
     cy.demoStudentLogin();
   });
 
   afterEach(() => {
     cy.contains('Logout').click();
-
-    cy.exec('psql -d tutordb -c "DELETE FROM tournaments_users;"');
-    cy.exec('psql -d tutordb -c "DELETE FROM users_tournaments;"');
-    cy.exec('psql -d tutordb -c "DELETE FROM users_created_tournaments;"');
-    cy.exec('psql -d tutordb -c "DELETE FROM tournaments_topics;"');
-    cy.exec('psql -d tutordb -c "DELETE FROM tournaments;"');
   });
 
   it('login and create a tournament', () => {

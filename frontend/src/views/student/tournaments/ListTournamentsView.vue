@@ -46,44 +46,14 @@
       </template>
 
       <template v-slot:item.topicsName="{ item }">
-        <v-chip v-for="topic in item.topics" style="margin: 5px;">
+        <v-chip :key="topic.id" v-for="topic in item.topics" style="margin: 5px;">
           {{ topic.name }}
         </v-chip>
       </template>
 
       <template v-slot:item.action="{ item }">
-        <v-tooltip v-if="myTournaments.includes(item) && item.status === 'CREATED'" bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              x-large
-              class="mr-2"
-              color="red"
-              dark
-              v-on="on"
-              @click="cancelTournament(item)"
-              data-cy="cancelTournament"
-              >
-              mdi-cancel
-            </v-icon>
-          </template>
-          <span>Cancel Tournament</span>
-        </v-tooltip>
 
-        <v-tooltip v-else bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-                    x-large
-                    class="mr-2"
-                    v-on="on"
-                    disabled
-            >
-              mdi-cancel
-            </v-icon>
-          </template>
-          <span>Cancel Tournament</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
+        <v-tooltip v-if="canEnroll(item)" bottom>
           <template v-slot:activator="{ on }">
             <v-icon
                     x-large
@@ -98,6 +68,83 @@
             </v-icon>
           </template>
           <span>Enroll Tournament</span>
+        </v-tooltip>
+
+        <v-tooltip v-else bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+                    x-large
+                    class="mr-2"
+                    v-on="on"
+                    disabled
+            >
+              mdi-location-enter
+            </v-icon>
+          </template>
+          <span>Enroll Tournament</span>
+        </v-tooltip>
+
+        <v-tooltip v-if="canAnswer(item)" bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+                    x-large
+                    class="mr-2"
+                    color="primary"
+                    dark
+                    v-on="on"
+                    @click="answerQuiz(item)"
+                    data-cy="answerTournament"
+            >
+              mdi-file-move
+            </v-icon>
+          </template>
+          <span>Answer Quiz</span>
+        </v-tooltip>
+
+        <v-tooltip v-else bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+                    x-large
+                    class="mr-2"
+                    v-on="on"
+                    disabled
+            >
+              mdi-file-move
+            </v-icon>
+          </template>
+          <span>Answer Quiz</span>
+        </v-tooltip>
+
+        <v-tooltip v-if="myTournaments.includes(item) && item.status === 'CREATED'" bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+                    x-large
+                    class="mr-2"
+                    color="red"
+                    dark
+                    v-on="on"
+                    @click="cancelTournament(item)"
+                    data-cy="cancelTournament"
+            >
+              mdi-cancel
+            </v-icon>
+          </template>
+          <span>Cancel Tournament</span>
+        </v-tooltip>
+
+        <v-tooltip v-else bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+                    x-large
+                    class="mr-2"
+                    v-on="on"
+                    disabled
+                    data-cy="disabledCancelTournament"
+            >
+              mdi-cancel
+            </v-icon>
+          </template>
+          <span>Cancel Tournament</span>
         </v-tooltip>
       </template>
 
@@ -125,13 +172,15 @@ import { Tournament } from '@/models/tournaments/Tournament';
 import CreateTournamentDialog from '@/views/student/tournaments/CreateTournamentDialog.vue';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import StatementManager from '@/models/statement/StatementManager';
 
 @Component({
   components: {
     'create-tournament-dialog': CreateTournamentDialog
   }
 })
-export default class CreateTournamentsView extends Vue {
+export default class ListTournamentsView extends Vue {
+  statementManager: StatementManager = StatementManager.getInstance;
   tournaments: Tournament[] = [];
   myTournaments: Tournament[] = [];
   allTournaments: boolean = true;
@@ -181,13 +230,14 @@ export default class CreateTournamentsView extends Vue {
       value: 'action',
       align: 'center',
       sortable: false,
-      width: '10%'
+      width: '15%'
     }
   ];
 
   async created() {
     await this.$store.dispatch('loading');
     try {
+      this.statementManager.reset();
       this.tournaments = await RemoteServices.getTournaments();
       this.myTournaments = this.tournaments.filter(tournament => tournament.creatorName === this.$store.getters.getUser.name)
     } catch (error) {
@@ -236,9 +286,24 @@ export default class CreateTournamentsView extends Vue {
     }
   }
 
+  async answerQuiz(tournamentToAnswer: Tournament) {
+    try {
+      if (tournamentToAnswer.quizID != null) {
+        await this.statementManager.getTournamentQuiz(
+                tournamentToAnswer.quizID
+        );
+        await this.$router.push({ name: 'solve-quiz' });
+      } else {
+        throw Error('No quiz');
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
   getStatusColor(status: string): string {
     if (status === 'CREATED') return 'green';
-    else if (status === 'ONGOING') return 'yellow';
+    else if (status === 'ONGOING') return 'orange';
     else return 'red'
   }
 
@@ -248,6 +313,16 @@ export default class CreateTournamentsView extends Vue {
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
+  }
+
+  canEnroll(tournament: Tournament): boolean {
+    return !tournament.enrolledStudentsNames.includes(this.$store.getters.getUser.name) &&
+            tournament.status === 'CREATED';
+  }
+
+  canAnswer(tournament: Tournament): boolean {
+    return tournament.enrolledStudentsNames.includes(this.$store.getters.getUser.name) &&
+            tournament.status === 'ONGOING';
   }
 }
 </script>

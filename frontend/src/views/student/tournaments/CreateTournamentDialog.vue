@@ -33,6 +33,7 @@
                 multiple
                 deletable-chips
                 hide-selected
+                data-cy="topicSelect"
             />
             <v-flex xs24 sm12 md8>
               <v-text-field

@@ -16,7 +16,7 @@
               no-gutters
       >
           <v-col class="post-text">
-              <span class="post-text" align="left" v-html="convertMarkDown(this.question.content, null)" />
+              <span class="post-text" style="text-align: left;" v-html="convertMarkDown(this.question.content, null)" />
           </v-col>
       </v-row>
       <v-list align="left">
@@ -158,7 +158,7 @@
 
     getStatusColor(status: string) {
       if (status === 'CLOSED') return 'red';
-      else if (status === 'ANSWERED') return 'yellow';
+      else if (status === 'ANSWERED') return 'orange';
       else return 'green'
     }
 

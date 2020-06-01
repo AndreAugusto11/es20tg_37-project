@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.util.*;
 import java.io.Serializable;
@@ -13,6 +14,7 @@ public class TournamentDto implements Serializable {
 
     private Integer id;
     private Set<Integer> enrolledStudentsIds = new HashSet<>();
+    private Set<String> enrolledStudentsNames = new HashSet<>();
     private int creatorID;
     private Set<TopicDto> topics = new HashSet<>();
     private int numberQuestions = 1;
@@ -29,7 +31,8 @@ public class TournamentDto implements Serializable {
     public TournamentDto(Tournament tournament) {
         this.id = tournament.getId();
         this.creatorID = tournament.getCreator().getId();
-        this.enrolledStudentsIds.add(creatorID);
+        this.enrolledStudentsIds.addAll(tournament.getUsers().stream().map(User::getId).collect(Collectors.toList()));
+        this.enrolledStudentsNames.addAll(tournament.getUsers().stream().map(User::getName).collect(Collectors.toList()));
         this.topics = tournament.getTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toSet());
         this.numberQuestions = tournament.getNumberQuestions();
         if (tournament.getQuiz() != null)
@@ -113,5 +116,13 @@ public class TournamentDto implements Serializable {
 
     public void setCreatorName(String creatorName) {
         this.creatorName = creatorName;
+    }
+
+    public Set<String> getEnrolledStudentsNames() {
+        return enrolledStudentsNames;
+    }
+
+    public void setEnrolledStudentsNames(Set<String> enrolledStudentsNames) {
+        this.enrolledStudentsNames = enrolledStudentsNames;
     }
 }
