@@ -2,7 +2,7 @@
   <v-card class="table">
     <v-data-table
       :headers="headers"
-      :items="tournaments"
+      :items="allTournaments ? tournaments : myTournaments"
       :search="search"
       multi-sort
       :mobile-breakpoint="0"
@@ -45,11 +45,17 @@
         </v-row>
       </template>
 
+      <template v-slot:item.topicsName="{ item }">
+        <v-chip v-for="topic in item.topics" style="margin: 5px;">
+          {{ topic.name }}
+        </v-chip>
+      </template>
+
       <template v-slot:item.action="{ item }">
-        <v-tooltip bottom>
+        <v-tooltip v-if="myTournaments.includes(item) && item.status === 'CREATED'" bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              x-medium
+              x-large
               class="mr-2"
               color="red"
               dark
@@ -57,6 +63,20 @@
               @click="cancelTournament(item)"
               data-cy="cancelTournament"
               >
+              mdi-cancel
+            </v-icon>
+          </template>
+          <span>Cancel Tournament</span>
+        </v-tooltip>
+
+        <v-tooltip v-else bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+                    x-large
+                    class="mr-2"
+                    v-on="on"
+                    disabled
+            >
               mdi-cancel
             </v-icon>
           </template>
@@ -103,6 +123,8 @@ import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { Tournament } from '@/models/tournaments/Tournament';
 import CreateTournamentDialog from '@/views/student/tournaments/CreateTournamentDialog.vue';
+import Image from '@/models/management/Image';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
 
 @Component({
   components: {
@@ -116,7 +138,7 @@ export default class CreateTournamentsView extends Vue {
   currentTournament: Tournament | null = null;
   createTournamentDialog: boolean = false;
   search: string = '';
-  tournamentsFilters: string[] = ["All Tournaments", "My Tournaments"];
+  tournamentsFilters: string[] = ['All Tournaments', 'My Tournaments'];
   headers: object = [
     {
       text: 'Creator',
@@ -126,15 +148,15 @@ export default class CreateTournamentsView extends Vue {
     },
     {
       text: 'Number of Questions',
-      value: 'numQuests',
+      value: 'numberQuestions',
       align: 'center',
       width: '10%'
     },
     {
-      text: 'Tournament Topics',
+      text: 'Topics',
       value: 'topicsName',
       align: 'center',
-      width: '20%'
+      width: '30%'
     },
     {
       text: 'Start Date',
@@ -181,6 +203,7 @@ export default class CreateTournamentsView extends Vue {
 
   async onCreateTournament(tournament: Tournament) {
     this.tournaments.unshift(tournament);
+    this.myTournaments.unshift(tournament);
     this.createTournamentDialog = false;
     this.currentTournament = null;
   }
@@ -213,14 +236,18 @@ export default class CreateTournamentsView extends Vue {
     }
   }
 
-  getStatusColor(status: string) {
-    if (status === 'OPEN') return 'green';
+  getStatusColor(status: string): string {
+    if (status === 'CREATED') return 'green';
     else if (status === 'ONGOING') return 'yellow';
     else return 'red'
   }
 
   changeTournamentsFilter(value: string) {
-    this.allTournaments = value === "All Tournaments";
+    this.allTournaments = value === 'All Tournaments';
+  }
+
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
   }
 }
 </script>

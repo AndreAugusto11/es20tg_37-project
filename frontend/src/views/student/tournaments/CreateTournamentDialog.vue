@@ -18,7 +18,7 @@
           <v-layout column wrap>
             <v-flex xs24 sm12 md8>
               <v-text-field
-                v-model="currentTournament.numQuests"
+                v-model="currentTournament.numberQuestions"
                 label="Number Of Questions"
                 data-cy="numQuest"
               />
@@ -78,7 +78,7 @@ export default class CreateTournamentDialog extends Vue {
 
   currentTournament!: Tournament;
   topicsAll: Topic[] = [];
-  topicsSelected: Topic[] = [];
+  topicsSelected: string[] = [];
   stringAux: String[] | null = null;
   startString: string = '';
   endString: string = '';
@@ -94,11 +94,11 @@ export default class CreateTournamentDialog extends Vue {
   }
 
   async saveTournament() {
-    this.currentTournament.topics = this.topicsSelected;
+    this.currentTournament.topics = this.topicsAll.filter(topic => this.topicsSelected.includes(topic.name));
     console.log(this.currentTournament.topics);
     if (
       this.currentTournament &&
-      (!this.currentTournament.numQuests ||
+      (!this.currentTournament.numberQuestions ||
         !this.currentTournament.topics.length ||
         !this.currentTournament.startTimeString ||
         !this.currentTournament.endTimeString)

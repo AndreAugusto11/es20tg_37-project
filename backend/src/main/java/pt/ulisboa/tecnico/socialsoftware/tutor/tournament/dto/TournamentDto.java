@@ -37,7 +37,7 @@ public class TournamentDto implements Serializable {
         this.startTime = tournament.getStartTime();
         this.endTime = tournament.getEndTime();
         this.status = tournament.getStatus().name();
-        creatorName = tournament.getcreator().getName();
+        creatorName = tournament.getCreator().getName();
     }
 
     public int getCreatorID()
