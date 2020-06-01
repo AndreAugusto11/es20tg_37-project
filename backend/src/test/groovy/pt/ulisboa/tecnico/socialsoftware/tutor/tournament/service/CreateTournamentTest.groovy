@@ -9,30 +9,35 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
+
 @DataJpaTest
 class CreateTournamentTest extends Specification {
 
-    public static final String TOPIC_ONE = "topicOne"
-    public static final String TOPIC_TWO = "topicTwo"
-    public static final String TOPIC_THREE = "topicThree"
-	public static final Integer	number_of_questions = 5
+    private static final String TOPIC_ONE = "topicOne"
+    private static final String TOPIC_TWO = "topicTwo"
+    private static final String TOPIC_THREE = "topicThree"
+	private static final Integer INVALID_USER_ID = 3456;
+	private static final Integer NUMBER_QUESTIONS = 5
 
 	@Autowired
 	TournamentService tournamentService
@@ -50,50 +55,44 @@ class CreateTournamentTest extends Specification {
 	UserRepository userRepository
 
 	@Shared
-	def student
-	@Shared
-	def topic
-	@Shared
-	def topics
-	@Shared
 	def startTime
+
 	@Shared
 	def endTime
-	@Shared
+
+	def student
+	def topicsDto
 	def formatter
 
-	def setup()
-	{
-		student = new User('student', "istStu", 1, User.Role.STUDENT)
-		userRepository.save(student)
-		student = userRepository.findByKey(1)
-
-		topic = new HashSet<Topic>()
-		def tpc = new Topic()
-        tpc.setName(TOPIC_ONE)
-		topic.add(tpc)
-        def topicTwo = new Topic()
-        topicTwo.setName(TOPIC_TWO)
-		def topicThree = new Topic()
-        topicThree.setName(TOPIC_THREE)
-
+	def setup() {
 		def course = new Course("LEIC", Course.Type.TECNICO)
 		courseRepository.save(course)
-		course = courseRepository.findByNameType("LEIC", "TECNICO").get()
-		tpc.setCourse(course)
+
+		student = new User('student', "studentName", 1, User.Role.STUDENT)
+		userRepository.save(student)
+
+		def topicOne = new Topic()
+        topicOne.setName(TOPIC_ONE)
+		topicOne.setCourse(course)
+		topicRepository.save(topicOne);
+
+        def topicTwo = new Topic()
+        topicTwo.setName(TOPIC_TWO)
 		topicTwo.setCourse(course)
-		topicThree.setCourse(course)
-
-		topics = new HashSet<Topic>()
-		topics.add(tpc)
-		topics.add(topicTwo)
-		topics.add(topicThree)
-
-		topicRepository.save(tpc);
 		topicRepository.save(topicTwo);
+
+		def topicThree = new Topic()
+        topicThree.setName(TOPIC_THREE)
+		topicThree.setCourse(course)
 		topicRepository.save(topicThree);
 
+		topicsDto = new HashSet<TopicDto>()
+		topicsDto.add(new TopicDto(topicOne))
+		topicsDto.add(new TopicDto(topicTwo))
+		topicsDto.add(new TopicDto(topicThree))
+
 		formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
+
 		startTime = LocalDateTime.now().plusDays(1)
 		startTime.format(formatter)
         endTime = LocalDateTime.now().plusDays(2)
@@ -101,165 +100,191 @@ class CreateTournamentTest extends Specification {
 
 	}
 
-	def "create a tournament with a student, topic, number of questions and timestamps"()
-	{
-		// create tournament with a student, topic, number of questions and timestamps
+	def "create a tournament with a student, topic, number of questions and timestamps"() {
+		given: "a tournament Dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setCreatorId(student.getId())
+		tournamentDto.setTopics(topicsDto)
+		tournamentDto.setNumberQuestions(NUMBER_QUESTIONS)
+		tournamentDto.setStartTime(startTime)
+		tournamentDto.setEndTime(endTime)
+
 		when:
-		def result = tournamentService.createTournament(student, topic, number_of_questions, startTime, endTime)
+		tournamentService.createTournament(student.getId(), tournamentDto)
 
 		then: "the returned data is correct"
-		result.getCreatorID() == student.getId()
-		result.getNumberQuestions() == number_of_questions
+		tournamentRepository.findAll().size() == 1
+		def result = tournamentRepository.findAll().get(0)
+		result.getCreator().getId() == student.getId()
+		result.getTopics().size() == topicsDto.size()
+		result.getNumberQuestions() == NUMBER_QUESTIONS
 		result.getStartTime() == startTime
 		result.getEndTime() == endTime
-		def retTopic = result.getTopics()
-		def iter = retTopic.iterator()
-		def i=0
-		while(iter.hasNext())
-		{
-			iter.next() == topic[i++].getId()
-		}
 	}
 
-	def "create a tournament with a student, 3 topics, number of questions and timestamps"()
-	{
-		// create tournament with a student, 3 topics, number of questions and timestamps
-		when:
-		def result = tournamentService.createTournament(student, topics, number_of_questions, startTime, endTime)
-
-		then: "the tournament was created correctly"
-		result.getCreatorID() == student.getId()
-		result.getNumberQuestions() == number_of_questions
-		result.getStartTime() == startTime
-		result.getEndTime() == endTime
-		def retTopic = result.getTopics()
-		def iter = retTopic.iterator()
-		def i=0
-		while(iter.hasNext())
-		{
-			iter.next() == topics[i++].getId()
-		}
-	}
-
-	def "save a created tournament"()
-	{
-		// the tournament should be saved within the database
-		given: "a tournament"
-		def tournament = new Tournament()
-		tournament.setCreator(student)
+	def "user is not defined"() {
+		given: "a tournament Dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setCreatorId(student.getId())
+		tournamentDto.setTopics(topicsDto)
+		tournamentDto.setNumberQuestions(NUMBER_QUESTIONS)
+		tournamentDto.setStartTime(startTime)
+		tournamentDto.setEndTime(endTime)
 
 		when:
-		tournamentRepository.save(tournament)
-		def res = tournamentService.findTournamentById(tournament.getId())
-
-		then:
-		res.getId() == tournament.getId()
-	}
-
-	def "user is empty"()
-	{
-		// an exception should be thrown
-		when:
-		tournamentService.createTournament(null, topic, number_of_questions, startTime, endTime)
+		tournamentService.createTournament(null, tournamentDto)
 
 		then:
 		def exception = thrown(TutorException)
-		exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_USER
+		exception.getErrorMessage() == TOURNAMENT_NULL_USER
 	}
 
-	def "topic is empty"()
-	{
-		// an exception should be thrown
+	def "topic is empty"() {
+		given: "a tournament Dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setCreatorId(student.getId())
+		tournamentDto.setTopics(new HashSet<TopicDto>())
+		tournamentDto.setNumberQuestions(NUMBER_QUESTIONS)
+		tournamentDto.setStartTime(startTime)
+		tournamentDto.setEndTime(endTime)
+
 		when:
-		tournamentService.createTournament(student, null, number_of_questions, startTime, endTime)
+		tournamentService.createTournament(student.getId(), tournamentDto)
 
 		then:
 		def exception = thrown(TutorException)
-		exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_TOPIC
+		exception.getErrorMessage() == TOURNAMENT_WITH_NO_TOPICS
 	}
 
-	def "null static arguments" ()
-	{
-		// an exception should be thrown
+	def "topic is not defined"() {
+		given: "a tournament Dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setCreatorId(student.getId())
+		tournamentDto.setTopics(null)
+		tournamentDto.setNumberQuestions(NUMBER_QUESTIONS)
+		tournamentDto.setStartTime(startTime)
+		tournamentDto.setEndTime(endTime)
+
 		when:
-		tournamentService.createTournament(student, topic, num, startT, endT)
+		tournamentService.createTournament(student.getId(), tournamentDto)
+
+		then:
+		def exception = thrown(TutorException)
+		exception.getErrorMessage() == TOURNAMENT_WITH_NULL_TOPICS
+	}
+
+	@Unroll
+	def "invalid arguments: numberQuestions=#numberQuestions | startTime=#start | endTime=#end || errorMessage=#errorMessage" () {
+		given: "a tournament Dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setCreatorId(student.getId())
+		tournamentDto.setTopics(topicsDto)
+		tournamentDto.setNumberQuestions(numberQuestions)
+		tournamentDto.setStartTime(start)
+		tournamentDto.setEndTime(end)
+
+		when:
+		tournamentService.createTournament(student.getId(), tournamentDto)
 
 		then:
 		def exception = thrown(TutorException)
 		exception.getErrorMessage() == errorMessage
 
 		where:
-		num 				|	startT					| endT		|| errorMessage
-		/*null				| 	startTime				| endTime	|| ErrorMessage.TOURNAMENT_NULL_NUM_QUESTS*/
-		number_of_questions	| 	null					| endTime	|| ErrorMessage.TOURNAMENT_NULL_STARTTIME
-		number_of_questions	| 	startTime				| null		|| ErrorMessage.TOURNAMENT_NULL_ENDTIME
+		numberQuestions  |	start     | end     || errorMessage
+		null             | 	startTime | endTime || TOURNAMENT_NULL_NUM_QUESTS
+		NUMBER_QUESTIONS | 	null      | endTime || TOURNAMENT_NULL_STARTTIME
+		NUMBER_QUESTIONS | 	startTime | null    || TOURNAMENT_NULL_ENDTIME
 	}
 
-	def "non-saved student user is invalid"()
-	{
-		// an exception should be thrown
-		given: "a non-saved"
-		def user = new User('user', "user", 3, User.Role.STUDENT)
+	def "a non existing user creates a tournament"() {
+		given: "a tournament Dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setCreatorId(INVALID_USER_ID)
+		tournamentDto.setTopics(topicsDto)
+		tournamentDto.setNumberQuestions(NUMBER_QUESTIONS)
+		tournamentDto.setStartTime(startTime)
+		tournamentDto.setEndTime(endTime)
 
 		when:
-		tournamentService.createTournament(user, topic, number_of_questions, startTime, endTime)
+		tournamentService.createTournament(INVALID_USER_ID, tournamentDto)
 
 		then:
 		def exception = thrown(TutorException)
-		exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NON_VALID_USER
+		exception.getErrorMessage() == USER_NOT_FOUND
 	}
 
-	def "number_of_questions is invalid"()
-	{
-		// an exception should be thrown
-		given: "a non-positive number"
-		def num = 0
+	def "number_of_questions is invalid"() {
+		given: "a tournament Dto with a non-positive number of questions"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setCreatorId(student.getId())
+		tournamentDto.setTopics(topicsDto)
+		tournamentDto.setNumberQuestions(0)
+		tournamentDto.setStartTime(startTime)
+		tournamentDto.setEndTime(endTime)
 
 		when:
-		tournamentService.createTournament(student, topic, num, startTime, endTime)
+		tournamentService.createTournament(student.getId(), tournamentDto)
 
         then:
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_NUM_QUESTS
+        exception.getErrorMessage() == TOURNAMENT_INVALID_NUM_QUESTS
 	}
 
-	def "startTime is invalid"()
-	{
-		// an exception should be thrown
+	def "startTime is invalid"() {
 		given: "an a startTime before the current timeStamp"
-		def format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
+
 		def start = LocalDateTime.now().plusDays(-1)
-		start.format(format)
+		start.format(formatter)
+
+		and: "a tournament Dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setCreatorId(student.getId())
+		tournamentDto.setTopics(topicsDto)
+		tournamentDto.setNumberQuestions(NUMBER_QUESTIONS)
+		tournamentDto.setStartTime(start)
+		tournamentDto.setEndTime(endTime)
 
 		when:
-		tournamentService.createTournament(student, topic, number_of_questions, start, endTime)
+		tournamentService.createTournament(student.getId(), tournamentDto)
 
         then:
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_STARTTIME
+        exception.getErrorMessage() == TOURNAMENT_INVALID_STARTTIME
 	}
 
-	def "startTime is equal to endTime"()
-	{
-		// an exception should be thrown
+	def "startTime is equal to endTime"() {
+		given: "a tournament Dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setCreatorId(student.getId())
+		tournamentDto.setTopics(topicsDto)
+		tournamentDto.setNumberQuestions(NUMBER_QUESTIONS)
+		tournamentDto.setStartTime(endTime)
+		tournamentDto.setEndTime(endTime)
 
 		when:
-		tournamentService.createTournament(student, topic, number_of_questions, startTime, startTime)
+		tournamentService.createTournament(student.getId(), tournamentDto)
 
         then:
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_TIMEFRAME
+        exception.getErrorMessage() == TOURNAMENT_INVALID_TIMEFRAME
 	}
 
-	def "startTime is after endTime"()
-	{
-		// an exception should be thrown
+	def "startTime is after endTime"() {
+		given: "a tournament Dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setCreatorId(student.getId())
+		tournamentDto.setTopics(topicsDto)
+		tournamentDto.setNumberQuestions(NUMBER_QUESTIONS)
+		tournamentDto.setStartTime(endTime)
+		tournamentDto.setEndTime(startTime)
+
 		when:
-		tournamentService.createTournament(student, topic, number_of_questions, endTime, startTime)
+		tournamentService.createTournament(student.getId(), tournamentDto)
 
         then:
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_TIMEFRAME
+        exception.getErrorMessage() == TOURNAMENT_INVALID_TIMEFRAME
 	}
 
 	@TestConfiguration

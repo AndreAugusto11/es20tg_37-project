@@ -26,10 +26,11 @@ import java.time.LocalDateTime
 
 @DataJpaTest
 class CreateTournamentPerformanceTest extends Specification {
-    public static final String TOPIC_ONE = "topicOne"
-    public static final Integer number_of_questions = 10
-    public static final LocalDateTime startTime = LocalDateTime.now().plusDays(1)
-    public static final LocalDateTime endTime = LocalDateTime.now().plusDays(2)
+
+    private static final String TOPIC_ONE = "topicOne"
+    private static final Integer numberQuestions = 10
+    private static final LocalDateTime startTime = LocalDateTime.now().plusDays(1)
+    private static final LocalDateTime endTime = LocalDateTime.now().plusDays(2)
 
     @Autowired
     TournamentService tournamentService
@@ -71,9 +72,9 @@ class CreateTournamentPerformanceTest extends Specification {
 
         and: "a tournament dto"
         def tournamentDto = new TournamentDto()
-        tournamentDto.setCreatorID(student.getId())
+        tournamentDto.setCreatorId(student.getId())
         tournamentDto.setTopics(topicsDto)
-        tournamentDto.setNumberQuestions(number_of_questions)
+        tournamentDto.setNumberQuestions(numberQuestions)
         tournamentDto.setStartTime(startTime)
         tournamentDto.setEndTime(endTime)
 
