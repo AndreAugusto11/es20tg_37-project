@@ -59,8 +59,7 @@ public class TournamentController {
 
     @PostMapping("/tournaments")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public TournamentDto createTournament(Principal principal, @RequestBody TournamentDto tournamentDto)
-    {
+    public TournamentDto createTournament(Principal principal, @RequestBody TournamentDto tournamentDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {
@@ -72,8 +71,7 @@ public class TournamentController {
 
     @PostMapping("/tournaments/{tournamentId}/enroll")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public TournamentDto enrollTournament(Principal principal, @PathVariable Integer tournamentId)
-    {
+    public TournamentDto enrollTournament(Principal principal, @PathVariable Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {
@@ -123,8 +121,7 @@ public class TournamentController {
     }
     @PostMapping("/tournaments/{tournamentId}/cancel")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public ResponseEntity cancelTournament(Principal principal, @PathVariable Integer tournamentId)
-    {
+    public ResponseEntity cancelTournament(Principal principal, @PathVariable Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
         if (user == null) { throw new TutorException(AUTHENTICATION_ERROR); }
         Integer userId = user.getId();

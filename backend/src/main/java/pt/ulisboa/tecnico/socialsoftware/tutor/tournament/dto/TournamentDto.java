@@ -11,13 +11,12 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 public class TournamentDto implements Serializable {
-
     private Integer id;
     private Set<Integer> enrolledStudentsIds = new HashSet<>();
     private Set<String> enrolledStudentsNames = new HashSet<>();
     private int creatorID;
     private Set<TopicDto> topics = new HashSet<>();
-    private int numberQuestions = 1;
+    private Integer numberQuestions = 1;
     private String creatorName;
     private Integer quizID = null;
     private LocalDateTime startTime;
@@ -57,7 +56,7 @@ public class TournamentDto implements Serializable {
         return this.id;
     }
 
-    public int getNumberQuestions() {
+    public Integer getNumberQuestions() {
         return this.numberQuestions;
     }
 
@@ -75,7 +74,7 @@ public class TournamentDto implements Serializable {
         return this.endTime;
     }
 
-    public void setCreatorID(int creatorID) {
+    public void setCreatorId(int creatorID) {
         this.creatorID = creatorID;
     }
 
@@ -87,14 +86,13 @@ public class TournamentDto implements Serializable {
         this.id = id;
     }
 
-    public void setNumberQuestions(int numberQuestions) {
+    public void setNumberQuestions(Integer numberQuestions) {
         this.numberQuestions = numberQuestions;
     }
 
     public void setQuizID(Integer quizID){this.quizID = quizID;}
 
-    public void setTopics(Set<TopicDto> topics)
-    {
+    public void setTopics(Set<TopicDto> topics) {
         this.topics = topics;
     }
 

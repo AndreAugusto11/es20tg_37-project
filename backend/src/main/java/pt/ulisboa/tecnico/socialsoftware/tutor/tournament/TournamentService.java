@@ -63,7 +63,13 @@ public class TournamentService {
 			backoff = @Backoff(delay = 5000))
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
 	public TournamentDto createTournament(Integer userId, TournamentDto tournamentDto) {
+		if (userId == null)
+			throw new TutorException(TOURNAMENT_NULL_USER);
+
 		User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+		if (tournamentDto.getTopics() == null)
+			throw new TutorException(TOURNAMENT_WITH_NULL_TOPICS);
 
 		Set<Topic> topics = tournamentDto.getTopics().stream()
 				.map(topic -> topicRepository.findById(topic.getId())
@@ -77,9 +83,9 @@ public class TournamentService {
 		return new TournamentDto(tournament);
 	}
 
-	public TournamentDto findTournamentById(Integer id){
-		return tournamentRepository.findById(id).map(TournamentDto::new)
-				.orElseThrow( () -> new TutorException(TOURNAMENT_NOT_FOUND,id));
+	public Tournament findTournamentById(Integer tournamentId){
+		return tournamentRepository.findById(tournamentId)
+				.orElseThrow( () -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
 	}
 
 	@Retryable(
@@ -91,8 +97,8 @@ public class TournamentService {
 
 		if(tournamentId == null) throw new TutorException(TOURNAMENT_NULL_TOURNAMENT);
 
-		Tournament tournament = tournamentRepository.findById(tournamentId)
-				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+		Tournament tournament = this.findTournamentById(tournamentId);
+
 		User user = userRepository.findById(userId)
 				.orElseThrow( () -> new TutorException(USER_NOT_FOUND, userId));
 
@@ -116,8 +122,7 @@ public class TournamentService {
 	private Tournament tournamentQuizVerification(int userId, Integer tournamentId){
 		if(tournamentId == null) throw new TutorException(TOURNAMENT_NULL_TOURNAMENT);
 
-		Tournament tournament = tournamentRepository.findById(tournamentId)
-				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND,tournamentId));
+		Tournament tournament = this.findTournamentById(tournamentId);
 
 		if(tournament.getStatus() != Tournament.Status.ONGOING) throw new TutorException(TOURNAMENT_NOT_ONGOING,tournamentId);
 
@@ -203,8 +208,7 @@ public class TournamentService {
 		if (tournamentId == null)
 			throw new TutorException(TOURNAMENT_NULL_ID);
 
-		Tournament tournament = tournamentRepository.findById(tournamentId)
-				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+		Tournament tournament = this.findTournamentById(tournamentId);
 
 		if (tournament.getStatus() == Tournament.Status.CANCELLED) {
 			throw new TutorException(TOURNAMENT_ALREADY_CANCELLED, tournamentId);

@@ -55,10 +55,10 @@ public class Tournament {
 
 	public Tournament(){}
 
-	public Tournament(User student, Set<Topic> topics, int numberQuestions, LocalDateTime startTime, LocalDateTime endTime) {
+	public Tournament(User student, Set<Topic> topics, Integer numberQuestions, LocalDateTime startTime, LocalDateTime endTime) {
 		this.setCreator(student);
 		this.setTopics(topics);
-		this.numberQuestions = numberQuestions;
+		this.setNumberQuestions(numberQuestions);
 		this.setTimeframe(startTime, endTime);
 	}
 
@@ -120,19 +120,20 @@ public class Tournament {
 		}*/
 	}
 
-	public void setNumberQuestions(Integer num) {
-		if (num == null)
+	public void setNumberQuestions(Integer numberQuestions) {
+		if (numberQuestions == null)
 			throw new TutorException(TOURNAMENT_NULL_NUM_QUESTS);
 
-		if (num <= 0) {
-			throw new TutorException(ErrorMessage.TOURNAMENT_INVALID_NUM_QUESTS, num);
+		if (numberQuestions <= 0) {
+			throw new TutorException(ErrorMessage.TOURNAMENT_INVALID_NUM_QUESTS, numberQuestions);
 		}
-		this.numberQuestions = num;
+		this.numberQuestions = numberQuestions;
 	}
 
 	public void setTopics(Set<Topic> topics) {
-		if (topics == null)
-			throw new TutorException(TOURNAMENT_NULL_TOPIC);
+		if (topics.isEmpty())
+			throw new TutorException(TOURNAMENT_WITH_NO_TOPICS);
+
 		this.topics.addAll(topics);
 	}
 

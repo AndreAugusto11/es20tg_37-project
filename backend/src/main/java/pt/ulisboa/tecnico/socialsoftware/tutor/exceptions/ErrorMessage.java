@@ -43,9 +43,10 @@ public enum ErrorMessage {
     TOURNAMENT_ALREADY_CANCELLED("Tournament %d was already cancelled"),
 
     TOURNAMENT_NULL_ID("Tournament ID is null"),
-    TOURNAMENT_NULL_USER("User is null"),
+    TOURNAMENT_NULL_USER("User ID is not defined"),
     TOURNAMENT_NULL_TOURNAMENT("Tournament is null"),
-    TOURNAMENT_NULL_TOPIC("Topic is null in Tournament Creation"),
+    TOURNAMENT_WITH_NULL_TOPICS("Topics are not defined in Tournament Creation"),
+    TOURNAMENT_WITH_NO_TOPICS("Topics are empty in Tournament Creation"),
     TOURNAMENT_NULL_NUM_QUESTS("Number of Questions is null in Tournament Creation"),
     TOURNAMENT_NULL_STARTTIME("Start Time is null in Tournament Creation"),
     TOURNAMENT_NULL_ENDTIME("End Time is null in Tournament Creation"),
