@@ -6,7 +6,7 @@
     max-width="75%"
     max-height="80%"
   >
-    <v-card>
+    <v-card v-bind:class="[startDateOpen || endDateOpen ? 'activeDate' : 'notActiveDate']">
       <v-card-title>
         <span class="headline">
           New Tournament
@@ -35,19 +35,25 @@
                 hide-selected
                 data-cy="topicSelect"
             />
-            <v-flex xs24 sm12 md8>
-              <v-text-field
-                v-model="startString"
-                label="Start Time (format = YYYY-MM-DD HH:MM)"
-                data-cy="start"
-              />
+            <v-flex xs24 sm12 md8 style="margin-left: -10px;">
+              <VueCtkDateTimePicker
+                      label="*Start Date"
+                      id="availableDateInput"
+                      v-model="currentTournament.startTime"
+                      format="YYYY-MM-DDTHH:mm:ssZ"
+                      v-on:is-shown="changeStartDateOpen(true)"
+                      v-on:is-hidden="changeStartDateOpen(false)"
+              ></VueCtkDateTimePicker>
             </v-flex>
-            <v-flex xs24 sm12 md8>
-              <v-text-field
-                v-model="endString"
-                label="End Time (format = YYYY-MM-DD HH:MM)"
-                data-cy="end"
-              />
+            <v-flex xs24 sm12 md8 style="margin-left: -10px;">
+                <VueCtkDateTimePicker
+                      label="*End Date"
+                      id="endDateInput"
+                      v-model="currentTournament.endTime"
+                      format="YYYY-MM-DDTHH:mm:ssZ"
+                      v-on:is-shown="changeEndDateOpen(true)"
+                      v-on:is-hidden="changeEndDateOpen(false)"
+              ></VueCtkDateTimePicker>
             </v-flex>
           </v-layout>
         </v-container>
@@ -71,6 +77,10 @@ import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import Topic from '@/models/management/Topic';
 import RemoteServices from '@/services/RemoteServices';
 import { Tournament } from '@/models/tournaments/Tournament';
+import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
+import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
+
+Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 @Component
 export default class CreateTournamentDialog extends Vue {
@@ -80,9 +90,8 @@ export default class CreateTournamentDialog extends Vue {
   currentTournament!: Tournament;
   topicsAll: Topic[] = [];
   topicsSelected: string[] = [];
-  stringAux: String[] | null = null;
-  startString: string = '';
-  endString: string = '';
+  startDateOpen: boolean = false;
+  endDateOpen: boolean = false;
 
   async created() {
     try {
@@ -96,26 +105,21 @@ export default class CreateTournamentDialog extends Vue {
 
   async saveTournament() {
     this.currentTournament.topics = this.topicsAll.filter(topic => this.topicsSelected.includes(topic.name));
-    console.log(this.currentTournament.topics);
+    console.log(this.currentTournament.startTime);
     if (
       this.currentTournament &&
       (!this.currentTournament.numberQuestions ||
         !this.currentTournament.topics.length ||
-        !this.currentTournament.startTimeString ||
-        !this.currentTournament.endTimeString)
+        !this.currentTournament.startTime ||
+        !this.currentTournament.endTime)
     ) {
       await this.$store.dispatch(
         'error',
-        'Tournament must have a Number of Questions, topic(s), a start and end time'
+        'Tournament must have a Number of Questions, topic(s), a start and end date'
       );
       return;
     }
-    this.currentTournament.startTimeString = this.startString;
-    this.currentTournament.endTimeString = this.endString;
-    this.stringAux = this.currentTournament.startTimeString.split(/ |:|-/);
-    this.currentTournament.startTime = this.stringAux.map(Number);
-    this.stringAux = this.currentTournament.endTimeString.split(/ |:|-/);
-    this.currentTournament.endTime = this.stringAux.map(Number);
+
     try {
       const result = await RemoteServices.createTournament(this.currentTournament);
       this.$emit('new-tournament', result);
@@ -123,5 +127,22 @@ export default class CreateTournamentDialog extends Vue {
       await this.$store.dispatch('error', error);
     }
   }
+
+  changeStartDateOpen(boolean: boolean) {
+    this.startDateOpen = boolean;
+  }
+
+  changeEndDateOpen(boolean: boolean) {
+    this.endDateOpen = boolean;
+  }
 }
 </script>
+
+<style lang="scss" scoped>
+  .activeDate {
+    height: 800px !important;
+  }
+
+  .notActiveDate {
+  }
+</style>

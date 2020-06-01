@@ -209,13 +209,13 @@ export default class ListTournamentsView extends Vue {
     },
     {
       text: 'Start Date',
-      value: 'startTimeString',
+      value: 'startTime',
       align: 'center',
       width: '10%'
     },
     {
       text: 'End Date',
-      value: 'endTimeString',
+      value: 'endTime',
       align: 'center',
       width: '10%'
     },

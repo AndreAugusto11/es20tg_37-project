@@ -60,6 +60,8 @@ public class TournamentService {
 						.orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topic.getId())))
 				.collect(Collectors.toSet());
 
+		System.out.println(tournamentDto.getStartTime());
+
 		Tournament tournament = new Tournament(
 				user,
 				topics,
