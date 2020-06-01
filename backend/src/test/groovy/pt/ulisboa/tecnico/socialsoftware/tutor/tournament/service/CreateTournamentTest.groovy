@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
@@ -93,11 +94,8 @@ class CreateTournamentTest extends Specification {
 
 		formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
 
-		startTime = LocalDateTime.now().plusDays(1)
-		startTime.format(formatter)
-        endTime = LocalDateTime.now().plusDays(2)
-		endTime.format(formatter)
-
+		startTime = DateHandler.toISOString(LocalDateTime.now().plusDays(1))
+        endTime = DateHandler.toISOString(LocalDateTime.now().plusDays(2))
 	}
 
 	def "create a tournament with a student, topic, number of questions and timestamps"() {
@@ -118,25 +116,8 @@ class CreateTournamentTest extends Specification {
 		result.getCreator().getId() == student.getId()
 		result.getTopics().size() == topicsDto.size()
 		result.getNumberQuestions() == NUMBER_QUESTIONS
-		result.getStartTime() == startTime
-		result.getEndTime() == endTime
-	}
-
-	def "user is not defined"() {
-		given: "a tournament Dto"
-		def tournamentDto = new TournamentDto()
-		tournamentDto.setCreatorId(student.getId())
-		tournamentDto.setTopics(topicsDto)
-		tournamentDto.setNumberQuestions(NUMBER_QUESTIONS)
-		tournamentDto.setStartTime(startTime)
-		tournamentDto.setEndTime(endTime)
-
-		when:
-		tournamentService.createTournament(null, tournamentDto)
-
-		then:
-		def exception = thrown(TutorException)
-		exception.getErrorMessage() == TOURNAMENT_NULL_USER
+		result.getStartTime() == DateHandler.toLocalDateTime(startTime)
+		result.getEndTime() == DateHandler.toLocalDateTime(endTime)
 	}
 
 	def "topic is empty"() {
@@ -174,12 +155,12 @@ class CreateTournamentTest extends Specification {
 	}
 
 	@Unroll
-	def "invalid arguments: numberQuestions=#numberQuestions | startTime=#start | endTime=#end || errorMessage=#errorMessage" () {
+	def "invalid arguments: startTime=#start | endTime=#end || errorMessage=#errorMessage" () {
 		given: "a tournament Dto"
 		def tournamentDto = new TournamentDto()
 		tournamentDto.setCreatorId(student.getId())
 		tournamentDto.setTopics(topicsDto)
-		tournamentDto.setNumberQuestions(numberQuestions)
+		tournamentDto.setNumberQuestions(NUMBER_QUESTIONS)
 		tournamentDto.setStartTime(start)
 		tournamentDto.setEndTime(end)
 
@@ -191,10 +172,9 @@ class CreateTournamentTest extends Specification {
 		exception.getErrorMessage() == errorMessage
 
 		where:
-		numberQuestions  |	start     | end     || errorMessage
-		null             | 	startTime | endTime || TOURNAMENT_NULL_NUM_QUESTS
-		NUMBER_QUESTIONS | 	null      | endTime || TOURNAMENT_NULL_STARTTIME
-		NUMBER_QUESTIONS | 	startTime | null    || TOURNAMENT_NULL_ENDTIME
+		start     | end     || errorMessage
+		null      | endTime || TOURNAMENT_NULL_STARTTIME
+		startTime | null    || TOURNAMENT_NULL_ENDTIME
 	}
 
 	def "a non existing user creates a tournament"() {
@@ -234,15 +214,13 @@ class CreateTournamentTest extends Specification {
 	def "startTime is invalid"() {
 		given: "an a startTime before the current timeStamp"
 
-		def start = LocalDateTime.now().plusDays(-1)
-		start.format(formatter)
-
+		def startTimeInvalid = DateHandler.toISOString(LocalDateTime.now().plusDays(-1))
 		and: "a tournament Dto"
 		def tournamentDto = new TournamentDto()
 		tournamentDto.setCreatorId(student.getId())
 		tournamentDto.setTopics(topicsDto)
 		tournamentDto.setNumberQuestions(NUMBER_QUESTIONS)
-		tournamentDto.setStartTime(start)
+		tournamentDto.setStartTime(startTimeInvalid)
 		tournamentDto.setEndTime(endTime)
 
 		when:

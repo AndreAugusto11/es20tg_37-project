@@ -124,15 +124,6 @@ class CancelTournamentTest extends Specification{
         exception.getErrorMessage() == ErrorMessage.USER_NOT_FOUND
     }
 
-    def "null user"()
-    {
-        when:
-        tournamentService.cancelTournament(null, tournamentId)
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_USER
-    }
-
     def "tournament not created by the user"()
     {
         given: "a user ID"
@@ -145,15 +136,6 @@ class CancelTournamentTest extends Specification{
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NON_CREATOR
-    }
-
-    def "tournament ID non-existent"()
-    {
-        when:
-        tournamentService.cancelTournament(userID, null)
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_ID
     }
 
     def "tournament ID is invalid"()

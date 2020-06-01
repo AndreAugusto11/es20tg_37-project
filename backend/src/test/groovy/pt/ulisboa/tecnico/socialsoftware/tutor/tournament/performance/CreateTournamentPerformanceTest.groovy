@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
@@ -21,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Shared
 import spock.lang.Specification
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 
@@ -29,8 +31,8 @@ class CreateTournamentPerformanceTest extends Specification {
 
     private static final String TOPIC_ONE = "topicOne"
     private static final Integer numberQuestions = 10
-    private static final LocalDateTime startTime = LocalDateTime.now().plusDays(1)
-    private static final LocalDateTime endTime = LocalDateTime.now().plusDays(2)
+    private static final String startTime = DateHandler.toISOString(LocalDateTime.now().plusDays(1))
+    private static final String endTime = DateHandler.toISOString(LocalDateTime.now().plusDays(2))
 
     @Autowired
     TournamentService tournamentService

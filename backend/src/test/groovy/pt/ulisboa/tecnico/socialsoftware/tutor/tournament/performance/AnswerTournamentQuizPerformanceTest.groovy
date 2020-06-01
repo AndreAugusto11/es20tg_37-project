@@ -158,7 +158,7 @@ class AnswerTournamentQuizPerformanceTest extends Specification {
 
         when:
         1.upto(1, {
-            tournamentService.submitAnswer(user.getId(),tournamentList.pop().getId(),statementAnswer)
+            tournamentService.submitAnswer(user.getId(), tournamentList.pop().getId(), statementAnswer)
         })
 
         then:

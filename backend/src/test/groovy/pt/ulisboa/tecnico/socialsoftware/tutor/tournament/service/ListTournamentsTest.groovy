@@ -16,6 +16,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 @DataJpaTest
 class ListTournamentsTest extends Specification {
 
@@ -29,22 +32,35 @@ class ListTournamentsTest extends Specification {
     UserRepository userRepository
 
     def user
+    def formatter
 
     def setup() {
         user = new User("Manel1", "Man12", 1, User.Role.STUDENT)
         userRepository.save(user)
+
+        formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
     }
 
     def "Lists tournaments when there are 2 tournaments"() {
         given:
         def tournament1 = new Tournament()
         tournament1.setCreator(user)
+        tournament1.setStatus(Tournament.Status.CREATED)
+        def startTime1 = LocalDateTime.now().plusDays(1)
+        //startTime1.format(formatter)
+        tournament1.setStartTime(startTime1)
         tournamentRepository.save(tournament1)
         def tournament2 = new Tournament()
         tournament2.setCreator(user)
+        tournament2.setStatus(Tournament.Status.CREATED)
+        def startTime2 = LocalDateTime.now().plusDays(1)
+        //startTime2.format(formatter)
+        tournament1.setStartTime(startTime2)
         tournamentRepository.save(tournament2)
+
         when:
         def result = tournamentService.getTournaments()
+
         then: "inserted data is correct"
         result.size() == 2
         and: "is sorted correctly"
