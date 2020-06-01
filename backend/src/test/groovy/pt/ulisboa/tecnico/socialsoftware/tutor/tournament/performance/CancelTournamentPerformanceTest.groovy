@@ -5,12 +5,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
@@ -20,9 +16,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Shared
 import spock.lang.Specification
-
-import java.time.LocalDateTime
-
 
 @DataJpaTest
 class CancelTournamentPerformanceTest extends Specification {
@@ -50,7 +43,9 @@ class CancelTournamentPerformanceTest extends Specification {
 
         for (int i = 0; i < maxTests; i++)
         {
-            def tournament = new Tournament(user)
+            def tournament = new Tournament()
+            tournament.setCreator(user)
+
             tournamentRepository.save(tournament)
             user.addCreatedTournament(tournament)
             userRepository.save(user)
@@ -64,7 +59,7 @@ class CancelTournamentPerformanceTest extends Specification {
         when:
         1.upto(maxTests, {
             def userID = user.getId()
-            def tournamentId = user.getCreatedTournaments().getAt(0).getid()
+            def tournamentId = user.getCreatedTournaments().getAt(0).getId()
             tournamentService.cancelTournament(userID, tournamentId)
         })
 

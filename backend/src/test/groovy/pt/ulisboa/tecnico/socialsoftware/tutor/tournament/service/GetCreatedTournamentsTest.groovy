@@ -34,7 +34,8 @@ class GetCreatedTournaments extends Specification {
     def setup() {
         user = new User("User", "use1", 1, User.Role.STUDENT)
         userRepository.save(user)
-        tournament = new Tournament(user)
+        tournament = new Tournament()
+        tournament.setCreator(user)
         tournamentRepository.save(tournament)
         user.addCreatedTournament(tournament)
         userRepository.save(user)
@@ -46,7 +47,7 @@ class GetCreatedTournaments extends Specification {
         then: "inserted data is correct"
         result.size() == 1
         def returned = result.get(0)
-        returned.getcreatorID() == user.getKey()
+        returned.getCreatorID() == user.getKey()
     }
 
     @TestConfiguration

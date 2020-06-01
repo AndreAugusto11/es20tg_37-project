@@ -75,7 +75,7 @@ public class User implements UserDetails, DomainEntity {
     private Set<CourseExecution> courseExecutions = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Tournament> tournaments = new HashSet<>();
+    private Set<Tournament> enrolledTournaments = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Tournament> createdTournaments = new HashSet<>();
@@ -405,11 +405,11 @@ public class User implements UserDetails, DomainEntity {
         this.courseExecutions.add(course);
     }
 
-    public void addTournament(Tournament tournament) {this.tournaments.add(tournament);}
+    public void addTournament(Tournament tournament) {this.enrolledTournaments.add(tournament);}
 
-    public Set<Tournament> getTournaments() { return this.tournaments; }
+    public Set<Tournament> getEnrolledTournaments() { return this.enrolledTournaments; }
 
-    public void removeTournament (Tournament tournament) { this.tournaments.remove(tournament); }
+    public void removeTournament (Tournament tournament) { this.enrolledTournaments.remove(tournament); }
 
     public Set<ClarificationRequest> getClarificationRequests() { return clarificationRequests; }
 
@@ -516,9 +516,8 @@ public class User implements UserDetails, DomainEntity {
         justifications.add(justification);
     }
 
-    public void addCreatedTournament(Tournament tournament)
-    {
-        tournaments.add(tournament);
+    public void addCreatedTournament(Tournament tournament) {
+        enrolledTournaments.add(tournament);
         createdTournaments.add(tournament);
     }
 

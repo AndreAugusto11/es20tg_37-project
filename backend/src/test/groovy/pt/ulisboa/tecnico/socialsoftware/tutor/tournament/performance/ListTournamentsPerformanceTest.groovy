@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.performance
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -32,9 +32,13 @@ class ListTournamentsPerformanceTest extends Specification {
         given: "a user"
         def user = new User("Manel1", "Man12", 1, User.Role.STUDENT)
         userRepository.save(user)
+        def tournament
+
         and: "1000 tournaments"
-        1.upto(1,{
-            tournamentRepository.save(new Tournament(user))
+        1.upto(1, {
+            tournament = new Tournament()
+            tournament.setCreator(user)
+            tournamentRepository.save(tournament)
         })
         when:
         1.upto(1, {tournamentService.getTournaments()})

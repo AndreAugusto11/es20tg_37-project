@@ -40,9 +40,11 @@ class GetEnrolledTournamentsTest extends Specification {
 
     def "Lists tournaments when there are 2 tournaments"() {
         given:
-        def tournament1 = new Tournament(user)
+        def tournament1 = new Tournament()
+        tournament1.setCreator(user)
         tournamentRepository.save(tournament1)
-        def tournament2 = new Tournament(user)
+        def tournament2 = new Tournament()
+        tournament2.setCreator(user)
         tournamentRepository.save(tournament2)
         user2.addTournament(tournament1)
         user2.addTournament(tournament2)

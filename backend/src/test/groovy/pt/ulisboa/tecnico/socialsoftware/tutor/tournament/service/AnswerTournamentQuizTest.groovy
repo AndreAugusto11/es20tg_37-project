@@ -139,11 +139,12 @@ class AnswerTournamentQuizTest extends Specification {
         quizAnswer = new QuizAnswer(user, quiz)
         quizAnswerRepository.save(quizAnswer)
 
-        tournament = new Tournament(user)
-        tournament.setquiz(quiz)
-        tournament.setstartTime(LocalDateTime.now())
-        tournament.setendTime(LocalDateTime.now().plusDays(1))
-        tournament.setstatus(Tournament.Status.ONGOING)
+        tournament = new Tournament()
+        tournament.setCreator(user)
+        tournament.setQuiz(quiz)
+        tournament.setStartTime(LocalDateTime.now())
+        tournament.setEndTime(LocalDateTime.now().plusDays(1))
+        tournament.setStatus(Tournament.Status.ONGOING)
         tournamentRepository.save(tournament)
     }
 
@@ -153,10 +154,10 @@ class AnswerTournamentQuizTest extends Specification {
         def statementAnswer = new StatementAnswerDto(questionAnswer)
 
         and:"Open/Closed Tournament"
-        tournament.setstatus(Tournament.Status.OPEN)
+        tournament.setStatus(Tournament.Status.CREATED)
 
         when:
-        tournamentService.submitAnswer(user.getId(),tournament.getid(),statementAnswer)
+        tournamentService.submitAnswer(user.getId(),tournament.getId(),statementAnswer)
 
         then:
         def exception = thrown(TutorException)
@@ -170,10 +171,10 @@ class AnswerTournamentQuizTest extends Specification {
         def statementAnswer = new StatementAnswerDto(questionAnswer)
 
         and:"tournament quiz null"
-        tournament.setquiz(null)
+        tournament.setQuiz(null)
 
         when:
-        tournamentService.submitAnswer(user.getId(),tournament.getid(),statementAnswer)
+        tournamentService.submitAnswer(user.getId(),tournament.getId(),statementAnswer)
 
         then:
         def exception = thrown(TutorException)
@@ -193,7 +194,7 @@ class AnswerTournamentQuizTest extends Specification {
         userRepository.save(user1)
 
         when:
-        tournamentService.submitAnswer(user1.getId(),tournament.getid(),statementAnswer)
+        tournamentService.submitAnswer(user1.getId(),tournament.getId(),statementAnswer)
 
         then:
         def exception = thrown(TutorException)
@@ -202,7 +203,7 @@ class AnswerTournamentQuizTest extends Specification {
 
     def "Start Quiz of an Ongoing Tournament"() {
         when:
-        def res = tournamentService.startQuiz(user.getId(),tournament.getid())
+        def res = tournamentService.startQuiz(user.getId(),tournament.getId())
 
         then:
         res
@@ -216,7 +217,7 @@ class AnswerTournamentQuizTest extends Specification {
         def statementAnswer = new StatementAnswerDto(questionAnswer)
 
         when:
-        tournamentService.submitAnswer(user.getId(),tournament.getid(),statementAnswer)
+        tournamentService.submitAnswer(user.getId(),tournament.getId(),statementAnswer)
 
         then:
         def quizAns = user.getQuizAnswers().stream()
@@ -231,7 +232,7 @@ class AnswerTournamentQuizTest extends Specification {
 
     def "Conclude tournament quiz with one correct answer"() {
         when:
-        def results = tournamentService.concludeQuiz(user.getId(),tournament.getid())
+        def results = tournamentService.concludeQuiz(user.getId(),tournament.getId())
 
         then:
         results.size() == 1

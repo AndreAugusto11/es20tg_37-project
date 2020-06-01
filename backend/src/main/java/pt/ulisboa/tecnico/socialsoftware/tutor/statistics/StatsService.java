@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statistics;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -59,7 +58,7 @@ public class StatsService {
 
         StatsDto statsDto = new StatsDto();
 
-        int totalNumberEnrolledTournaments = (int) user.getTournaments().stream()
+        int totalNumberEnrolledTournaments = (int) user.getEnrolledTournaments().stream()
                 .filter(t ->t.canResultsBePublic(executionId))
                 .count();
 
