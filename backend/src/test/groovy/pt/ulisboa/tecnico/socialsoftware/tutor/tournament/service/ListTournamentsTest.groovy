@@ -37,17 +37,19 @@ class ListTournamentsTest extends Specification {
 
     def "Lists tournaments when there are 2 tournaments"() {
         given:
-        def tournament1 = new Tournament(user)
+        def tournament1 = new Tournament()
+        tournament1.setCreator(user)
         tournamentRepository.save(tournament1)
-        def tournament2 = new Tournament(user)
+        def tournament2 = new Tournament()
+        tournament2.setCreator(user)
         tournamentRepository.save(tournament2)
         when:
         def result = tournamentService.getTournaments()
         then: "inserted data is correct"
         result.size() == 2
         and: "is sorted correctly"
-        result.get(0).getid() == tournament1.getid()
-        result.get(1).getid() == tournament2.getid()
+        result.get(0).getId() == tournament1.getId()
+        result.get(1).getId() == tournament2.getId()
     }
 
     def "Lists tournaments when there are no tournaments"() {

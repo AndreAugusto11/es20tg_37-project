@@ -30,8 +30,7 @@ import java.util.stream.Collectors;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
-public class TournamentService
-{
+public class TournamentService {
 	@Autowired
 	private TournamentRepository tournamentRepository;
 
@@ -51,24 +50,9 @@ public class TournamentService
 			value = { SQLException.class },
 			backoff = @Backoff(delay = 5000))
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
-	public TournamentDto createTournament(User student, Set<Topic> topics, Integer numOfQuestions, LocalDateTime startTime, LocalDateTime endTime)
-	{
-		Tournament tournament = new Tournament();
-		tournament.setcreator(student);
-		if(userRepository.findByKey(student.getKey()) == null) throw new TutorException(TOURNAMENT_NON_VALID_USER);
-
-		if (topics == null) throw new TutorException(TOURNAMENT_NULL_TOPIC);
-		if(!this.checkTopicsExistence(topics)) throw new TutorException(TOURNAMENT_INVALID_TOPIC);
-		tournament.settopics(topics);
-
-		tournament.setnumQuests(numOfQuestions);
-		tournament.setstartTime(startTime);
-		tournament.setendTime(endTime);
-
-		tournament.checkConsistent();
-		tournament.setstatus(Tournament.Status.OPEN);
-
-		student.addCreatedTournament(tournament);
+	public TournamentDto createTournament(User user, Set<Topic> topics, Integer numOfQuestions, LocalDateTime startTime, LocalDateTime endTime) {
+		Tournament tournament = new Tournament(user, topics, numOfQuestions, startTime, endTime);
+		user.addCreatedTournament(tournament);
 
 		this.entityManager.persist(tournament);
 		return new TournamentDto(tournament);
@@ -78,18 +62,19 @@ public class TournamentService
 			value = { SQLException.class },
 			backoff = @Backoff(delay = 5000))
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
-	public TournamentDto createTournament(Integer userId, TournamentDto tournamentDto)
-	{
-		User student = userRepository.findById(userId).get();
-		Set<Integer> tmp = tournamentDto.gettopics();
-		Set<Topic> topics = new HashSet<>();
-		for(Integer id: tmp){
-			topics.add(topicRepository.findById(id).get());
-		}
-		Integer numOfQuestions = tournamentDto.getnumQuests();
-		LocalDateTime start = tournamentDto.getstartTime();
-		LocalDateTime end = tournamentDto.getendTime();
-		return createTournament(student, topics, numOfQuestions, start, end);
+	public TournamentDto createTournament(Integer userId, TournamentDto tournamentDto) {
+		User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+		Set<Topic> topics = tournamentDto.getTopics().stream()
+				.map(topic -> topicRepository.findById(topic.getId())
+						.orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topic.getId())))
+				.collect(Collectors.toSet());
+
+		Tournament tournament = new Tournament(user, topics, tournamentDto.getNumberQuestions(), tournamentDto.getStartTime(), tournamentDto.getEndTime());
+		user.addCreatedTournament(tournament);
+
+		this.entityManager.persist(tournament);
+		return new TournamentDto(tournament);
 	}
 
 	public TournamentDto findTournamentById(Integer id){
@@ -107,18 +92,21 @@ public class TournamentService
 		if(tournamentId == null) throw new TutorException(TOURNAMENT_NULL_TOURNAMENT);
 
 		Tournament tournament = tournamentRepository.findById(tournamentId)
-				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND,tournamentId));
+				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
 		User user = userRepository.findById(userId)
-				.orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
+				.orElseThrow( () -> new TutorException(USER_NOT_FOUND, userId));
 
-		if(user.getRole() != User.Role.STUDENT) throw new TutorException(TOURNAMENT_NOT_STUDENT);
+		if(user.getRole() != User.Role.STUDENT)
+			throw new TutorException(TOURNAMENT_NOT_STUDENT);
 
-		if(tournament.getstatus() != Tournament.Status.OPEN) throw new TutorException(TOURNAMENT_NOT_OPEN,tournamentId);
+		if(tournament.getStatus() != Tournament.Status.CREATED)
+			throw new TutorException(TOURNAMENT_NOT_OPEN,tournamentId);
 
 		Predicate<User> u1 = s -> s.getId().equals(userId);
 
 		//DEMO STUDENT has id 676 needed for load test
-		if(userId != 676 && tournament.getusers().stream().anyMatch(u1)) throw new TutorException(TOURNAMENT_STUDENT_ALREADY_ENROLLED,userId);
+		if(userId != 676 && tournament.getUsers().stream().anyMatch(u1))
+			throw new TutorException(TOURNAMENT_STUDENT_ALREADY_ENROLLED,userId);
 
 		tournament.addUser(user);
 		user.addTournament(tournament);
@@ -131,11 +119,11 @@ public class TournamentService
 		Tournament tournament = tournamentRepository.findById(tournamentId)
 				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND,tournamentId));
 
-		if(tournament.getstatus() != Tournament.Status.ONGOING) throw new TutorException(TOURNAMENT_NOT_ONGOING,tournamentId);
+		if(tournament.getStatus() != Tournament.Status.ONGOING) throw new TutorException(TOURNAMENT_NOT_ONGOING,tournamentId);
 
-		if(tournament.getquiz() == null) throw new TutorException(TOURNAMENT_NULL_QUIZ,tournamentId);
+		if(tournament.getQuiz() == null) throw new TutorException(TOURNAMENT_NULL_QUIZ,tournamentId);
 
-		tournament.getusers().stream()
+		tournament.getUsers().stream()
 				.filter(u->u.getId().equals(userId)).findFirst()
 				.orElseThrow( () -> new TutorException(TOURNAMENT_STUDENT_NOT_ENROLLED,userId));
 		return tournament;
@@ -147,7 +135,7 @@ public class TournamentService
 	@Transactional(isolation = Isolation.READ_COMMITTED)
 	public boolean startQuiz(int userId, Integer tournamentId) {
 		Tournament tournament = tournamentQuizVerification(userId,tournamentId);
-		statementService.startQuiz(userId, tournament.getquiz().getId());
+		statementService.startQuiz(userId, tournament.getQuiz().getId());
 		return true;
 	}
 
@@ -157,8 +145,8 @@ public class TournamentService
 	@Transactional(isolation = Isolation.READ_COMMITTED)
 	public void submitAnswer(int userId, Integer tournamentId, StatementAnswerDto answer) {
 		Tournament tournament = tournamentQuizVerification(userId,tournamentId);
-		System.out.println(tournament.getquiz().toString());
-		statementService.submitAnswer(userId, tournament.getquiz().getId(), answer);
+		System.out.println(tournament.getQuiz().toString());
+		statementService.submitAnswer(userId, tournament.getQuiz().getId(), answer);
 	}
 
 	@Retryable(
@@ -167,22 +155,7 @@ public class TournamentService
 	@Transactional(isolation = Isolation.READ_COMMITTED)
 	public List<CorrectAnswerDto> concludeQuiz(int userId, Integer tournamentId) {
 		Tournament tournament = tournamentQuizVerification(userId,tournamentId);
-		return statementService.concludeQuiz(userId, tournament.getquiz().getId());
-	}
-
-	private boolean checkTopicsExistence(Set<Topic> topics)
-	{
-		Iterator<Topic> iter = topics.iterator();
-		while(iter.hasNext())
-		{
-			Topic t1 = iter.next();
-			Topic topic = topicRepository.findTopicByName(t1.getCourse().getId(), t1.getName());
-			if (topic == null)
-			{
-				return false;
-			}
-		}
-		return true;
+		return statementService.concludeQuiz(userId, tournament.getQuiz().getId());
 	}
 
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -191,7 +164,7 @@ public class TournamentService
 		return tournamentRepository.findAll().stream()
 				.map(TournamentDto::new)
 				.sorted(Comparator
-						.comparing(TournamentDto::getid))
+						.comparing(TournamentDto::getId))
 				.collect(Collectors.toList());
 	}
 
@@ -201,10 +174,10 @@ public class TournamentService
 		User user = userRepository.findById(userId)
 				.orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
 		tournamentRepository.findAll().forEach(Tournament::statusUpdate);
-		return user.getTournaments().stream()
+		return user.getEnrolledTournaments().stream()
 				.map(TournamentDto::new)
 				.sorted(Comparator
-						.comparing(TournamentDto::getid))
+						.comparing(TournamentDto::getId))
 				.collect(Collectors.toList());
 	}
 
@@ -217,7 +190,7 @@ public class TournamentService
 		return user.getCreatedTournaments().stream()
 				.map(TournamentDto::new)
 				.sorted(Comparator
-						.comparing(TournamentDto::getid))
+						.comparing(TournamentDto::getId))
 				.collect(Collectors.toList());
 	}
 
@@ -227,27 +200,27 @@ public class TournamentService
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
 	public void cancelTournament(Integer userId, Integer tournamentId) {
 
-		if (tournamentId == null) throw new TutorException(TOURNAMENT_NULL_ID);
-		Tournament tournament = tournamentRepository.findById(tournamentId)
-				.orElseThrow( () -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+		if (tournamentId == null)
+			throw new TutorException(TOURNAMENT_NULL_ID);
 
-		if (tournament.getstatus() == Tournament.Status.CANCELLED)
-		{
+		Tournament tournament = tournamentRepository.findById(tournamentId)
+				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+
+		if (tournament.getStatus() == Tournament.Status.CANCELLED) {
 			throw new TutorException(TOURNAMENT_ALREADY_CANCELLED, tournamentId);
 		}
 
-		if (userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
+		if (userId == null)
+			throw new TutorException(TOURNAMENT_NULL_USER);
 		userRepository.findById(userId).orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
 
-		User creator = tournament.getcreator();
+		User creator = tournament.getCreator();
 		Integer creatorId = creator.getId();
 
-		if (creatorId.equals(userId))
-		{
-			tournament.setstatus(Tournament.Status.CANCELLED);
+		if (creatorId.equals(userId)) {
+			tournament.setStatus(Tournament.Status.CANCELLED);
 		}
-		else
-		{
+		else {
 			throw new TutorException(TOURNAMENT_NON_CREATOR, tournamentId, userId);
 		}
 

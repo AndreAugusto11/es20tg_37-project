@@ -86,7 +86,7 @@ class CancelTournamentTest extends Specification{
 
         tournament = new Tournament(user, topics, 5, startTime, endTime)
         tournamentRepository.save(tournament)
-        tournamentId = tournament.getid()
+        tournamentId = tournament.getId()
         userID = user.getId()
     }
 
@@ -96,8 +96,8 @@ class CancelTournamentTest extends Specification{
         tournamentService.cancelTournament(userID, tournamentId)
         then: "the tournament is removed"
         def t = tournamentRepository.findById(tournamentId).get()
-        t.getcreator().getId() == userID
-        t.getstatus() == Tournament.Status.CANCELLED
+        t.getCreator().getId() == userID
+        t.getStatus() == Tournament.Status.CANCELLED
     }
 
     def "tournament was already cancelled"()

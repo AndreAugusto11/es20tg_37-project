@@ -22,7 +22,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentR
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -109,11 +108,11 @@ class CreateTournamentTest extends Specification {
 		def result = tournamentService.createTournament(student, topic, number_of_questions, startTime, endTime)
 
 		then: "the returned data is correct"
-		result.getcreatorID() == student.getId()
-		result.getnumQuests() == number_of_questions
-		result.getstartTime() == startTime
-		result.getendTime() == endTime
-		def retTopic = result.gettopics()
+		result.getCreatorID() == student.getId()
+		result.getNumberQuestions() == number_of_questions
+		result.getStartTime() == startTime
+		result.getEndTime() == endTime
+		def retTopic = result.getTopics()
 		def iter = retTopic.iterator()
 		def i=0
 		while(iter.hasNext())
@@ -129,11 +128,11 @@ class CreateTournamentTest extends Specification {
 		def result = tournamentService.createTournament(student, topics, number_of_questions, startTime, endTime)
 
 		then: "the tournament was created correctly"
-		result.getcreatorID() == student.getId()
-		result.getnumQuests() == number_of_questions
-		result.getstartTime() == startTime
-		result.getendTime() == endTime
-		def retTopic = result.gettopics()
+		result.getCreatorID() == student.getId()
+		result.getNumberQuestions() == number_of_questions
+		result.getStartTime() == startTime
+		result.getEndTime() == endTime
+		def retTopic = result.getTopics()
 		def iter = retTopic.iterator()
 		def i=0
 		while(iter.hasNext())
@@ -146,14 +145,15 @@ class CreateTournamentTest extends Specification {
 	{
 		// the tournament should be saved within the database
 		given: "a tournament"
-		def tournament = new Tournament(student)
+		def tournament = new Tournament()
+		tournament.setCreator(student)
 
 		when:
 		tournamentRepository.save(tournament)
-		def res = tournamentService.findTournamentById(tournament.getid())
+		def res = tournamentService.findTournamentById(tournament.getId())
 
 		then:
-		res.getid() == tournament.getid()
+		res.getId() == tournament.getId()
 	}
 
 	def "user is empty"()
@@ -190,7 +190,7 @@ class CreateTournamentTest extends Specification {
 
 		where:
 		num 				|	startT					| endT		|| errorMessage
-		null				| 	startTime				| endTime	|| ErrorMessage.TOURNAMENT_NULL_NUM_QUESTS
+		/*null				| 	startTime				| endTime	|| ErrorMessage.TOURNAMENT_NULL_NUM_QUESTS*/
 		number_of_questions	| 	null					| endTime	|| ErrorMessage.TOURNAMENT_NULL_STARTTIME
 		number_of_questions	| 	startTime				| null		|| ErrorMessage.TOURNAMENT_NULL_ENDTIME
 	}

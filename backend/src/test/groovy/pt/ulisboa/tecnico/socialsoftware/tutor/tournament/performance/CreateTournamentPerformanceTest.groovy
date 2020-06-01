@@ -10,10 +10,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Shared
@@ -42,33 +44,42 @@ class CreateTournamentPerformanceTest extends Specification {
     TopicRepository topicRepository
 
     @Shared
-    User student
-    @Shared
-    Set<Topic> topic
+    def topic
+    def student
 
-    def setup()
-    {
+
+    def setup() {
+        def course = new Course("LEIC", Course.Type.TECNICO)
+        courseRepository.save(course)
+        course = courseRepository.findByNameType("LEIC", "TECNICO").get()
+
         def user = new User("Student", "stu", 1, User.Role.STUDENT)
         userRepository.save(user)
         student = userRepository.findByKey(1)
 
-        topic = new HashSet<Topic>()
-        def tpc = new Topic()
-        tpc.setName(TOPIC_ONE)
-        def course = new Course("LEIC", Course.Type.TECNICO)
-        courseRepository.save(course)
-        course = courseRepository.findByNameType("LEIC", "TECNICO").get()
-        tpc.setCourse(course)
-        topic.add(tpc)
-        topicRepository.save(tpc)
+        topic = new Topic()
+        topic.setName(TOPIC_ONE)
+        topic.setCourse(course)
+        topicRepository.save(topic)
     }
 
-    def "performance testing to create 10000 tournaments"()
-    {
+    def "performance testing to create 10000 tournaments"() {
+        given: "a topic dto"
+        def topicDto = new TopicDto(topic)
+        def topicsDto = new HashSet<TopicDto>()
+        topicsDto.add(topicDto)
+
+        and: "a tournament dto"
+        def tournamentDto = new TournamentDto()
+        tournamentDto.setCreatorID(student.getId())
+        tournamentDto.setTopics(topicsDto)
+        tournamentDto.setNumberQuestions(number_of_questions)
+        tournamentDto.setStartTime(startTime)
+        tournamentDto.setEndTime(endTime)
 
         when:
         1.upto(1, {
-            tournamentService.createTournament(student, topic, number_of_questions, startTime, endTime)
+            tournamentService.createTournament(student.getId(), tournamentDto)
         })
 
         then:

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.performance
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -141,11 +141,13 @@ class AnswerTournamentQuizPerformanceTest extends Specification {
     def "performance testing to answer quiz in 10000 tournaments"(){
         given: "10000 tournaments"
         1.upto(1, {
-            tournament = new Tournament(user)
-            tournament.setquiz(quiz)
-            tournament.setstartTime(LocalDateTime.now())
-            tournament.setendTime(LocalDateTime.now().plusDays(1))
-            tournament.setstatus(Tournament.Status.ONGOING)
+            tournament = new Tournament()
+            tournament.setCreator(user)
+
+            tournament.setQuiz(quiz)
+            tournament.setStartTime(LocalDateTime.now())
+            tournament.setEndTime(LocalDateTime.now().plusDays(1))
+            tournament.setStatus(Tournament.Status.ONGOING)
             tournamentRepository.save(tournament)
         })
         List<Tournament> tournamentList = tournamentRepository.findAll()
@@ -156,7 +158,7 @@ class AnswerTournamentQuizPerformanceTest extends Specification {
 
         when:
         1.upto(1, {
-            tournamentService.submitAnswer(user.getId(),tournamentList.pop().getid(),statementAnswer)
+            tournamentService.submitAnswer(user.getId(),tournamentList.pop().getId(),statementAnswer)
         })
 
         then:

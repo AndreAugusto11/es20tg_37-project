@@ -60,8 +60,10 @@ class GetNumberOfTournamentsFromStudentTest extends Specification {
 
     def "Get the number of tournaments created by student"() {
         given:"Student created 2 tournaments"
-        def tournament1 = new Tournament(user)
-        def tournament2 = new Tournament(user)
+        def tournament1 = new Tournament()
+        tournament1.setCreator(user)
+        def tournament2 = new Tournament()
+        tournament2.setCreator(user)
         tournamentRepository.save(tournament1)
         tournamentRepository.save(tournament2)
         user.addCreatedTournament(tournament1)
@@ -80,7 +82,8 @@ class GetNumberOfTournamentsFromStudentTest extends Specification {
         user2.setEnrolledCoursesAcronyms(ACRONYM)
         courseExecution.getUsers().add(user2)
         userRepository.save(user2)
-        def tournament1 = new Tournament(user2)
+        def tournament1 = new Tournament()
+        tournament1.setCreator(user2)
         tournamentRepository.save(tournament1)
         user.addTournament(tournament1)
         when: "nothing"

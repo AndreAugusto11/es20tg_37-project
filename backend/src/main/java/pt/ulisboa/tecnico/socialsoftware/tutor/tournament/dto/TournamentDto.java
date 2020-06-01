@@ -1,24 +1,25 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import java.util.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 public class TournamentDto implements Serializable {
 
     private Integer id;
     private Set<Integer> enrolledStudentsIds = new HashSet<>();
     private int creatorID;
+    private Set<TopicDto> topics = new HashSet<>();
+    private int numberQuestions = 1;
     private String creatorName;
-    private Set<Integer> topics = new HashSet<>();
-    private int numQuests = 1;
     private Integer quizID = null;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private Set<String> topicsName = new HashSet<>();
 
     private String status;
 
@@ -26,100 +27,85 @@ public class TournamentDto implements Serializable {
     }
 
     public TournamentDto(Tournament tournament) {
-        this.id = tournament.getid();
-        creatorID = tournament.getcreator().getId();
+        this.id = tournament.getId();
+        this.creatorID = tournament.getCreator().getId();
+        this.enrolledStudentsIds.add(creatorID);
+        this.topics = tournament.getTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toSet());
+        this.numberQuestions = tournament.getNumberQuestions();
+        if (tournament.getQuiz() != null)
+            this.quizID = tournament.getQuiz().getId();
+        this.startTime = tournament.getStartTime();
+        this.endTime = tournament.getEndTime();
+        this.status = tournament.getStatus().name();
         creatorName = tournament.getcreator().getName();
-        enrolledStudentsIds.add(creatorID);
-        settopicsTour(tournament.gettopics());
-        numQuests = tournament.getnumQuests();
-        if(tournament.getquiz() != null) quizID = tournament.getquiz().getId();
-        startTime = tournament.getstartTime();
-        endTime = tournament.getendTime();
-        status = tournament.getstatus().name();
     }
 
-    public int getcreatorID()
+    public int getCreatorID()
     {
-        return creatorID;
+        return this.creatorID;
     }
 
-    public Set<Integer> getenrolledStudentsIds()
+    public Set<Integer> getEnrolledStudentsIds()
     {
-        return enrolledStudentsIds;
+        return this.enrolledStudentsIds;
     }
 
-    public Integer getid() {
-        return id;
+    public Integer getId() {
+        return this.id;
     }
 
-    public int getnumQuests() {
-        return numQuests;
+    public int getNumberQuestions() {
+        return this.numberQuestions;
     }
 
-    public Integer getquizID() {return quizID;}
+    public Integer getQuizID() {return this.quizID;}
 
-    public Set<Integer> gettopics() {
-        return topics;
+    public Set<TopicDto> getTopics() {
+        return this.topics;
     }
 
-    public Set<String> gettopicsName() {
-        return topicsName;
+    public LocalDateTime getStartTime() {
+        return this.startTime;
     }
 
-    public LocalDateTime getstartTime() {
-        return startTime;
-    }
-
-    public LocalDateTime getendTime() {
-        return endTime;
+    public LocalDateTime getEndTime() {
+        return this.endTime;
     }
 
     public void setCreatorID(int creatorID) {
         this.creatorID = creatorID;
     }
 
-    public void setenrolledStudentsIds(Set<Integer> enrolledStudentsIds) {
+    public void setEnrolledStudentsIds(Set<Integer> enrolledStudentsIds) {
         this.enrolledStudentsIds.addAll(enrolledStudentsIds);
     }
 
-    public void setid(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public void setnumQuests(int numQuests) {
-        this.numQuests = numQuests;
+    public void setNumberQuestions(int numberQuestions) {
+        this.numberQuestions = numberQuestions;
     }
 
-    public void setquizID(Integer quizID){this.quizID = quizID;}
+    public void setQuizID(Integer quizID){this.quizID = quizID;}
 
-    public void settopics(Set<Integer> topics)
+    public void setTopics(Set<TopicDto> topics)
     {
         this.topics = topics;
     }
 
-    public void settopicsName(Set<String> topics)
-    {
-        this.topicsName = topics;
-    }
-
-    public void settopicsTour(Set<Topic> topics) {
-        for(Topic t: topics){
-            this.topics.add(t.getId());
-            this.topicsName.add(""+t.getCourse().getName()+":"+t.getName());
-        }
-    }
-
-    public void setstartTime(LocalDateTime startTime) {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public void setendTime(LocalDateTime endTime) {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 
-    public String getstatus() { return this.status;}
+    public String getStatus() { return this.status;}
 
-    public void setstatus(Tournament.Status status) {this.status = status.name();}
+    public void setStatus(Tournament.Status status) {this.status = status.name();}
 
     public String getCreatorName() {
         return creatorName;
