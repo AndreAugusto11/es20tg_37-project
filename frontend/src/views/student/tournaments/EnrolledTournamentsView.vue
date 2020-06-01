@@ -34,8 +34,9 @@
                     v-on="on"
                     @click="answerQuiz(item)"
                     data-cy="answerTournament"
-            >mdi-file-move</v-icon
             >
+              mdi-file-move
+            </v-icon>
           </template>
           <span>Answer Quiz</span>
         </v-tooltip>

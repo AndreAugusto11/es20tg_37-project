@@ -1,10 +1,12 @@
+import Topic from '@/models/management/Topic';
+
 export class Tournament {
   id: number | null = null;
   creatorID: number | null = null;
+  creatorName: string | null = null;
   numQuests: number | null = null;
   quizID: number | null = null;
-  topics: number[] | null = null;
-  topicsName: string[] | null = null;
+  topics: Topic[] = [];
   enrolledStudentsIds!: number[];
   startTime!: number[];
   endTime!: number[];
@@ -13,14 +15,14 @@ export class Tournament {
   status!: string;
 
   constructor(jsonObj?: Tournament) {
-    if(jsonObj) {
+    if (jsonObj) {
       this.id = jsonObj.id;
       this.creatorID = jsonObj.creatorID;
+      this.creatorName = jsonObj.creatorName;
       this.numQuests = jsonObj.numQuests;
       this.quizID = jsonObj.quizID;
       this.enrolledStudentsIds = jsonObj.enrolledStudentsIds;
       this.topics = jsonObj.topics;
-      this.topicsName = jsonObj.topicsName;
       this.startTime = jsonObj.startTime;
       this.endTime = jsonObj.endTime;
       this.getDateFormatted(jsonObj);

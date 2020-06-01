@@ -12,6 +12,7 @@ public class TournamentDto implements Serializable {
     private Integer id;
     private Set<Integer> enrolledStudentsIds = new HashSet<>();
     private int creatorID;
+    private String creatorName;
     private Set<Integer> topics = new HashSet<>();
     private int numQuests = 1;
     private Integer quizID = null;
@@ -27,6 +28,7 @@ public class TournamentDto implements Serializable {
     public TournamentDto(Tournament tournament) {
         this.id = tournament.getid();
         creatorID = tournament.getcreator().getId();
+        creatorName = tournament.getcreator().getName();
         enrolledStudentsIds.add(creatorID);
         settopicsTour(tournament.gettopics());
         numQuests = tournament.getnumQuests();
@@ -119,4 +121,11 @@ public class TournamentDto implements Serializable {
 
     public void setstatus(Tournament.Status status) {this.status = status.name();}
 
+    public String getCreatorName() {
+        return creatorName;
+    }
+
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
+    }
 }
