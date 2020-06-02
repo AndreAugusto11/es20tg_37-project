@@ -87,8 +87,8 @@ public class QuestionSuggestionController {
     }
 
     @DeleteMapping("/questionSuggestions/{questionSuggestionId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#questionSuggestionId, 'QUESTION_SUGGESTION.ACCESS'))")
-    public ResponseEntity removeCourseExecution(@PathVariable Integer questionSuggestionId) {
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN'))")
+    public ResponseEntity removeQuestionSuggestion(@PathVariable Integer questionSuggestionId) {
         questionSuggestionService.removeQuestionSuggestion(questionSuggestionId);
 
         return ResponseEntity.ok().build();
