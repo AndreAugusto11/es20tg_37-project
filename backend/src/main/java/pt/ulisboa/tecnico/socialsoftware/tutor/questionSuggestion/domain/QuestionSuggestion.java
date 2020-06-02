@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CANNOT_DELETE_COURSE_EXECUTION;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CANNOT_DELETE_QUESTION_SUGGESTION;
 
 
 @Entity
@@ -147,6 +150,17 @@ public class QuestionSuggestion {
                 ", question=" + question +
                 ", justification=" + justification +
                 '}';
+    }
+
+    public void remove() {
+        if (status == Status.PENDING)
+            throw new TutorException(CANNOT_DELETE_QUESTION_SUGGESTION);
+
+        user.getQuestionsSuggestion().remove(this);
+        user = null;
+
+        question.remove();
+        justification.remove();
     }
 }
 

@@ -75,4 +75,9 @@ public class Justification {
     public Image getImage() { return image; }
 
     public void setImage(Image image) { this.image = image; }
+
+    public void remove() {
+        user.getJustifications().remove(this);
+        user = null;
+    }
 }

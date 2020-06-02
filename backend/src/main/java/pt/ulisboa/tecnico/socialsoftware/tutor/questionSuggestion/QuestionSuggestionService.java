@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
@@ -224,5 +225,18 @@ public class QuestionSuggestionService {
 
         questionSuggestion.update(questionSuggestionDto);
         return new QuestionSuggestionDto(questionSuggestion);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void removeQuestionSuggestion(int questionSuggestionId) {
+        QuestionSuggestion questionSuggestion = questionSuggestionRepository.findById(questionSuggestionId).
+                orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
+
+        questionSuggestion.remove();
+
+        questionSuggestionRepository.delete(questionSuggestion);
     }
 }

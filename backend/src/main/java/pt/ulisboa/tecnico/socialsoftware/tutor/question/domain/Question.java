@@ -23,7 +23,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "questions")
 public class Question implements DomainEntity {
-    public enum Type {NORMAL, SUGGESTION}
+    public enum Type { NORMAL, SUGGESTION }
 
     public enum Status {
         DISABLED, REMOVED, AVAILABLE

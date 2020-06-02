@@ -70,6 +70,7 @@ public enum ErrorMessage {
     QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),
     USER_NOT_FOUND("User not found with id %d"),
 
+    CANNOT_DELETE_QUESTION_SUGGESTION("The question suggestion cannot be deleted in a Pending state"),
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
     USERNAME_NOT_FOUND("Username %d not found"),
 

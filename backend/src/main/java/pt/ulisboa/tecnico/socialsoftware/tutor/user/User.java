@@ -188,6 +188,14 @@ public class User implements UserDetails, DomainEntity {
         this.courseExecutions = courseExecutions;
     }
 
+    public Set<Justification> getJustifications() {
+        return justifications;
+    }
+
+    public void setJustifications(Set<Justification> justifications) {
+        this.justifications = justifications;
+    }
+
     public Integer getNumberOfTeacherQuizzes() {
         if (this.numberOfTeacherQuizzes == null)
             this.numberOfTeacherQuizzes = (int) getQuizAnswers().stream()
