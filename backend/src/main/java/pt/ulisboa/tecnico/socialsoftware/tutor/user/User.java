@@ -80,7 +80,7 @@ public class User implements UserDetails, DomainEntity {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Tournament> createdTournaments = new HashSet<>();
   
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval=true)
     private Set<QuestionSuggestion> questionSuggestion = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch=FetchType.LAZY, orphanRemoval=true)

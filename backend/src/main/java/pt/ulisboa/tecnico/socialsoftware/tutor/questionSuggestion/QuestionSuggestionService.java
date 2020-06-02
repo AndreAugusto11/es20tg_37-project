@@ -132,10 +132,16 @@ public class QuestionSuggestionService {
             throw new TutorException(USER_IS_STUDENT, userId);
         }
 
-        Justification justification = new Justification(user, suggestion, justificationDto);
-        suggestion.setStatus(QuestionSuggestion.Status.REJECTED);
+        Justification justification;
+        if (suggestion.getJustification() == null) {
+            justification = new Justification(user, suggestion, justificationDto);
+            this.entityManager.persist(justification);
+        } else {
+            justification = suggestion.getJustification();
+            justification.setContent(justificationDto.getContent());
+        }
 
-        this.entityManager.persist(justification);
+        suggestion.setStatus(QuestionSuggestion.Status.REJECTED);
     }
 
     private QuestionSuggestion checkForQuestionSuggestion(Integer questionSuggestionId) {
