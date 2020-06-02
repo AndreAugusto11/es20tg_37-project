@@ -60,14 +60,12 @@ public class TournamentService {
 						.orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topic.getId())))
 				.collect(Collectors.toSet());
 
-		System.out.println(tournamentDto.getStartTime());
-
 		Tournament tournament = new Tournament(
 				user,
 				topics,
 				tournamentDto.getNumberQuestions(),
-				DateHandler.toLocalDateTime(tournamentDto.getStartTime()),
-				DateHandler.toLocalDateTime(tournamentDto.getEndTime())
+				DateHandler.toLocalDateTime(tournamentDto.getStartTime()).plusHours(1),
+				DateHandler.toLocalDateTime(tournamentDto.getEndTime()).plusHours(1)
 		);
 
 		user.addCreatedTournament(tournament);
