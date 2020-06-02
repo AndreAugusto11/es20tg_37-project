@@ -14,6 +14,6 @@ describe('Tournaments walkthrough', () => {
   });
 
   it('login and create a tournament', () => {
-    cy.createTournaments('5', 'GitHub', '2025-11-23 10:50', '2025-11-23 10:59');
+    cy.createTournaments('5');
   });
 });

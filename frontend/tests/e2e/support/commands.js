@@ -66,15 +66,15 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createTournaments', (numQ, topicName, start, finish) => {
+Cypress.Commands.add('createTournaments', (numQ) => {
   cy.contains('Tournaments').click();
   cy.get('[data-cy="createButton"]').click();
   cy.wait(5000);
   cy.get('[data-cy="numQuest"]').type(numQ);
   cy.get('[data-cy="topicSelect"]').click({force: true});
   cy.contains('Adventure').click();
-  cy.get('[data-cy="start"]').type(start, {force: true});
-  cy.get('[data-cy="end"]').type(finish, {force: true});
+  cy.get('#startDateInput-input').click({force: true}).type('{rightarrow}{enter}', {force: true});
+  cy.get('#endDateInput-input').click({force: true}).type('{rightarrow}{rightarrow}{enter}', {force: true});
   cy.get('[data-cy="save"]').click({force: true});
 });
 

@@ -14,7 +14,7 @@ describe('Tournament Cancel', () => {
   });
 
   it('Creating tournament and cancelling it', () => {
-    cy.createTournaments('5', 'GitHub', '2025-11-23 10:50', '2025-11-23 10:59');
+    cy.createTournaments('5');
     cy.cancelTournaments("Demo Student");
     cy.contains('CANCELLED').should('exist');
   });

@@ -38,12 +38,12 @@
             <v-flex xs24 sm12 md8 style="margin-left: -10px;">
               <VueCtkDateTimePicker
                       label="*Start Date"
-                      id="availableDateInput"
+                      id="startDateInput"
                       v-model="currentTournament.startTime"
                       format="YYYY-MM-DDTHH:mm:ssZ"
                       v-on:is-shown="changeStartDateOpen(true)"
                       v-on:is-hidden="changeStartDateOpen(false)"
-              ></VueCtkDateTimePicker>
+              />
             </v-flex>
             <v-flex xs24 sm12 md8 style="margin-left: -10px;">
                 <VueCtkDateTimePicker
@@ -53,7 +53,7 @@
                       format="YYYY-MM-DDTHH:mm:ssZ"
                       v-on:is-shown="changeEndDateOpen(true)"
                       v-on:is-hidden="changeEndDateOpen(false)"
-              ></VueCtkDateTimePicker>
+              />
             </v-flex>
           </v-layout>
         </v-container>
@@ -87,7 +87,7 @@ export default class CreateTournamentDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Tournament, required: true }) readonly tournament!: Tournament;
 
-  currentTournament!: Tournament;
+  currentTournament: Tournament | null = null;
   topicsAll: Topic[] = [];
   topicsSelected: string[] = [];
   startDateOpen: boolean = false;
@@ -104,27 +104,23 @@ export default class CreateTournamentDialog extends Vue {
   }
 
   async saveTournament() {
-    this.currentTournament.topics = this.topicsAll.filter(topic => this.topicsSelected.includes(topic.name));
-    console.log(this.currentTournament.startTime);
-    if (
-      this.currentTournament &&
-      (!this.currentTournament.numberQuestions ||
-        !this.currentTournament.topics.length ||
-        !this.currentTournament.startTime ||
-        !this.currentTournament.endTime)
-    ) {
-      await this.$store.dispatch(
-        'error',
-        'Tournament must have a Number of Questions, topic(s), a start and end date'
-      );
-      return;
-    }
+    if (this.currentTournament) {
+      this.currentTournament.topics = this.topicsAll.filter(topic => this.topicsSelected.includes(topic.name));
+      if (!this.currentTournament.numberQuestions || !this.currentTournament.topics.length ||
+              !this.currentTournament.startTime || !this.currentTournament.endTime) {
+        await this.$store.dispatch(
+                'error',
+                'Tournament must have a Number of Questions, topic(s), a start and end date'
+        );
+        return;
+      }
 
-    try {
-      const result = await RemoteServices.createTournament(this.currentTournament);
-      this.$emit('new-tournament', result);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
+      try {
+        const result = await RemoteServices.createTournament(this.currentTournament);
+        this.$emit('new-tournament', result);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
     }
   }
 
