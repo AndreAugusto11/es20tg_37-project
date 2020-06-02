@@ -54,22 +54,17 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionSuggestionDto createQuestionSuggestion(Integer userId, Integer courseId, QuestionSuggestionDto questionSuggestionDto){
+    public QuestionSuggestionDto createQuestionSuggestion(int userId, int courseId, QuestionSuggestionDto questionSuggestionDto){
 
         if (questionSuggestionDto == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTION);
         }
 
-        if (userId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        if (courseId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
-        }
-
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
         if (user.getRole() != User.Role.STUDENT) {
             throw new TutorException(USER_IS_TEACHER, userId);
@@ -88,11 +83,7 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionDto acceptQuestionSuggestion(Integer questionSuggestionId) {
-
-        if (questionSuggestionId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
-        }
+    public QuestionDto acceptQuestionSuggestion(int questionSuggestionId) {
 
         QuestionSuggestion suggestion = checkForQuestionSuggestion(questionSuggestionId);
         QuestionSuggestionDto questionSuggestionDto = new QuestionSuggestionDto(suggestion);
@@ -113,13 +104,9 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void rejectQuestionSuggestion(Integer userId, Integer questionSuggestionId, JustificationDto justificationDto) {
+    public void rejectQuestionSuggestion(int userId, int questionSuggestionId, JustificationDto justificationDto) {
 
-        if (questionSuggestionId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
-        } else if (userId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
-        } else if (justificationDto == null) {
+        if (justificationDto == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_JUSTIFICATION);
         } else if (justificationDto.getContent() == null || justificationDto.getContent().equals("   ")) {
             throw new TutorException(JUSTIFICATION_MISSING_DATA);
@@ -145,7 +132,7 @@ public class QuestionSuggestionService {
         suggestion.setStatus(QuestionSuggestion.Status.REJECTED);
     }
 
-    private QuestionSuggestion checkForQuestionSuggestion(Integer questionSuggestionId) {
+    private QuestionSuggestion checkForQuestionSuggestion(int questionSuggestionId) {
         QuestionSuggestion suggestion = questionSuggestionRepository.
                 findById(questionSuggestionId).
                 orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
@@ -163,13 +150,13 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuestionSuggestionDto> getQuestionSuggestions(Integer userId, Integer courseId) {
+    public List<QuestionSuggestionDto> getQuestionSuggestions(int userId, int courseId) {
 
-        if (userId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
-        } else if (courseId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
-        }
+        userRepository.findById(userId)
+                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        courseRepository.findById(courseId)
+                .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
         return questionSuggestionRepository.findQuestionSuggestions(userId).stream()
                 .filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId))
@@ -182,11 +169,10 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuestionSuggestionDto> getAllQuestionSuggestions(Integer courseId) {
+    public List<QuestionSuggestionDto> getAllQuestionSuggestions(int courseId) {
 
-        if (courseId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
-        }
+        courseRepository.findById(courseId)
+                .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
         return questionSuggestionRepository.findAll().stream()
                 .filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId))
@@ -196,7 +182,7 @@ public class QuestionSuggestionService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public CourseDto findQuestionSuggestionCourse(Integer questionSuggestionId) {
+    public CourseDto findQuestionSuggestionCourse(int questionSuggestionId) {
         return questionSuggestionRepository.findById(questionSuggestionId)
                 .map(QuestionSuggestion::getCourse)
                 .map(CourseDto::new)
@@ -208,11 +194,9 @@ public class QuestionSuggestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionSuggestionDto
-    updateRejectedQuestionSuggestion(Integer questionSuggestionId, QuestionSuggestionDto questionSuggestionDto) {
+    updateRejectedQuestionSuggestion(int questionSuggestionId, QuestionSuggestionDto questionSuggestionDto) {
 
-        if (questionSuggestionId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
-        } else if (questionSuggestionDto == null) {
+        if (questionSuggestionDto == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTION);
         }
 
@@ -236,7 +220,6 @@ public class QuestionSuggestionService {
                 orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
 
         questionSuggestion.remove();
-
         questionSuggestionRepository.delete(questionSuggestion);
     }
 }

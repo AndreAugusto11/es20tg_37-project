@@ -38,8 +38,7 @@ public class Justification {
         this.key = justificationDto.getKey();
         this.content = justificationDto.getContent();
 
-        this.user = user;
-        user.addJustification(this);
+        setUser(user);
 
         questionSuggestion.setJustification(this);
 
@@ -70,7 +69,10 @@ public class Justification {
 
     public User getUser() { return user; }
 
-    public void setUser(User user) { this.user = user; }
+    public void setUser(User user) {
+        this.user = user;
+        this.user.addJustification(this);
+    }
 
     public Image getImage() { return image; }
 

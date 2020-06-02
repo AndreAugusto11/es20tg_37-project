@@ -160,7 +160,9 @@ public class QuestionSuggestion {
         user = null;
 
         question.remove();
-        justification.remove();
+
+        if (justification != null)
+            justification.remove();
     }
 }
 
