@@ -23,22 +23,26 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_JUSTIFICATION
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_SUGGESTIONID
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_USERID
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.JUSTIFICATION_MISSING_DATA
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_SUGGESTION_ALREADY_ACCEPTED
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_SUGGESTION_ALREADY_REJECTED
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_SUGGESTION_NOT_FOUND
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_IS_STUDENT
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND
 
 @DataJpaTest
 class RejectQuestionSuggestionTest extends Specification {
 
     public static final String COURSE_NAME = "Software Architecture"
-    public static final String QUESTION_TITLE = "question_title"
-    public static final String QUESTION_CONTENT = "question_content"
-    public static final String JUSTIFICATION_CONTENT = "justification_content"
+    public static final String STUDENT_NAME = "Student Name"
+    public static final String STUDENT_USERNAME = "Student Username"
+    public static final String TEACHER_NAME = "Teacher Name"
+    public static final String TEACHER_USERNAME = "Teacher Username"
+    public static final String QUESTION_TITLE = "Question Title"
+    public static final String QUESTION_CONTENT = "Question Content"
+    public static final String OPTION_CONTENT = "Option Content"
     public static final String IMAGE_URL = "image_url"
-    public static final String OPTION_CONTENT = "option content"
+    public static final String JUSTIFICATION_CONTENT = "Justification Content"
 
     @Autowired
     QuestionSuggestionService questionSuggestionService
@@ -89,32 +93,34 @@ class RejectQuestionSuggestionTest extends Specification {
     }
 
     def "A pending question suggestion is rejected with justification by a teacher"() {
-        given: "a justification"
+        given: "aAjustification"
         def justificationDto = new JustificationDto()
         justificationDto.setKey(2)
         justificationDto.setContent(JUSTIFICATION_CONTENT)
 
-        and: "a user"
+        and: "A user teacher"
         def teacher = new User()
         teacher.setKey(2)
+        teacher.setName(TEACHER_NAME)
+        teacher.setUsername(TEACHER_USERNAME)
         teacher.setRole(User.Role.TEACHER)
         userRepository.save(teacher)
 
         when:
         questionSuggestionService.rejectQuestionSuggestion(teacher.getId(), questionSuggestion.getId(), justificationDto)
 
-        then: "the suggestion becomes rejected"
+        then: "The suggestion becomes rejected"
         def result = questionSuggestionRepository.findAll().get(0)
         result != null
         result.getStatus() == QuestionSuggestion.Status.REJECTED
 
-        and: "the underlying question status does not change"
+        and: "The underlying question status does not change"
         result.getQuestion().getStatus() == Question.Status.DISABLED
 
-        and: "no new question is created"
+        and: "No new question is created"
         questionRepository.count() == 1L
 
-        and: "a justification exists"
+        and: "A justification exists"
         result.getJustification() != null
         def justification = result.getJustification()
         justification.getId() != null
@@ -125,18 +131,18 @@ class RejectQuestionSuggestionTest extends Specification {
     }
 
     def "A pending question suggestion is rejected with a justification with an image"() {
-        given: "a justification"
+        given: "A justification"
         def justificationDto = new JustificationDto()
         justificationDto.setKey(2)
         justificationDto.setContent(JUSTIFICATION_CONTENT)
 
-        and: "a user"
+        and: "A user"
         def user = new User()
         user.setKey(2)
         user.setRole(User.Role.TEACHER)
         userRepository.save(user)
 
-        and: "an image"
+        and: "An image"
         def imageDto = new ImageDto()
         imageDto.setUrl(IMAGE_URL)
         imageDto.setWidth(20)
@@ -145,15 +151,15 @@ class RejectQuestionSuggestionTest extends Specification {
         when:
         questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestion.getId(), justificationDto)
 
-        then: "the suggestion becomes rejected"
+        then: "The suggestion becomes rejected"
         def result = questionSuggestionRepository.findAll().get(0)
         result != null
         result.getStatus() == QuestionSuggestion.Status.REJECTED
 
-        and: "the underlying question status does not change"
+        and: "The underlying question status does not change"
         result.getQuestion().getStatus() == Question.Status.DISABLED
 
-        and: "a justification exists"
+        and: "A justification exists"
         result.getJustification() != null
         def justification = result.getJustification()
         justification.getId() != null
@@ -161,7 +167,7 @@ class RejectQuestionSuggestionTest extends Specification {
         justification.getUser().getId() == user.getId()
         justification.getQuestionSuggestion().getId() == result.getId()
 
-        and: "with an image"
+        and: "With an image"
         justification.getImage() != null
         def image = justification.getImage()
         image.getId() != null
@@ -172,20 +178,20 @@ class RejectQuestionSuggestionTest extends Specification {
     }
 
     @Unroll
-    def "A #status question suggestion is rejected"() {
+    def "Cannot reject a #status question suggestion"() {
         given: "a question suggestion"
         def suggestion = new QuestionSuggestion()
         suggestion.setQuestion(question)
         suggestion.setStatus(status)
         questionSuggestionRepository.save(suggestion)
 
-        and: "a user"
+        and: "A user"
         def user = new User()
         user.setKey(2)
         user.setRole(User.Role.TEACHER)
         userRepository.save(user)
 
-        and: "a justification"
+        and: "A justification"
         def justificationDto = new JustificationDto()
         justificationDto.setKey(2)
         justificationDto.setContent(JUSTIFICATION_CONTENT)
@@ -193,7 +199,7 @@ class RejectQuestionSuggestionTest extends Specification {
         when:
         questionSuggestionService.rejectQuestionSuggestion(user.getId(), suggestion.getId(), justificationDto)
 
-        then: "an exception is thrown"
+        then: "An exception is thrown"
         TutorException exception = thrown()
         exception.getErrorMessage() == errorMessage
 
@@ -203,14 +209,14 @@ class RejectQuestionSuggestionTest extends Specification {
         QuestionSuggestion.Status.REJECTED || QUESTION_SUGGESTION_ALREADY_REJECTED
     }
 
-    def "A question suggestion is rejected with a justification without content"() {
-        given: "a user"
+    def "Cannot reject a question suggestion with a justification without content"() {
+        given: "A user"
         def user = new User()
         user.setKey(2)
         user.setRole(User.Role.TEACHER)
         userRepository.save(user)
 
-        and: "a justification"
+        and: "A justification"
         def justificationDto = new JustificationDto()
         justificationDto.setKey(2)
         justificationDto.setContent(null)
@@ -218,19 +224,21 @@ class RejectQuestionSuggestionTest extends Specification {
         when:
         questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestion.getId(), justificationDto)
 
-        then: "an exception is thrown"
+        then: "An exception is thrown"
         TutorException exception = thrown()
         exception.getErrorMessage() == JUSTIFICATION_MISSING_DATA
     }
 
-    def "A question suggestion is rejected by a student user"() {
-        given: "a user"
+    def "A student cannot reject a question suggestion"() {
+        given: "A student user"
         def student = new User()
-        student.setKey(2)
+        student.setKey(3)
+        student.setName(STUDENT_NAME)
+        student.setUsername(STUDENT_USERNAME)
         student.setRole(User.Role.STUDENT)
         userRepository.save(student)
 
-        and: "a justification"
+        and: "A justification"
         def justificationDto = new JustificationDto()
         justificationDto.setKey(2)
         justificationDto.setContent(JUSTIFICATION_CONTENT)
@@ -238,47 +246,47 @@ class RejectQuestionSuggestionTest extends Specification {
         when:
         questionSuggestionService.rejectQuestionSuggestion(student.getId(), questionSuggestion.getId(), justificationDto)
 
-        then: "an exception is thrown"
+        then: "An exception is thrown"
         TutorException exception = thrown()
         exception.getErrorMessage() == USER_IS_STUDENT
     }
 
-    def "A question suggestion is rejected with a justification and no user"() {
-        given: "a justification"
+    def "Cannot reject a question suggestion given an invalid user id"() {
+        given: "A justification"
         def justificationDto = new JustificationDto()
         justificationDto.setKey(2)
         justificationDto.setContent(JUSTIFICATION_CONTENT)
 
         when:
-        questionSuggestionService.rejectQuestionSuggestion(null, questionSuggestion.getId(), justificationDto)
+        questionSuggestionService.rejectQuestionSuggestion(0, questionSuggestion.getId(), justificationDto)
 
-        then: "an exception is thrown"
+        then: "An exception is thrown"
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_USERID
+        exception.getErrorMessage() == USER_NOT_FOUND
     }
 
-    def "The question suggestion to rejected does not exist"() {
-        given: "a user"
+    def "Cannot reject a question suggestion given an invalid suggestion id"() {
+        given: "A user"
         def user = new User()
         user.setKey(2)
         user.setRole(User.Role.TEACHER)
         userRepository.save(user)
 
-        and: "a justification"
+        and: "A justification"
         def justificationDto = new JustificationDto()
         justificationDto.setKey(2)
         justificationDto.setContent(JUSTIFICATION_CONTENT)
 
         when:
-        questionSuggestionService.rejectQuestionSuggestion(user.getId(), null, justificationDto)
+        questionSuggestionService.rejectQuestionSuggestion(user.getId(), 0, justificationDto)
 
-        then: "an exception is thrown"
+        then: "An exception is thrown"
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_SUGGESTIONID
+        exception.getErrorMessage() == QUESTION_SUGGESTION_NOT_FOUND
     }
 
-    def "A question suggestion is rejected without justification"() {
-        given: "a user"
+    def "Cannot reject a question suggestion without a justification"() {
+        given: "A user"
         def user = new User()
         user.setKey(2)
         user.setRole(User.Role.TEACHER)
@@ -287,7 +295,7 @@ class RejectQuestionSuggestionTest extends Specification {
         when:
         questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestion.getId(), null)
 
-        then: "an exception is thrown"
+        then: "An exception is thrown"
         TutorException exception = thrown()
         exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_JUSTIFICATION
     }

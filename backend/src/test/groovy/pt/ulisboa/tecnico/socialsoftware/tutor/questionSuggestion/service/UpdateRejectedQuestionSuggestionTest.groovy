@@ -166,7 +166,7 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
         exception.getErrorMessage() == QUESTION_SUGGESTION_NOT_REJECTED
     }
 
-    def "update question suggestion given no suggestion id"() {
+    def "update question suggestion given inbalid suggestion id"() {
         given: "an optionDto"
         def options = new ArrayList()
         def optionDto = new OptionDto()
@@ -190,11 +190,11 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
 
         when:
-        questionSuggestionService.updateRejectedQuestionSuggestion(null, questionSuggestionDto)
+        questionSuggestionService.updateRejectedQuestionSuggestion(0, questionSuggestionDto)
 
         then: "an exception is thrown"
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_SUGGESTIONID
+        exception.getErrorMessage() == QUESTION_SUGGESTION_NOT_FOUND
     }
 
     def "update question suggestion given no suggestion dto"() {

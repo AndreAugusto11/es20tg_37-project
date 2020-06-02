@@ -19,17 +19,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Questio
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_SUGGESTIONID
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_SUGGESTION_ALREADY_ACCEPTED
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_SUGGESTION_ALREADY_REJECTED
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_SUGGESTION_NOT_FOUND
 
 @DataJpaTest
 class AcceptQuestionSuggestionTest extends Specification {
 
     public static final String COURSE_NAME = "Software Architecture"
-    public static final String QUESTION_TITLE = "title"
-    public static final String QUESTION_CONTENT = "Is Math Related to Science?"
-    public static final String OPTION_CONTENT = "option content"
+    public static final String QUESTION_TITLE = "Question Title"
+    public static final String QUESTION_CONTENT = "Question Content"
+    public static final String OPTION_CONTENT = "Option Content"
 
     @Autowired
     QuestionSuggestionService questionSuggestionService
@@ -89,8 +89,8 @@ class AcceptQuestionSuggestionTest extends Specification {
         result.getStatus() == QuestionSuggestion.Status.ACCEPTED
 
         and: "a new question is created"
-        def questionResult = questionRepository.findAll().get(1)
         questionRepository.count() == 2L
+        def questionResult = questionRepository.findAll().get(1)
         questionResult.getId() != null
         questionResult.getKey() != 1
         questionResult.getStatus() == Question.Status.DISABLED
@@ -107,7 +107,7 @@ class AcceptQuestionSuggestionTest extends Specification {
     }
 
     @Unroll
-    def "A #status question suggestion is accepted"() {
+    def "Cannot accept a #status question suggestion"() {
         given: "a question suggestion"
         def questionSuggestion = new QuestionSuggestion()
         questionSuggestion.setQuestion(question)
@@ -127,13 +127,13 @@ class AcceptQuestionSuggestionTest extends Specification {
         QuestionSuggestion.Status.REJECTED || QUESTION_SUGGESTION_ALREADY_REJECTED
     }
 
-    def "A question suggestion with wrong id is accepted"() {
+    def "Cannot accept a question suggestion given an invalid id"() {
         when:
-        questionSuggestionService.acceptQuestionSuggestion(null)
+        questionSuggestionService.acceptQuestionSuggestion(0)
 
         then: "an exception is thrown"
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_SUGGESTIONID
+        exception.getErrorMessage() == QUESTION_SUGGESTION_NOT_FOUND
     }
 
     @TestConfiguration

@@ -66,9 +66,9 @@ public class QuestionSuggestionDto implements Serializable {
 
     public void setCreationDate(String creationDate){ this.creationDate = creationDate; }
 
-    public QuestionDto getQuestionDto(){ return questionDto; }
+    public QuestionDto getQuestionDto() { return questionDto; }
 
-    public void setQuestionDto(QuestionDto questionDto){ this.questionDto = questionDto; }
+    public void setQuestionDto(QuestionDto questionDto) { this.questionDto = questionDto; }
 
     public JustificationDto getJustificationDto() { return justificationDto; }
 

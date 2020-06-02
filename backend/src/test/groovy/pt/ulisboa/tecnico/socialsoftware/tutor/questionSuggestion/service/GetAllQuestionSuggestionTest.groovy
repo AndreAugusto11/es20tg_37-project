@@ -5,34 +5,31 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSuggestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.QuestionSuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.QuestionSuggestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_COURSEID
+import java.time.LocalDateTime
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND
 
 @DataJpaTest
 class GetAllQuestionSuggestionTest extends Specification {
 
     public static final String COURSE_NAME = "Software Architecture"
-    public static final String ACRONYM = "AS1"
-    public static final String ACADEMIC_TERM = "1 SEM"
-    public static final String USER_REAL_NAME = "name"
-    public static final String USER_NAME = "username"
-    public static final String QUESTION_TITLE = "title"
-    public static final String QUESTION_CONTENT = "question content"
-    public static final String OPTION_CONTENT = "option content"
+    public static final String STUDENT_NAME = "Student Name"
+    public static final String STUDENT_USERNAME = "Student Username"
+    public static final String QUESTION_TITLE = "Question Title"
+    public static final String QUESTION_CONTENT = "Question Content"
+    public static final String OPTION_CONTENT = "Option Content"
 
     @Autowired
     QuestionSuggestionService questionSuggestionService
@@ -49,86 +46,108 @@ class GetAllQuestionSuggestionTest extends Specification {
     @Autowired
     QuestionSuggestionRepository questionSuggestionRepository
 
-    def course
-    def courseExecution
-
-    def user
-
-    def options
-
-    def questionDto
-    def questionSuggestionDto
+    def course = new Course()
+    def student = new User()
+    def question1 = new Question()
+    def question2 = new Question()
 
     def setup() {
-        course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        course.setName(COURSE_NAME)
+        course.setType(Course.Type.TECNICO)
         courseRepository.save(course)
 
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
+        student = new User()
+        student.setKey(1)
+        student.setName(STUDENT_NAME)
+        student.setUsername(STUDENT_USERNAME)
+        student.setRole(User.Role.STUDENT)
+        userRepository.save(student)
 
-        user = new User(USER_REAL_NAME, USER_NAME, 1, User.Role.STUDENT)
-        user.getCourseExecutions().add(courseExecution)
-        user.setEnrolledCoursesAcronyms(ACRONYM)
-        courseExecution.getUsers().add(user)
-        userRepository.save(user)
+        def option1 = new Option()
+        option1.setContent(OPTION_CONTENT)
+        option1.setCorrect(true)
+        option1.setSequence(0)
 
-        options = new ArrayList<OptionDto>()
-        def optionDto1 = new OptionDto()
-        optionDto1.setContent(OPTION_CONTENT)
-        optionDto1.setCorrect(true)
-        options.add(optionDto1)
-        def optionDto2 = new OptionDto()
-        optionDto2.setContent(OPTION_CONTENT)
-        optionDto2.setCorrect(false)
-        options.add(optionDto2)
+        question1.setKey(1)
+        question1.setTitle(QUESTION_TITLE)
+        question1.setContent(QUESTION_CONTENT)
+        question1.addOption(option1)
+        question1.setType(Question.Type.SUGGESTION)
+        question1.setCourse(course)
 
-        questionDto = new QuestionDto()
-        questionDto.setTitle(QUESTION_TITLE)
-        questionDto.setContent(QUESTION_CONTENT)
-        questionDto.setKey(1)
-        questionDto.setStatus(Question.Status.DISABLED.name())
-        questionDto.setType(Question.Type.SUGGESTION.name())
-        questionDto.setOptions(options)
-        questionDto.setCreationDate("2020-04-16 17:51")
+        def option2 = new Option()
+        option2.setContent(OPTION_CONTENT)
+        option2.setCorrect(true)
+        option2.setSequence(0)
 
-        questionSuggestionDto = new QuestionSuggestionDto()
-        questionSuggestionDto.setQuestionDto(questionDto)
-        questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
+        question2.setKey(2)
+        question2.setTitle(QUESTION_TITLE)
+        question2.setContent(QUESTION_CONTENT)
+        question2.addOption(option2)
+        question2.setType(Question.Type.SUGGESTION)
+        question2.setCourse(course)
     }
 
-    def "create question suggestion and retrieve it"() {
-        given: "a question suggestion"
-        def questionSuggestion = new QuestionSuggestion(user, course, questionSuggestionDto)
-        questionSuggestionRepository.save(questionSuggestion)
+    def "Create two question suggestions and retrieve both"() {
+        given: "Two question suggestion"
+        def questionSuggestion1 = new QuestionSuggestion()
+        questionSuggestion1.setUser(student)
+        questionSuggestion1.setQuestion(question1)
+        questionSuggestion1.setCreationDate(LocalDateTime.now())
+        questionSuggestion1.setStatus(QuestionSuggestion.Status.PENDING)
+        questionSuggestionRepository.save(questionSuggestion1)
+
+        def questionSuggestion2 = new QuestionSuggestion()
+        questionSuggestion2.setUser(student)
+        questionSuggestion2.setQuestion(question2)
+        questionSuggestion2.setCreationDate(LocalDateTime.now())
+        questionSuggestion2.setStatus(QuestionSuggestion.Status.PENDING)
+        questionSuggestionRepository.save(questionSuggestion2)
 
         when:
         def result = questionSuggestionService.getAllQuestionSuggestions(course.getId())
 
-        then:
-        result.size() == 1
-        def resQuestionSuggestion = result.get(0)
-        resQuestionSuggestion != null
-        resQuestionSuggestion.getId() != null
-        resQuestionSuggestion.getStatus() == QuestionSuggestion.Status.PENDING.name()
-        resQuestionSuggestion.getQuestionDto() != null
-        resQuestionSuggestion.getQuestionDto().getId() != null
-        resQuestionSuggestion.getTitle() == QUESTION_TITLE
-        resQuestionSuggestion.getContent() == QUESTION_CONTENT
-        resQuestionSuggestion.getQuestionDto().getType() == Question.Type.SUGGESTION.name()
-        resQuestionSuggestion.getQuestionDto().getStatus() == Question.Status.DISABLED.name()
+        then: "The first suggestion is retrieved intact"
+        result.size() == 2
+
+        def resQuestionSuggestion1 = result.get(0)
+        resQuestionSuggestion1 != null
+        resQuestionSuggestion1.getId() != null
+        resQuestionSuggestion1.getStatus() == QuestionSuggestion.Status.PENDING.name()
+        resQuestionSuggestion1.getQuestionDto() != null
+        resQuestionSuggestion1.getQuestionDto().getId() != null
+        resQuestionSuggestion1.getTitle() == QUESTION_TITLE
+        resQuestionSuggestion1.getContent() == QUESTION_CONTENT
+        resQuestionSuggestion1.getQuestionDto().getType() == Question.Type.SUGGESTION.name()
+        resQuestionSuggestion1.getQuestionDto().getStatus() == Question.Status.DISABLED.name()
+
+        and: "The second suggestion is retrieved intact"
+        def resQuestionSuggestion2 = result.get(1)
+        resQuestionSuggestion2 != null
+        resQuestionSuggestion2.getId() != null
+        resQuestionSuggestion2.getStatus() == QuestionSuggestion.Status.PENDING.name()
+        resQuestionSuggestion2.getQuestionDto() != null
+        resQuestionSuggestion2.getQuestionDto().getId() != null
+        resQuestionSuggestion2.getTitle() == QUESTION_TITLE
+        resQuestionSuggestion2.getContent() == QUESTION_CONTENT
+        resQuestionSuggestion2.getQuestionDto().getType() == Question.Type.SUGGESTION.name()
+        resQuestionSuggestion2.getQuestionDto().getStatus() == Question.Status.DISABLED.name()
     }
 
-    def "retrieve all question suggestions with no given course"() {
-        given: "a question suggestion"
-        def questionSuggestion = new QuestionSuggestion(user, course, questionSuggestionDto)
+    def "Cannot retrieve question suggestions given an invalid course id"() {
+        given: "A question suggestion"
+        def questionSuggestion = new QuestionSuggestion()
+        questionSuggestion.setUser(student)
+        questionSuggestion.setQuestion(question1)
+        questionSuggestion.setStatus(QuestionSuggestion.Status.PENDING)
         questionSuggestionRepository.save(questionSuggestion)
 
         when:
-        questionSuggestionService.getQuestionSuggestions(user.getId(), null)
+        questionSuggestionService.getAllQuestionSuggestions(0)
 
-        then: "an exception is thrown"
+        then: "An exception is thrown"
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_COURSEID
+        exception.getErrorMessage() == COURSE_NOT_FOUND
     }
 
     @TestConfiguration

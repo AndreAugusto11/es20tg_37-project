@@ -69,7 +69,7 @@ class RemoveQuestionSuggestionTest extends Specification {
         course.setType(Course.Type.TECNICO)
         courseRepository.save(course)
 
-        def student = new User()
+        student = new User()
         student.setName(STUDENT_NAME)
         student.setUsername(STUDENT_USERNAME)
         student.setRole(User.Role.STUDENT)
