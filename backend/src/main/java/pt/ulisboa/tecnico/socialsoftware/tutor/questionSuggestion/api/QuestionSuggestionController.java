@@ -85,4 +85,12 @@ public class QuestionSuggestionController {
             (@PathVariable int questionSuggestionId, @Valid @RequestBody QuestionSuggestionDto questionSuggestionDto) {
         return questionSuggestionService.updateRejectedQuestionSuggestion(questionSuggestionId, questionSuggestionDto);
     }
+
+    @DeleteMapping("/questionSuggestions/{questionSuggestionId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#questionSuggestionId, 'QUESTION_SUGGESTION.ACCESS'))")
+    public ResponseEntity removeCourseExecution(@PathVariable Integer questionSuggestionId) {
+        questionSuggestionService.removeQuestionSuggestion(questionSuggestionId);
+
+        return ResponseEntity.ok().build();
+    }
 }
