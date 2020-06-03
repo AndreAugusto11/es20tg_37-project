@@ -79,6 +79,12 @@ public class QuestionSuggestionController {
         return questionSuggestionService.getAllQuestionSuggestions(courseId);
     }
 
+    @GetMapping("/questionSuggestions")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public List<QuestionSuggestionDto> getAllQuestionSuggestions() {
+        return questionSuggestionService.getAllQuestionSuggestions();
+    }
+
     @PutMapping("/questionSuggestions/{questionSuggestionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionSuggestionId, 'QUESTION_SUGGESTION.ACCESS')")
     public QuestionSuggestionDto updateRejectedQuestionSuggestion
