@@ -924,6 +924,12 @@ export default class RemoteServices {
       });
   }
 
+  static async removeQuestionSuggestion(questionSuggestionId: number) {
+    return httpClient.delete(`/questionSuggestions/${questionSuggestionId}`).catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
+  }
+
   static async getQuestionSuggestions(): Promise<QuestionSuggestion[]> {
     return httpClient
       .get(
@@ -943,6 +949,21 @@ export default class RemoteServices {
     return httpClient
       .get(
         `/courses/${Store.getters.getCurrentCourse.courseId}/allQuestionSuggestions`
+      )
+      .then(response => {
+        return response.data.map((questionSuggestion: any) => {
+          return new QuestionSuggestion(questionSuggestion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getAllQuestionSuggestionsAdmin(): Promise<QuestionSuggestion[]> {
+    return httpClient
+      .get(
+        '/questionSuggestions'
       )
       .then(response => {
         return response.data.map((questionSuggestion: any) => {

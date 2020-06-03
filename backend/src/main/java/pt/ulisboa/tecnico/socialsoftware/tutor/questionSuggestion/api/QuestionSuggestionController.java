@@ -80,7 +80,7 @@ public class QuestionSuggestionController {
     }
 
     @GetMapping("/questionSuggestions")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
     public List<QuestionSuggestionDto> getAllQuestionSuggestions() {
         return questionSuggestionService.getAllQuestionSuggestions();
     }

@@ -42,6 +42,15 @@
                 <v-list-item-title>Manage Courses</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+
+            <v-list-item to="/admin/suggestions" data-cy="manageSuggestionsMenuButton">
+              <v-list-item-action>
+                <v-icon>mdi-message-plus</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Manage Suggestions</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
 
@@ -277,6 +286,15 @@
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Manage Courses</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/admin/suggestions">
+            <v-list-item-action>
+              <v-icon>mdi-message-plus</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Question Suggestions</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>

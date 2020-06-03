@@ -33,6 +33,7 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import ListClarificationRequestsView from '@/views/discussion/ListClarificationRequestsView.vue';
 import QuestionClarificationRequestsView from '@/views/student/discussion/QuestionClarificationRequestsView.vue';
 import ClarificationRequestView from '@/views/discussion/ClarificationRequestView.vue';
+import AdminQuestionSuggestionsView from '@/views/admin/questionSuggestion/AdminQuestionSuggestionView.vue';
 
 Vue.use(Router);
 
@@ -299,6 +300,15 @@ let router = new Router({
           component: CoursesView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Manage Courses',
+            requiredAuth: 'Admin'
+          }
+        },
+        {
+          path: 'suggestions',
+          name: 'suggestionsAdmin',
+          component: AdminQuestionSuggestionsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Manage Question Suggestions',
             requiredAuth: 'Admin'
           }
         }

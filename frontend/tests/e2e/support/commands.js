@@ -286,6 +286,15 @@ Cypress.Commands.add('rejectQuestionSuggestionShow', (title, text) => {
   cy.get('[data-cy="saveJustification"]').click({ force: true });
 });
 
+Cypress.Commands.add('removeQuestionSuggestion', (title) => {
+  cy.contains(title)
+    .parent()
+    .children()
+    .should('have.length', 5)
+    .find('[data-cy="removeButton"]')
+    .click({ force: true });
+});
+
 Cypress.Commands.add(
   'updateRejectedQuestionSuggestion',
   (title, newTitle, question, op0, op1, op2, op3) => {

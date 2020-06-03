@@ -20,9 +20,9 @@
             class="mx-2"
           />
           <v-spacer />
-          <v-btn color="primary" dark @click="newQuestionSuggestion"
-            >New Suggestion</v-btn
-          >
+          <v-btn color="primary" dark @click="newQuestionSuggestion">
+            New Suggestion
+          </v-btn>
         </v-card-title>
       </template>
 
