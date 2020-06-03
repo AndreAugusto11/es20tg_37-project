@@ -11,34 +11,39 @@
       :key="update"
     >
       <template v-slot:top>
-        <v-subheader class="font-weight-bold" style="font-size: 20px; color:black;">Tournaments</v-subheader>
+        <v-card-title>
+        <span class="headline">
+          Tournaments
+        </span>
+        </v-card-title>
+
         <v-row align="left">
           <v-col class="d-flex" cols="12" sm="4">
             <v-text-field
-                    v-model="search"
-                    append-icon="search"
-                    label="Search"
-                    class="mx-2"
+                v-model="search"
+                append-icon="search"
+                label="Search"
+                class="mx-2"
             />
           </v-col>
           <v-col class="mt-3 d-flex" cols="12" sm="4">
             <v-select
-                    :items="tournamentsFilters"
-                    label="Tournaments"
-                    dense
-                    outlined
-                    class="ml-5"
-                    style="max-width: 300px;"
-                    value="All Tournaments"
-                    v-on:change="changeTournamentsFilter"
+                :items="tournamentsFilters"
+                label="Tournaments"
+                dense
+                outlined
+                class="ml-5"
+                style="max-width: 300px;"
+                value="All Tournaments"
+                v-on:change="changeTournamentsFilter"
             />
           </v-col>
           <v-col class="mt-3" cols="12" sm="4" align="right">
             <v-btn
-                    color="primary"
-                    dark
-                    @click="newTournament"
-                    data-cy="createButton"
+                color="primary"
+                dark
+                @click="newTournament"
+                data-cy="createButton"
             >
               New Tournament
             </v-btn>
@@ -57,13 +62,13 @@
         <v-tooltip v-if="canEnroll(item)" bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-                    x-large
-                    class="mr-2"
-                    color="primary"
-                    dark
-                    v-on="on"
-                    @click="enrollTournament(item)"
-                    data-cy="enrollTournament"
+                x-large
+                class="mr-2"
+                color="primary"
+                dark
+                v-on="on"
+                @click="enrollTournament(item)"
+                data-cy="enrollTournament"
             >
               mdi-location-enter
             </v-icon>
@@ -74,11 +79,11 @@
         <v-tooltip v-else bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-                    x-large
-                    class="mr-2"
-                    v-on="on"
-                    disabled
-                    data-cy="disabledEnrollTournament"
+                x-large
+                class="mr-2"
+                v-on="on"
+                disabled
+                data-cy="disabledEnrollTournament"
             >
               mdi-location-enter
             </v-icon>
@@ -89,13 +94,13 @@
         <v-tooltip v-if="canAnswer(item)" bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-                    x-large
-                    class="mr-2"
-                    color="primary"
-                    dark
-                    v-on="on"
-                    @click="answerQuiz(item)"
-                    data-cy="answerTournament"
+                x-large
+                class="mr-2"
+                color="primary"
+                dark
+                v-on="on"
+                @click="answerQuiz(item)"
+                data-cy="answerTournament"
             >
               mdi-file-move
             </v-icon>
@@ -106,10 +111,10 @@
         <v-tooltip v-else bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-                    x-large
-                    class="mr-2"
-                    v-on="on"
-                    disabled
+                x-large
+                class="mr-2"
+                v-on="on"
+                disabled
             >
               mdi-file-move
             </v-icon>
@@ -120,13 +125,13 @@
         <v-tooltip v-if="myTournaments.includes(item) && item.status === 'CREATED'" bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-                    x-large
-                    class="mr-2"
-                    color="red"
-                    dark
-                    v-on="on"
-                    @click="cancelTournament(item)"
-                    data-cy="cancelTournament"
+                x-large
+                class="mr-2"
+                color="red"
+                dark
+                v-on="on"
+                @click="cancelTournament(item)"
+                data-cy="cancelTournament"
             >
               mdi-cancel
             </v-icon>
@@ -137,11 +142,11 @@
         <v-tooltip v-else bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-                    x-large
-                    class="mr-2"
-                    v-on="on"
-                    disabled
-                    data-cy="disabledCancelTournament"
+                x-large
+                class="mr-2"
+                v-on="on"
+                disabled
+                data-cy="disabledCancelTournament"
             >
               mdi-cancel
             </v-icon>

@@ -209,6 +209,14 @@
           <v-icon>fa fa-book</v-icon>
         </v-btn>
 
+        <v-switch
+            v-model="$vuetify.theme.dark"
+            hide-details
+            inset
+            style="margin-top: 20px; margin-left: 5px;"
+            color="white"
+        />
+
         <v-btn
           v-if="isLoggedIn"
           @click="logout"

@@ -20,6 +20,11 @@
         >
             <template v-slot:top>
                 <v-card-title>
+                  <span class="headline">
+                    Discussions
+                  </span>
+                </v-card-title>
+                <v-card-title>
                     <v-text-field
                             v-model="search"
                             append-icon="search"

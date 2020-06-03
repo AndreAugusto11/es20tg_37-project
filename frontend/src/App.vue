@@ -1,12 +1,14 @@
 <template>
-  <v-app id="app">
-    <top-bar />
-    <div class="scrollbar">
-      <error-message />
-      <loading />
-      <router-view />
-    </div>
-  </v-app>
+  <v-theme-provider root>
+    <v-app id="app">
+      <top-bar />
+      <div class="scrollbar">
+        <error-message />
+        <loading />
+        <router-view />
+      </div>
+    </v-app>
+  </v-theme-provider>
 </template>
 
 <script lang="ts">

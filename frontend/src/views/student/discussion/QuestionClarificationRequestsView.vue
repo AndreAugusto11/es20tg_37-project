@@ -1,15 +1,11 @@
 <template>
   <div>
     <v-card class="table">
-      <v-row
-              align="center"
-              class="spacer"
-              no-gutters
-      >
-          <v-col>
-              <v-subheader style="font-size: 20px; color:black;" class="mb-2 font-weight-bold">Question</v-subheader>
-          </v-col>
-      </v-row>
+        <v-card-title>
+            <span class="headline">
+                Question
+            </span>
+        </v-card-title>
       <v-row
               align="center"
               class="spacer ml-5"
@@ -54,7 +50,11 @@
               @click:row='openClarificationRequest'
       >
           <template v-slot:top>
-              <v-subheader class="font-weight-bold" style="font-size: 20px; color:black;">Clarification Requests</v-subheader>
+              <v-card-title>
+                <span class="headline">
+                    Discussions
+                </span>
+              </v-card-title>
               <v-card-title>
                   <v-text-field
                           v-model="search"

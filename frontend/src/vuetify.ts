@@ -13,6 +13,7 @@ const vuetify = new Vuetify({
   },
   iconfont: 'fa',
   theme: {
+    dark: false,
     themes: {
       dark: {
         primary: 'blue',
