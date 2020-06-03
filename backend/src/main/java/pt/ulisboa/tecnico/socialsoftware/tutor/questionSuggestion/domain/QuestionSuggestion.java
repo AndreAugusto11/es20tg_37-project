@@ -70,13 +70,13 @@ public class QuestionSuggestion {
         return this.question.getKey();
     }
 
-    public String getTitle(){ return question.getTitle(); }
+    public String getTitle() { return question.getTitle(); }
 
-    public void setTitle(String title){ this.question.setTitle(title); }
+    public void setTitle(String title) { this.question.setTitle(title); }
 
-    public String getContent(){ return question.getContent(); }
+    public String getContent() { return question.getContent(); }
 
-    public void setContent(String content){ this.question.setContent(content); }
+    public void setContent(String content) { this.question.setContent(content); }
 
     public QuestionSuggestion.Status getStatus() { return status; }
 
@@ -84,9 +84,9 @@ public class QuestionSuggestion {
 
     public Image getImage(){ return question.getImage(); }
 
-    public void setImage(Image image){ this.question.setImage(image);}
+    public void setImage(Image image){ this.question.setImage(image); }
 
-    public LocalDateTime getCreationDate(){ return creationDate; }
+    public LocalDateTime getCreationDate() { return creationDate; }
 
     public void setCreationDate(LocalDateTime creationDate) {
         if (this.creationDate == null) {

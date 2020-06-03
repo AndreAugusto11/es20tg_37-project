@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -45,6 +46,9 @@ public class QuestionSuggestionService {
 
     @Autowired
     CourseRepository courseRepository;
+
+    @Autowired
+    private QuestionService questionService;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -185,11 +189,19 @@ public class QuestionSuggestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSuggestionDto> getAllQuestionSuggestions() {
-
         return questionSuggestionRepository.findAll().stream()
                 .map(QuestionSuggestionDto::new)
                 .sorted(Comparator.comparing(QuestionSuggestionDto::getCreationDate).reversed())
                 .collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public QuestionSuggestionDto findQuestionSuggestionById(int questionSuggestionId) {
+        return questionSuggestionRepository.findById(questionSuggestionId).map(QuestionSuggestionDto::new)
+                .orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -220,6 +232,20 @@ public class QuestionSuggestionService {
 
         questionSuggestion.update(questionSuggestionDto);
         return new QuestionSuggestionDto(questionSuggestion);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void uploadImage(int questionSuggestionId, String type) {
+        QuestionSuggestion questionSuggestion = questionSuggestionRepository.findById(questionSuggestionId)
+                .orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
+
+        if (questionSuggestion.getQuestion() == null)
+            throw new TutorException(EMPTY_QUESTION_SUGGESTION, questionSuggestionId);
+
+        questionService.uploadImage(questionSuggestion.getQuestion().getId(), type);
     }
 
     @Retryable(

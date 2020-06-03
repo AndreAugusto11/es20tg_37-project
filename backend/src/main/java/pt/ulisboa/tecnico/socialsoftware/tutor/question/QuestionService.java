@@ -173,12 +173,18 @@ public class QuestionService {
             image = new Image();
 
             question.setImage(image);
+            setImageUrl(question, type);
 
             imageRepository.save(image);
+        } else {
+            setImageUrl(question, type);
         }
+    }
 
+    private void setImageUrl(Question question, String type) {
         question.getImage().setUrl(question.getCourse().getName().replaceAll("\\s", "") +
                 question.getCourse().getType() +
+                "q" +
                 question.getKey() +
                 "." + type);
     }
