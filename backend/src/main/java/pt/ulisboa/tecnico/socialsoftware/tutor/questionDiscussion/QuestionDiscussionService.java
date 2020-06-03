@@ -1,11 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
@@ -13,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer;
@@ -27,12 +30,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -48,6 +52,9 @@ public class QuestionDiscussionService {
 
     @Autowired
     ClarificationRequestAnswerRepository clarificationRequestAnswerRepository;
+
+    @Autowired
+    ImageRepository imageRepository;
 
     @Autowired
     CourseExecutionRepository courseExecutionRepository;
@@ -80,9 +87,6 @@ public class QuestionDiscussionService {
         checkQuestionAnswerMatchQuestion(questionAnswer, question);
 
         ClarificationRequest clarificationRequest = new ClarificationRequest(questionAnswer, question, user, clarificationRequestDto.getContent());
-        if (clarificationRequestDto.getImage() != null) {
-            addImage(clarificationRequestDto, clarificationRequest);
-        }
 
         entityManager.persist(clarificationRequest);
         return new ClarificationRequestDto(clarificationRequest);
@@ -137,12 +141,6 @@ public class QuestionDiscussionService {
             throw new TutorException(USER_NOT_FOUND_USERNAME, username);
         }
         return user;
-    }
-
-    private void addImage(ClarificationRequestDto clarificationRequestDto, ClarificationRequest clarificationRequest) {
-        Image img = new Image(clarificationRequestDto.getImage());
-        clarificationRequest.setImage(img);
-        img.setClarificationRequest(clarificationRequest);
     }
 
     private void checkQuestionAnswerMatchQuestion(QuestionAnswer questionAnswer, Question question) {
@@ -258,5 +256,31 @@ public class QuestionDiscussionService {
         return courseExecutionRepository.findById(executionId)
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId))
                 .getCourse();
+    }
+
+    public String uploadImage(int clarificationRequestId, String type) {
+
+        ClarificationRequest clarificationRequest = clarificationRequestRepository.findById(clarificationRequestId)
+                .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_NOT_FOUND, clarificationRequestId));
+
+        if (clarificationRequest.getImage() != null) {
+            throw new TutorException(CLARIFICATION_REQUEST_ALREADY_HAS_IMAGE);
+        }
+
+        Image image = new Image();
+
+        image.setUrl(clarificationRequest.getQuestion().getCourse().getName().replaceAll("\\s", "") +
+                clarificationRequest.getQuestion().getCourse().getType() +
+                "-CLAR_REQ-" +
+                clarificationRequest.getKey() +
+                "." + type);
+
+        clarificationRequest.setImage(image);
+        image.setClarificationRequest(clarificationRequest);
+        imageRepository.save(image);
+
+        System.out.println("Image posted with URL " + clarificationRequest.getImage().getUrl());
+
+        return clarificationRequest.getImage().getUrl();
     }
 }

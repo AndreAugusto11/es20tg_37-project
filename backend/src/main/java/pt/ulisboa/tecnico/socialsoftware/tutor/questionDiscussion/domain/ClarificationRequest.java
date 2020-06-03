@@ -10,8 +10,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -25,6 +28,8 @@ public class ClarificationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    private Integer key;
 
     @ManyToOne
     @JoinColumn(name = "question_answer_id")
@@ -80,6 +85,10 @@ public class ClarificationRequest {
 
     public void setId(Integer id) { this.id = id; }
 
+    public void setKey(Integer key) {
+        this.key = key;
+    }
+
     public QuestionAnswer getQuestionAnswer() { return questionAnswer; }
 
     public void setQuestionAnswer(QuestionAnswer questionAnswer) { this.questionAnswer = questionAnswer; }
@@ -124,5 +133,28 @@ public class ClarificationRequest {
 
     public void setPublicClarificationRequest(PublicClarificationRequest publicClarificationRequest) {
         this.publicClarificationRequest = publicClarificationRequest;
+    }
+
+    public Integer getKey() {
+        if (this.key == null)
+            this.generateKeys();
+
+        return key;
+    }
+
+    private void generateKeys() {
+        int max = this.getQuestion().getClarificationRequest().stream()
+                .filter(question -> question.key != null)
+                .map(ClarificationRequest::getKey)
+                .max(Comparator.comparing(Integer::valueOf))
+                .orElse(0);
+
+        List<ClarificationRequest> nullKeyClarifications = this.getQuestion().getClarificationRequest().stream()
+                .filter(question -> question.key == null).collect(Collectors.toList());
+
+        for (ClarificationRequest clarificationRequest: nullKeyClarifications) {
+            max = max + 1;
+            clarificationRequest.setKey(max);
+        }
     }
 }

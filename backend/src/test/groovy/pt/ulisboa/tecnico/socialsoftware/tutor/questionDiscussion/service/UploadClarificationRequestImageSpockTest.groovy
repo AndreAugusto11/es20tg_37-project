@@ -1,41 +1,42 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.service;
+package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.service
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService;
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.ClarificationRequestRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.repository.PublicClarificationRequestRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
-import spock.lang.Shared;
-import spock.lang.Specification;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import spock.lang.Shared
+import spock.lang.Specification
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_ALREADY_HAS_IMAGE
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_NOT_FOUND
 
 @DataJpaTest
-class CreatePublicClarificationRequestSpockTest extends Specification {
+class UploadClarificationRequestImageSpockTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String CLARIFICATION_CONTENT = "clarification request content"
+    public static final Integer CLARIFICATION_REQUEST_ID_NOT_VALID = 1234
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     public static final Integer TIME_TAKEN = 1234
@@ -45,7 +46,7 @@ class CreatePublicClarificationRequestSpockTest extends Specification {
     public static final String OPTION_CONTENT = "optionId content"
     public static final Integer SEQUENCE = 0
     public static final String URL = 'URL'
-    private Random rand = new Random();
+    public static final String FILE_TYPE_PNG = 'PNG'
 
     @Autowired
     QuestionDiscussionService questionDiscussionService
@@ -79,9 +80,6 @@ class CreatePublicClarificationRequestSpockTest extends Specification {
 
     @Autowired
     ClarificationRequestRepository clarificationRequestRepository
-
-    @Autowired
-    PublicClarificationRequestRepository publicClarificationRequestRepository
 
     @Shared
     def user
@@ -140,72 +138,58 @@ class CreatePublicClarificationRequestSpockTest extends Specification {
         quizAnswerRepository.save(quizAnswer)
     }
 
-    def "create public clarification request"() {
+    def "upload image to created clarification request"() {
         given: "a question answer answered"
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
         quizAnswer.addQuestionAnswer(questionAnswer)
         questionAnswerRepository.save(questionAnswer)
 
-        and: "a clarification request"
+        and: "a Clarification Request"
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
         clarificationRequestRepository.save(clarificationRequest)
 
+        def clarificationRequestId = clarificationRequestRepository.findAll().get(0).getId()
+
         when:
-        questionDiscussionService.createPublicClarificationRequest(clarificationRequest.getId())
+        questionDiscussionService.uploadImage(clarificationRequestId, FILE_TYPE_PNG)
 
-        then: "the correct public clarification request is inside the repository"
-        publicClarificationRequestRepository.findAll().size() == 1
-        def result = publicClarificationRequestRepository.findAll().get(0)
+        then: "the image is associated to the clarification request inside the repository"
+        clarificationRequestRepository.findAll().size() == 1
+        def result = clarificationRequestRepository.findAll().get(0)
         result != null
-
         and: "has the correct values"
-        result.getId() != null
-        result.getCourse() == course
-        result.getClarificationRequest() == clarificationRequest
-
-        and: "is associated correctly"
-        clarificationRequest.getPublicClarificationRequest() == result
-        course.getPublicClarificationRequests().contains(result)
+        result.getImage().getUrl() == course.getName().replaceAll("\\s", "") + course.getType() + "-CLAR_REQ-1." +  FILE_TYPE_PNG
+        result.getImage().getClarificationRequest() == clarificationRequest
     }
 
-    def "create public clarification request to a non existing clarification request"() {
+    def "upload two images to the same clarification request"() {
         given: "a question answer answered"
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
         quizAnswer.addQuestionAnswer(questionAnswer)
         questionAnswerRepository.save(questionAnswer)
 
-        and: "a clarification request"
+        and: "a Clarification Request"
         def clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
         clarificationRequestRepository.save(clarificationRequest)
 
+        def clarificationRequestId = clarificationRequestRepository.findAll().get(0).getId()
+
         when:
-        questionDiscussionService.createPublicClarificationRequest(rand.nextInt(1000000))
+        questionDiscussionService.uploadImage(clarificationRequestId, FILE_TYPE_PNG)
+        questionDiscussionService.uploadImage(clarificationRequestId, FILE_TYPE_PNG)
 
-        then: "the repository is empty"
-        publicClarificationRequestRepository.findAll().size() == 0
+        then: "an exeption should be thrown"
+        def error = thrown(TutorException)
+        error.errorMessage == CLARIFICATION_REQUEST_ALREADY_HAS_IMAGE
+    }
 
-        and: "an exception is thrown"
+    def "upload an image to a non existing clarification request"() {
+        when:
+        questionDiscussionService.uploadImage(CLARIFICATION_REQUEST_ID_NOT_VALID, FILE_TYPE_PNG)
+
+        then: "an exeption should be thrown"
         def error = thrown(TutorException)
         error.errorMessage == CLARIFICATION_REQUEST_NOT_FOUND
-    }
-
-    def "create public clarification request when clarification request is already public"() {
-        given: "a question answer answered"
-        questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
-        quizAnswer.addQuestionAnswer(questionAnswer)
-        questionAnswerRepository.save(questionAnswer)
-
-        and: "a clarification request"
-        def clarificationRequest = new ClarificationRequest(questionAnswer, question, user, CLARIFICATION_CONTENT)
-        clarificationRequestRepository.save(clarificationRequest)
-
-        when:
-        questionDiscussionService.createPublicClarificationRequest(clarificationRequest.getId())
-        questionDiscussionService.createPublicClarificationRequest(clarificationRequest.getId())
-
-        then: "an exception is thrown"
-        def error = thrown(TutorException)
-        error.errorMessage == CLARIFICATION_REQUEST_IS_ALREADY_PUBLIC
     }
 
     @TestConfiguration

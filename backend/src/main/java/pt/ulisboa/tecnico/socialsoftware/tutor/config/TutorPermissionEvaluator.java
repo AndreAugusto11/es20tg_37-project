@@ -63,6 +63,8 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                 case "DEMO.ACCESS":
                     CourseDto courseDto = courseService.getCourseExecutionById(id);
                     return courseDto.getName().equals("Demo Course");
+                case "CLARIFICATION_REQUEST.ACCESS":
+                    return userCreatedClarificationRequest(userId, id);
                 case "COURSE.ACCESS":
                     return userHasAnExecutionOfTheCourse(userId, id);
                 case "EXECUTION.ACCESS":
@@ -99,6 +101,11 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
     private boolean userHasAnswered(int userId, int id) {
         return userService.getQuestionAnswers(userId).stream()
                 .anyMatch(questionAnswer -> questionAnswer.getId() == id);
+    }
+
+    private boolean userCreatedClarificationRequest(int userId, int id) {
+        return userService.getClarificationRequests(userId).stream()
+                .anyMatch(clarificationRequest -> clarificationRequest.getId() == id);
     }
 
      @Override

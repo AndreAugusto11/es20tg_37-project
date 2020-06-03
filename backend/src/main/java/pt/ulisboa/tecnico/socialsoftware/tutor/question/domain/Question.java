@@ -69,7 +69,7 @@ public class Question implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval=true)
     private final Set<QuizQuestion> quizQuestions = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval=true)
     private Set<ClarificationRequest> clarificationRequests = new HashSet<>();
 
     @ManyToMany(mappedBy = "questions")
