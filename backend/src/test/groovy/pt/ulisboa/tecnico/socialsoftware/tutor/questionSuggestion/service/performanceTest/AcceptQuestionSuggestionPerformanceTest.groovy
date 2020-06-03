@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
@@ -88,6 +89,11 @@ class AcceptQuestionSuggestionPerformanceTest extends Specification {
         @Bean
         QuestionSuggestionService questionSuggestionService() {
             return new QuestionSuggestionService()
+        }
+
+        @Bean
+        QuestionService questionService() {
+            return new QuestionService()
         }
     }
 }

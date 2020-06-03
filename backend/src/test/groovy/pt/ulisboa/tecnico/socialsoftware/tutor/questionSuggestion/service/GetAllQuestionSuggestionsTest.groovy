@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSuggestionService
@@ -22,11 +23,14 @@ import java.time.LocalDateTime
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND
 
 @DataJpaTest
-class GetAllQuestionSuggestionTest extends Specification {
+class GetAllQuestionSuggestionsTest extends Specification {
 
-    public static final String COURSE_NAME = "Software Architecture"
-    public static final String STUDENT_NAME = "Student Name"
-    public static final String STUDENT_USERNAME = "Student Username"
+    public static final String COURSE1_NAME = "Software Architecture"
+    public static final String COURSE2_NAME = "Distributed Systems"
+    public static final String STUDENT1_NAME = "Student1 Name"
+    public static final String STUDENT2_NAME = "Student2 Name"
+    public static final String STUDENT1_USERNAME = "Student1 Username"
+    public static final String STUDENT2_USERNAME = "Student2 Username"
     public static final String QUESTION_TITLE = "Question Title"
     public static final String QUESTION_CONTENT = "Question Content"
     public static final String OPTION_CONTENT = "Option Content"
@@ -46,22 +50,37 @@ class GetAllQuestionSuggestionTest extends Specification {
     @Autowired
     QuestionSuggestionRepository questionSuggestionRepository
 
-    def course = new Course()
-    def student = new User()
+    def course1 = new Course()
+    def course2 = new Course()
+
+    def student1 = new User()
+    def student2 = new User()
+
     def question1 = new Question()
     def question2 = new Question()
 
     def setup() {
-        course.setName(COURSE_NAME)
-        course.setType(Course.Type.TECNICO)
-        courseRepository.save(course)
+        course1.setName(COURSE1_NAME)
+        course1.setType(Course.Type.TECNICO)
+        courseRepository.save(course1)
 
-        student = new User()
-        student.setKey(1)
-        student.setName(STUDENT_NAME)
-        student.setUsername(STUDENT_USERNAME)
-        student.setRole(User.Role.STUDENT)
-        userRepository.save(student)
+        course2.setName(COURSE2_NAME)
+        course2.setType(Course.Type.TECNICO)
+        courseRepository.save(course2)
+
+        student1 = new User()
+        student1.setKey(1)
+        student1.setName(STUDENT1_NAME)
+        student1.setUsername(STUDENT1_USERNAME)
+        student1.setRole(User.Role.STUDENT)
+        userRepository.save(student1)
+
+        student2 = new User()
+        student2.setKey(2)
+        student2.setName(STUDENT2_NAME)
+        student2.setUsername(STUDENT2_USERNAME)
+        student2.setRole(User.Role.STUDENT)
+        userRepository.save(student2)
 
         def option1 = new Option()
         option1.setContent(OPTION_CONTENT)
@@ -73,7 +92,7 @@ class GetAllQuestionSuggestionTest extends Specification {
         question1.setContent(QUESTION_CONTENT)
         question1.addOption(option1)
         question1.setType(Question.Type.SUGGESTION)
-        question1.setCourse(course)
+        question1.setCourse(course1)
 
         def option2 = new Option()
         option2.setContent(OPTION_CONTENT)
@@ -85,27 +104,27 @@ class GetAllQuestionSuggestionTest extends Specification {
         question2.setContent(QUESTION_CONTENT)
         question2.addOption(option2)
         question2.setType(Question.Type.SUGGESTION)
-        question2.setCourse(course)
+        question2.setCourse(course2)
     }
 
-    def "Create two question suggestions and retrieve both"() {
+    def "Create two question suggestions for different courses and retrieve both"() {
         given: "Two question suggestion"
         def questionSuggestion1 = new QuestionSuggestion()
-        questionSuggestion1.setUser(student)
+        questionSuggestion1.setUser(student1)
         questionSuggestion1.setQuestion(question1)
         questionSuggestion1.setCreationDate(LocalDateTime.now())
         questionSuggestion1.setStatus(QuestionSuggestion.Status.PENDING)
         questionSuggestionRepository.save(questionSuggestion1)
 
         def questionSuggestion2 = new QuestionSuggestion()
-        questionSuggestion2.setUser(student)
+        questionSuggestion2.setUser(student2)
         questionSuggestion2.setQuestion(question2)
         questionSuggestion2.setCreationDate(LocalDateTime.now())
         questionSuggestion2.setStatus(QuestionSuggestion.Status.PENDING)
         questionSuggestionRepository.save(questionSuggestion2)
 
         when:
-        def result = questionSuggestionService.getAllQuestionSuggestions(course.getId())
+        def result = questionSuggestionService.getAllQuestionSuggestions()
 
         then: "The first suggestion is retrieved intact"
         result.size() == 2
@@ -134,28 +153,17 @@ class GetAllQuestionSuggestionTest extends Specification {
         resQuestionSuggestion2.getQuestionDto().getStatus() == Question.Status.DISABLED.name()
     }
 
-    def "Cannot retrieve question suggestions given an invalid course id"() {
-        given: "A question suggestion"
-        def questionSuggestion = new QuestionSuggestion()
-        questionSuggestion.setUser(student)
-        questionSuggestion.setQuestion(question1)
-        questionSuggestion.setStatus(QuestionSuggestion.Status.PENDING)
-        questionSuggestionRepository.save(questionSuggestion)
-
-        when:
-        questionSuggestionService.getAllQuestionSuggestions(0)
-
-        then: "An exception is thrown"
-        TutorException exception = thrown()
-        exception.getErrorMessage() == COURSE_NOT_FOUND
-    }
-
     @TestConfiguration
     static class QuestionSuggestionServiceImplTestContextConfiguration {
 
         @Bean
         QuestionSuggestionService questionSuggestionService() {
             return new QuestionSuggestionService()
+        }
+
+        @Bean
+        QuestionService questionService() {
+            return new QuestionService()
         }
     }
 }

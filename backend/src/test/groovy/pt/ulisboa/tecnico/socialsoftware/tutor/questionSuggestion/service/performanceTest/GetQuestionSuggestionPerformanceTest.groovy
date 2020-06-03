@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
@@ -117,6 +118,11 @@ class GetQuestionSuggestionPerformanceTest extends Specification {
         @Bean
         QuestionSuggestionService questionSuggestionService() {
             return new QuestionSuggestionService()
+        }
+
+        @Bean
+        QuestionService questionService() {
+            return new QuestionService()
         }
     }
 }
