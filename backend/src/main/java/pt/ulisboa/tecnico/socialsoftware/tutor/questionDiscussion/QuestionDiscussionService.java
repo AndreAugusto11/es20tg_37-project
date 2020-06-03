@@ -258,14 +258,14 @@ public class QuestionDiscussionService {
                 .getCourse();
     }
 
-    public String uploadImage(int clarificationRequestId, String type) {
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public String uploadClarificationRequestImage(int clarificationRequestId, String type) {
 
         ClarificationRequest clarificationRequest = clarificationRequestRepository.findById(clarificationRequestId)
                 .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_NOT_FOUND, clarificationRequestId));
 
-        if (clarificationRequest.getImage() != null) {
+        if (clarificationRequest.getImage() != null)
             throw new TutorException(CLARIFICATION_REQUEST_ALREADY_HAS_IMAGE);
-        }
 
         Image image = new Image();
 
@@ -282,5 +282,32 @@ public class QuestionDiscussionService {
         System.out.println("Image posted with URL " + clarificationRequest.getImage().getUrl());
 
         return clarificationRequest.getImage().getUrl();
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public String uploadClarificationRequestAnswerImage(int clarificationRequestAnswerId, String type) {
+
+        ClarificationRequestAnswer clarificationRequestAnswer = clarificationRequestAnswerRepository.findById(clarificationRequestAnswerId)
+                .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_ANSWER_NOT_FOUND, clarificationRequestAnswerId));
+
+        if (clarificationRequestAnswer.getImage() != null)
+            throw new TutorException(CLARIFICATION_REQUEST_ALREADY_HAS_IMAGE);
+
+        Image image = new Image();
+
+        image.setUrl(clarificationRequestAnswer.getClarificationRequest().getQuestion().getCourse().getName().replaceAll("\\s", "") +
+                clarificationRequestAnswer.getClarificationRequest().getQuestion().getCourse().getType() +
+                "-CLAR_REQ-" + clarificationRequestAnswer.getClarificationRequest().getId() +
+                "-CLAR_REQ_ANSW-" + clarificationRequestAnswer.getId() +
+                clarificationRequestAnswer.getKey() +
+                "." + type);
+
+        clarificationRequestAnswer.setImage(image);
+        image.setClarificationRequestAnswer(clarificationRequestAnswer);
+        imageRepository.save(image);
+
+        System.out.println("Image posted with URL " + clarificationRequestAnswer.getImage().getUrl());
+
+        return "www";
     }
 }

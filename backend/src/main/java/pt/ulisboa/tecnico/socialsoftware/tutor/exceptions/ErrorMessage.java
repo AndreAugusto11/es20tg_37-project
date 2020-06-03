@@ -62,6 +62,7 @@ public enum ErrorMessage {
     COURSE_TYPE_NOT_DEFINED("The course type is not defined"),
     CLARIFICATION_REQUEST_NOT_DEFINED("Clarification request is not defined"),
     CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED("Clarification request answer type is not defined"),
+    CLARIFICATION_REQUEST_ANSWER_NOT_FOUND("Clarification request answer not found with id %d"),
     COURSE_EXECUTION_ACRONYM_IS_EMPTY("The course execution acronym is empty"),
     COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY("The course execution academic term is empty"),
 

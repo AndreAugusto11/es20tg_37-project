@@ -54,7 +54,7 @@ public class QuestionDiscussionController {
         int lastIndex = Objects.requireNonNull(file.getContentType()).lastIndexOf('/');
         String type = file.getContentType().substring(lastIndex + 1);
 
-        String url = questionDiscussionService.uploadImage(clarificationRequestId, type);
+        String url = questionDiscussionService.uploadClarificationRequestImage(clarificationRequestId, type);
 
         Files.copy(file.getInputStream(), this.getTargetLocation(url), StandardCopyOption.REPLACE_EXISTING);
         return url;
@@ -90,6 +90,22 @@ public class QuestionDiscussionController {
                                                                           @PathVariable Integer clarificationRequestId,
                                                                           @Valid @RequestBody ClarificationRequestAnswerDto clarificationRequestAnswerDto) {
         return questionDiscussionService.createClarificationRequestAnswer(clarificationRequestId, clarificationRequestAnswerDto);
+    }
+
+    @PutMapping("/executions/{executionId}/clarificationRequestAnswers/{clarificationRequestAnswerId}/uploadImage")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public String uploadClarificationRequestAnswerImage(@PathVariable Integer clarificationRequestAnswerId,
+                                                        @RequestParam("file") MultipartFile file) throws IOException {
+        if (file == null)
+            throw new TutorException(FILE_NOT_DEFINED);
+
+        int lastIndex = Objects.requireNonNull(file.getContentType()).lastIndexOf('/');
+        String type = file.getContentType().substring(lastIndex + 1);
+
+        String url = questionDiscussionService.uploadClarificationRequestAnswerImage(clarificationRequestAnswerId, type);
+
+        Files.copy(file.getInputStream(), this.getTargetLocation(url), StandardCopyOption.REPLACE_EXISTING);
+        return url;
     }
 
     @GetMapping("/executions/{executionId}/clarificationRequests/{clarificationRequestId}/clarificationRequestAnswers")

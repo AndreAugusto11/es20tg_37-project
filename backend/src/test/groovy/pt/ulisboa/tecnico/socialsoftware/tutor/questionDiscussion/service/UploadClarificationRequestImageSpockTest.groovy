@@ -155,7 +155,7 @@ class UploadClarificationRequestImageSpockTest extends Specification {
         def clarificationRequestId = clarificationRequestRepository.findAll().get(0).getId()
 
         when:
-        questionDiscussionService.uploadImage(clarificationRequestId, FILE_TYPE_PNG)
+        questionDiscussionService.uploadClarificationRequestImage(clarificationRequestId, FILE_TYPE_PNG)
 
         then: "the clarification request is associated to the image inside the repository"
         clarificationRequestRepository.findAll().size() == 1
@@ -186,8 +186,8 @@ class UploadClarificationRequestImageSpockTest extends Specification {
         def clarificationRequestId = clarificationRequestRepository.findAll().get(0).getId()
 
         when:
-        questionDiscussionService.uploadImage(clarificationRequestId, FILE_TYPE_PNG)
-        questionDiscussionService.uploadImage(clarificationRequestId, FILE_TYPE_PNG)
+        questionDiscussionService.uploadClarificationRequestImage(clarificationRequestId, FILE_TYPE_PNG)
+        questionDiscussionService.uploadClarificationRequestImage(clarificationRequestId, FILE_TYPE_PNG)
 
         then: "an exeption should be thrown"
         def error = thrown(TutorException)
@@ -196,7 +196,7 @@ class UploadClarificationRequestImageSpockTest extends Specification {
 
     def "upload an image to a non existing clarification request"() {
         when:
-        questionDiscussionService.uploadImage(CLARIFICATION_REQUEST_ID_NOT_VALID, FILE_TYPE_PNG)
+        questionDiscussionService.uploadClarificationRequestImage(CLARIFICATION_REQUEST_ID_NOT_VALID, FILE_TYPE_PNG)
 
         then: "an exeption should be thrown"
         def error = thrown(TutorException)
