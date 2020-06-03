@@ -19,6 +19,7 @@ import Justification from '@/models/management/Justification';
 import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
 import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 import User from '@/models/user/User';
+import Image from '@/models/management/Image';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 50000;
@@ -712,9 +713,10 @@ export default class RemoteServices {
 
   static async createClarificationRequest(
     questionAnswerId: number,
-    clarificationRequest: ClarificationRequest
+    clarificationRequest: ClarificationRequest,
+    file: File
   ): Promise<ClarificationRequest> {
-    return httpClient
+    let newClarificationRequest = httpClient
       .post(
         `/questionAnswers/${questionAnswerId}/clarificationRequests`,
         clarificationRequest
@@ -725,6 +727,32 @@ export default class RemoteServices {
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
+    
+    if (file != null && newClarificationRequest != null) {
+      let formData = new FormData();
+      formData.append("file", file);
+      let url = httpClient
+      .put(`/clarificationRequests/${(await newClarificationRequest).id}/uploadImage`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then(response => {
+        return response.data as string;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+
+      newClarificationRequest.then(clarification => {
+        url.then(url => {
+          clarification.image = new Image();
+          clarification.image.url = url
+        });
+      });
+    }
+
+    return newClarificationRequest;
   }
 
   static async getClarificationRequests(): Promise<ClarificationRequest[]> {

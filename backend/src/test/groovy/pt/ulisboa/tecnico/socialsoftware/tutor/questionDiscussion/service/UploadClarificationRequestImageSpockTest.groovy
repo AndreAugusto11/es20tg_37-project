@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
@@ -80,6 +81,9 @@ class UploadClarificationRequestImageSpockTest extends Specification {
 
     @Autowired
     ClarificationRequestRepository clarificationRequestRepository
+
+    @Autowired
+    ImageRepository imageRepository
 
     @Shared
     def user
@@ -153,13 +157,20 @@ class UploadClarificationRequestImageSpockTest extends Specification {
         when:
         questionDiscussionService.uploadImage(clarificationRequestId, FILE_TYPE_PNG)
 
-        then: "the image is associated to the clarification request inside the repository"
+        then: "the clarification request is associated to the image inside the repository"
         clarificationRequestRepository.findAll().size() == 1
         def result = clarificationRequestRepository.findAll().get(0)
         result != null
+
         and: "has the correct values"
         result.getImage().getUrl() == course.getName().replaceAll("\\s", "") + course.getType() + "-CLAR_REQ-1." +  FILE_TYPE_PNG
         result.getImage().getClarificationRequest() == clarificationRequest
+
+        and: "the image is associated to the clarification request inside the repository"
+        imageRepository.findAll().size() == 1
+        def result2 = imageRepository.findAll().get(0)
+        result2 != null
+        result2.getClarificationRequest().getId() == clarificationRequestId
     }
 
     def "upload two images to the same clarification request"() {

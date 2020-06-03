@@ -115,26 +115,26 @@
         date_diff = new Date(milisec_diff);
 
         if (days > 0) {
-          return days + " Days ago";
+          return days + ' Days ago';
         }
         else if ((date_diff.getHours() - 1) > 0) {
           if ((date_diff.getHours() - 1) > 1) {
-            return (date_diff.getHours() - 1) + " Hours ago";
+            return (date_diff.getHours() - 1) + ' Hours ago';
           }
           else {
-            return (date_diff.getHours() - 1) + " Hour ago";
+            return (date_diff.getHours() - 1) + ' Hour ago';
           }
         }
         else if (date_diff.getMinutes() > 0) {
           if (date_diff.getMinutes() > 1) {
-            return date_diff.getMinutes() + " Minutes ago";
+            return date_diff.getMinutes() + ' Minutes ago';
           }
           else {
-            return date_diff.getMinutes() + " Minute ago";
+            return date_diff.getMinutes() + ' Minute ago';
           }
         }
         else {
-          return date_diff.getSeconds() + " Seconds ago";
+          return date_diff.getSeconds() + ' Seconds ago';
         }
       }
     }
