@@ -258,6 +258,7 @@ public class QuestionDiscussionService {
                 .getCourse();
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public String uploadImage(int clarificationRequestId, String type) {
 
         ClarificationRequest clarificationRequest = clarificationRequestRepository.findById(clarificationRequestId)
