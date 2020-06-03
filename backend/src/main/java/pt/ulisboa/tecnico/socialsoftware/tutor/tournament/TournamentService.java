@@ -9,7 +9,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -32,6 +41,15 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class TournamentService {
 	@Autowired
 	private TournamentRepository tournamentRepository;
+
+	@Autowired
+	private QuizRepository quizRepository;
+
+	@Autowired
+	private CourseExecutionRepository courseExecutionRepository;
+
+	@Autowired
+	private QuestionRepository questionRepository;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -111,6 +129,87 @@ public class TournamentService {
 		tournament.addUser(user);
 
 		return new TournamentDto(tournament);
+	}
+
+	// DUPLICATED CODE: Course Execution is missing from implementation !!
+	@Retryable(
+			value = { SQLException.class },
+			backoff = @Backoff(delay = 5000))
+	@Transactional(isolation = Isolation.REPEATABLE_READ)
+	public TournamentDto enrollStudentInTournament1(int userId, int tournamentId, int courseExecutionId) {
+
+		Tournament tournament = this.findTournamentById(tournamentId);
+
+		User user = userRepository.findById(userId)
+				.orElseThrow( () -> new TutorException(USER_NOT_FOUND, userId));
+
+		if (user.getRole() != User.Role.STUDENT)
+			throw new TutorException(TOURNAMENT_NOT_STUDENT);
+
+		if (tournament.getStatus() != Tournament.Status.CREATED)
+			throw new TutorException(TOURNAMENT_NOT_CREATED, tournamentId);
+
+		if (tournament.getUsers().stream().anyMatch(u -> u.getId().equals(userId)))
+			throw new TutorException(TOURNAMENT_STUDENT_ALREADY_ENROLLED, userId);
+
+		if (tournament.getQuiz() == null)
+			generateQuiz(tournament, courseExecutionId);
+
+		//TODO Check use of this code in jmeter
+		/*
+		Predicate<User> u1 = s -> s.getId().equals(userId);
+
+		//DEMO STUDENT has id 676 needed for load test
+		if(userId != 676 && tournament.getUsers().stream().anyMatch(u1))
+			throw new TutorException(TOURNAMENT_STUDENT_ALREADY_ENROLLED, userId);
+		*/
+
+		tournament.addUser(user);
+
+		return new TournamentDto(tournament);
+	}
+
+	private void generateQuiz(Tournament tournament, int courseExecutionId) {
+		CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+		Quiz quiz = initializeQuiz(tournament);
+
+		List<Question> questions = questionRepository.
+				findAvailableQuestionsFromTopics(tournament.getTopics().stream()
+						.map(Topic::getId)
+						.collect(Collectors.toList()));
+
+		quiz.setCreationDate(DateHandler.now());
+		quiz.setCourseExecution(courseExecution);
+
+		for (int i = 0; i < tournament.getNumberQuestions(); i++) {
+			Random rand = new Random();
+			Question question = questions.get(rand.nextInt(questions.size()));
+			new QuizQuestion(quiz, question, quiz.getQuizQuestions().size());
+		}
+
+		tournament.setQuiz(quiz);
+		quiz.setTournament(tournament);
+
+		quizRepository.save(quiz);
+	}
+
+	private Quiz initializeQuiz(Tournament tournament) {
+		Quiz quiz = new Quiz();
+		quiz.setType(Quiz.QuizType.GENERATED.name());
+		quiz.setKey(getMaxQuizKey() + 1);
+		quiz.setScramble(true);
+		quiz.setOneWay(false);
+		quiz.setQrCodeOnly(false);
+		quiz.setOneWay(false);
+		quiz.setAvailableDate(tournament.getStartTime());
+		quiz.setConclusionDate(tournament.getEndTime());
+
+		return quiz;
+	}
+
+	private Integer getMaxQuizKey() {
+		Integer maxQuizKey = quizRepository.getMaxQuizKey();
+		return maxQuizKey != null ? maxQuizKey : 0;
 	}
 
 	private Tournament tournamentQuizVerification(int userId, int tournamentId) {

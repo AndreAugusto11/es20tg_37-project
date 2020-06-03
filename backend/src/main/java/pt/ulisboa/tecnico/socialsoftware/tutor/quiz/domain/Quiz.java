@@ -157,7 +157,7 @@ public class Quiz implements DomainEntity {
     return title;
     }
 
-    public void settournament(Tournament tournament){this.tournament = tournament;}
+    public void setTournament(Tournament tournament) { this.tournament = tournament; }
 
     public void setTitle(String title) {
         if (title == null || title.isBlank())
