@@ -180,6 +180,18 @@ public class QuestionSuggestionService {
                 .collect(Collectors.toList());
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<QuestionSuggestionDto> getAllQuestionSuggestions() {
+
+        return questionSuggestionRepository.findAll().stream()
+                .map(QuestionSuggestionDto::new)
+                .sorted(Comparator.comparing(QuestionSuggestionDto::getCreationDate).reversed())
+                .collect(Collectors.toList());
+    }
+
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseDto findQuestionSuggestionCourse(int questionSuggestionId) {
         return questionSuggestionRepository.findById(questionSuggestionId)
