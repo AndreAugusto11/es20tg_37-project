@@ -271,8 +271,8 @@ public class QuestionDiscussionService {
 
         image.setUrl(clarificationRequest.getQuestion().getCourse().getName().replaceAll("\\s", "") +
                 clarificationRequest.getQuestion().getCourse().getType() +
-                "-CLAR_REQ-" +
-                clarificationRequest.getKey() +
+                "-Q_" + clarificationRequest.getQuestion().getId() +
+                "-CLAR_REQ-" + clarificationRequest.getKey() +
                 "." + type);
 
         clarificationRequest.setImage(image);

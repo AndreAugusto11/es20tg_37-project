@@ -108,7 +108,7 @@
         <v-row
                 align="center"
         >
-            <v-col>
+            <v-col v-if="this.clarificationRequest.image">
                 <span v-html="convertMarkDown('![image][image]', this.clarificationRequest.image)"/>
             </v-col>
         </v-row>
