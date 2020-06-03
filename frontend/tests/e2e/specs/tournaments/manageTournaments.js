@@ -5,13 +5,7 @@ describe('Tournaments walkthrough', () => {
     cy.exec('psql -d tutordb -c "Delete from users_created_tournaments;"')
     cy.exec('psql -d tutordb -c "Delete from tournaments_topics;"')
     cy.exec('psql -d tutordb -c "Delete from users_enrolled_tournaments;"')
-    cy.exec('psql -d tutordb -c "Delete from tournaments ;"')
-    cy.exec(
-      'psql -d tutordb -c "insert into tournaments(id,end_date,number_of_questions,start_date,status,user_id,quiz_id) values (1234,\'2019-05-26 00:00:00\',1,\'2021-05-24 00:00:00\',\'ONGOING\',676,5376);"'
-    );
-    cy.exec(
-      'psql -d tutordb -c "insert into tournaments_topics(tournament_id,topics_id) values (1234,82);"'
-    );
+    cy.exec('psql -d tutordb -c "Delete from tournaments;"')
     cy.demoStudentLogin();
   });
 
@@ -19,12 +13,14 @@ describe('Tournaments walkthrough', () => {
     cy.contains('Logout').click();
   });
 
-  it('login enroll in tournament and checks it Enrolled Tournaments', () => {
-    cy.enrollTournament('1234');
-    cy.demoStudentLogin();
+  it('Tournament is created and enrolls in it', () => {
+    cy.exec(
+      'psql -d tutordb -c "insert into tournaments(end_date,number_of_questions,start_date,status,user_id) values (\'2025-06-05 00:21:00\',1,\'2025-06-05 00:21:00\',\'CREATED\',678);"'
+    );
+    cy.enrollTournament('Student 678');
   });
 
-  it('login,checks Enrolled Tournaments,solves quiz', () => {
+  /* it('login,checks Enrolled Tournaments,solves quiz', () => {
     cy.exec(
       'psql -d tutordb -c "insert into tournaments_users (tournament_id,users_id) values(1234,676);"'
     );
@@ -34,5 +30,5 @@ describe('Tournaments walkthrough', () => {
 
     cy.answerTournament('1234');
     cy.demoStudentLogin();
-  });
+  }); */
 });

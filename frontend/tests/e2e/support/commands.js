@@ -69,10 +69,10 @@ Cypress.Commands.add(
 Cypress.Commands.add('createTournaments', (numQ) => {
   cy.contains('Tournaments').click();
   cy.get('[data-cy="createButton"]').click();
-  cy.wait(5000);
+  cy.wait(1000);
   cy.get('[data-cy="numQuest"]').type(numQ);
   cy.get('[data-cy="topicSelect"]').click({force: true});
-  cy.contains('Adventure').click();
+  cy.contains('Adventure').click({force: true});
   cy.get('#startDateInput-input').click({force: true}).type('{rightarrow}{enter}', {force: true});
   cy.get('#endDateInput-input').click({force: true}).type('{rightarrow}{rightarrow}{enter}', {force: true});
   cy.get('[data-cy="save"]').click({force: true});
@@ -89,19 +89,16 @@ Cypress.Commands.add('cancelTournaments', studentName => {
     .click();
 });
 
-Cypress.Commands.add('enrollTournament', id => {
+Cypress.Commands.add('enrollTournament', studentName => {
   cy.contains('Tournaments').click();
-  cy.contains('All Tournaments').click();
-  cy.contains(id)
+  cy.contains(studentName)
     .parent()
     .should('have.length', 1)
     .children()
     .should('have.length', 7)
     .find('[data-cy="enrollTournament"]')
     .click();
-  cy.contains('Tournaments').click();
-  cy.contains('Enrolled Tournaments').click();
-  cy.contains(id);
+  cy.get('[data-cy="disabledEnrollTournament"]').should('exist');
 });
 
 Cypress.Commands.add('answerTournament', id => {

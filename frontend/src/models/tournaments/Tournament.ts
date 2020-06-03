@@ -1,4 +1,5 @@
 import Topic from '@/models/management/Topic';
+import { ISOtoString } from '@/services/ConvertDateService';
 
 export class Tournament {
   id: number | null = null;
@@ -23,8 +24,10 @@ export class Tournament {
       this.enrolledStudentsIds = jsonObj.enrolledStudentsIds;
       this.enrolledStudentsNames = jsonObj.enrolledStudentsNames;
       this.topics = jsonObj.topics;
-      this.startTime = jsonObj.startTime;
-      this.endTime = jsonObj.endTime;
+      if (jsonObj.startTime)
+        this.startTime = ISOtoString(jsonObj.startTime);
+      if (jsonObj.endTime)
+        this.endTime = ISOtoString(jsonObj.endTime);
       this.status = jsonObj.status;
     }
   }

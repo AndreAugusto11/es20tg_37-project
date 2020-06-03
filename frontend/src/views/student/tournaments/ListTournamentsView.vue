@@ -8,6 +8,7 @@
       :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      :key="update"
     >
       <template v-slot:top>
         <v-subheader class="font-weight-bold" style="font-size: 20px; color:black;">Tournaments</v-subheader>
@@ -77,6 +78,7 @@
                     class="mr-2"
                     v-on="on"
                     disabled
+                    data-cy="disabledEnrollTournament"
             >
               mdi-location-enter
             </v-icon>
@@ -188,6 +190,7 @@ export default class ListTournamentsView extends Vue {
   createTournamentDialog: boolean = false;
   search: string = '';
   tournamentsFilters: string[] = ['All Tournaments', 'My Tournaments'];
+  update: number = 0;
   headers: object = [
     {
       text: 'Creator',
@@ -269,7 +272,9 @@ export default class ListTournamentsView extends Vue {
     ) {
       try {
         await RemoteServices.cancelTournament(tournamentToCancel);
-        this.tournaments = await RemoteServices.getCreatedTournaments();
+        this.tournaments[this.tournaments.indexOf(tournamentToCancel)].status = 'CANCELLED';
+        this.myTournaments[this.myTournaments.indexOf(tournamentToCancel)].status = 'CANCELLED';
+        this.update += 1;
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
@@ -279,7 +284,8 @@ export default class ListTournamentsView extends Vue {
   async enrollTournament(tournamentToEnroll: Tournament) {
     if (confirm('Are you sure you want to enroll?')) {
       try {
-        await RemoteServices.enrollTournament(tournamentToEnroll);
+        this.tournaments[this.tournaments.indexOf(tournamentToEnroll)] = await RemoteServices.enrollTournament(tournamentToEnroll);
+        this.update += 1;
       } catch (error) {
         await this.$store.dispatch('error', error);
       }

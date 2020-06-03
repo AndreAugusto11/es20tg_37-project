@@ -17,5 +17,6 @@ describe('Tournament Cancel', () => {
     cy.createTournaments('5');
     cy.cancelTournaments("Demo Student");
     cy.contains('CANCELLED').should('exist');
+    cy.get('[data-cy="disabledCancelTournament"]').should('exist');
   });
 });
