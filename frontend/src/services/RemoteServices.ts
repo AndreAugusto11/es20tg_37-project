@@ -713,10 +713,9 @@ export default class RemoteServices {
 
   static async createClarificationRequest(
     questionAnswerId: number,
-    clarificationRequest: ClarificationRequest,
-    file: File
+    clarificationRequest: ClarificationRequest
   ): Promise<ClarificationRequest> {
-    let newClarificationRequest = httpClient
+    return httpClient
       .post(
         `/questionAnswers/${questionAnswerId}/clarificationRequests`,
         clarificationRequest
@@ -727,32 +726,26 @@ export default class RemoteServices {
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
-    
-    if (file != null && newClarificationRequest != null) {
-      let formData = new FormData();
-      formData.append("file", file);
-      let url = httpClient
-      .put(`/clarificationRequests/${(await newClarificationRequest).id}/uploadImage`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      .then(response => {
-        return response.data as string;
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
+  }
 
-      newClarificationRequest.then(clarification => {
-        url.then(url => {
-          clarification.image = new Image();
-          clarification.image.url = url
-        });
-      });
-    }
-
-    return newClarificationRequest;
+  static async uploadClarificationRequestImage(
+    clarificationRequestId: number,
+    file: File
+  ): Promise<string> {
+    let formData = new FormData();
+    formData.append("file", file);
+    return httpClient
+    .put(`/clarificationRequests/${clarificationRequestId}/uploadImage`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    .then(response => {
+      return response.data as string;
+    })
+    .catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
   }
 
   static async getClarificationRequests(): Promise<ClarificationRequest[]> {
