@@ -3,13 +3,10 @@
     :value="dialog"
     @input="$emit('close-dialog')"
     @keydown.esc="closeQuestionSuggestionDialog"
-    max-width="75%"
+    max-width="65%"
+    max-height="80%"
   >
     <v-card>
-      <v-card-title>
-        <span class="headline">{{ questionSuggestion.questionDto.title }}</span>
-      </v-card-title>
-
       <v-card-text class="text-left">
         <show-questionSuggestion :questionSuggestion="questionSuggestion" />
       </v-card-text>
@@ -32,14 +29,11 @@
       </v-card-title>
 
       <v-card-text class="text-left">
-        <span
-          v-html="
-            convertMarkDown(
-              questionSuggestion.justificationDto.content,
-              questionSuggestion.justificationDto.image
-            )
-          "
-        />
+        <span v-html="convertMarkDown(questionSuggestion.justificationDto.content, null)" />
+      </v-card-text>
+
+      <v-card-text class="text-left" v-if="questionSuggestion.justificationDto.image">
+        <span v-html="convertMarkDown('![image][image]', questionSuggestion.justificationDto.image)" />
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -71,3 +65,9 @@ export default class ShowQuestionSuggestionDialog extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+    .v-application p {
+      margin-bottom: 0;
+    }
+</style>
