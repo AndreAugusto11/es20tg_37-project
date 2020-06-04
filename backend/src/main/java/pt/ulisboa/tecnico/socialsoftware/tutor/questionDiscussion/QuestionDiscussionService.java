@@ -271,8 +271,7 @@ public class QuestionDiscussionService {
 
         String url = clarificationRequest.getQuestion().getCourse().getName().replaceAll("\\s", "") +
                 clarificationRequest.getQuestion().getCourse().getType() +
-                "-CLAR_REQ-" +
-                clarificationRequest.getKey() +
+                "-CLAR_REQ-" + clarificationRequest.getKey() +
                 "." + type;
 
         image.setUrl(url);
@@ -299,9 +298,8 @@ public class QuestionDiscussionService {
 
         String url = clarificationRequestAnswer.getClarificationRequest().getQuestion().getCourse().getName().replaceAll("\\s", "") +
                 clarificationRequestAnswer.getClarificationRequest().getQuestion().getCourse().getType() +
-                "-CLAR_REQ-" + clarificationRequestAnswer.getClarificationRequest().getId() +
-                "-CLAR_REQ_ANSW-" + clarificationRequestAnswer.getId() +
-                clarificationRequestAnswer.getKey() +
+                "-CLAR_REQ-" + clarificationRequestAnswer.getClarificationRequest().getKey() +
+                "-ANSW-" + clarificationRequestAnswer.getKey() +
                 "." + type;
 
         image.setUrl(url);
@@ -310,7 +308,7 @@ public class QuestionDiscussionService {
         image.setClarificationRequestAnswer(clarificationRequestAnswer);
         imageRepository.save(image);
 
-        System.out.println("Image posted with URL " + url);
+        System.out.println("Image posted with URL " + url + " in clarification Req Ans with id " + clarificationRequestAnswer.getId());
 
         return url;
     }

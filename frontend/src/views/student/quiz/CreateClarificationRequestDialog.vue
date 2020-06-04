@@ -30,6 +30,7 @@
                 <template>
                   <v-file-input
                   label="File input"
+                  class="pr-3"
                   show-size
                   outlined
                   counter

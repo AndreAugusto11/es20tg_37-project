@@ -41,7 +41,7 @@
 
         <v-row
                 align="center"
-                class="spacer ml-5 mb-5"
+                class="spacer ml-5"
                 no-gutters
         >
             <v-col md="auto" class="mr-5">
@@ -52,6 +52,13 @@
             <v-col class="post-text">
                 <span v-html="convertMarkDown(this.clarificationRequestAnswer.content, null)" />
             </v-col>
+        </v-row>
+        <v-row
+                align="center"
+        >
+          <v-col v-if="this.clarificationRequestAnswer.image">
+              <span v-html="convertMarkDown('![image][image]', this.clarificationRequestAnswer.image)"/>
+          </v-col>
         </v-row>
 
         <v-row
@@ -143,5 +150,11 @@
 <style lang="scss" scoped>
     .post-text {
         text-align: left !important;
+    }
+
+    img {
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
     }
 </style>

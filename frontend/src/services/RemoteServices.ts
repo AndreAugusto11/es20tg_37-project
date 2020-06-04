@@ -802,9 +802,10 @@ export default class RemoteServices {
 
   static async createClarificationRequestAnswer(
     clarificationRequestId: number,
-    clarificationRequestAnswer: ClarificationRequestAnswer
+    clarificationRequestAnswer: ClarificationRequestAnswer,
+    file: File
   ): Promise<ClarificationRequestAnswer> {
-    return httpClient
+    let newClarificationRequestAnswer = httpClient
       .post(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/clarificationRequests/${clarificationRequestId}/clarificationRequestAnswers`,
         clarificationRequestAnswer
@@ -815,6 +816,32 @@ export default class RemoteServices {
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
+
+      if (file != null && newClarificationRequestAnswer != null) {
+        let formData = new FormData();
+        formData.append("file", file);
+        let url = httpClient
+        .put(`/clarificationRequestAnswers/${(await newClarificationRequestAnswer).id}/uploadImage`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        .then(response => {
+          return response.data as string;
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  
+        newClarificationRequestAnswer.then(clarificationAnswer => {
+          url.then(url => {
+            clarificationAnswer.image = new Image();
+            clarificationAnswer.image.url = url
+          });
+        });
+      }
+
+      return newClarificationRequestAnswer;
   }
 
   static async makeClarificationRequestPublic(

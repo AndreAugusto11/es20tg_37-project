@@ -116,6 +116,10 @@ public class ClarificationRequestAnswer {
         this.image = image;
     }
 
+    public void setKey(Integer key) {
+        this.key = key;
+    }
+
     public Integer getKey() {
         if (this.key == null)
             this.generateKeys();
@@ -124,18 +128,18 @@ public class ClarificationRequestAnswer {
     }
 
     private void generateKeys() {
-        int max = this.getClarificationRequest().getQuestion().getClarificationRequest().stream()
-                .filter(question -> question.getKey() != null)
-                .map(ClarificationRequest::getKey)
+        int max = this.getClarificationRequest().getClarificationRequestAnswer().stream()
+                .filter(clarificationRequestAnswer -> clarificationRequestAnswer.key != null)
+                .map(ClarificationRequestAnswer::getKey)
                 .max(Comparator.comparing(Integer::valueOf))
                 .orElse(0);
 
-        List<ClarificationRequest> nullKeyClarifications = this.getClarificationRequest().getQuestion().getClarificationRequest().stream()
-                .filter(question -> question.getKey() == null).collect(Collectors.toList());
+        List<ClarificationRequestAnswer> nullKeyClarifications = this.getClarificationRequest().getClarificationRequestAnswer().stream()
+                .filter(clarificationRequestAnswer -> clarificationRequestAnswer.key == null).collect(Collectors.toList());
 
-        for (ClarificationRequest clarificationRequest: nullKeyClarifications) {
+        for (ClarificationRequestAnswer clarificationRequestAnswer: nullKeyClarifications) {
             max = max + 1;
-            clarificationRequest.setKey(max);
+            clarificationRequestAnswer.setKey(max);
         }
     }
 }

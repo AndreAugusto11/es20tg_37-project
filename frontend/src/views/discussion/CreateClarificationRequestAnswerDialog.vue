@@ -27,6 +27,18 @@
                         </v-flex>
                     </v-layout>
                 </v-container>
+                <template>
+                  <v-file-input
+                  class="pr-3"
+                  label="File input"
+                  show-size
+                  outlined
+                  counter
+                  dense
+                  @change="constructImage($event)"
+                  accept="image/*"
+                  />
+                </template>
             </v-card-text>
 
             <v-card-actions>
@@ -57,10 +69,15 @@
     @Model('dialog', Boolean) dialog!: boolean;
     @Prop({ type: ClarificationRequest, required: true }) readonly clarificationRequest!: ClarificationRequest;
 
-      createClarificationRequestAnswer!: ClarificationRequestAnswer;
+    createClarificationRequestAnswer!: ClarificationRequestAnswer;
+    file!: File
 
     created() {
       this.createClarificationRequestAnswer = new ClarificationRequestAnswer(this.createClarificationRequestAnswer);
+    }
+
+    async constructImage(event: File) {
+        this.file = event;
     }
 
     async saveClarificationRequestAnswer() {
@@ -80,7 +97,7 @@
           this.createClarificationRequestAnswer.name = this.$store.getters.getUser.name;
           this.createClarificationRequestAnswer.username = this.$store.getters.getUser.username;
           this.createClarificationRequestAnswer.type = this.$store.getters.isTeacher ? 'TEACHER_ANSWER' : 'STUDENT_ANSWER';
-          const result = await RemoteServices.createClarificationRequestAnswer(this.clarificationRequest.id, this.createClarificationRequestAnswer);
+          const result = await RemoteServices.createClarificationRequestAnswer(this.clarificationRequest.id, this.createClarificationRequestAnswer, this.file);          
           this.$emit('new-clarification-request-answer', result);
         } catch (error) {
           await this.$store.dispatch('error', error);

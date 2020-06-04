@@ -70,13 +70,21 @@
       this.createClarificationRequestAnswerDialog = true;
     }
 
-    onCreateClarificationRequestAnswer() {
+    onCreateClarificationRequestAnswer(clarificationRequestAnswer: ClarificationRequestAnswer) {
       this.createClarificationRequestAnswerDialog = false;
       this.currentClarificationRequestAnswer = null;
       if (this.$store.getters.isTeacher)
         this.clarificationRequest.status = 'ANSWERED';
       if (this.$store.getters.isStudent)
         this.clarificationRequest.status = 'OPEN';
+
+      /*
+      this.clarificationRequestAnswers.forEach(answer => {
+        if (answer.id === clarificationRequestAnswer.id) {
+          answer.image = clarificationRequestAnswer.image;
+        }
+      });*/
+
       this.getClarificationRequestAnswers();
     }
 

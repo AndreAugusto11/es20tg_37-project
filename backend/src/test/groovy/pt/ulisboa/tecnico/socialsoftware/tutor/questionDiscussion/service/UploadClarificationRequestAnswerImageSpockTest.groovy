@@ -175,8 +175,8 @@ class UploadClarificationRequestAnswerImageSpockTest extends Specification {
         result != null
 
         and: "has the correct values"
-        result.getImage().getUrl() == course.getName().replaceAll("\\s", "") + course.getType() + "-CLAR_REQ-" + clarificationRequestAnswer.getClarificationRequest().getId() + "-CLAR_REQ_ANSW-" + clarificationRequestAnswer.getId() + clarificationRequestAnswer.getKey() + "." + FILE_TYPE_PNG;
-        result.getImage().getClarificationRequestAnswer() == clarificationRequestAnswer
+        result.getImage().getUrl() == course.getName().replaceAll("\\s", "") + course.getType() + "-CLAR_REQ-" + clarificationRequestAnswer.getClarificationRequest().getKey() + "-ANSW-" + clarificationRequestAnswer.getKey() + "." + FILE_TYPE_PNG;
+
 
         and: "the image is associated to the clarification request inside the repository"
         imageRepository.findAll().size() == 1

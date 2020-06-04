@@ -144,13 +144,13 @@ public class ClarificationRequest {
 
     private void generateKeys() {
         int max = this.getQuestion().getClarificationRequest().stream()
-                .filter(question -> question.key != null)
+                .filter(clarificationRequest -> clarificationRequest.key != null)
                 .map(ClarificationRequest::getKey)
                 .max(Comparator.comparing(Integer::valueOf))
                 .orElse(0);
 
         List<ClarificationRequest> nullKeyClarifications = this.getQuestion().getClarificationRequest().stream()
-                .filter(question -> question.key == null).collect(Collectors.toList());
+                .filter(clarificationRequest -> clarificationRequest.key == null).collect(Collectors.toList());
 
         for (ClarificationRequest clarificationRequest: nullKeyClarifications) {
             max = max + 1;

@@ -92,8 +92,8 @@ public class QuestionDiscussionController {
         return questionDiscussionService.createClarificationRequestAnswer(clarificationRequestId, clarificationRequestAnswerDto);
     }
 
-    @PutMapping("/executions/{executionId}/clarificationRequestAnswers/{clarificationRequestAnswerId}/uploadImage")
-    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    @PutMapping("clarificationRequestAnswers/{clarificationRequestAnswerId}/uploadImage")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#clarificationRequestAnswerId, 'CLARIFICATION_REQUEST_ANSWER.ACCESS')")
     public String uploadClarificationRequestAnswerImage(@PathVariable Integer clarificationRequestAnswerId,
                                                         @RequestParam("file") MultipartFile file) throws IOException {
         if (file == null)
@@ -112,6 +112,7 @@ public class QuestionDiscussionController {
     @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<ClarificationRequestAnswerDto> getClarificationRequestAnswers(@PathVariable Integer executionId,
                                                                           @PathVariable Integer clarificationRequestId) {
+
         return questionDiscussionService.getClarificationRequestAnswers(clarificationRequestId);
     }
 
