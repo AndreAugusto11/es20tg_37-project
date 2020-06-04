@@ -61,6 +61,7 @@
 <script lang="ts">
   import { Component, Model, Prop, Vue } from 'vue-property-decorator';
   import RemoteServices from '@/services/RemoteServices';
+  import Image from '@/models/management/Image';
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
   import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 
@@ -97,7 +98,11 @@
           this.createClarificationRequestAnswer.name = this.$store.getters.getUser.name;
           this.createClarificationRequestAnswer.username = this.$store.getters.getUser.username;
           this.createClarificationRequestAnswer.type = this.$store.getters.isTeacher ? 'TEACHER_ANSWER' : 'STUDENT_ANSWER';
-          const result = await RemoteServices.createClarificationRequestAnswer(this.clarificationRequest.id, this.createClarificationRequestAnswer, this.file);          
+          const result = await RemoteServices.createClarificationRequestAnswer(this.clarificationRequest.id, this.createClarificationRequestAnswer);
+          if (result.id != null) {
+            result.image = new Image();
+            result.image.url = await RemoteServices.uploadClarificationRequestAnswerImage(result.id, this.file);
+          }
           this.$emit('new-clarification-request-answer', result);
         } catch (error) {
           await this.$store.dispatch('error', error);
