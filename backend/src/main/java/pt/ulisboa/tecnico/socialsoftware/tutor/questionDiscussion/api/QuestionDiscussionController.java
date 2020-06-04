@@ -92,7 +92,7 @@ public class QuestionDiscussionController {
         return questionDiscussionService.createClarificationRequestAnswer(clarificationRequestId, clarificationRequestAnswerDto);
     }
 
-    @PutMapping("clarificationRequestAnswers/{clarificationRequestAnswerId}/uploadImage")
+    @PutMapping("/clarificationRequestAnswers/{clarificationRequestAnswerId}/uploadImage")
     @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#clarificationRequestAnswerId, 'CLARIFICATION_REQUEST_ANSWER.ACCESS')")
     public String uploadClarificationRequestAnswerImage(@PathVariable Integer clarificationRequestAnswerId,
                                                         @RequestParam("file") MultipartFile file) throws IOException {
