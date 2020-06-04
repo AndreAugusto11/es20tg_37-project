@@ -104,10 +104,10 @@ public class QuestionSuggestionController {
     }
 
     @PutMapping("/questionSuggestions/{questionSuggestionId}/image")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
-    public String uploadImage(@PathVariable Integer questionSuggestionId, @RequestParam("file") MultipartFile file) throws IOException {
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionSuggestionId, 'QUESTION_SUGGESTION.ACCESS')")
+    public String uploadImageToQuestionSuggestion(@PathVariable int questionSuggestionId, @RequestParam("file") MultipartFile file) throws IOException {
         logger.debug("uploadImage  questionId: {}: , filename: {}", questionSuggestionId, file.getContentType());
-
+        System.out.println("uploadImage  questionId:" + questionSuggestionId + ": , filename: " + file.getContentType());
         QuestionDto questionDto = questionSuggestionService.findQuestionSuggestionById(questionSuggestionId).getQuestionDto();
         String url = questionDto.getImage() != null ? questionDto.getImage().getUrl() : null;
         if (url != null && Files.exists(getTargetLocation(url))) {
