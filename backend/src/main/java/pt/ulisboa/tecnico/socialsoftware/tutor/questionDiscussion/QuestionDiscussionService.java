@@ -272,7 +272,7 @@ public class QuestionDiscussionService {
 
         image.setUrl(clarificationRequest.getQuestion().getCourse().getName().replaceAll("\\s", "") +
                 clarificationRequest.getQuestion().getCourse().getType() +
-                "-Q_" + clarificationRequest.getQuestion().getId() +
+                "-Q_" + clarificationRequest.getQuestion().getKey() +
                 "-CLAR_REQ-" + clarificationRequest.getKey() +
                 "." + type);
 
