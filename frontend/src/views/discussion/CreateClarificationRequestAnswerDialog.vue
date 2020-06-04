@@ -99,7 +99,7 @@
           this.createClarificationRequestAnswer.username = this.$store.getters.getUser.username;
           this.createClarificationRequestAnswer.type = this.$store.getters.isTeacher ? 'TEACHER_ANSWER' : 'STUDENT_ANSWER';
           const result = await RemoteServices.createClarificationRequestAnswer(this.clarificationRequest.id, this.createClarificationRequestAnswer);
-          if (result.id != null) {
+          if (result.id != null && this.file) {
             result.image = new Image();
             result.image.url = await RemoteServices.uploadClarificationRequestAnswerImage(result.id, this.file);
           }

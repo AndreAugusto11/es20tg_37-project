@@ -163,7 +163,7 @@ class UploadClarificationRequestAnswerImageSpockTest extends Specification {
 
         and: "a Clarification Request Answer"
         def clarificationRequestAnswer = new ClarificationRequestAnswer(clarificationRequest, ClarificationRequestAnswer.Type.STUDENT_ANSWER, user, CLARIFICATION_ANSWER_CONTENT)
-
+        clarificationRequestAnswerRepository.save(clarificationRequestAnswer)
         def clarificationRequestAnswerId = clarificationRequestAnswerRepository.findAll().get(0).getId()
 
         when:
@@ -197,13 +197,14 @@ class UploadClarificationRequestAnswerImageSpockTest extends Specification {
 
         and: "a Clarification Request Answer"
         def clarificationRequestAnswer = new ClarificationRequestAnswer(clarificationRequest, ClarificationRequestAnswer.Type.STUDENT_ANSWER, user, CLARIFICATION_ANSWER_CONTENT)
+        clarificationRequestAnswerRepository.save(clarificationRequestAnswer)
         def clarificationRequestAnswerId = clarificationRequestAnswerRepository.findAll().get(0).getId()
 
         when:
         questionDiscussionService.uploadClarificationRequestAnswerImage(clarificationRequestAnswerId, FILE_TYPE_PNG)
         questionDiscussionService.uploadClarificationRequestAnswerImage(clarificationRequestAnswerId, FILE_TYPE_PNG)
 
-        then: "an exeption should be thrown"
+        then: "an exception should be thrown"
         def error = thrown(TutorException)
         error.errorMessage == CLARIFICATION_REQUEST_ANSWER_ALREADY_HAS_IMAGE
     }
@@ -212,7 +213,7 @@ class UploadClarificationRequestAnswerImageSpockTest extends Specification {
         when:
         questionDiscussionService.uploadClarificationRequestAnswerImage(CLARIFICATION_REQUEST_ANSWER_ID_NOT_VALID, FILE_TYPE_PNG)
 
-        then: "an exeption should be thrown"
+        then: "an exception should be thrown"
         def error = thrown(TutorException)
         error.errorMessage == CLARIFICATION_REQUEST_ANSWER_NOT_FOUND
     }

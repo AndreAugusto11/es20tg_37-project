@@ -101,7 +101,7 @@
           this.createClarificationRequest.username = this.$store.getters.getUser.username;
           this.createClarificationRequest.questionAnswerDto = this.answer.questionAnswerDto;
           const result = await RemoteServices.createClarificationRequest(this.answer.questionAnswerId, this.createClarificationRequest);
-          if (result.id) {
+          if (result.id && this.file) {
             result.image = new Image();
             result.image.url = await RemoteServices.uploadClarificationRequestImage(result.id, this.file);
           }
