@@ -269,19 +269,21 @@ public class QuestionDiscussionService {
 
         Image image = new Image();
 
-        image.setUrl(clarificationRequest.getQuestion().getCourse().getName().replaceAll("\\s", "") +
+        String url = clarificationRequest.getQuestion().getCourse().getName().replaceAll("\\s", "") +
                 clarificationRequest.getQuestion().getCourse().getType() +
                 "-CLAR_REQ-" +
                 clarificationRequest.getKey() +
-                "." + type);
+                "." + type;
+
+        image.setUrl(url);
 
         clarificationRequest.setImage(image);
         image.setClarificationRequest(clarificationRequest);
         imageRepository.save(image);
 
-        System.out.println("Image posted with URL " + clarificationRequest.getImage().getUrl());
+        System.out.println("Image posted with URL " + url);
 
-        return clarificationRequest.getImage().getUrl();
+        return url;
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -291,23 +293,25 @@ public class QuestionDiscussionService {
                 .orElseThrow(() -> new TutorException(CLARIFICATION_REQUEST_ANSWER_NOT_FOUND, clarificationRequestAnswerId));
 
         if (clarificationRequestAnswer.getImage() != null)
-            throw new TutorException(CLARIFICATION_REQUEST_ALREADY_HAS_IMAGE);
+            throw new TutorException(CLARIFICATION_REQUEST_ANSWER_ALREADY_HAS_IMAGE);
 
         Image image = new Image();
 
-        image.setUrl(clarificationRequestAnswer.getClarificationRequest().getQuestion().getCourse().getName().replaceAll("\\s", "") +
+        String url = clarificationRequestAnswer.getClarificationRequest().getQuestion().getCourse().getName().replaceAll("\\s", "") +
                 clarificationRequestAnswer.getClarificationRequest().getQuestion().getCourse().getType() +
                 "-CLAR_REQ-" + clarificationRequestAnswer.getClarificationRequest().getId() +
                 "-CLAR_REQ_ANSW-" + clarificationRequestAnswer.getId() +
                 clarificationRequestAnswer.getKey() +
-                "." + type);
+                "." + type;
+
+        image.setUrl(url);
 
         clarificationRequestAnswer.setImage(image);
         image.setClarificationRequestAnswer(clarificationRequestAnswer);
         imageRepository.save(image);
 
-        System.out.println("Image posted with URL " + clarificationRequestAnswer.getImage().getUrl());
+        System.out.println("Image posted with URL " + url);
 
-        return "www";
+        return url;
     }
 }

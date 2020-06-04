@@ -96,6 +96,7 @@ public enum ErrorMessage {
     CLARIFICATION_REQUEST_NO_LONGER_AVAILABLE("This clarification request is no longer available"),
     CLARIFICATION_REQUEST_ALREADY_CLOSED("This clarification request is already closed"),
     CLARIFICATION_REQUEST_ALREADY_HAS_IMAGE("This clarification request already has an image"),
+    CLARIFICATION_REQUEST_ANSWER_ALREADY_HAS_IMAGE("This clarification request already has an image"),
 
     NO_CORRECT_OPTION("Question does not have a correct option"),
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
