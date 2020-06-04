@@ -243,7 +243,7 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void uploadImage(int questionSuggestionId, String type) {
+    public void uploadImageToQuestionSuggestion(int questionSuggestionId, String type) {
         QuestionSuggestion questionSuggestion = questionSuggestionRepository.findById(questionSuggestionId)
                 .orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
 

@@ -20,7 +20,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Questio
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.QuestionSuggestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
-import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
@@ -92,7 +91,7 @@ class UploadImageToQuestionSuggestionTest extends Specification {
         questionSuggestionRepository.save(questionSuggestion)
 
         when:
-        questionSuggestionService.uploadImage(questionSuggestion.getId(), IMAGE_TYPE_ONE)
+        questionSuggestionService.uploadImageToQuestionSuggestion(questionSuggestion.getId(), IMAGE_TYPE_ONE)
 
         then: "the suggestion remains in the same state"
         def result = questionSuggestionRepository.findAll().get(0)
@@ -137,7 +136,7 @@ class UploadImageToQuestionSuggestionTest extends Specification {
         questionSuggestionRepository.save(questionSuggestion)
 
         when:
-        questionSuggestionService.uploadImage(questionSuggestion.getId(), IMAGE_TYPE_TWO)
+        questionSuggestionService.uploadImageToQuestionSuggestion(questionSuggestion.getId(), IMAGE_TYPE_TWO)
 
         then: "the image is altered"
         questionSuggestionRepository.count() == 1L
@@ -169,7 +168,7 @@ class UploadImageToQuestionSuggestionTest extends Specification {
         questionSuggestionRepository.save(questionSuggestion)
 
         when:
-        questionSuggestionService.uploadImage(questionSuggestion.getId(), IMAGE_TYPE_ONE)
+        questionSuggestionService.uploadImageToQuestionSuggestion(questionSuggestion.getId(), IMAGE_TYPE_ONE)
 
         then: "an image is attached to the question"
         questionSuggestionRepository.count() == 1L
@@ -182,7 +181,7 @@ class UploadImageToQuestionSuggestionTest extends Specification {
 
     def "Cannot upload an image to a suggestion given an invalid suggestion id"() {
         when:
-        questionSuggestionService.uploadImage(0, IMAGE_TYPE_ONE)
+        questionSuggestionService.uploadImageToQuestionSuggestion(0, IMAGE_TYPE_ONE)
 
         then: "an exception is thrown"
         TutorException exception = thrown()
@@ -196,7 +195,7 @@ class UploadImageToQuestionSuggestionTest extends Specification {
         questionSuggestionRepository.save(questionSuggestion)
 
         when:
-        questionSuggestionService.uploadImage(questionSuggestion.getId(), IMAGE_TYPE_ONE)
+        questionSuggestionService.uploadImageToQuestionSuggestion(questionSuggestion.getId(), IMAGE_TYPE_ONE)
 
         then: "an exception is thrown"
         TutorException exception = thrown()

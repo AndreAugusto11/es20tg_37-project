@@ -106,20 +106,46 @@ public class QuestionSuggestionController {
     @PutMapping("/questionSuggestions/{questionSuggestionId}/image")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionSuggestionId, 'QUESTION_SUGGESTION.ACCESS')")
     public String uploadImageToQuestionSuggestion(@PathVariable int questionSuggestionId, @RequestParam("file") MultipartFile file) throws IOException {
-        logger.debug("uploadImage  questionId: {}: , filename: {}", questionSuggestionId, file.getContentType());
-        System.out.println("uploadImage  questionId:" + questionSuggestionId + ": , filename: " + file.getContentType());
-        QuestionDto questionDto = questionSuggestionService.findQuestionSuggestionById(questionSuggestionId).getQuestionDto();
+
+        QuestionDto questionDto = questionSuggestionService
+                .findQuestionSuggestionById(questionSuggestionId)
+                .getQuestionDto();
+
         String url = questionDto.getImage() != null ? questionDto.getImage().getUrl() : null;
-        if (url != null && Files.exists(getTargetLocation(url))) {
+        if (url != null && Files.exists(getTargetLocation(url)))
             Files.delete(getTargetLocation(url));
-        }
 
         int lastIndex = Objects.requireNonNull(file.getContentType()).lastIndexOf('/');
         String type = file.getContentType().substring(lastIndex + 1);
 
-        questionSuggestionService.uploadImage(questionSuggestionId, type);
+        questionSuggestionService.uploadImageToQuestionSuggestion(questionSuggestionId, type);
 
         url = questionSuggestionService.findQuestionSuggestionById(questionSuggestionId).getImage().getUrl();
+        Files.copy(file.getInputStream(), getTargetLocation(url), StandardCopyOption.REPLACE_EXISTING);
+
+        return url;
+    }
+
+    @PutMapping("/questionSuggestions/{questionSuggestionId}/rejecting/image")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionSuggestionId, 'QUESTION_SUGGESTION.ACCESS')")
+    public String uploadJustificationImage(@PathVariable int questionSuggestionId, @RequestParam("file") MultipartFile file) throws IOException {
+
+        JustificationDto justificationDto = questionSuggestionService
+                .findQuestionSuggestionById(questionSuggestionId)
+                .getJustificationDto();
+
+        String url = justificationDto.getImage() != null ? justificationDto.getImage().getUrl() : null;
+        if (url != null && Files.exists(getTargetLocation(url)))
+            Files.delete(getTargetLocation(url));
+
+        int lastIndex = Objects.requireNonNull(file.getContentType()).lastIndexOf('/');
+        String type = file.getContentType().substring(lastIndex + 1);
+
+        questionSuggestionService.uploadJustificationImage(questionSuggestionId, type);
+
+        url = questionSuggestionService.findQuestionSuggestionById(questionSuggestionId)
+                .getJustificationDto().getImage().getUrl();
+
         Files.copy(file.getInputStream(), getTargetLocation(url), StandardCopyOption.REPLACE_EXISTING);
 
         return url;
