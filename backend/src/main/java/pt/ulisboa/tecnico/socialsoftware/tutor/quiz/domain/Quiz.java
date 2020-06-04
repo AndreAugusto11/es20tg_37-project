@@ -261,7 +261,7 @@ public class Quiz implements DomainEntity {
         return quizAnswers;
     }
 
-    public Tournament gettournament(){return tournament;}
+    public Tournament getTournament(){return tournament;}
 
     public CourseExecution getCourseExecution() {
         return courseExecution;

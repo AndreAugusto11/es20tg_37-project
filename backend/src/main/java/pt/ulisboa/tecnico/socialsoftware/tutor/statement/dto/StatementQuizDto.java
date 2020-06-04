@@ -30,7 +30,7 @@ public class StatementQuizDto implements Serializable {
     public StatementQuizDto(QuizAnswer quizAnswer) {
         this.id = quizAnswer.getQuiz().getId();
         this.quizAnswerId = quizAnswer.getId();
-        if(quizAnswer.getQuiz().gettournament() != null) this.tournamentID = quizAnswer.getQuiz().gettournament().getId();
+        if(quizAnswer.getQuiz().getTournament() != null) this.tournamentID = quizAnswer.getQuiz().getTournament().getId();
         this.title = quizAnswer.getQuiz().getTitle();
         this.oneWay = quizAnswer.getQuiz().isOneWay();
         this.availableDate = DateHandler.toISOString(quizAnswer.getQuiz().getAvailableDate());
