@@ -100,7 +100,11 @@
           this.createClarificationRequest.name = this.$store.getters.getUser.name;
           this.createClarificationRequest.username = this.$store.getters.getUser.username;
           this.createClarificationRequest.questionAnswerDto = this.answer.questionAnswerDto;
-          const result = await RemoteServices.createClarificationRequest(this.answer.questionAnswerId, this.createClarificationRequest, this.file);
+          const result = await RemoteServices.createClarificationRequest(this.answer.questionAnswerId, this.createClarificationRequest);
+          if (result.id) {
+            result.image = new Image();
+            result.image.url = await RemoteServices.uploadClarificationRequestImage(result.id, this.file);
+          }
           this.$emit('new-clarification-request', result);
         } catch (error) {
           await this.$store.dispatch('error', error);
