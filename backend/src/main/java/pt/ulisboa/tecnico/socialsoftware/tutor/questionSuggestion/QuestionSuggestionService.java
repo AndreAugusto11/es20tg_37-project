@@ -10,8 +10,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
@@ -36,16 +38,19 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class QuestionSuggestionService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    QuestionSuggestionRepository questionSuggestionRepository;
+    private QuestionSuggestionRepository questionSuggestionRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
 
     @Autowired
-    CourseRepository courseRepository;
+    private CourseRepository courseRepository;
+
+    @Autowired
+    private ImageRepository imageRepository;
 
     @Autowired
     private QuestionService questionService;
@@ -110,7 +115,7 @@ public class QuestionSuggestionService {
     public void rejectQuestionSuggestion(int userId, int questionSuggestionId, JustificationDto justificationDto) {
 
         if (justificationDto == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_JUSTIFICATION);
+            throw new TutorException(JUSTIFICATION_MISSING);
         } else if (justificationDto.getContent() == null || justificationDto.getContent().equals("   ")) {
             throw new TutorException(JUSTIFICATION_MISSING_DATA);
         }
@@ -246,6 +251,46 @@ public class QuestionSuggestionService {
             throw new TutorException(EMPTY_QUESTION_SUGGESTION, questionSuggestionId);
 
         questionService.uploadImage(questionSuggestion.getQuestion().getId(), type);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void uploadJustificationImage(int questionSuggestionId, String type) {
+        QuestionSuggestion questionSuggestion = questionSuggestionRepository.findById(questionSuggestionId)
+                .orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
+
+        if (questionSuggestion.getQuestion() == null)
+            throw new TutorException(EMPTY_QUESTION_SUGGESTION, questionSuggestionId);
+
+        if (questionSuggestion.getStatus() != QuestionSuggestion.Status.REJECTED)
+            throw new TutorException(QUESTION_SUGGESTION_NOT_REJECTED);
+
+        if (questionSuggestion.getJustification() == null)
+            throw new TutorException(JUSTIFICATION_MISSING);
+
+        Justification justification = questionSuggestion.getJustification();
+        Image image = justification.getImage();
+
+        if (image == null) {
+            image = new Image();
+
+            justification.setImage(image);
+            setImageUrl(justification, questionSuggestion.getQuestion().getCourse(), type);
+
+            imageRepository.save(image);
+        } else {
+            setImageUrl(justification, questionSuggestion.getQuestion().getCourse(), type);
+        }
+    }
+
+    private void setImageUrl(Justification justification, Course course, String type) {
+        justification.getImage().setUrl(course.getName().replaceAll("\\s", "") +
+                course.getType() +
+                "j" +
+                justification.getKey() +
+                "." + type);
     }
 
     @Retryable(

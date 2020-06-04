@@ -53,9 +53,16 @@ public class Justification {
 
     public void setId(Integer id) { this.id = id; }
 
-    public Integer getKey() { return key; }
+    public Integer getKey() {
+        if (this.key == null)
+            setKey(this.questionSuggestion.getKey());
 
-    public void setKey(Integer key) { this.key = key; }
+        return key;
+    }
+
+    public void setKey(Integer key) {
+        this.key = key;
+    }
 
     public String getContent() { return content; }
 
@@ -74,9 +81,14 @@ public class Justification {
         this.user.addJustification(this);
     }
 
-    public Image getImage() { return image; }
+    public Image getImage() {
+        return image;
+    }
 
-    public void setImage(Image image) { this.image = image; }
+    public void setImage(Image image) {
+        this.image = image;
+        image.setJustification(this);
+    }
 
     public void remove() {
         user.getJustifications().remove(this);
