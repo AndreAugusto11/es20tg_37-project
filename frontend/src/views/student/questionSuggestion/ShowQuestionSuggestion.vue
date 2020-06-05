@@ -13,15 +13,11 @@
       </v-card-text>
 
        <v-card-text class="text-left">
-        <v-list class="text-left">
-          <v-list-item v-for="option in questionSuggestion.questionDto.options.slice(0, 4)" :key="option.sequence" >
-            <v-row>
-              <v-icon v-if="option.correct" class="dark">mdi-checkbox-marked-circle</v-icon>
+        <v-list>
+          <v-list-item class="row" v-for="option in questionSuggestion.questionDto.options.slice(0, 4)" :key="option.sequence" >
+              <v-icon v-if="option.correct">mdi-checkbox-marked-circle</v-icon>
               <v-icon v-else>mdi-checkbox-blank-circle-outline</v-icon>
-              <v-col>
-                <v-card-text v-html="convertMarkDown(option.content)" />
-              </v-col>
-            </v-row>
+              <div class="optionContent ml-3" v-html="convertMarkDown(option.content)" />
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -44,8 +40,9 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
     img {
+        max-width: 1100px;
         margin-left: auto;
         margin-right: auto;
     }
