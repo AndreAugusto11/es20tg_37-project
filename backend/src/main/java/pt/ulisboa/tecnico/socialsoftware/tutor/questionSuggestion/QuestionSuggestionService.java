@@ -135,6 +135,11 @@ public class QuestionSuggestionService {
         } else {
             justification = suggestion.getJustification();
             justification.setContent(justificationDto.getContent());
+
+            if (justification.getImage() != null) {
+                justification.getImage().setJustification(null);
+                justification.setImage(null);
+            }
         }
 
         suggestion.setStatus(QuestionSuggestion.Status.REJECTED);

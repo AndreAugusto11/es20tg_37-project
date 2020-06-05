@@ -62,6 +62,7 @@ import QuestionSuggestion from '@/models/management/QuestionSuggestion';
 import RemoteServices from '@/services/RemoteServices';
 import ShowSuggestionDialog from '@/views/teacher/questionSuggestions/ShowSuggestionDialog.vue';
 import Justification from '@/models/management/Justification';
+import Image from '@/models/management/Image';
 
 @Component({
   components: {
@@ -110,13 +111,16 @@ export default class SuggestionsTView extends Vue {
     }
   }
 
-  async rejected(suggestionId: number, justificationContent: string) {
+  async rejected(suggestionId: number, justification: Justification) {
     try {
       let suggestion = this.suggestions.find(suggestion => suggestion.id === suggestionId);
       if (suggestion && suggestion.justificationDto) {
         suggestion.status = 'REJECTED';
-        suggestion.justificationDto.content = justificationContent;
+        suggestion.justificationDto.content = justification.content;
+        suggestion.justificationDto.image = justification.image;
       }
+      console.log(suggestion);
+      
       this.onCloseSuggestionDialog();
     } catch (error) {
       await this.$store.dispatch('error', error);

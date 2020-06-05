@@ -87,7 +87,9 @@ public class Justification {
 
     public void setImage(Image image) {
         this.image = image;
-        image.setJustification(this);
+
+        if (image != null)
+            image.setJustification(this);
     }
 
     public void remove() {

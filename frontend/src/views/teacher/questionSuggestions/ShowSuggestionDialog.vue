@@ -145,14 +145,27 @@ export default class ShowSuggestionDialog extends Vue {
       await this.$store.dispatch('error', 'Justification must have content');
     } else {
       try {
-        if (this.questionSuggestion.id != null) {
-          let result = await RemoteServices.rejectQuestionSuggestion(this.questionSuggestion.id, this.justification);
+        if (this.questionSuggestion.id && this.questionSuggestion.justificationDto) {
+          let questionSuggestion = await RemoteServices.rejectQuestionSuggestion(this.questionSuggestion.id, this.justification);
 
-          if (result != null && this.file) {
-            await RemoteServices.uploadImageToJustification(this.questionSuggestion.id, this.file);
+          if (this.file) {
+            let url = await RemoteServices.uploadImageToJustification(this.questionSuggestion.id, this.file);
+            let image = new Image();
+            image.url = url;
+            console.log("URL");
+            console.log(url);
+            
+            this.questionSuggestion.justificationDto.image = image
+            this.$emit('reject-suggestion', {'content': this.justification.content, 'image': image});
+          }
+          else {
+            this.questionSuggestion.justificationDto.image = null;
+            this.$emit('reject-suggestion', {'content': this.justification.content, 'image': null});
           }
         }
-        this.$emit('reject-suggestion', this.justification.content);
+        else {
+          this.$emit('reject-suggestion', {'content': this.justification.content, 'image': null});
+        }
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
