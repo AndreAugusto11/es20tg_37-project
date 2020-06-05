@@ -41,32 +41,6 @@
           </template>
           <span>Show Suggestion</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="item.status === 'PENDING'">
-          <template v-slot:activator="{ on }">
-            <v-icon
-              large
-              class="mr-2"
-              v-on="on"
-              @click="accepted(item.id)"
-              data-cy="acceptButton"
-              >mdi-check</v-icon
-            >
-          </template>
-          <span>Accept Suggestion</span>
-        </v-tooltip>
-        <v-tooltip bottom v-if="item.status === 'PENDING'">
-          <template v-slot:activator="{ on }">
-            <v-icon
-              large
-              class="mr-2"
-              v-on="on"
-              @click="showRejectionDialog(item)"
-              data-cy="rejectButton"
-              >mdi-close</v-icon
-            >
-          </template>
-          <span>Reject Suggestion</span>
-        </v-tooltip>
       </template>
     </v-data-table>
 
@@ -136,17 +110,12 @@ export default class SuggestionsTView extends Vue {
     }
   }
 
-  async rejected(suggestionId: number, justification: Justification) {
+  async rejected(suggestionId: number, justificationContent: string) {
     try {
-      await RemoteServices.rejectQuestionSuggestion(
-        suggestionId,
-        justification
-      );
-      let suggestion = this.suggestions.find(
-        suggestion => suggestion.id === suggestionId
-      );
-      if (suggestion) {
+      let suggestion = this.suggestions.find(suggestion => suggestion.id === suggestionId);
+      if (suggestion && suggestion.justificationDto) {
         suggestion.status = 'REJECTED';
+        suggestion.justificationDto.content = justificationContent;
       }
       this.onCloseSuggestionDialog();
     } catch (error) {

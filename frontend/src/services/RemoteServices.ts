@@ -907,6 +907,29 @@ export default class RemoteServices {
       });
   }
 
+  static async uploadImageToJustification(
+    questionSuggestionId: number,
+    file: File
+  ): Promise<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return httpClient
+      .put(
+        `/questionSuggestions/${questionSuggestionId}/rejecting/image`,
+        formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      )
+      .then(response => {
+        return response.data as string;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async updateRejectedQuestionSuggestion(
     questionSuggestion: QuestionSuggestion
   ): Promise<QuestionSuggestion> {

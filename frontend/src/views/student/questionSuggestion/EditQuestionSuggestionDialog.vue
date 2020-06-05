@@ -141,7 +141,7 @@ export default class EditQuestionSuggestionDialog extends Vue {
                 this.editQuestionSuggestion
               );
 
-        if (result.id != null) {
+        if (result.id != null && this.file) {
           result.questionDto.image = new Image();
           result.questionDto.image.url = await RemoteServices.uploadImageToQuestionSuggestion(result.id, this.file);
         }

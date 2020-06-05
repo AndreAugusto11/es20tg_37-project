@@ -39,6 +39,18 @@
           v-model="justification.content"
           data-cy="justification_text"
         ></v-textarea>
+        <template>
+          <v-file-input
+          class="pr-3"
+          label="File input"
+          show-size
+          outlined
+          counter
+          dense
+          @change="constructImage($event)"
+          accept="image/*"
+          />
+        </template>
       </v-card-text>
 
       <v-card-actions v-if="rejected">
@@ -82,6 +94,7 @@ import QuestionSuggestion from '../../../models/management/QuestionSuggestion';
 import ShowQuestionSuggestion from '@/views/student/questionSuggestion/ShowQuestionSuggestion.vue';
 import Justification from '@/models/management/Justification';
 import Image from '@/models/management/Image';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component({
   components: {
@@ -95,9 +108,14 @@ export default class ShowSuggestionDialog extends Vue {
   @Prop({ type: Boolean, required: true }) rejected!: boolean;
 
   justification!: Justification;
+  file!: File
 
   async created() {
     this.justification = new Justification();
+  }
+
+  async constructImage(event: File) {
+    this.file = event;
   }
 
   closeSuggestionDialog() {
@@ -125,10 +143,16 @@ export default class ShowSuggestionDialog extends Vue {
   async saveJustification() {
     if (this.justification && !this.justification.content) {
       await this.$store.dispatch('error', 'Justification must have content');
-      return;
     } else {
       try {
-        this.$emit('reject-suggestion', this.justification);
+        if (this.questionSuggestion.id != null) {
+          let result = await RemoteServices.rejectQuestionSuggestion(this.questionSuggestion.id, this.justification);
+
+          if (result != null && this.file) {
+            await RemoteServices.uploadImageToJustification(this.questionSuggestion.id, this.file);
+          }
+        }
+        this.$emit('reject-suggestion', this.justification.content);
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
