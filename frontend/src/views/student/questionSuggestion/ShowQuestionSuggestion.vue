@@ -1,10 +1,10 @@
 <template>
   <div>
-      <v-card-title class="mx-auto mb-5">
+      <v-card-title class="mb-5">
         <span class="headline">{{ questionSuggestion.questionDto.title }}</span>
       </v-card-title>
 
-      <v-card-subtitle class="text-left mb-0">
+      <v-card-subtitle class="text-left mb-1">
         <span v-html="convertMarkDown(questionSuggestion.questionDto.content, null)" />
       </v-card-subtitle>
       
@@ -48,6 +48,6 @@
     }
 
     .v-application p {
-      margin-bottom: 0;
+      margin-bottom: 0 !important;
     }
 </style>

@@ -66,8 +66,8 @@ export default class ShowQuestionSuggestionDialog extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .v-application p {
-      margin-bottom: 0;
+      margin-bottom: 0 !important;
     }
 </style>
