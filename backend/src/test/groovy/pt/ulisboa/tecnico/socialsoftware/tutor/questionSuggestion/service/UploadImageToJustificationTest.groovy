@@ -16,27 +16,32 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageReposito
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSuggestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.JustificationRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.QuestionSuggestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.EMPTY_QUESTION_SUGGESTION
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.JUSTIFICATION_MISSING
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_SUGGESTION_NOT_FOUND
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_SUGGESTION_NOT_REJECTED
 
 @DataJpaTest
-class UploadImageToQuestionSuggestionTest extends Specification {
+class UploadImageToJustificationTest extends Specification {
 
     public static final String COURSE_NAME = "Software Architecture"
     public static final Course.Type COURSE_TYPE = Course.Type.TECNICO
     public static final String QUESTION_TITLE = "Question Title"
     public static final String QUESTION_CONTENT = "Question Content"
     public static final String OPTION_CONTENT = "Option Content"
+    public static final String JUSTIFICATION_CONTENT = "Justification Content"
 
     public static final String IMAGE_TYPE_ONE = "png"
     public static final String IMAGE_TYPE_TWO = "jpeg"
-    public static final String IMAGE_TYPE_ONE_URL = "SoftwareArchitectureTECNICOq1.png"
-    public static final String IMAGE_TYPE_ONE_URL_ALT = "SoftwareArchitectureTECNICOq2.png"
-    public static final String IMAGE_TYPE_TWO_URL = "SoftwareArchitectureTECNICOq1.jpeg"
+    public static final String IMAGE_TYPE_ONE_URL = "SoftwareArchitectureTECNICOj1.png"
+    public static final String IMAGE_TYPE_TWO_URL = "SoftwareArchitectureTECNICOj1.jpeg"
 
     @Autowired
     QuestionSuggestionService questionSuggestionService
@@ -46,6 +51,9 @@ class UploadImageToQuestionSuggestionTest extends Specification {
 
     @Autowired
     CourseRepository courseRepository
+
+    @Autowired
+    JustificationRepository justificationRepository
 
     @Autowired
     QuestionSuggestionRepository questionSuggestionRepository
@@ -83,20 +91,26 @@ class UploadImageToQuestionSuggestionTest extends Specification {
         question.setCourse(course)
     }
 
-    def "An image is uploaded to a suggestion without image"() {
-        given: "a question suggestion"
+    def "An image is uploaded to a justification without image"() {
+        given: "a justification"
+        def justification = new Justification()
+        justification.setKey(1)
+        justification.setContent(JUSTIFICATION_CONTENT)
+
+        and: "a question suggestion"
         def questionSuggestion = new QuestionSuggestion()
         questionSuggestion.setQuestion(question)
-        questionSuggestion.setStatus(QuestionSuggestion.Status.PENDING)
+        questionSuggestion.setStatus(QuestionSuggestion.Status.REJECTED)
+        questionSuggestion.setJustification(justification)
         questionSuggestionRepository.save(questionSuggestion)
 
         when:
-        questionSuggestionService.uploadImageToQuestionSuggestion(questionSuggestion.getId(), IMAGE_TYPE_ONE)
+        questionSuggestionService.uploadJustificationImage(questionSuggestion.getId(), IMAGE_TYPE_ONE)
 
         then: "the suggestion remains in the same state"
         def result = questionSuggestionRepository.findAll().get(0)
         result != null
-        result.getStatus() == QuestionSuggestion.Status.PENDING
+        result.getStatus() == QuestionSuggestion.Status.REJECTED
 
         and: "the underlying question is in the same state"
         questionRepository.count() == 1L
@@ -109,97 +123,127 @@ class UploadImageToQuestionSuggestionTest extends Specification {
         questionResult.getContent() == QUESTION_CONTENT
         questionResult.getOptions().size() == 1
         questionResult.getCourse().getName() == COURSE_NAME
+        questionResult.getImage() == null
         course.getQuestions().contains(questionResult)
         def resOption = questionResult.getOptions().get(0)
         resOption.getContent() == OPTION_CONTENT
         resOption.getCorrect()
 
-        and: "an image is attached to the question"
+        and: "an image is attached to the justification"
+        justificationRepository.count() == 1L
+        def justificationResult = justificationRepository.findAll().get(0)
         imageRepository.count() == 1L
         def imageResult = imageRepository.findAll().get(0)
-        questionResult.getImage() == imageResult
-        imageResult.getQuestion() == questionResult
+        justificationResult.getImage() == imageResult
+        imageResult.getJustification() == justificationResult
         imageResult.getId() != null
         imageResult.getUrl() == IMAGE_TYPE_ONE_URL
     }
 
-    def "An image is uploaded to a suggestion with an image"() {
+    def "An image is uploaded to a justification with an image"() {
         given: "an image"
         def image = new Image()
         image.setUrl("url")
 
+        and: "a justification"
+        def justification = new Justification()
+        justification.setKey(1)
+        justification.setContent(JUSTIFICATION_CONTENT)
+        justification.setImage(image)
+
         and: "a question suggestion"
         def questionSuggestion = new QuestionSuggestion()
         questionSuggestion.setQuestion(question)
-        questionSuggestion.setImage(image)
-        questionSuggestion.setStatus(QuestionSuggestion.Status.PENDING)
+        questionSuggestion.setStatus(QuestionSuggestion.Status.REJECTED)
+        questionSuggestion.setJustification(justification)
         questionSuggestionRepository.save(questionSuggestion)
 
         when:
-        questionSuggestionService.uploadImageToQuestionSuggestion(questionSuggestion.getId(), IMAGE_TYPE_TWO)
+        questionSuggestionService.uploadJustificationImage(questionSuggestion.getId(), IMAGE_TYPE_TWO)
 
         then: "the image is altered"
-        questionSuggestionRepository.count() == 1L
-        def result = questionSuggestionRepository.findAll().get(0)
+        justificationRepository.count() == 1L
+        def result = justificationRepository.findAll().get(0)
         imageRepository.count() == 1L
         result.getImage().getId() != null
         result.getImage().getUrl() == IMAGE_TYPE_TWO_URL
     }
 
-    def "An image is uploaded to a suggestion whose question has no key"() {
-        given: "an option"
-        def newOption = new Option()
-        newOption.setContent(OPTION_CONTENT)
-        newOption.setCorrect(true)
-        newOption.setSequence(0)
-
-        and: "a question with no key"
-        def noKeyQuestion = new Question()
-        noKeyQuestion.setTitle(QUESTION_TITLE)
-        noKeyQuestion.setContent(QUESTION_CONTENT)
-        noKeyQuestion.addOption(newOption)
-        noKeyQuestion.setType(Question.Type.SUGGESTION)
-        noKeyQuestion.setCourse(course)
+    def "An image is uploaded to a justification with no key"() {
+        given: "a justification"
+        def justification = new Justification()
+        justification.setContent(JUSTIFICATION_CONTENT)
 
         and: "a question suggestion"
         def questionSuggestion = new QuestionSuggestion()
-        questionSuggestion.setQuestion(noKeyQuestion)
-        questionSuggestion.setStatus(QuestionSuggestion.Status.PENDING)
+        questionSuggestion.setQuestion(question)
+        questionSuggestion.setStatus(QuestionSuggestion.Status.REJECTED)
+        questionSuggestion.setJustification(justification)
         questionSuggestionRepository.save(questionSuggestion)
 
         when:
-        questionSuggestionService.uploadImageToQuestionSuggestion(questionSuggestion.getId(), IMAGE_TYPE_ONE)
+        questionSuggestionService.uploadJustificationImage(questionSuggestion.getId(), IMAGE_TYPE_ONE)
 
-        then: "an image is attached to the question"
-        questionSuggestionRepository.count() == 1L
-        def result = questionSuggestionRepository.findAll().get(0)
-        result.getQuestion().getKey() != null
+        then: "an image is attached to the justification"
+        justificationRepository.count() == 1L
+        def result = justificationRepository.findAll().get(0)
+        result.getKey() != null
         imageRepository.count() == 1L
         result.getImage().getId() != null
-        result.getImage().getUrl() == IMAGE_TYPE_ONE_URL_ALT
+        result.getImage().getUrl() == IMAGE_TYPE_ONE_URL
     }
 
-    def "Cannot upload an image to a suggestion given an invalid suggestion id"() {
+    def "Cannot upload an image to a justification given an invalid suggestion id"() {
         when:
-        questionSuggestionService.uploadImageToQuestionSuggestion(0, IMAGE_TYPE_ONE)
+        questionSuggestionService.uploadJustificationImage(0, IMAGE_TYPE_ONE)
 
         then: "an exception is thrown"
         TutorException exception = thrown()
         exception.getErrorMessage() == QUESTION_SUGGESTION_NOT_FOUND
     }
 
-    def "Cannot upload an image to an empty suggestion"() {
+    def "Cannot upload a justification image to an empty suggestion"() {
         given: "an empty question suggestion"
         def questionSuggestion = new QuestionSuggestion()
-        questionSuggestion.setStatus(QuestionSuggestion.Status.PENDING)
+        questionSuggestion.setStatus(QuestionSuggestion.Status.REJECTED)
         questionSuggestionRepository.save(questionSuggestion)
 
         when:
-        questionSuggestionService.uploadImageToQuestionSuggestion(questionSuggestion.getId(), IMAGE_TYPE_ONE)
+        questionSuggestionService.uploadJustificationImage(questionSuggestion.getId(), IMAGE_TYPE_ONE)
 
         then: "an exception is thrown"
         TutorException exception = thrown()
         exception.getErrorMessage() == EMPTY_QUESTION_SUGGESTION
+    }
+
+    def "Cannot upload a justification image to a not rejected suggestion"() {
+        given: "an empty question suggestion"
+        def questionSuggestion = new QuestionSuggestion()
+        questionSuggestion.setQuestion(question)
+        questionSuggestion.setStatus(QuestionSuggestion.Status.PENDING)
+        questionSuggestionRepository.save(questionSuggestion)
+
+        when:
+        questionSuggestionService.uploadJustificationImage(questionSuggestion.getId(), IMAGE_TYPE_ONE)
+
+        then: "an exception is thrown"
+        TutorException exception = thrown()
+        exception.getErrorMessage() == QUESTION_SUGGESTION_NOT_REJECTED
+    }
+
+    def "Cannot upload a justification image to a suggestion that has no justification"() {
+        given: "a question suggestion"
+        def questionSuggestion = new QuestionSuggestion()
+        questionSuggestion.setQuestion(question)
+        questionSuggestion.setStatus(QuestionSuggestion.Status.REJECTED)
+        questionSuggestionRepository.save(questionSuggestion)
+
+        when:
+        questionSuggestionService.uploadJustificationImage(questionSuggestion.getId(), IMAGE_TYPE_ONE)
+
+        then: "an exception is thrown"
+        TutorException exception = thrown()
+        exception.getErrorMessage() == JUSTIFICATION_MISSING
     }
 
     @TestConfiguration
