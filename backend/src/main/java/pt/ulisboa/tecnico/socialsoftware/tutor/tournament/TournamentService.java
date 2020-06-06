@@ -117,7 +117,7 @@ public class TournamentService {
 				.orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
 		if (user.getRole() != User.Role.STUDENT)
-			throw new TutorException(USER_IS_STUDENT, userId);
+			throw new TutorException(USER_NOT_STUDENT);
 
 		Tournament tournament = tournamentRepository.findById(tournamentId)
 				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));

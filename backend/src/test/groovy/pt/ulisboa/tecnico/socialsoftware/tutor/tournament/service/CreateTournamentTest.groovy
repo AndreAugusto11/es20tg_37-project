@@ -17,11 +17,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
@@ -30,12 +28,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
@@ -50,8 +44,6 @@ class CreateTournamentTest extends Specification {
 	public static final String ACADEMIC_TERM = "First Semester"
 	public static final String CREATOR_NAME = "Creator Name"
 	public static final String CREATOR_USERNAME = "Creator Username"
-	public static final String ENROLLER_NAME = "Enroller Name"
-	public static final String ENROLLER_USERNAME = "Enroller Username"
 	public static final String TOPIC1_NAME = "Topic 1 Name"
 	public static final String TOPIC2_NAME = "Topic 2 Name"
 	public static final String TOPIC3_NAME = "Topic 3 Name"
@@ -90,7 +82,6 @@ class CreateTournamentTest extends Specification {
 	def course = new Course()
 	def courseExecution = new CourseExecution()
 	def creator = new User()
-	def enroller = new User()
 	def topic1 = new Topic()
 	def topic2 = new Topic()
 	def topic3 = new Topic()
@@ -114,13 +105,6 @@ class CreateTournamentTest extends Specification {
 		creator.setRole(User.Role.STUDENT)
 		creator.addCourseExecutions(courseExecution)
 		userRepository.save(creator)
-
-		enroller.setName(ENROLLER_NAME)
-		enroller.setUsername(ENROLLER_USERNAME)
-		enroller.setKey(2)
-		enroller.setRole(User.Role.STUDENT)
-		enroller.addCourseExecutions(courseExecution)
-		userRepository.save(enroller)
 
 		topic1.setName(TOPIC1_NAME)
 		topic1.setCourse(course)
@@ -173,6 +157,8 @@ class CreateTournamentTest extends Specification {
 		def result = tournamentRepository.findAll().get(0)
 		result.getId() != null
 		result.getCourseExecution() == courseExecution
+		courseExecution.getTournaments() != null
+		courseExecution.getTournaments().size() == 1
 		result.getTitle() == TOURNAMENT_TITLE
 		result.getCreator() != null
 		result.getCreator().getId() == getCreator().getId()
@@ -184,6 +170,8 @@ class CreateTournamentTest extends Specification {
 		result.getStatus() == Tournament.Status.ENROLLING
 		result.getEnrolledUsers() != null
 		result.getEnrolledUsers().size() == 1
+		creator.getEnrolledTournaments() != null
+		creator.getEnrolledTournaments().size() == 1
 		def resultEnrolled = result.getEnrolledUsers().find()
 		resultEnrolled.getId() == creator.getId()
 
@@ -194,6 +182,7 @@ class CreateTournamentTest extends Specification {
 		resultTopicConjunctions.size() == 1
 		def resultTopicConjunction = resultTopicConjunctions.find()
 		resultTopicConjunction != null
+		resultTopicConjunction.getTournament() == result
 		resultTopicConjunction.getTopics() != null
 		resultTopicConjunction.getTopics().size() == 3
 		resultTopicConjunction.getTopics().contains(topic1)
@@ -265,6 +254,8 @@ class CreateTournamentTest extends Specification {
 		def result = tournamentRepository.findAll().get(0)
 		result.getId() != null
 		result.getCourseExecution() == courseExecution
+		courseExecution.getTournaments() != null
+		courseExecution.getTournaments().size() == 1
 		result.getTitle() == TOURNAMENT_TITLE
 		result.getCreator() != null
 		result.getCreator().getId() == getCreator().getId()
@@ -276,6 +267,8 @@ class CreateTournamentTest extends Specification {
 		result.getStatus() == Tournament.Status.ENROLLING
 		result.getEnrolledUsers() != null
 		result.getEnrolledUsers().size() == 1
+		creator.getEnrolledTournaments() != null
+		creator.getEnrolledTournaments().size() == 1
 		def resultEnrolled = result.getEnrolledUsers().find()
 		resultEnrolled.getId() == creator.getId()
 
@@ -284,6 +277,7 @@ class CreateTournamentTest extends Specification {
 		def resultTopicConjunctions = result.getTopicConjunctions()
 		resultTopicConjunctions != null
 		resultTopicConjunctions.size() == 3
+		resultTopicConjunctions.forEach({ tc -> tc.getTournament() == result })
 
 		and: "the tournament question pool has two questions"
 		result.getQuestions() != null
@@ -355,12 +349,14 @@ class CreateTournamentTest extends Specification {
 		invalidTopic.setCourse(course)
 		invalidTopic.setName(TOPIC_NAME)
 		topicRepository.save(invalidTopic)
-		topicRepository.delete(invalidTopic)
 
 		and: "a topic conjunction with the invalid topic"
 		def invalidTopicConjunction = new TopicConjunction()
 		invalidTopicConjunction.addTopic(topic1)
 		invalidTopicConjunction.addTopic(invalidTopic)
+		topicConjunctionRepository.save(invalidTopicConjunction)
+
+		topicRepository.delete(invalidTopic)
 
 		and: "an invalid topic conjunction dto list"
 		def topicConjunctions = new HashSet()

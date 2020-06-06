@@ -132,6 +132,7 @@ public enum ErrorMessage {
 
     USER_IS_TEACHER("This operation is invalid to users of the type teacher"),
     USER_IS_STUDENT("This operation is invalid to users of the type student"),
+    USER_NOT_STUDENT("This operation is only valid for student users"),
     INVALID_NULL_ARGUMENTS_SUGGESTION("The question suggestion dto given is null"),
     INVALID_NULL_ARGUMENTS_SUGGESTIONID("The question suggestion id given is null"),
     INVALID_NULL_ARGUMENTS_USERID("The user id given is null"),
