@@ -1,35 +1,12 @@
 <template>
   <v-dialog
     :value="dialog"
-    v-on:click:outside="closeSuggestionDialog"
-    @keydown.esc="closeSuggestionDialog"
+    v-on:click:outside="closeJustificationDialog"
+    @keydown.esc="closeJustificationDialog"
     max-width="65%"
   >
     <v-card>
-      <v-card-text class="text-left">
-        <show-questionSuggestion :questionSuggestion="questionSuggestion" />
-      </v-card-text>
-
-      <v-card-actions v-if="!rejected">
-        <v-btn
-          v-if="questionSuggestion.status === 'PENDING'"
-          dark
-          color="green darken-1"
-          @click="acceptSuggestionDialog"
-          data-cy="acceptQuestion"
-        >Accept</v-btn>
-        <v-btn
-          v-if="questionSuggestion.status === 'PENDING'"
-          dark
-          color="red darken-1"
-          @click="rejectSuggestionDialog"
-          data-cy="rejectQuestion"
-        >Reject</v-btn>
-        <v-spacer />
-        <v-btn dark color="blue darken-1" @click="closeSuggestionDialog">close</v-btn>
-      </v-card-actions>
-
-      <v-card-text v-if="rejected">
+      <v-card-text>
         <v-textarea
           outline
           rows="2"
@@ -51,7 +28,7 @@
         </template>
       </v-card-text>
 
-      <v-card-actions v-if="rejected">
+      <v-card-actions>
         <v-spacer />
 
         <v-btn dark color="blue darken-1" @click="closeJustificationDialog">close</v-btn>
@@ -64,22 +41,6 @@
         >save</v-btn>
       </v-card-actions>
     </v-card>
-
-    <v-card class="mt-5" v-if="questionSuggestion.justificationDto">
-      <v-card-title>
-        <span class="headline">Justification</span>
-      </v-card-title>
-
-      <v-card-text class="text-left">
-        <span v-html="convertMarkDown(questionSuggestion.justificationDto.content, null)" />
-      </v-card-text>
-
-      <v-card-text class="text-left" v-if="questionSuggestion.justificationDto.image">
-        <span
-          v-html="convertMarkDown('![image][image]', questionSuggestion.justificationDto.image)"
-        />
-      </v-card-text>
-    </v-card>
   </v-dialog>
 </template>
 
@@ -87,21 +48,14 @@
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import QuestionSuggestion from '../../../models/management/QuestionSuggestion';
-import ShowQuestionSuggestion from '@/views/student/questionSuggestion/ShowQuestionSuggestion.vue';
 import Justification from '@/models/management/Justification';
 import Image from '@/models/management/Image';
 import RemoteServices from '@/services/RemoteServices';
 
-@Component({
-  components: {
-    'show-questionSuggestion': ShowQuestionSuggestion
-  }
-})
+@Component
 export default class ShowSuggestionDialog extends Vue {
-  @Prop({ type: QuestionSuggestion, required: true })
-  readonly questionSuggestion!: QuestionSuggestion;
+  @Prop({ type: QuestionSuggestion, required: true }) readonly questionSuggestion!: QuestionSuggestion;
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
-  @Prop({ type: Boolean, required: true }) rejected!: boolean;
 
   justification!: Justification;
   file!: File;
@@ -114,22 +68,8 @@ export default class ShowSuggestionDialog extends Vue {
     this.file = event;
   }
 
-  closeSuggestionDialog() {
-    if (this.rejected) this.rejected = false;
-    this.justification.content = '';
-    this.$emit('close-dialog');
-  }
-
-  acceptSuggestionDialog() {
-    this.$emit('accept-suggestion');
-  }
-
-  rejectSuggestionDialog() {
-    this.rejected = true;
-  }
-
   closeJustificationDialog() {
-    this.rejected = false;
+    this.$emit('close-dialog');
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {
@@ -142,13 +82,13 @@ export default class ShowSuggestionDialog extends Vue {
     } else {
       try {
         if (
-          this.questionSuggestion.id &&
-          this.questionSuggestion.justificationDto
-        ) {
-          let questionSuggestion = await RemoteServices.rejectQuestionSuggestion(
+          this.questionSuggestion.id) {
+          await RemoteServices.rejectQuestionSuggestion(
             this.questionSuggestion.id,
             this.justification
           );
+
+          this.questionSuggestion.justificationDto = this.justification;
 
           if (this.file) {
             let url = await RemoteServices.uploadImageToJustification(

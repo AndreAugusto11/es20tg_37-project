@@ -42,7 +42,8 @@
             <v-icon
               class="mr-2"
               v-on="on"
-              @click="showQuestionSuggestionDialog(item)"
+              @click="showQuestionSuggestion
+          (item)"
               data-cy="showSuggestion"
               >visibility</v-icon
             >
@@ -75,14 +76,8 @@
       v-if="currentQuestionSuggestion"
       v-model="editQuestionSuggestionDialog"
       :questionSuggestion="currentQuestionSuggestion"
-      v-on:save-questionSuggestion="onSaveQuestionSuggestion"
-      v-on:close-dialog="onCloseQuestionSuggestionDialog"
-    />
-    <show-questionSuggestion-dialog
-      v-if="currentQuestionSuggestion"
-      :dialog="questionSuggestionDialog"
-      :questionSuggestion="currentQuestionSuggestion"
-      v-on:close-dialog="onCloseQuestionSuggestionDialog"
+      v-on:save-questionSuggestion="saveQuestionSuggestion"
+      v-on:close-dialog="closeQuestionSuggestionDialog"
     />
   </v-card>
 </template>
@@ -92,21 +87,18 @@ import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
-import ShowQuestionSuggestionDialog from '@/views/student/questionSuggestion/ShowQuestionSuggestionDialog.vue';
 import QuestionSuggestion from '@/models/management/QuestionSuggestion';
 import EditQuestionSuggestionDialog from '@/views/student/questionSuggestion/EditQuestionSuggestionDialog.vue';
 
 @Component({
   components: {
-    'edit-questionSuggestion-dialog': EditQuestionSuggestionDialog,
-    'show-questionSuggestion-dialog': ShowQuestionSuggestionDialog
+    'edit-questionSuggestion-dialog': EditQuestionSuggestionDialog
   }
 })
 export default class QuestionSuggestionView extends Vue {
   questionSuggestions: QuestionSuggestion[] = [];
   currentQuestionSuggestion: QuestionSuggestion | null = null;
   editQuestionSuggestionDialog: boolean = false;
-  questionSuggestionDialog: boolean = false;
   search: string = '';
 
   headers: object = [
@@ -134,11 +126,10 @@ export default class QuestionSuggestionView extends Vue {
     this.editQuestionSuggestionDialog = true;
   }
 
-  editRejectedQuestionSuggestion(
-    questionSuggestion: QuestionSuggestion,
-    e?: Event
-  ) {
-    if (e) e.preventDefault();
+  editRejectedQuestionSuggestion(questionSuggestion: QuestionSuggestion, e?: Event) {
+    if (e)
+      e.preventDefault();
+
     this.currentQuestionSuggestion = questionSuggestion;
     this.editQuestionSuggestionDialog = true;
   }
@@ -167,7 +158,7 @@ export default class QuestionSuggestionView extends Vue {
     else return 'green';
   }
 
-  onSaveQuestionSuggestion(questionSuggestion: QuestionSuggestion) {
+  saveQuestionSuggestion(questionSuggestion: QuestionSuggestion) {
     this.questionSuggestions = this.questionSuggestions.filter(
       q => q.id !== questionSuggestion.id
     );
@@ -176,13 +167,12 @@ export default class QuestionSuggestionView extends Vue {
     this.currentQuestionSuggestion = null;
   }
 
-  showQuestionSuggestionDialog(questionSuggestion: QuestionSuggestion) {
-    this.currentQuestionSuggestion = questionSuggestion;
-    this.questionSuggestionDialog = true;
+  async showQuestionSuggestion(questionSuggestion: QuestionSuggestion) {
+    await this.$router.push({ name: 'test', params: { questionSuggestion: JSON.stringify(questionSuggestion) } });
   }
 
-  onCloseQuestionSuggestionDialog() {
-    this.questionSuggestionDialog = false;
+  closeQuestionSuggestionDialog() {
+    this.currentQuestionSuggestion = null;
   }
 }
 </script>

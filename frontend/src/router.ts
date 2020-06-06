@@ -16,6 +16,7 @@ import TournamentsView from '@/views/student/tournaments/TournamentsView.vue';
 import EnrolledTournamentsView from '@/views/student/tournaments/EnrolledTournamentsView.vue';
 import CreateTournamentsView from '@/views/student/tournaments/CreateTournamentsView.vue';
 import SuggestionsView from './views/student/questionSuggestion/QuestionSuggestionView.vue';
+import MyQuestionSuggestionView from './views/student/questionSuggestion/MyQSView.vue'
 import SuggestionsTView from './views/teacher/questionSuggestions/AvailableSuggestionsView.vue';
 import AvailableQuizzesView from '@/views/student/AvailableQuizzesView.vue';
 import SolvedQuizzesView from '@/views/student/SolvedQuizzesView.vue';
@@ -83,6 +84,15 @@ let router = new Router({
           path: 'suggestions',
           name: 'student-suggestions-management',
           component: SuggestionsTView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Questions',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'test2',
+          name: 'test2',
+          component: MyQuestionSuggestionView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Questions',
             requiredAuth: 'Teacher'
@@ -163,6 +173,15 @@ let router = new Router({
           path: 'suggestions',
           name: 'create-suggestions',
           component: SuggestionsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Questions',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'test',
+          name: 'test',
+          component: MyQuestionSuggestionView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Questions',
             requiredAuth: 'Student'
@@ -307,6 +326,15 @@ let router = new Router({
           path: 'suggestions',
           name: 'suggestionsAdmin',
           component: AdminQuestionSuggestionsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Manage Question Suggestions',
+            requiredAuth: 'Admin'
+          }
+        },
+        {
+          path: 'test3',
+          name: 'test3',
+          component: MyQuestionSuggestionView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Manage Question Suggestions',
             requiredAuth: 'Admin'

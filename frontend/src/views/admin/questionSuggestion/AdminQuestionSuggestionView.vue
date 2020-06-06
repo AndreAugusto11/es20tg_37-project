@@ -31,10 +31,9 @@
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
                         <v-icon
-                                large
                                 class="mr-2"
                                 v-on="on"
-                                @click="showSuggestionDialog(item)"
+                                @click="showSuggestion(item)"
                                 data-cy="showButton"
                         >
                             visibility
@@ -45,7 +44,6 @@
                 <v-tooltip bottom v-if="item.status === 'REJECTED' || item.status === 'ACCEPTED'">
                     <template v-slot:activator="{ on }">
                         <v-icon
-                                large
                                 class="mr-2"
                                 v-on="on"
                                 @click="remove(item.id)"
@@ -60,7 +58,6 @@
                 <v-tooltip bottom v-else>
                     <template v-slot:activator="{ on }">
                         <v-icon
-                                large
                                 class="mr-2"
                                 v-on="on"
                                 data-cy="disabledRemoveButton"
@@ -72,14 +69,6 @@
                 </v-tooltip>
             </template>
         </v-data-table>
-
-        <show-questionSuggestion-dialog
-            v-if="currentSuggestion"
-            :dialog="suggestionDialog"
-            :questionSuggestion="currentSuggestion"
-            :rejected="rejectionDialog"
-            v-on:close-dialog="onCloseSuggestionDialog"
-        />
     </v-card>
 </template>
 
@@ -87,26 +76,18 @@
   import { Component, Vue } from 'vue-property-decorator';
   import QuestionSuggestion from '@/models/management/QuestionSuggestion';
   import RemoteServices from '@/services/RemoteServices';
-  import ShowSuggestionDialog from '@/views/teacher/questionSuggestions/ShowSuggestionDialog.vue';
 
-  @Component({
-    components: {
-      'show-questionSuggestion-dialog': ShowSuggestionDialog
-    }
-  })
+  @Component
   export default class AdminQuestionSuggestionsView extends Vue {
     suggestions: QuestionSuggestion[] = [];
-    currentSuggestion: QuestionSuggestion | null = null;
-    suggestionDialog: boolean = false;
-    rejectionDialog: boolean = false;
     search: string = '';
 
     headers: object = [
-      { text: 'Actions', value: 'action', align: 'center', sortable: false },
-      { text: 'Title', value: 'questionDto.title', align: 'center' },
-      { text: 'Content', value: 'questionDto.content', align: 'left' },
-      { text: 'Status', value: 'status', align: 'center' },
-      { text: 'Creation Date', value: 'creationDate', align: 'center' }
+    { text: 'Title', value: 'questionDto.title', align: 'left' },
+    { text: 'Content', value: 'questionDto.content', align: 'left' },
+    { text: 'Creation Date', value: 'creationDate', align: 'center' },
+    { text: 'Status', value: 'status', align: 'center' }, 
+    { text: 'Actions', value: 'action', align: 'center', sortable: false }
     ];
 
     async created() {
@@ -138,16 +119,8 @@
       else return 'red';
     }
 
-    showSuggestionDialog(suggestion: QuestionSuggestion) {
-      this.currentSuggestion = suggestion;
-      this.rejectionDialog = false;
-      this.suggestionDialog = true;
-    }
-
-    onCloseSuggestionDialog() {
-      this.suggestionDialog = false;
-      this.rejectionDialog = false;
-      this.currentSuggestion = null;
+    async showSuggestion(questionSuggestion: QuestionSuggestion) {
+      await this.$router.push({ name: 'test3', params: { questionSuggestion: JSON.stringify(questionSuggestion) } });
     }
   }
 </script>
