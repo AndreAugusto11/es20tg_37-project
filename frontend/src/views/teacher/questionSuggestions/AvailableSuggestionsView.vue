@@ -31,7 +31,6 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              large
               class="mr-2"
               v-on="on"
               @click="showSuggestionDialog(item)"
@@ -41,6 +40,44 @@
           </template>
           <span>Show Suggestion</span>
         </v-tooltip>
+        <v-tooltip bottom v-if="item.status === 'PENDING'">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="accepted(item.id)"
+              data-cy="acceptButton"
+              >mdi-check</v-icon
+            >
+          </template>
+          <span>Accept Suggestion</span>
+        </v-tooltip>
+        <template v-else>
+          <v-icon
+            class="mr-2"
+            disabled
+            >mdi-check</v-icon
+          >
+        </template>
+        <v-tooltip bottom v-if="item.status === 'PENDING'">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="showRejectionDialog(item)"
+              data-cy="rejectButton"
+              >mdi-close</v-icon
+            >
+          </template>
+          <span>Reject Suggestion</span>
+        </v-tooltip>
+        <template v-else>
+          <v-icon
+            class="mr-2"
+            disabled
+            >mdi-close</v-icon
+          >
+        </template>
       </template>
     </v-data-table>
 
@@ -77,11 +114,11 @@ export default class SuggestionsTView extends Vue {
   search: string = '';
 
   headers: object = [
-    { text: 'Actions', value: 'action', align: 'center', sortable: false },
-    { text: 'Title', value: 'questionDto.title', align: 'center' },
+    { text: 'Title', value: 'questionDto.title', align: 'left' },
     { text: 'Content', value: 'questionDto.content', align: 'left' },
-    { text: 'Status', value: 'status', align: 'center' },
-    { text: 'Creation Date', value: 'creationDate', align: 'center' }
+    { text: 'Creation Date', value: 'creationDate', align: 'center' },
+    { text: 'Status', value: 'status', align: 'center' }, 
+    { text: 'Actions', value: 'action', align: 'center', sortable: false }
   ];
 
   async created() {

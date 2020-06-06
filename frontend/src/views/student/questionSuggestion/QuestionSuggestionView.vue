@@ -5,7 +5,6 @@
       :custom-filter="customFilter"
       :items="questionSuggestions"
       :search="search"
-      :sort-by="['creationDate']"
       multi-sort
       :mobile-breakpoint="0"
       :items-per-page="15"
@@ -35,14 +34,12 @@
       <template v-slot:item.content="{ item }">
         <p
           v-html="convertMarkDown(item.content, null)"
-          @click="showQuestionSuggestionDialog(item)"
       /></template>
 
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              large
               class="mr-2"
               v-on="on"
               @click="showQuestionSuggestionDialog(item)"
@@ -55,7 +52,6 @@
         <v-tooltip bottom v-if="item.status === 'REJECTED'">
           <template v-slot:activator="{ on }">
             <v-icon
-              large
               class="mr-2"
               v-on="on"
               @click="editRejectedQuestionSuggestion(item)"
@@ -65,6 +61,13 @@
           </template>
           <span>Edit Question</span>
         </v-tooltip>
+          <template v-else>
+            <v-icon
+              class="mr-2"
+              disabled
+              >edit</v-icon
+            >
+          </template>
       </template>
     </v-data-table>
 
@@ -107,20 +110,11 @@ export default class QuestionSuggestionView extends Vue {
   search: string = '';
 
   headers: object = [
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'center',
-      sortable: false
-    },
-    { text: 'Title', value: 'questionDto.title', align: 'center' },
+    { text: 'Title', value: 'questionDto.title', align: 'left' },
     { text: 'Content', value: 'questionDto.content', align: 'left' },
-    { text: 'Status', value: 'status', align: 'center' },
-    {
-      text: 'Creation Date',
-      value: 'creationDate',
-      align: 'center'
-    }
+    { text: 'Creation Date', value: 'creationDate', align: 'center' },
+    { text: 'Status', value: 'status', align: 'center' }, 
+    { text: 'Actions', value: 'action', align: 'center', sortable: false }
   ];
 
   async created() {
