@@ -71,7 +71,7 @@
     @Prop({ type: ClarificationRequest, required: true }) readonly clarificationRequest!: ClarificationRequest;
 
     createClarificationRequestAnswer!: ClarificationRequestAnswer;
-    file!: File
+    file: File | null = null;
 
     created() {
       this.createClarificationRequestAnswer = new ClarificationRequestAnswer(this.createClarificationRequestAnswer);
