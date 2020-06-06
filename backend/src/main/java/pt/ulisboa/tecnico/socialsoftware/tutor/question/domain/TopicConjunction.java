@@ -112,10 +112,10 @@ public class TopicConjunction {
         });
     }
 
-    public List<Question> getQuestions() {
+    public Set<Question> getQuestions() {
         return this.topics.stream()
                 .flatMap(topic -> topic.getQuestions().stream())
                 .filter(question -> question.getTopics().equals(this.topics))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 }

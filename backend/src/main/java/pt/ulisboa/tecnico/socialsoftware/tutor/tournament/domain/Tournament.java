@@ -74,13 +74,13 @@ public class Tournament {
 		setCourseExecution(courseExecution);
 		setTitle(tournamentDto.getTitle());
 		setCreator(creator);
-		setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
 		setCreationDate(DateHandler.toLocalDateTime(tournamentDto.getCreationDate()));
 		setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
 		setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
 		setResultsDate(DateHandler.toLocalDateTime(tournamentDto.getResultsDate()));
 		setStatus(Tournament.Status.valueOf(tournamentDto.getStatus()));
 		setTopicConjunctions(topicConjunctions);
+		setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
 	}
 
 	public Integer getId() { return this.id; }
@@ -123,6 +123,10 @@ public class Tournament {
 	}
 
 	public void setNumberOfQuestions(int numberOfQuestions) {
+		if (numberOfQuestions <= 0)
+			throw new TutorException(INVALID_NUMBER_OF_QUESTIONS);
+		if (numberOfQuestions > getQuestions().size())
+			throw new TutorException(NOT_ENOUGH_QUESTIONS);
 		this.numberOfQuestions = numberOfQuestions;
 	}
 
@@ -223,10 +227,10 @@ public class Tournament {
 		user.addEnrolledTournament(this);
 	}
 
-	public List<Question> getQuestions() {
+	public Set<Question> getQuestions() {
 		return this.topicConjunctions.stream()
 				.flatMap(topicConjunction -> topicConjunction.getQuestions().stream())
-				.collect(Collectors.toList());
+				.collect(Collectors.toSet());
 	}
 
 	public Quiz getQuiz() { return this.quiz; }

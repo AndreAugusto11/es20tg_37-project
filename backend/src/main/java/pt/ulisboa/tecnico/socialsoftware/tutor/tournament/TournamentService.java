@@ -88,7 +88,8 @@ public class TournamentService {
 
 					Set<Topic> newTopics = topicConjunctionDto.getTopics().stream()
 							.map(topicDto -> topicRepository.findById(topicDto.getId())
-									.orElseThrow()).collect(Collectors.toSet());
+									.orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND)))
+							.collect(Collectors.toSet());
 
 					topicConjunction.updateTopics(newTopics);
 					return topicConjunction;
