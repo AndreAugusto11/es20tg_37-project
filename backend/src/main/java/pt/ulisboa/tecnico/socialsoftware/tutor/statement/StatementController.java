@@ -83,6 +83,18 @@ public class StatementController {
         return statementService.getQuizByQRCode(user.getId(), quizId);
     }
 
+    @GetMapping("/tournaments/{tournamentId}/quiz")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS')")
+    public StatementQuizDto getTournamentQuiz(Principal principal, @PathVariable int tournamentId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null) {
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        return statementService.getTournamentQuiz(user.getId(), tournamentId);
+    }
+
     @PostMapping("/quizzes/{quizId}/submit")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody StatementAnswerDto answer) {

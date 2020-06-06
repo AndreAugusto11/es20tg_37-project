@@ -85,7 +85,7 @@ class GetNumberOfTournamentsFromStudentTest extends Specification {
         def tournament1 = new Tournament()
         tournament1.setCreator(user2)
         tournamentRepository.save(tournament1)
-        user.addTournament(tournament1)
+        user.addEnrolledTournament(tournament1)
         when: "nothing"
         def result = statsService.getStats(user.getId(), courseExecution.getId())
 

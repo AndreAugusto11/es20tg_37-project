@@ -75,12 +75,12 @@ public class Quiz implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY, orphanRemoval=true)
     private final Set<QuizAnswer> quizAnswers = new HashSet<>();
 
+    @OneToOne
+    private Tournament tournament;
+
     @ManyToOne
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
-
-    @OneToOne
-    private Tournament tournament;
 
     public Quiz() {}
 
@@ -156,8 +156,6 @@ public class Quiz implements DomainEntity {
     public String getTitle() {
     return title;
     }
-
-    public void setTournament(Tournament tournament) { this.tournament = tournament; }
 
     public void setTitle(String title) {
         if (title == null || title.isBlank())
@@ -261,8 +259,6 @@ public class Quiz implements DomainEntity {
         return quizAnswers;
     }
 
-    public Tournament getTournament(){return tournament;}
-
     public CourseExecution getCourseExecution() {
         return courseExecution;
     }
@@ -271,6 +267,10 @@ public class Quiz implements DomainEntity {
         this.courseExecution = courseExecution;
         courseExecution.addQuiz(this);
     }
+
+    public Tournament getTournament() { return tournament; }
+
+    public void setTournament(Tournament tournament) { this.tournament = tournament; }
 
     public void addQuizQuestion(QuizQuestion quizQuestion) {
         this.quizQuestions.add(quizQuestion);

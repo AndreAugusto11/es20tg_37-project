@@ -51,7 +51,7 @@ class EnrollInOpenTournamentPerformanceTest extends Specification {
 
         when:
         1.upto(1, {
-            tournamentService.enrollStudentInTournament(user2.getId(),tournamentList.pop().getId())
+            tournamentService.enrollInTournament(user2.getId(),tournamentList.pop().getId())
         })
 
         then:

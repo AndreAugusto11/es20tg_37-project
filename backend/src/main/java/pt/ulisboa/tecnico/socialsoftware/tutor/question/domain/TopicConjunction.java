@@ -1,11 +1,17 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_RESULTS_DATE_FOR_TOURNAMENT;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOPIC_CONJUNCTION_IS_USED_IN_TOURNAMENT;
 
 @Entity
 @Table(name = "topic_conjunctions")
@@ -20,6 +26,10 @@ public class TopicConjunction {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "tournament_id")
+    private Tournament tournament;
 
     public Integer getId() {
         return id;
@@ -37,15 +47,33 @@ public class TopicConjunction {
         this.assessment = assessment;
     }
 
+    public Tournament getTournament() {
+        return tournament;
+    }
+
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
+    }
+
     public void addTopic(Topic topic) {
         topics.add(topic);
     }
 
     public void remove() {
+        if (this.tournament != null && this.assessment != null) {
+            throw new TutorException(TOPIC_CONJUNCTION_IS_USED_IN_TOURNAMENT, this.tournament.getTitle());
+        }
+
         getTopics().forEach(topic -> topic.getTopicConjunctions().remove(this));
         getTopics().clear();
-        this.assessment.getTopicConjunctions().remove(this);
-        this.assessment = null;
+
+        if (this.assessment != null) {
+            this.assessment.getTopicConjunctions().remove(this);
+            this.assessment = null;
+        } else if (this.tournament != null) {
+            this.tournament.getTopicConjunctions().remove(this);
+            this.tournament = null;
+        }
     }
 
     @Override

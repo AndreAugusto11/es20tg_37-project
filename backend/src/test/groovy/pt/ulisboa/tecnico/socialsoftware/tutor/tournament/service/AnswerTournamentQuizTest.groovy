@@ -154,7 +154,7 @@ class AnswerTournamentQuizTest extends Specification {
         def statementAnswer = new StatementAnswerDto(questionAnswer)
 
         and:"Open/Closed Tournament"
-        tournament.setStatus(Tournament.Status.CREATED)
+        tournament.setStatus(Tournament.Status.ENROLLING)
 
         when:
         tournamentService.submitAnswer(user.getId(),tournament.getId(),statementAnswer)
@@ -188,7 +188,7 @@ class AnswerTournamentQuizTest extends Specification {
 
         and:"non enrolled student"
         def user1 = new User("Manel12", "Man123", 2, User.Role.STUDENT)
-        courseExecution.getUsers().add(user)
+        courseExecution.getEnrolledUsers().add(user)
 
         user1.getCourseExecutions().add(courseExecution)
         userRepository.save(user1)

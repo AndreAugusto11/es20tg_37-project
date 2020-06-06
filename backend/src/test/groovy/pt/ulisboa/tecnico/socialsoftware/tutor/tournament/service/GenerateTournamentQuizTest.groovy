@@ -21,16 +21,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
-
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class GenerateTournamentQuizTest extends Specification {
@@ -154,7 +150,7 @@ class GenerateTournamentQuizTest extends Specification {
         tournament.setStartTime(startDate)
         endDate = LocalDateTime.now().plusDays(1)
         tournament.setEndTime(endDate)
-        tournament.setStatus(Tournament.Status.CREATED)
+        tournament.setStatus(Tournament.Status.ENROLLING)
         tournamentRepository.save(tournament)
     }
 
@@ -167,17 +163,17 @@ class GenerateTournamentQuizTest extends Specification {
         tournamentService.enrollStudentInTournament1(user2.getId(),tournament.getId(), courseExecution.getId())
 
         then: "User is enrolled correctly"
-        tournament.getUsers().size() == 2
+        tournament.getEnrolledUsers().size() == 2
         user2.getEnrolledTournaments().size() == 1
-        tournament.getStatus() == Tournament.Status.CREATED
-        tournament.getUsers().stream().anyMatch({ u -> u.getId() == user2.getId() })
+        tournament.getStatus() == Tournament.Status.ENROLLING
+        tournament.getEnrolledUsers().stream().anyMatch({ u -> u.getId() == user2.getId() })
         user2.getEnrolledTournaments().stream().anyMatch({ t -> t.getId() == tournament.getId() })
         and: "quiz gets generated"
         tournament.getQuiz() != null
         tournament.getQuiz().getQuizQuestions()[0].getQuestion() == question || tournament.getQuiz().getQuizQuestions()[0].getQuestion() == question1
         tournament.getQuiz().getAvailableDate() == startDate
         tournament.getQuiz().getConclusionDate() == endDate
-        tournament.getQuiz().getTournament() == tournament
+        tournament.getQuiz().getTournamentId() == tournament
     }
 
     @TestConfiguration

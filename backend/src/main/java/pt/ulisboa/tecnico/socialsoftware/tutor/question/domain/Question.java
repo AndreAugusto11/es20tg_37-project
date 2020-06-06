@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Questio
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.QuestionSuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -329,6 +330,10 @@ public class Question implements DomainEntity {
 
     public boolean belongsToAssessment(Assessment chosenAssessment) {
         return chosenAssessment.getTopicConjunctions().stream().map(TopicConjunction::getTopics).collect(Collectors.toList()).contains(this.topics);
+    }
+
+    public boolean belongsToTournament(Tournament chosenTournament) {
+        return chosenTournament.getTopicConjunctions().stream().map(TopicConjunction::getTopics).collect(Collectors.toList()).contains(this.topics);
     }
 
     public void update(QuestionDto questionDto) {

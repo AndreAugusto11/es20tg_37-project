@@ -56,6 +56,12 @@ public class UserService {
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public String getEnrolledCoursesAcronyms(int userId) {
+
+        System.out.println("\n" +
+                "UserService : getEnrolledCoursesAcronyms\n" +
+                " - userId: " + userId + "\n"
+        );
+
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         return user.getEnrolledCoursesAcronyms();
@@ -80,6 +86,12 @@ public class UserService {
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionAnswer> getQuestionAnswers(int userId) {
+
+        System.out.println("\n" +
+                "UserService : getQuestionAnswers\n" +
+                " - userId: " + userId + "\n"
+        );
+
         User user = this.userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         return user.getQuizAnswers().stream()

@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 public class StatementCreationDto implements Serializable {
     private Integer numberOfQuestions;
-    private Integer assessment;
+    private Integer assessmentId;
+    private Integer tournamentId;
 
     public Integer getNumberOfQuestions() {
         return numberOfQuestions;
@@ -14,19 +15,28 @@ public class StatementCreationDto implements Serializable {
         this.numberOfQuestions = numberOfQuestions;
     }
 
-    public Integer getAssessment() {
-        return assessment;
+    public Integer getAssessmentId() {
+        return assessmentId;
     }
 
-    public void setAssessment(Integer assessment) {
-        this.assessment = assessment;
+    public void setAssessmentId(Integer assessmentId) {
+        this.assessmentId = assessmentId;
+    }
+
+    public Integer getTournamentId() {
+        return tournamentId;
+    }
+
+    public void setTournamentId(Integer tournamentId) {
+        this.tournamentId = tournamentId;
     }
 
     @Override
     public String toString() {
         return "StatementCreationDto{" +
                 "numberOfQuestions=" + numberOfQuestions +
-                ", assessment=" + assessment +
+                ", assessment=" + assessmentId +
+                ", tournament=" + tournamentId +
                 '}';
     }
 }

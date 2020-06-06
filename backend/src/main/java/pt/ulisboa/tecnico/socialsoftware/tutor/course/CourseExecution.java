@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
@@ -40,6 +41,9 @@ public class CourseExecution implements DomainEntity {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
     private final Set<Quiz> quizzes = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
+    private final Set<Tournament> tournaments = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
     private final Set<Assessment> assessments = new HashSet<>();
@@ -139,6 +143,18 @@ public class CourseExecution implements DomainEntity {
 
     public void addAssessment(Assessment assessment) {
         assessments.add(assessment);
+    }
+
+    public Set<Tournament> getTournaments() {
+        return tournaments;
+    }
+
+    public void addTournament(Tournament tournament) {
+        tournaments.add(tournament);
+    }
+
+    public void removeTournament(Tournament tournament) {
+        tournaments.remove(tournament);
     }
 
     @Override

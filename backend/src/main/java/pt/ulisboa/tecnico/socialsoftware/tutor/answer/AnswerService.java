@@ -62,6 +62,13 @@ public class AnswerService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuizAnswerDto createQuizAnswer(Integer userId, Integer quizId) {
+
+        System.out.println("\n" +
+                "AnswerService : createQuizAnswer\n" +
+                " - userId: " + userId + "\n" +
+                " - quizId: " + quizId + "\n"
+        );
+
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
@@ -77,6 +84,13 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<CorrectAnswerDto> concludeQuiz(User user, Integer quizId) {
+
+        System.out.println("\n" +
+                "AnswerService : concludeQuiz\n" +
+                " - user: " + user + "\n" +
+                " - quizId: " + quizId + "\n"
+        );
+
         QuizAnswer quizAnswer = user.getQuizAnswers().stream().filter(qa -> qa.getQuiz().getId().equals(quizId)).findFirst().orElseThrow(() ->
                 new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -108,6 +122,14 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void submitAnswer(User user, Integer quizId, StatementAnswerDto answer) {
+
+        System.out.println("\n" +
+                "AnswerService : submitAnswer\n" +
+                " - user: " + user + "\n" +
+                " - quizId: " + quizId + "\n" +
+                " - answer: " + answer + "\n"
+        );
+
         QuizAnswer quizAnswer = user.getQuizAnswers().stream()
                 .filter(qa -> qa.getQuiz().getId().equals(quizId))
                 .findFirst()
@@ -184,6 +206,12 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteQuizAnswer(QuizAnswer quizAnswer) {
+
+        System.out.println("\n" +
+                "AnswerService : deleteQuizAnswer\n" +
+                " - quizAnswer: " + quizAnswer + "\n"
+        );
+
         List<QuestionAnswer> questionAnswers = new ArrayList<>(quizAnswer.getQuestionAnswers());
         questionAnswers.forEach(questionAnswer ->
         {

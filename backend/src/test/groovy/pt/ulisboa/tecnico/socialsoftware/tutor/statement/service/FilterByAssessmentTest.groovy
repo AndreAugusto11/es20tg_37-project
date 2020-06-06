@@ -115,7 +115,7 @@ class FilterByAssessmentTest extends Specification {
         assessmentTopic1.addTopicConjunction(topicConjunction1)
         assessmentRepository.save(assessmentTopic1)
         def statementCreationDto = new StatementCreationDto()
-        statementCreationDto.assessment = assessmentTopic1.id
+        statementCreationDto.assessmentId = assessmentTopic1.id
 
         when:
         def result = statementService.filterByAssessment(questionList, statementCreationDto)
@@ -136,7 +136,7 @@ class FilterByAssessmentTest extends Specification {
         assessmentTopic1_and_2.addTopicConjunction(topicConjunction1_and_2)
         assessmentRepository.save(assessmentTopic1_and_2)
         def statementCreationDto = new StatementCreationDto()
-        statementCreationDto.assessment = assessmentTopic1_and_2.id
+        statementCreationDto.assessmentId = assessmentTopic1_and_2.id
 
         when:
         def result = statementService.filterByAssessment(questionList, statementCreationDto)
@@ -158,7 +158,7 @@ class FilterByAssessmentTest extends Specification {
         assessmentTopic1_or_2.addTopicConjunction(topicConjunction2)
         assessmentRepository.save(assessmentTopic1_or_2)
         def statementCreationDto = new StatementCreationDto()
-        statementCreationDto.assessment = assessmentTopic1_or_2.id
+        statementCreationDto.assessmentId = assessmentTopic1_or_2.id
 
         when:
         def result = statementService.filterByAssessment(questionList, statementCreationDto)

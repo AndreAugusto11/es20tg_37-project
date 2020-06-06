@@ -180,12 +180,15 @@ public class User implements UserDetails, DomainEntity {
         return quizAnswers;
     }
 
-    public Set<CourseExecution> getCourseExecutions() {
-        return courseExecutions;
-    }
+    public Set<CourseExecution> getCourseExecutions() { return courseExecutions; }
 
     public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
         this.courseExecutions = courseExecutions;
+    }
+
+    public void addCourseExecutions(CourseExecution courseExecutions) {
+        this.courseExecutions.add(courseExecutions);
+        courseExecutions.addUser(this);
     }
 
     public Integer getNumberOfTeacherQuizzes() {
@@ -405,12 +408,6 @@ public class User implements UserDetails, DomainEntity {
         this.courseExecutions.add(course);
     }
 
-    public void addTournament(Tournament tournament) { this.enrolledTournaments.add(tournament); }
-
-    public Set<Tournament> getEnrolledTournaments() { return this.enrolledTournaments; }
-
-    public void removeTournament (Tournament tournament) { this.enrolledTournaments.remove(tournament); }
-
     public Set<ClarificationRequest> getClarificationRequests() { return clarificationRequests; }
 
     public void addClarificationRequest(ClarificationRequest clarificationRequest) {
@@ -516,17 +513,20 @@ public class User implements UserDetails, DomainEntity {
         justifications.add(justification);
     }
 
-    public void addCreatedTournament(Tournament tournament) {
-        enrolledTournaments.add(tournament);
-        createdTournaments.add(tournament);
-    }
-
     public Set<Tournament> getCreatedTournaments()
     {
         return createdTournaments;
     }
 
+    public void addCreatedTournament(Tournament tournament) { createdTournaments.add(tournament); }
+
     public void removeCreatedTournament(Tournament tournament) { createdTournaments.remove(tournament); }
+
+    public Set<Tournament> getEnrolledTournaments() { return this.enrolledTournaments; }
+
+    public void addEnrolledTournament(Tournament tournament) { this.enrolledTournaments.add(tournament); }
+
+    public void removeEnrolledTournament(Tournament tournament) { this.enrolledTournaments.remove(tournament); }
 
     public Boolean isPrivateClarificationStats() {
         return privateClarificationStats;
@@ -535,7 +535,6 @@ public class User implements UserDetails, DomainEntity {
     public void setPrivateClarificationStats(Boolean privateClarificationStats) {
         this.privateClarificationStats = privateClarificationStats;
     }
-
 
     public Boolean isPrivateSuggestion() {
         return privateSuggestion;

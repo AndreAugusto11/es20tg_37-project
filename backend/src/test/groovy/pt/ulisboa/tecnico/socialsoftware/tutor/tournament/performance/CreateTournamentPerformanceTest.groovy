@@ -22,7 +22,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Shared
 import spock.lang.Specification
 
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 
@@ -76,7 +75,7 @@ class CreateTournamentPerformanceTest extends Specification {
         def tournamentDto = new TournamentDto()
         tournamentDto.setCreatorId(student.getId())
         tournamentDto.setTopics(topicsDto)
-        tournamentDto.setNumberQuestions(numberQuestions)
+        tournamentDto.setNumberOfAvailableQuestions(numberQuestions)
         tournamentDto.setStartTime(startTime)
         tournamentDto.setEndTime(endTime)
 

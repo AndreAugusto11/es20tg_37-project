@@ -63,13 +63,13 @@ class ImportExportUsersTest extends Specification {
         def usersXml = userService.exportUsers()
         and: 'a clean database'
         userRepository.deleteAll()
-        courseExecution.getUsers().clear()
+        courseExecution.getEnrolledUsers().clear()
 
         when:
         userService.importUsers(usersXml)
 
         then:
-        courseExecution.getUsers().size() == 2
+        courseExecution.getEnrolledUsers().size() == 2
 
         userRepository.findAll().size() == 2
         def userOne = userRepository.findByUsername(AR)
