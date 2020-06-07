@@ -194,7 +194,12 @@ public class Tournament {
 
 	public Status getStatus() { return this.status; }
 
-	public void setStatus(Status status) { this.status = status; }
+	public void setStatus(Status status) {
+		if (status == null)
+			this.status = Status.ENROLLING;
+		else
+			this.status = status;
+	}
 
 	public void updateStatus() {
 		if (status == Status.ONGOING && conclusionDate != null && DateHandler.now().isAfter(conclusionDate))
