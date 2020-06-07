@@ -49,12 +49,27 @@
         <v-list>
           <v-list-item
             class="row"
-            v-for="option in questionSuggestion.questionDto.options.slice(0, 4)"
+            v-for="option in questionSuggestion.questionDto.options"
             :key="option.sequence"
           >
-            <v-icon v-if="option.correct">mdi-checkbox-marked-circle</v-icon>
-            <v-icon v-else>mdi-checkbox-blank-circle-outline</v-icon>
-            <div class="ml-3" v-html="convertMarkDown(option.content)" />
+            <v-list-item-icon>
+              <v-tooltip v-if="option.correct" left>
+                <template v-slot:activator="{ on }">
+                  <v-icon color="green" v-on="on">mdi-check</v-icon>
+                </template>
+                <span>Correct option</span>
+              </v-tooltip>
+
+              <v-tooltip v-else left>
+                <template v-slot:activator="{ on }">
+                  <v-icon color="red" v-on="on">mdi-close</v-icon>
+                </template>
+                <span>Incorrect option</span>
+              </v-tooltip>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <span v-html="convertMarkDown(option.content, null)" />
+            </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -118,7 +133,6 @@ export default class ShowQuestionSuggestion extends Vue {
   getRandomVuetifyColor(name: string): string {
     return getRandomVuetifyColor(name);
   }
-
 }
 </script>
 
@@ -132,5 +146,4 @@ img {
 .v-application p {
   margin-bottom: 0 !important;
 }
-
 </style>
