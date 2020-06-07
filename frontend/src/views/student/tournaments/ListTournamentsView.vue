@@ -59,13 +59,24 @@
           </v-row>
         </template>
 
-        <template v-slot:item.topicsName="{ item }">
-          <v-chip
-            :key="topic.id"
-            v-for="topic in item.topics"
-            style="margin: 5px;"
+        <template v-slot:item.topics="{ item }">
+          <div
+            :key="topicConjunction.id"
+            v-for="topicConjunction in item.topicConjunctions"
           >
-            {{ topic.name }}
+            <v-chip
+              :key="topic.id"
+              v-for="topic in topicConjunction.topics"
+              style="margin: 5px;"
+            >
+              {{ topic.name }}
+            </v-chip>
+          </div>
+        </template>
+
+        <template v-slot:item.numberOfEnrolls="{ item }">
+          <v-chip>
+            {{ item.enrolledStudentsNames.length }}
           </v-chip>
         </template>
 
@@ -129,7 +140,7 @@
           </v-tooltip>
 
           <v-tooltip
-            v-if="myTournaments.includes(item) && item.status === 'CREATED'"
+            v-if="myTournaments.includes(item) && item.status === 'ENROLLING'"
             bottom
           >
             <template v-slot:activator="{ on }">
@@ -206,6 +217,18 @@ export default class ListTournamentsView extends Vue {
       width: '10%'
     },
     {
+      text: 'Title',
+      value: 'title',
+      align: 'center',
+      width: '10%'
+    },
+    {
+      text: 'Number of Enrolls',
+      value: 'numberOfEnrolls',
+      align: 'center',
+      width: '10%'
+    },
+    {
       text: 'Number of Questions',
       value: 'numberOfQuestions',
       align: 'center',
@@ -213,19 +236,19 @@ export default class ListTournamentsView extends Vue {
     },
     {
       text: 'Topics',
-      value: 'topicsName',
+      value: 'topics',
       align: 'center',
       width: '30%'
     },
     {
       text: 'Start Date',
-      value: 'startTime',
+      value: 'availableDate',
       align: 'center',
       width: '10%'
     },
     {
       text: 'End Date',
-      value: 'endTime',
+      value: 'conclusionDate',
       align: 'center',
       width: '10%'
     },
@@ -281,13 +304,16 @@ export default class ListTournamentsView extends Vue {
       confirm('Are you sure you want to cancel?\nThis action in non-reversible')
     ) {
       try {
-        await RemoteServices.cancelTournament(tournamentToCancel);
-        this.tournaments[this.tournaments.indexOf(tournamentToCancel)].status =
-          'CANCELLED';
-        this.myTournaments[
-          this.myTournaments.indexOf(tournamentToCancel)
-        ].status = 'CANCELLED';
-        this.update += 1;
+        if (tournamentToCancel.id) {
+          await RemoteServices.cancelTournament(tournamentToCancel.id);
+          this.tournaments[
+            this.tournaments.indexOf(tournamentToCancel)
+          ].status = 'CANCELLED';
+          this.myTournaments[
+            this.myTournaments.indexOf(tournamentToCancel)
+          ].status = 'CANCELLED';
+          this.update += 1;
+        }
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
@@ -297,10 +323,12 @@ export default class ListTournamentsView extends Vue {
   async enrollTournament(tournamentToEnroll: Tournament) {
     if (confirm('Are you sure you want to enroll?')) {
       try {
-        this.tournaments[
-          this.tournaments.indexOf(tournamentToEnroll)
-        ] = await RemoteServices.enrollTournament(tournamentToEnroll);
-        this.update += 1;
+        if (tournamentToEnroll.id) {
+          this.tournaments[
+            this.tournaments.indexOf(tournamentToEnroll)
+          ] = await RemoteServices.enrollTournament(tournamentToEnroll.id);
+          this.update += 1;
+        }
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
@@ -308,22 +336,18 @@ export default class ListTournamentsView extends Vue {
   }
 
   async answerQuiz(tournamentToAnswer: Tournament) {
-    /* try {
-      if (tournamentToAnswer.quizID != null) {
-        await this.statementManager.getTournamentQuiz(
-          tournamentToAnswer.quizID
-        );
+    try {
+      if (tournamentToAnswer.id) {
+        await this.statementManager.setTournamentQuiz(tournamentToAnswer.id);
         await this.$router.push({ name: 'solve-quiz' });
-      } else {
-        throw Error('No quiz');
       }
     } catch (error) {
       await this.$store.dispatch('error', error);
-    } */
+    }
   }
 
   getStatusColor(status: string): string {
-    if (status === 'CREATED') return 'green';
+    if (status === 'ENROLLING') return 'green';
     else if (status === 'ONGOING') return 'orange';
     else return 'red';
   }
@@ -340,7 +364,7 @@ export default class ListTournamentsView extends Vue {
     return (
       !tournament.enrolledStudentsNames.includes(
         this.$store.getters.getUser.name
-      ) && tournament.status === 'CREATED'
+      ) && tournament.status === 'ENROLLING'
     );
   }
 

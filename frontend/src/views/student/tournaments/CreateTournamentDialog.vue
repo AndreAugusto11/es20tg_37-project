@@ -51,6 +51,14 @@
               format="YYYY-MM-DDTHH:mm:ssZ"
             />
           </v-flex>
+          <v-flex xs24 sm12 md8 style="margin-left: -10px;">
+            <VueCtkDateTimePicker
+              label="Results Date"
+              id="resultsDateInput"
+              v-model="currentTournament.resultsDate"
+              format="YYYY-MM-DDTHH:mm:ssZ"
+            />
+          </v-flex>
         </v-layout>
       </v-container>
     </v-card-text>

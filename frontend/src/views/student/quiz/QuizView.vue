@@ -167,10 +167,7 @@ export default class QuizView extends Vue {
       await this.$router.push({ name: 'create-quiz' });
     } else {
       try {
-        if (this.statementQuiz?.tournamentID == null)
-          await RemoteServices.startQuiz(this.statementQuiz?.id);
-        else
-          await RemoteServices.startTournamentQuiz(this.statementQuiz?.tournamentID);
+        await RemoteServices.startQuiz(this.statementQuiz?.id);
       } catch (error) {
         await this.$store.dispatch('error', error);
         await this.$router.push({ name: 'available-quizzes' });

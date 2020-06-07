@@ -144,9 +144,9 @@ export default class RemoteServices {
       });
   }
 
-  static async enrollTournament(tournament: Tournament): Promise<Tournament> {
+  static async enrollTournament(tournamentId: number): Promise<Tournament> {
     return httpClient
-      .post(`/tournaments/${tournament.id}/enroll`, tournament)
+      .post(`/tournaments/${tournamentId}/enroll`)
       .then(response => {
         return new Tournament(response.data);
       })
@@ -155,10 +155,9 @@ export default class RemoteServices {
       });
   }
 
-  static cancelTournament(tournament: Tournament) {
-    console.log(tournament.id);
+  static cancelTournament(tournamentId: number) {
     return httpClient
-      .post(`/tournaments/${tournament.id}/cancel`)
+      .post(`/tournaments/${tournamentId}/cancel`)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -296,6 +295,19 @@ export default class RemoteServices {
       .post(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/generate`,
         params
+      )
+      .then(response => {
+        return new StatementQuiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getTournamentQuiz(tournamentId: number): Promise<StatementQuiz> {
+    return httpClient
+      .get(
+        `/tournaments/${tournamentId}/quiz`
       )
       .then(response => {
         return new StatementQuiz(response.data);
