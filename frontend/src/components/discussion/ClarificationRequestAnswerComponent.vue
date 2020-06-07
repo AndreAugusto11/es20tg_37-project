@@ -41,7 +41,7 @@
 
         <v-row
                 align="center"
-                class="spacer ml-5 mb-5"
+                class="spacer ml-5"
                 no-gutters
         >
             <v-col md="auto" class="mr-5">
@@ -52,6 +52,13 @@
             <v-col class="post-text">
                 <span v-html="convertMarkDown(this.clarificationRequestAnswer.content, null)" />
             </v-col>
+        </v-row>
+        <v-row
+                align="center"
+        >
+          <v-col v-if="this.clarificationRequestAnswer.image">
+              <span v-html="convertMarkDown('![image][image]', this.clarificationRequestAnswer.image)"/>
+          </v-col>
         </v-row>
 
         <v-row
@@ -115,26 +122,26 @@
         date_diff = new Date(milisec_diff);
 
         if (days > 0) {
-          return days + " Days ago";
+          return days + ' Days ago';
         }
         else if ((date_diff.getHours() - 1) > 0) {
           if ((date_diff.getHours() - 1) > 1) {
-            return (date_diff.getHours() - 1) + " Hours ago";
+            return (date_diff.getHours() - 1) + ' Hours ago';
           }
           else {
-            return (date_diff.getHours() - 1) + " Hour ago";
+            return (date_diff.getHours() - 1) + ' Hour ago';
           }
         }
         else if (date_diff.getMinutes() > 0) {
           if (date_diff.getMinutes() > 1) {
-            return date_diff.getMinutes() + " Minutes ago";
+            return date_diff.getMinutes() + ' Minutes ago';
           }
           else {
-            return date_diff.getMinutes() + " Minute ago";
+            return date_diff.getMinutes() + ' Minute ago';
           }
         }
         else {
-          return date_diff.getSeconds() + " Seconds ago";
+          return date_diff.getSeconds() + ' Seconds ago';
         }
       }
     }
@@ -143,5 +150,11 @@
 <style lang="scss" scoped>
     .post-text {
         text-align: left !important;
+    }
+
+    img {
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
     }
 </style>
