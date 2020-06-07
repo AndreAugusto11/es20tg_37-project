@@ -11,8 +11,6 @@ describe('Reject a suggestion', () => {
     cy.exec('psql -d tutordb -c "' +
       'DELETE FROM questions WHERE title = \'TestReject\';"');
     cy.exec('psql -d tutordb -c "' +
-      'DELETE FROM users_question_suggestion;"');
-    cy.exec('psql -d tutordb -c "' +
       'DELETE FROM justifications;"');
     cy.exec('psql -d tutordb -c "' +
       'DELETE FROM question_suggestions;"');
@@ -26,20 +24,6 @@ describe('Reject a suggestion', () => {
     cy.contains('Management').click();
     cy.contains('Suggestions').click();
     cy.rejectQuestionSuggestion('TestReject', 'Some justification');
-    cy.contains('Logout').click();
-    cy.demoStudentLogin();
-    cy.contains('Suggestions').click();
-    cy.showQuestionSuggestion('TestReject')
-  });
-
-  it('login, creates a suggestion and rejects it through show menu', () => {
-    cy.createQuestionSuggestion('TestReject','Question','a', 'b', 'c', 'd', 'No');
-    cy.contains('Logout').click();
-    cy.wait(5000);
-    cy.demoTeacherLogin();
-    cy.contains('Management').click();
-    cy.contains('Suggestions').click();
-    cy.rejectQuestionSuggestionShow('TestReject', 'Some justification 2');
     cy.contains('Logout').click();
     cy.demoStudentLogin();
     cy.contains('Suggestions').click();

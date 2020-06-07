@@ -71,6 +71,7 @@
           show-size
           dens
           @change="saveImage($event)"
+          data-cy="imageInput"
         ></v-file-input>
         </template>
       </v-card-text>

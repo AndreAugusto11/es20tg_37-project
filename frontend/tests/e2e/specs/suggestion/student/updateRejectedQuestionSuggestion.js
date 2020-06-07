@@ -17,8 +17,6 @@ describe('Update a suggestion', () => {
     cy.exec('psql -d tutordb -c "' +
       'DELETE FROM justifications;"');
     cy.exec('psql -d tutordb -c ' +
-      '"DELETE FROM users_question_suggestion;"');
-    cy.exec('psql -d tutordb -c ' +
       '"DELETE FROM question_Suggestions;"');
   });
 
@@ -53,30 +51,5 @@ describe('Update a suggestion', () => {
     );
     cy.wait(5000);
     cy.showQuestionSuggestion('Update');
-  });
-
-  it('login, creates a suggestion and updates this one', () => {
-    cy.createQuestionSuggestion(
-      'TestUpdate',
-      'Question',
-      'a',
-      'b',
-      'c',
-      'd',
-      'No'
-    );
-    cy.wait(5000);
-    cy.updateRejectedQuestionSuggestion(
-      'TestUpdate',
-      'TestUpdateNew',
-      'QuestionUpdate',
-      'e',
-      'f',
-      'h',
-      'i'
-    );
-    cy.wait(1000);
-    cy.closeErrorMessage();
-    cy.get('[data-cy="cancelButton"]').click();
   });
 });

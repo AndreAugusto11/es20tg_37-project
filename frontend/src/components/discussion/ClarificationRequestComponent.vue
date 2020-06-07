@@ -1,6 +1,6 @@
 <template>
   <v-card :key="this.clarificationRequest.public" class="mx-auto mt-10" max-width="1000" outlined>
-    <v-row align="center" class="spacer ml-5 mr-5 mt-5" no-gutters>
+    <v-row align="center" class="spacer ml-5 mb-5 mr-5 mt-5" no-gutters>
       <v-col md="auto" class="mr-5">
         <v-avatar :color="this.getRandomVuetifyColor(this.clarificationRequest.name)">
           <span

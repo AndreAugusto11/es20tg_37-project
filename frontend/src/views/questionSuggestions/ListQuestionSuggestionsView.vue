@@ -17,6 +17,7 @@
           <v-text-field
             v-model="search"
             append-icon="search"
+            data-cy="Search"
             label="Search"
             class="mx-2"
           />
@@ -57,6 +58,7 @@
             <v-icon
               class="mr-2"
               v-on="on"
+              color="green"
               @click="accepted(item.id)"
               data-cy="acceptButton"
               >mdi-check</v-icon
@@ -76,6 +78,7 @@
             <v-icon
               class="mr-2"
               v-on="on"
+              color="red"
               @click="showJustificationDialog(item)"
               data-cy="rejectButton"
               >mdi-close</v-icon
@@ -118,6 +121,7 @@
             <v-icon
               class="mr-2"
               v-on="on"
+              color="blue"
               @click="editRejectedQuestionSuggestion(item)"
               data-cy="updateRejectedQuestion"
               >edit</v-icon
