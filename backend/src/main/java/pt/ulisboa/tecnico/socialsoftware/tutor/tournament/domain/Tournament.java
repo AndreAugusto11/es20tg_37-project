@@ -79,7 +79,10 @@ public class Tournament {
 		setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
 		setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
 		setResultsDate(DateHandler.toLocalDateTime(tournamentDto.getResultsDate()));
-		setStatus(Tournament.Status.valueOf(tournamentDto.getStatus()));
+		if (tournamentDto.getStatus() == null)
+			setStatus(Status.ENROLLING);
+		else
+			setStatus(Tournament.Status.valueOf(tournamentDto.getStatus()));
 		setTopicConjunctions(topicConjunctions);
 
 		if (numberOfQuestions > getQuestions().size())

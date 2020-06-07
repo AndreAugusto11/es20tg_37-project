@@ -83,7 +83,7 @@ public class TournamentService {
 		if (tournamentDto == null)
 			throw new TutorException(INVALID_NULL_ARGUMENTS_TOURNAMENTDTO);
 
-		List<TopicConjunction> topicConjunctions = tournamentDto.getTopicConjunctions().stream()
+		Set<TopicConjunction> topicConjunctions = tournamentDto.getTopicConjunctions().stream()
 				.map(topicConjunctionDto -> {
 					TopicConjunction topicConjunction = new TopicConjunction();
 
@@ -94,7 +94,7 @@ public class TournamentService {
 
 					topicConjunction.updateTopics(newTopics);
 					return topicConjunction;
-				}).collect(Collectors.toList());
+				}).collect(Collectors.toSet());
 
 		if (topicConjunctions.isEmpty())
 			throw new TutorException(TOURNAMENT_HAS_NO_TOPICS);
