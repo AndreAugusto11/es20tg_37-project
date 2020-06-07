@@ -122,7 +122,7 @@ export default class RemoteServices {
 
   static async getTournaments(): Promise<Tournament[]> {
     return httpClient
-      .get('/tournaments')
+      .get(`/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments`)
       .then(response => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament);
@@ -133,26 +133,11 @@ export default class RemoteServices {
       });
   }
 
-  static async getCreatedTournaments(): Promise<Tournament[]> {
+  static createTournament(tournament: Tournament): Promise<Tournament> {
     return httpClient
-      .get('/tournaments/created')
+      .post(`/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments`, tournament)
       .then(response => {
-        return response.data.map((tournament: any) => {
-          return new Tournament(tournament);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async getEnrolledTournaments(): Promise<Tournament[]> {
-    return httpClient
-      .get('/tournaments/enrolled')
-      .then(response => {
-        return response.data.map((tournament: any) => {
-          return new Tournament(tournament);
-        });
+        return new Tournament(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -165,6 +150,15 @@ export default class RemoteServices {
       .then(response => {
         return new Tournament(response.data);
       })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static cancelTournament(tournament: Tournament) {
+    console.log(tournament.id);
+    return httpClient
+      .post(`/tournaments/${tournament.id}/cancel`)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -198,26 +192,6 @@ export default class RemoteServices {
           return new Question(question);
         });
       })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static createTournament(tournament: Tournament): Promise<Tournament> {
-    return httpClient
-      .post('/tournaments', tournament)
-      .then(response => {
-        return new Tournament(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static cancelTournament(tournament: Tournament) {
-    console.log(tournament.id);
-    return httpClient
-      .post(`/tournaments/${tournament.id}/cancel`)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });

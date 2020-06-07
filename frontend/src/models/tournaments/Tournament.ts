@@ -1,34 +1,46 @@
-import Topic from '@/models/management/Topic';
 import { ISOtoString } from '@/services/ConvertDateService';
+import TopicConjunction from '@/models/management/TopicConjunction';
 
 export class Tournament {
   id: number | null = null;
-  creatorID: number | null = null;
+  title: string | null = null;
+  creatorId: number | null = null;
   creatorName: string | null = null;
-  numberQuestions: number | null = null;
-  quizID: number | null = null;
-  topics: Topic[] = [];
+  numberOfQuestions: number | null = null;
+  numberOfAvailableQuestions: number | null = null;
+  creationDate!: string;
+  availableDate!: string;
+  conclusionDate!: string;
+  resultsDate!: string;
+  status: string | null = null;
+  topicConjunctions: TopicConjunction[] = [];
   enrolledStudentsIds!: number[];
   enrolledStudentsNames!: string[];
-  startTime!: string;
-  endTime!: string;
-  status!: string;
 
   constructor(jsonObj?: Tournament) {
     if (jsonObj) {
       this.id = jsonObj.id;
-      this.creatorID = jsonObj.creatorID;
+      this.title = jsonObj.title;
+      this.creatorId = jsonObj.creatorId;
       this.creatorName = jsonObj.creatorName;
-      this.numberQuestions = jsonObj.numberQuestions;
-      this.quizID = jsonObj.quizID;
+      this.numberOfQuestions = jsonObj.numberOfQuestions;
+      this.numberOfAvailableQuestions = jsonObj.numberOfAvailableQuestions;
+      if (jsonObj.creationDate)
+        this.creationDate = ISOtoString(jsonObj.creationDate);
+      if (jsonObj.availableDate)
+        this.availableDate = ISOtoString(jsonObj.availableDate);
+      if (jsonObj.conclusionDate)
+        this.conclusionDate = ISOtoString(jsonObj.conclusionDate);
+      if (jsonObj.resultsDate)
+        this.resultsDate = ISOtoString(jsonObj.resultsDate);
+      this.status = jsonObj.status;
+      this.topicConjunctions = jsonObj.topicConjunctions.map(
+        (topicConjunctionsDto: TopicConjunction) => {
+          return new TopicConjunction(topicConjunctionsDto);
+        }
+      );
       this.enrolledStudentsIds = jsonObj.enrolledStudentsIds;
       this.enrolledStudentsNames = jsonObj.enrolledStudentsNames;
-      this.topics = jsonObj.topics;
-      if (jsonObj.startTime)
-        this.startTime = ISOtoString(jsonObj.startTime);
-      if (jsonObj.endTime)
-        this.endTime = ISOtoString(jsonObj.endTime);
-      this.status = jsonObj.status;
     }
   }
 }
