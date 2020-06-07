@@ -64,7 +64,7 @@
             <v-icon
               class="mr-2"
               v-on="on"
-              @click="showRejectionDialog(item)"
+              @click="ShowJustificationDialog(item)"
               data-cy="rejectButton"
               >mdi-close</v-icon
             >
@@ -81,11 +81,11 @@
       </template>
     </v-data-table>
 
-    <show-justification-dialog
+    <justification-dialog
       v-if="currentSuggestion"
-      :dialog="suggestionDialog"
+      :dialog="rejectionDialog"
       :questionSuggestion="currentSuggestion"
-      v-on:reject-suggestion="rejected(currentSuggestion.id, $event)"
+      v-on:reject-suggestion="rejectQuestionSuggestion(currentSuggestion.id, $event)"
       v-on:close-dialog="onCloseSuggestionDialog"
     />
   </v-card>
@@ -95,19 +95,18 @@
 import { Component, Vue } from 'vue-property-decorator';
 import QuestionSuggestion from '@/models/management/QuestionSuggestion';
 import RemoteServices from '@/services/RemoteServices';
-import ShowJustificationDialog from '@/views/teacher/questionSuggestions/ShowJustificationDialog.vue';
+import JustificationDialog from '@/views/teacher/questionSuggestions/JustificationDialog.vue';
 import Justification from '@/models/management/Justification';
 import Image from '@/models/management/Image';
 
 @Component({
   components: {
-    'show-justification-dialog': ShowJustificationDialog
+    'justification-dialog': JustificationDialog
   }
 })
 export default class SuggestionsTView extends Vue {
   suggestions: QuestionSuggestion[] = [];
   currentSuggestion: QuestionSuggestion | null = null;
-  suggestionDialog: boolean = false;
   rejectionDialog: boolean = false;
   search: string = '';
 
@@ -131,11 +130,11 @@ export default class SuggestionsTView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
-  async rejected(suggestionId: number, justification: Justification) {
+  async rejectQuestionSuggestion(suggestionId: number, justification: Justification) {
     try {
       let suggestion = this.suggestions.find(suggestion => suggestion.id === suggestionId);
       if (suggestion && suggestion.justificationDto) {
-        suggestion.status = 'REJECTED';
+        suggestion.status = 'REJECT';
         suggestion.justificationDto.content = justification.content;
         suggestion.justificationDto.image = justification.image;
       }
@@ -155,19 +154,16 @@ export default class SuggestionsTView extends Vue {
   async showSuggestionDialog(questionSuggestion: QuestionSuggestion) {
     this.currentSuggestion = questionSuggestion;
     this.rejectionDialog = false;
-    this.suggestionDialog = true;
 
     await this.$router.push({ name: 'suggestionTeacher', params: { questionSuggestion: JSON.stringify(questionSuggestion) } });
   }
 
-  showRejectionDialog(suggestion: QuestionSuggestion) {
+  ShowJustificationDialog(suggestion: QuestionSuggestion) {
     this.currentSuggestion = suggestion;
     this.rejectionDialog = true;
-    this.suggestionDialog = true;
   }
 
   onCloseSuggestionDialog() {
-    this.suggestionDialog = false;
     this.rejectionDialog = false;
     this.currentSuggestion = null;
   }

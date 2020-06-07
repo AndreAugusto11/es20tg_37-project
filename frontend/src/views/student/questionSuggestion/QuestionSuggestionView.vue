@@ -121,8 +121,8 @@ export default class ShowQuestionSuggestion extends Vue {
   }
 
   getStatusColor(status: string) {
-    if (status === 'CLOSED') return 'red';
-    else if (status === 'ANSWERED') return 'yellow';
+    if (status === 'REJECTED') return 'red';
+    else if (status === 'PENDING') return 'orange';
     else return 'green';
   }
 

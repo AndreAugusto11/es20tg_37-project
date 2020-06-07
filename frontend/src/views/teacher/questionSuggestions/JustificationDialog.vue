@@ -65,7 +65,7 @@ import Image from '@/models/management/Image';
 import RemoteServices from '@/services/RemoteServices';
 
 @Component
-export default class ShowSuggestionDialog extends Vue {
+export default class JustificationDialog extends Vue {
   @Prop({ type: QuestionSuggestion, required: true })
   readonly questionSuggestion!: QuestionSuggestion;
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
