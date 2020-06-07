@@ -17,7 +17,6 @@ import EnrolledTournamentsView from '@/views/student/tournaments/EnrolledTournam
 import CreateTournamentsView from '@/views/student/tournaments/CreateTournamentsView.vue';
 import ListQuestionSuggestionsView from './views/student/questionSuggestion/ListQuestionSuggestionsView.vue';
 import QuestionSuggestionView from './views/student/questionSuggestion/QuestionSuggestionView.vue'
-import AvailableSuggestionsView from './views/teacher/questionSuggestions/AvailableSuggestionsView.vue';
 import AvailableQuizzesView from '@/views/student/AvailableQuizzesView.vue';
 import SolvedQuizzesView from '@/views/student/SolvedQuizzesView.vue';
 import QuizView from '@/views/student/quiz/QuizView.vue';
@@ -82,7 +81,7 @@ let router = new Router({
         {
           path: 'suggestions',
           name: 'student-suggestions-management',
-          component: AvailableSuggestionsView,
+          component: ListQuestionSuggestionsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Questions',
             requiredAuth: 'Teacher'
@@ -324,7 +323,7 @@ let router = new Router({
         {
           path: 'suggestions',
           name: 'suggestionsAdmin',
-          component: AvailableSuggestionsView,
+          component: ListQuestionSuggestionsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Manage Question Suggestions',
             requiredAuth: 'Admin'
