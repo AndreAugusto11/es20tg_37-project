@@ -15,8 +15,8 @@ import StudentView from '@/views/student/StudentView.vue';
 import TournamentsView from '@/views/student/tournaments/TournamentsView.vue';
 import EnrolledTournamentsView from '@/views/student/tournaments/EnrolledTournamentsView.vue';
 import CreateTournamentsView from '@/views/student/tournaments/CreateTournamentsView.vue';
-import ListQuestionSuggestionsView from './views/student/questionSuggestion/ListQuestionSuggestionsView.vue';
-import QuestionSuggestionView from './views/student/questionSuggestion/QuestionSuggestionView.vue'
+import ListQuestionSuggestionsView from './views/questionSuggestions/ListQuestionSuggestionsView.vue';
+import QuestionSuggestionView from './views/questionSuggestions/QuestionSuggestionView.vue'
 import AvailableQuizzesView from '@/views/student/AvailableQuizzesView.vue';
 import SolvedQuizzesView from '@/views/student/SolvedQuizzesView.vue';
 import QuizView from '@/views/student/quiz/QuizView.vue';

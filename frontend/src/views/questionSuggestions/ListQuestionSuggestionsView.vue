@@ -205,7 +205,7 @@ import Justification from '@/models/management/Justification';
     'justification-dialog': JustificationDialog
   }
 })
-export default class QuestionSuggestionView extends Vue {
+export default class ListQuestionSuggestionsView extends Vue {
   questionSuggestions: QuestionSuggestion[] = [];
   currentQuestionSuggestion: QuestionSuggestion | null = null;
   editQuestionSuggestionDialog: boolean = false;

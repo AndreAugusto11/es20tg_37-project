@@ -107,7 +107,7 @@ import { getNameInitials } from '@/services/GetNameInitialsService';
 import { getRandomVuetifyColor } from '@/services/GetRandomVuetifyColorService';
 
 @Component
-export default class ShowQuestionSuggestion extends Vue {
+export default class QuestionSuggestionView extends Vue {
   questionSuggestion!: QuestionSuggestion;
 
   async created() {
