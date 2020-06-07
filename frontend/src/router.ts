@@ -15,9 +15,9 @@ import StudentView from '@/views/student/StudentView.vue';
 import TournamentsView from '@/views/student/tournaments/TournamentsView.vue';
 import EnrolledTournamentsView from '@/views/student/tournaments/EnrolledTournamentsView.vue';
 import CreateTournamentsView from '@/views/student/tournaments/CreateTournamentsView.vue';
-import SuggestionsView from './views/student/questionSuggestion/QuestionSuggestionView.vue';
-import MyQuestionSuggestionView from './views/student/questionSuggestion/MyQSView.vue'
-import SuggestionsTView from './views/teacher/questionSuggestions/AvailableSuggestionsView.vue';
+import ListQuestionSuggestionsView from './views/student/questionSuggestion/ListQuestionSuggestionsView.vue';
+import QuestionSuggestionView from './views/student/questionSuggestion/QuestionSuggestionView.vue'
+import AvailableSuggestionsView from './views/teacher/questionSuggestions/AvailableSuggestionsView.vue';
 import AvailableQuizzesView from '@/views/student/AvailableQuizzesView.vue';
 import SolvedQuizzesView from '@/views/student/SolvedQuizzesView.vue';
 import QuizView from '@/views/student/quiz/QuizView.vue';
@@ -83,18 +83,18 @@ let router = new Router({
         {
           path: 'suggestions',
           name: 'student-suggestions-management',
-          component: SuggestionsTView,
+          component: AvailableSuggestionsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Questions',
             requiredAuth: 'Teacher'
           }
         },
         {
-          path: 'test2',
-          name: 'test2',
-          component: MyQuestionSuggestionView,
+          path: 'suggestion',
+          name: 'suggestionTeacher',
+          component: QuestionSuggestionView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Questions',
+            title: process.env.VUE_APP_NAME + ' - View Question Suggestion',
             requiredAuth: 'Teacher'
           }
         },
@@ -172,18 +172,18 @@ let router = new Router({
         {
           path: 'suggestions',
           name: 'create-suggestions',
-          component: SuggestionsView,
+          component: ListQuestionSuggestionsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Questions',
             requiredAuth: 'Student'
           }
         },
         {
-          path: 'test',
-          name: 'test',
-          component: MyQuestionSuggestionView,
+          path: 'suggestion',
+          name: 'suggestionStudent',
+          component: QuestionSuggestionView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Questions',
+            title: process.env.VUE_APP_NAME + ' - View Question Suggestion',
             requiredAuth: 'Student'
           }
         },
@@ -329,14 +329,17 @@ let router = new Router({
           meta: {
             title: process.env.VUE_APP_NAME + ' - Manage Question Suggestions',
             requiredAuth: 'Admin'
-          }
+          },
+          children: [
+            
+          ]
         },
         {
-          path: 'test3',
-          name: 'test3',
-          component: MyQuestionSuggestionView,
+          path: 'suggestion',
+          name: 'suggestionAdmin',
+          component: QuestionSuggestionView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Manage Question Suggestions',
+            title: process.env.VUE_APP_NAME + ' - View Question Suggestion',
             requiredAuth: 'Admin'
           }
         }

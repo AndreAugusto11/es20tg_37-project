@@ -90,7 +90,7 @@ public class QuestionSuggestion {
 
     public void setCreationDate(LocalDateTime creationDate) {
         if (this.creationDate == null) {
-            this.creationDate = DateHandler.now();
+            this.creationDate = DateHandler.now().plusHours(1);
         } else {
             this.creationDate = creationDate;
         }

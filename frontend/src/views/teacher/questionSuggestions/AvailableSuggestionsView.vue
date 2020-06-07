@@ -113,7 +113,7 @@ export default class SuggestionsTView extends Vue {
 
   headers: object = [
     { text: 'Title', value: 'questionDto.title', align: 'left' },
-    { text: 'Content', value: 'questionDto.content', align: 'left' },
+    { text: 'Content', value: 'questionDto.content', align: 'left', width: '45%' },
     { text: 'Creation Date', value: 'creationDate', align: 'center' },
     { text: 'Status', value: 'status', align: 'center' }, 
     { text: 'Actions', value: 'action', align: 'center', sortable: false }
@@ -157,7 +157,7 @@ export default class SuggestionsTView extends Vue {
     this.rejectionDialog = false;
     this.suggestionDialog = true;
 
-    await this.$router.push({ name: 'test2', params: { questionSuggestion: JSON.stringify(questionSuggestion) } });
+    await this.$router.push({ name: 'suggestionTeacher', params: { questionSuggestion: JSON.stringify(questionSuggestion) } });
   }
 
   showRejectionDialog(suggestion: QuestionSuggestion) {

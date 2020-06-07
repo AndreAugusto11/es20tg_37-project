@@ -84,7 +84,7 @@
 
     headers: object = [
     { text: 'Title', value: 'questionDto.title', align: 'left' },
-    { text: 'Content', value: 'questionDto.content', align: 'left' },
+    { text: 'Content', value: 'questionDto.content', align: 'left', width: '45%' },
     { text: 'Creation Date', value: 'creationDate', align: 'center' },
     { text: 'Status', value: 'status', align: 'center' }, 
     { text: 'Actions', value: 'action', align: 'center', sortable: false }
@@ -120,7 +120,7 @@
     }
 
     async showSuggestion(questionSuggestion: QuestionSuggestion) {
-      await this.$router.push({ name: 'test3', params: { questionSuggestion: JSON.stringify(questionSuggestion) } });
+      await this.$router.push({ name: 'suggestionAdmin', params: { questionSuggestion: JSON.stringify(questionSuggestion) } });
     }
   }
 </script>
