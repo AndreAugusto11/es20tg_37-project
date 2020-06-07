@@ -347,6 +347,8 @@ public class Quiz implements DomainEntity {
         setAvailableDate(DateHandler.now());
         setCreationDate(DateHandler.now());
         setType(QuizType.GENERATED.toString());
-        setTitle("Generated Quiz");
+
+        if (title == null)
+            setTitle("Generated Quiz");
     }
 }

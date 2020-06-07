@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
@@ -24,6 +23,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunct
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -34,16 +34,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.NOT_ENOUGH_QUESTIONS
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.STUDENT_NOT_ENROLLED_IN_TOURNAMENT
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_ALREADY_COMPLETED
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_ENROLLMENTS_NO_LONGER_AVAILABLE
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_ENROLLMENTS_NO_LONGER_AVAILABLE
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_ENROLLMENTS_NO_LONGER_AVAILABLE
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_FOUND
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_ONGOING
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_ENROLLED
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_STUDENT
 
 @DataJpaTest
 class GenerateTournamentQuizTest extends Specification {
@@ -56,8 +53,6 @@ class GenerateTournamentQuizTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String COURSE_ACRONYM = "SA1"
     public static final String ACADEMIC_TERM = "First Semester"
-    public static final String COURSE_ACRONYM_TWO = "SA2"
-    public static final String ACADEMIC_TERM_TWO = "Second Semester"
     public static final String CREATOR_NAME = "Creator Name"
     public static final String CREATOR_USERNAME = "Creator Username"
     public static final String ENROLLER_NAME = "Enroller Name"
@@ -67,12 +62,6 @@ class GenerateTournamentQuizTest extends Specification {
     public static final String TOPIC3_NAME = "Topic 3 Name"
     public static final String TOURNAMENT_TITLE = "Tournament Title"
     public static final int NUMBER_OF_QUESTIONS = 2
-
-
-    private static final String TOPIC_ONE = "topicOne"
-    private static final String TOPIC_TWO = "topicTwo"
-    private static final String TOPIC_THREE = "topicThree"
-    public static final Integer SEQUENCE = 0
 
     @Autowired
     StatementService statementService
@@ -88,6 +77,9 @@ class GenerateTournamentQuizTest extends Specification {
 
     @Autowired
     TournamentRepository tournamentRepository
+
+    @Autowired
+    QuizRepository quizRepository
 
     @Autowired
     QuizAnswerRepository quizAnswerRepository
@@ -209,32 +201,73 @@ class GenerateTournamentQuizTest extends Specification {
         tournament.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
         tournament.setAvailableDate(DateHandler.now())
         tournament.setConclusionDate(DateHandler.now().plusDays(1))
+        tournament.setResultsDate(DateHandler.now().plusDays(2))
         tournament.setStatus(Tournament.Status.ONGOING)
         tournament.setTopicConjunctions(topicConjunctions)
         tournament.addEnrolledUser(creator)
         tournamentRepository.save(tournament)
     }
 
-    /*def "The first student to enter the tournament generates the tournament quiz"() {
+    def "The first student to enter the tournament generates the tournament quiz"() {
         given: "an enrolled student"
         tournament.addEnrolledUser(enroller)
 
-        when: "nothing"
-        statementService.getTournamentQuiz(enroller.getId(), tournament.getId())
+        when: "a user tries to generate the quiz"
+        def result = statementService.getTournamentQuiz(enroller.getId(), tournament.getId())
 
-        then:
-        tournamentRepository.count() == 1L
-        topicConjunctionRepository.count() == 2L
-        topicRepository.count() == 3L
-        questionRepository.count() == 2L
-        optionRepository.count() == 2L
-        courseRepository.count() == 1L
-        courseExecutionRepository.count() == 1L
-        userRepository.count() == 2L
-    }*/
+        then: "a quiz was generated for the tournament"
+        quizRepository.count() == 1L
+        result != null
+        def resultQuiz = quizRepository.findAll().get(0)
+        resultQuiz != null
+        resultQuiz.getId() == result.getId()
+        resultQuiz.getCourseExecution() == courseExecution
+        resultQuiz.getTitle() == TOURNAMENT_TITLE
+        courseExecution.getQuizzes().contains(resultQuiz)
+        resultQuiz.getType() == Quiz.QuizType.GENERATED
+        resultQuiz.getCreationDate() != null
+        resultQuiz.getAvailableDate() != null
+        resultQuiz.getConclusionDate() != null
+        resultQuiz.getResultsDate() != null
+        resultQuiz.getTournament() == tournament
+        tournament.getQuiz() == resultQuiz
+        resultQuiz.getQuizQuestions().size() == 2
+
+        and: "A quiz answer for the student exists"
+        quizAnswerRepository.count() == 1L
+        def resultQuizAnswer = quizAnswerRepository.findAll().get(0)
+        resultQuizAnswer.getId() == result.getQuizAnswerId()
+        resultQuizAnswer.getUser() == enroller
+        enroller.getQuizAnswers().contains(resultQuizAnswer)
+        resultQuizAnswer.getQuiz() == resultQuiz
+        resultQuiz.getQuizAnswers().contains(resultQuizAnswer)
+    }
+
+    def "A tournament only generates a quiz once"() {
+        given: "an enrolled student"
+        tournament.addEnrolledUser(enroller)
+
+        and: "a user that generates the tournament quiz"
+        def quizDto = statementService.getTournamentQuiz(creator.getId(), tournament.getId())
+
+        when: "a second tries to generate the tournament quiz"
+        def result = statementService.getTournamentQuiz(enroller.getId(), tournament.getId())
+
+        then: "the returned quiz is the same that was previously generated"
+        quizRepository.count() == 1L
+        result != null
+        quizDto != null
+        result.getId() == quizDto.getId()
+
+        and: "a new quiz answer was generated"
+        quizAnswerRepository.count() == 2L
+        result.getQuizAnswerId() != quizDto.getQuizAnswerId()
+        quizAnswerRepository.findQuizAnswer(result.getId(), creator.getId()).isPresent()
+        quizAnswerRepository.findQuizAnswer(result.getId(), enroller.getId()).isPresent()
+    }
 
     def "Cannot generate tournament quiz given invalid user id"() {
-        when: "the tournament generates the quiz"
+        when: "a user tries to generate the quiz"
         statementService.getTournamentQuiz(0, tournament.getId())
 
         then: "an exception is thrown"
@@ -291,6 +324,18 @@ class GenerateTournamentQuizTest extends Specification {
         "cancelled" | Tournament.Status.CANCELLED || TOURNAMENT_NOT_ONGOING
     }
 
+    def "Cannot generate tournament quiz if there are not enough questions"() {
+        given: "a number of questions superior to the number of available questions"
+        tournament.setNumberOfQuestions(NUMBER_OF_QUESTIONS + 1)
+
+        when: "a user tries to generate the quiz"
+        statementService.getTournamentQuiz(creator.getId(), tournament.getId())
+
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == NOT_ENOUGH_QUESTIONS
+    }
+
     def "Cannot generate tournament quiz if the student has already completed the tournament"() {
         given: "an enrolled user"
         tournament.addEnrolledUser(enroller)
@@ -298,7 +343,8 @@ class GenerateTournamentQuizTest extends Specification {
         and: "a completed quiz answer"
         def quizDto = statementService.getTournamentQuiz(enroller.getId(), tournament.getId())
         quizDto != null
-        def quizAnswer = quizAnswerRepository.findById(quizDto.getQuizAnswerId()).orElseThrow()
+        def quizAnswer = quizAnswerRepository.findById(quizDto.getQuizAnswerId()).orElse(null)
+        quizAnswer != null
         quizAnswer.setCompleted(true)
 
         when: "a user tries to generate the quiz"

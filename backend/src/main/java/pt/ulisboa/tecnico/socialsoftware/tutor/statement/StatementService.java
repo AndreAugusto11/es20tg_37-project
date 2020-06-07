@@ -114,7 +114,6 @@ public class StatementService {
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
 
         quiz.setCourseExecution(courseExecution);
-        courseExecution.addQuiz(quiz);
 
         quizRepository.save(quiz);
         quizAnswerRepository.save(quizAnswer);
@@ -406,6 +405,7 @@ public class StatementService {
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, quizDetails.getTournamentId()));
 
         tournament.setQuiz(quiz);
+        quiz.setTitle(tournament.getTitle());
         quiz.setAvailableDate(tournament.getAvailableDate());
         quiz.setConclusionDate(tournament.getConclusionDate());
         quiz.setResultsDate(tournament.getResultsDate());
