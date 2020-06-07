@@ -198,7 +198,7 @@ class AnswerTournamentQuizTest extends Specification {
 
         then:
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_STUDENT_NOT_ENROLLED
+        exception.getErrorMessage() == ErrorMessage.STUDENT_NOT_ENROLLED_IN_TOURNAMENT
     }
 
     //TODO fazer teste quando geração de quizes tiver funcional

@@ -225,11 +225,14 @@ public class StatementService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        if (user.getRole() != User.Role.STUDENT)
-            throw new TutorException(USER_IS_STUDENT, userId);
-
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+
+        if (!user.getCourseExecutions().contains(tournament.getCourseExecution()))
+            throw new TutorException(USER_NOT_ENROLLED, user.getUsername());
+
+        if (!user.getEnrolledTournaments().contains(tournament))
+            throw new TutorException(STUDENT_NOT_ENROLLED_IN_TOURNAMENT, user.getUsername());
 
         if (tournament.getStatus() != Tournament.Status.ONGOING)
             throw new TutorException(TOURNAMENT_NOT_ONGOING);
@@ -242,10 +245,6 @@ public class StatementService {
             return generateStudentQuiz(userId, tournament.getCourseExecution().getId(), statementCreationDto);
         }
 
-        if (!user.getCourseExecutions().contains(tournament.getCourseExecution())) {
-            throw new TutorException(USER_NOT_ENROLLED, user.getUsername());
-        }
-
         QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(tournament.getQuiz().getId(), user.getId())
                 .orElseGet(() -> {
                     QuizAnswer qa = new QuizAnswer(user, tournament.getQuiz());
@@ -253,9 +252,8 @@ public class StatementService {
                     return qa;
                 });
 
-        if (quizAnswer.isCompleted()) {
+        if (quizAnswer.isCompleted())
             throw new TutorException(TOURNAMENT_ALREADY_COMPLETED);
-        }
 
         return new StatementQuizDto(quizAnswer);
     }
@@ -410,6 +408,7 @@ public class StatementService {
         tournament.setQuiz(quiz);
         quiz.setAvailableDate(tournament.getAvailableDate());
         quiz.setConclusionDate(tournament.getConclusionDate());
+        quiz.setResultsDate(tournament.getResultsDate());
 
         return availableQuestions.stream()
                 .filter(question -> question.belongsToTournament(tournament))

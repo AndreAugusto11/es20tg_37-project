@@ -41,7 +41,7 @@ public enum ErrorMessage {
     TOURNAMENT_NOT_CREATED("Tournament with id %d not created"),
     TOURNAMENT_NOT_STUDENT("Tournament only allows students to enroll"),
     STUDENT_ALREADY_ENROLLED_IN_TOURNAMENT("Student is already enrolled in tournament"),
-    TOURNAMENT_STUDENT_NOT_ENROLLED("Tournament not enrolled student with id %d"),
+    STUDENT_NOT_ENROLLED_IN_TOURNAMENT("User is not enrolled in tournament"),
     TOURNAMENT_NOT_ONGOING("Tournament as not open yet"),
     TOURNAMENT_NON_CREATOR("Tournament %d was not created by User with id %d"),
     TOURNAMENT_ALREADY_COMPLETED("Tournament already completed"),

@@ -73,9 +73,6 @@ class CreateTournamentTest extends Specification {
 	TopicRepository topicRepository
 
 	@Autowired
-	TopicConjunctionRepository topicConjunctionRepository
-
-	@Autowired
 	QuestionRepository questionRepository
 
 	def course = new Course()
