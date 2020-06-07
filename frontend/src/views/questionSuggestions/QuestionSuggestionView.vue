@@ -36,10 +36,10 @@
           <v-subheader>Question</v-subheader>
         </v-col>
       </v-row>
-      <v-row align="center" class="spacer ml-5" no-gutters>
+      <v-row align="center" class="spacer ml-7 mr-7" no-gutters>
         <v-col class="text-left">
           <span
-            class="text-left"
+            class="text-justify"
             v-html="convertMarkDown(questionSuggestion.questionDto.content, null)"
           />
         </v-col>
@@ -76,7 +76,7 @@
     </v-card>
 
     <v-card
-      class="mx-auto mb-10"
+      class="mx-auto mb-10 pb-3"
       max-width="1100"
       outlined
       v-if="questionSuggestion.justificationDto"
@@ -85,7 +85,7 @@
         <span class="headline">Justification</span>
       </v-card-title>
 
-      <v-card-text class="text-left">
+      <v-card-text class="text-justify">
         <span v-html="convertMarkDown(questionSuggestion.justificationDto.content, null)" />
       </v-card-text>
 
@@ -138,7 +138,7 @@ export default class QuestionSuggestionView extends Vue {
 
 <style lang="scss">
 img {
-  max-width: 90%;
+  max-width: 95%;
   margin-left: auto;
   margin-right: auto;
 }

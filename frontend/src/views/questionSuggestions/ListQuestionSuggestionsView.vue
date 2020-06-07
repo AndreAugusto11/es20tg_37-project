@@ -9,6 +9,7 @@
       :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      @click:row='showQuestionSuggestion'
     >
       <!-- Header if Student -->
       <template v-if="this.$store.getters.isStudent" v-slot:top>
@@ -51,18 +52,6 @@
 
       <!-- Actions if Teacher -->
       <template v-if="this.$store.getters.isTeacher" v-slot:item.action="{ item }">
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              class="mr-2"
-              v-on="on"
-              @click="showQuestionSuggestion(item)"
-              data-cy="showButton"
-              >visibility</v-icon
-            >
-          </template>
-          <span>Show Suggestion</span>
-        </v-tooltip>
         <v-tooltip bottom v-if="item.status === 'PENDING'">
           <template v-slot:activator="{ on }">
             <v-icon
@@ -105,19 +94,6 @@
 
       <!-- Actions if Admin -->
       <template v-else-if="this.$store.getters.isAdmin" v-slot:item.action="{ item }">
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              class="mr-2"
-              v-on="on"
-              @click="showQuestionSuggestion(item)"
-              data-cy="showButton"
-              >visibility</v-icon
-            >
-          </template>
-          <span>Show Suggestion</span>
-        </v-tooltip>
-
         <v-tooltip bottom v-if="item.status === 'REJECTED' || item.status === 'ACCEPTED'">
           <template v-slot:activator="{ on }">
             <v-icon
@@ -137,18 +113,6 @@
 
       <!-- Actions if Student -->
       <template v-else v-slot:item.action="{ item }">
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              class="mr-2"
-              v-on="on"
-              @click="showQuestionSuggestion(item)"
-              data-cy="showSuggestion"
-              >visibility</v-icon
-            >
-          </template>
-          <span>Show Question</span>
-        </v-tooltip>
         <v-tooltip bottom v-if="item.status === 'REJECTED'">
           <template v-slot:activator="{ on }">
             <v-icon
@@ -211,11 +175,13 @@ export default class ListQuestionSuggestionsView extends Vue {
   editQuestionSuggestionDialog: boolean = false;
   currentSuggestion: QuestionSuggestion | null = null;
   rejectionDialog: boolean = false;
+  accept: boolean = false;
+  removed: boolean = false;
   search: string = '';
 
   headers: object = [
-    { text: 'Title', value: 'questionDto.title', align: 'left' },
-    { text: 'Content', value: 'questionDto.content', align: 'left', width: '45%' },
+    { text: 'Title', value: 'questionDto.title', align: 'justify' },
+    { text: 'Content', value: 'questionDto.content', align: 'justify', width: '45%' },
     { text: 'Creation Date', value: 'creationDate', align: 'center' },
     { text: 'Status', value: 'status', align: 'center' }, 
     { text: 'Actions', value: 'action', align: 'center', sortable: false }
@@ -293,6 +259,20 @@ export default class ListQuestionSuggestionsView extends Vue {
 
   async showQuestionSuggestion(questionSuggestion: QuestionSuggestion) {
 
+    if (this.rejectionDialog || this.editQuestionSuggestionDialog) {
+      return;
+    }
+
+    if (this.accept) {
+      this.accept = false;
+      return;
+    }
+
+    if (this.removed) {
+      this.removed = false;
+      return;
+    }
+
     if (this.$store.getters.isTeacher)
       await this.$router.push({ name: 'suggestionTeacher', params: { questionSuggestion: JSON.stringify(questionSuggestion) } });
 
@@ -304,6 +284,7 @@ export default class ListQuestionSuggestionsView extends Vue {
   }
 
   async remove(suggestionId: number) {
+    this.removed = true;
     try {
       if (confirm('Are you sure you want to remove this suggestion?')) {
         await RemoteServices.removeQuestionSuggestion(suggestionId);
@@ -342,6 +323,7 @@ export default class ListQuestionSuggestionsView extends Vue {
   }
 
   async accepted(suggestionId: number) {
+    this.accept = true;
     try {
       await RemoteServices.acceptQuestionSuggestion(suggestionId);
       let suggestion = this.questionSuggestions.find(

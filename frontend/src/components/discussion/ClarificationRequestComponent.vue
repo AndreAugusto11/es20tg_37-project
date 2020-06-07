@@ -83,7 +83,7 @@
         </v-tooltip>
       </v-col>
     </v-row>
-    <v-row align="center" class="spacer ml-5 mb-5" no-gutters>
+    <v-row class="spacer ml-5 mr-10 mb-5" no-gutters>
       <v-col md="auto" class="mr-5">
         <v-avatar
           :color="this.getRandomVuetifyColor(this.clarificationRequest.name)"
@@ -94,7 +94,7 @@
           >{{ this.getNameInitials(this.clarificationRequest.name) }}</span>
         </v-avatar>
       </v-col>
-      <v-col class="text-left">
+      <v-col class="text-justify">
         <span v-html="convertMarkDown(this.clarificationRequest.content, null)" />
       </v-col>
     </v-row>
@@ -107,7 +107,7 @@
     <v-row align="center" class="spacer ml-5" no-gutters>
       <v-col class="text-left">
         <span
-          class="text-left"
+          class="text-justify"
           v-html="convertMarkDown(this.clarificationRequest.questionAnswerDto.question.content, null)"
         />
       </v-col>
