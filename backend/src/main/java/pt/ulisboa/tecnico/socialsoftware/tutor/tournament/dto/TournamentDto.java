@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 public class TournamentDto implements Serializable {
     private Integer id;
     private String title;
-    private int creatorId;
+    private Integer creatorId;
     private String creatorName;
-    private int numberOfQuestions;
+    private Integer numberOfQuestions;
     private Integer numberOfAvailableQuestions;
     private String creationDate;
     private String availableDate;
@@ -58,16 +58,20 @@ public class TournamentDto implements Serializable {
         return this.id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getTitle() { return this.title; }
 
     public void setTitle(String title) { this.title = title; }
 
-    public int getCreatorId()
+    public Integer getCreatorId()
     {
         return this.creatorId;
     }
 
-    public void setCreatorId(int creatorID) {
+    public void setCreatorId(Integer creatorID) {
         this.creatorId = creatorID;
     }
 
@@ -79,11 +83,11 @@ public class TournamentDto implements Serializable {
         this.creatorName = creatorName;
     }
 
-    public int getNumberOfQuestions() {
+    public Integer getNumberOfQuestions() {
         return numberOfQuestions;
     }
 
-    public void setNumberOfQuestions(int numberOfQuestions) {
+    public void setNumberOfQuestions(Integer numberOfQuestions) {
         this.numberOfQuestions = numberOfQuestions;
     }
 
@@ -129,6 +133,10 @@ public class TournamentDto implements Serializable {
 
     public String getStatus() { return this.status; }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public void setStatus(Tournament.Status status) { this.status = status.name(); }
 
     public Set<TopicConjunctionDto> getTopicConjunctions() { return topicConjunctions; }
@@ -141,7 +149,7 @@ public class TournamentDto implements Serializable {
         this.topicConjunctions.add(topicConjunctionDto);
     }
 
-    public Set<Integer> getEnrolledStudentsId() { return enrolledStudentsIds; }
+    public Set<Integer> getEnrolledStudentsIds() { return enrolledStudentsIds; }
 
     public void setEnrolledStudentsIds(Set<Integer> enrolledStudentsIds) {
         this.enrolledStudentsIds = enrolledStudentsIds;

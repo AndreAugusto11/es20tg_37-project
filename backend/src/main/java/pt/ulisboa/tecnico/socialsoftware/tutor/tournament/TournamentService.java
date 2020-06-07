@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -82,7 +83,7 @@ public class TournamentService {
 		if (tournamentDto == null)
 			throw new TutorException(INVALID_NULL_ARGUMENTS_TOURNAMENTDTO);
 
-		Set<TopicConjunction> topicConjunctions = tournamentDto.getTopicConjunctions().stream()
+		List<TopicConjunction> topicConjunctions = tournamentDto.getTopicConjunctions().stream()
 				.map(topicConjunctionDto -> {
 					TopicConjunction topicConjunction = new TopicConjunction();
 
@@ -93,7 +94,7 @@ public class TournamentService {
 
 					topicConjunction.updateTopics(newTopics);
 					return topicConjunction;
-				}).collect(Collectors.toSet());
+				}).collect(Collectors.toList());
 
 		if (topicConjunctions.isEmpty())
 			throw new TutorException(TOURNAMENT_HAS_NO_TOPICS);

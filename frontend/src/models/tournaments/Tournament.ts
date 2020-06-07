@@ -6,12 +6,12 @@ export class Tournament {
   title: string | null = null;
   creatorId: number | null = null;
   creatorName: string | null = null;
-  numberOfQuestions: number | null = null;
+  numberOfQuestions!: number;
   numberOfAvailableQuestions: number | null = null;
-  creationDate!: string;
+  creationDate: string | null = null;
   availableDate!: string;
   conclusionDate!: string;
-  resultsDate!: string;
+  resultsDate: string | null = null;
   status: string | null = null;
   topicConjunctions: TopicConjunction[] = [];
   enrolledStudentsIds!: number[];

@@ -29,8 +29,7 @@ public class TournamentController {
 
     @PostMapping("/executions/{executionId}/tournaments")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public TournamentDto
-    createTournament(Principal principal, @PathVariable int executionId, @RequestBody TournamentDto tournamentDto) {
+    public TournamentDto createTournament(Principal principal, @PathVariable int executionId, @RequestBody TournamentDto tournamentDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {

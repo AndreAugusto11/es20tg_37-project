@@ -115,7 +115,7 @@ export default class CreateTournamentDialog extends Vue {
       console.log(this.currentTournament.availableDate);
       console.log(this.currentTournament.conclusionDate);
       if (
-        !this.currentTournament.conclusionDate ||
+        !this.currentTournament.title ||
         !this.currentTournament.numberOfQuestions ||
         !this.currentTournament.topicConjunctions.length ||
         !this.currentTournament.availableDate ||
