@@ -15,6 +15,7 @@ public class QuestionSuggestionDto implements Serializable {
     private QuestionDto questionDto;
     private String status;
     private String creationDate = null;
+    private String name;
     private JustificationDto justificationDto = null;
 
     public QuestionSuggestionDto() {
@@ -24,6 +25,7 @@ public class QuestionSuggestionDto implements Serializable {
         this.id = questionSuggestion.getId();
         this.questionDto = new QuestionDto(questionSuggestion.getQuestion());
         this.status = questionSuggestion.getStatus().name();
+        this.name = questionSuggestion.getUser().getName();
 
         if (questionSuggestion.getCreationDate() != null) {
             this.creationDate = questionSuggestion.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
@@ -69,6 +71,14 @@ public class QuestionSuggestionDto implements Serializable {
     public QuestionDto getQuestionDto() { return questionDto; }
 
     public void setQuestionDto(QuestionDto questionDto) { this.questionDto = questionDto; }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public JustificationDto getJustificationDto() { return justificationDto; }
 

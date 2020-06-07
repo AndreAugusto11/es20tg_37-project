@@ -1,19 +1,31 @@
 <template>
   <v-dialog
     :value="dialog"
-    v-on:click:outside="closeJustificationDialog"
-    @keydown.esc="closeJustificationDialog"
-    max-width="65%"
+    @input="$emit('close-dialog')"
+    @keydown.esc="$emit('close-dialog')"
+    max-width="50%"
+    max-height="80%"
   >
     <v-card>
-      <v-card-text>
-        <v-textarea
-          outline
-          rows="2"
-          label="Justification"
-          v-model="justification.content"
-          data-cy="justification_text"
-        ></v-textarea>
+      <v-card-title>
+        <span class="headline">Justification</span>
+      </v-card-title>
+
+      <v-card-text class="text-left">
+        <v-container grid-list-md fluid>
+          <v-layout column wrap>
+            <v-flex xs24 sm12 md8>
+              <v-textarea
+                outline
+                rows="4"
+                v-model="justification.content"
+                label="Content"
+                data-cy="Content"
+              ></v-textarea>
+            </v-flex>
+          </v-layout>
+        </v-container>
+
         <template>
           <v-file-input
             class="pr-3"
@@ -54,7 +66,8 @@ import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class ShowSuggestionDialog extends Vue {
-  @Prop({ type: QuestionSuggestion, required: true }) readonly questionSuggestion!: QuestionSuggestion;
+  @Prop({ type: QuestionSuggestion, required: true })
+  readonly questionSuggestion!: QuestionSuggestion;
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
 
   justification!: Justification;
@@ -81,8 +94,7 @@ export default class ShowSuggestionDialog extends Vue {
       await this.$store.dispatch('error', 'Justification must have content');
     } else {
       try {
-        if (
-          this.questionSuggestion.id) {
+        if (this.questionSuggestion.id) {
           await RemoteServices.rejectQuestionSuggestion(
             this.questionSuggestion.id,
             this.justification

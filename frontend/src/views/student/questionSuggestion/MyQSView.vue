@@ -1,27 +1,49 @@
 <template>
   <div>
-    <v-card
-      class="mx-auto mt-10 mb-10"
-      max-width="1100"
-      outlined
-    >
-      <v-card-title class="mb-5">
+    <v-card class="mx-auto mt-10 mb-10" max-width="1100" outlined>
+      <!--<v-card-title class="mb-2">
         <span class="headline">{{ questionSuggestion.questionDto.title }}</span>
-      </v-card-title>
+      </v-card-title>-->
 
-      <v-card-text v-if="this.questionSuggestion.questionDto.image">
+      <v-row align="center" class="spacer ml-5 mr-5 mt-5" no-gutters>
+        <v-col md="auto" class="mr-5">
+          <v-avatar :color="this.getRandomVuetifyColor(this.questionSuggestion.name)">
+            <span
+              class="white--text headline"
+            >{{ this.getNameInitials(this.questionSuggestion.name) }}</span>
+          </v-avatar>
+        </v-col>
+
+        <v-col sm="3" md="7">
+          <h2 class="mb-1 text-left">{{ this.questionSuggestion.name }}</h2>
+        </v-col>
+
+        <v-col align="right" class="mr-5">
+          <v-chip :color="getStatusColor(this.questionSuggestion.status)" small>
+            <span>{{ this.questionSuggestion.status }}</span>
+          </v-chip>
+        </v-col>
+      </v-row>
+
+      <v-card-text class="mt-3" v-if="this.questionSuggestion.questionDto.image">
         <span v-html="convertMarkDown('![image][image]', questionSuggestion.questionDto.image)" />
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider v-if="this.questionSuggestion.questionDto.image"></v-divider>
 
-      <v-card-subtitle class="text-left mb-1">
-        <span>Question</span>
-      </v-card-subtitle>
-
-      <v-card-text class="text-left mb-1">
-        <span v-html="convertMarkDown(questionSuggestion.questionDto.content, null)" />
-      </v-card-text>
+      <v-row align="center" class="spacer" no-gutters>
+        <v-col>
+          <v-subheader>Question</v-subheader>
+        </v-col>
+      </v-row>
+      <v-row align="center" class="spacer ml-5" no-gutters>
+        <v-col class="text-left">
+          <span
+            class="text-left"
+            v-html="convertMarkDown(questionSuggestion.questionDto.content, null)"
+          />
+        </v-col>
+      </v-row>
 
       <v-card-text class="text-left">
         <v-list>
@@ -66,29 +88,49 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import QuestionSuggestion from '@/models/management/QuestionSuggestion';
 import Image from '@/models/management/Image';
+import { getNameInitials } from '@/services/GetNameInitialsService';
+import { getRandomVuetifyColor } from '@/services/GetRandomVuetifyColorService';
 
 @Component
 export default class ShowQuestionSuggestion extends Vue {
   questionSuggestion!: QuestionSuggestion;
 
   async created() {
-    this.questionSuggestion = new QuestionSuggestion(JSON.parse(this.$route.params.questionSuggestion));
+    this.questionSuggestion = new QuestionSuggestion(
+      JSON.parse(this.$route.params.questionSuggestion)
+    );
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
+
+  getStatusColor(status: string) {
+    if (status === 'CLOSED') return 'red';
+    else if (status === 'ANSWERED') return 'yellow';
+    else return 'green';
+  }
+
+  getNameInitials(name: string): string {
+    return getNameInitials(name);
+  }
+
+  getRandomVuetifyColor(name: string): string {
+    return getRandomVuetifyColor(name);
+  }
+
 }
 </script>
 
 <style lang="scss">
-  img {
-    max-width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-  }
+img {
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 .v-application p {
   margin-bottom: 0 !important;
 }
+
 </style>
