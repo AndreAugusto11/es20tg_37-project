@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.performance
+package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service.performance
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -9,16 +9,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import spock.lang.Shared
 import spock.lang.Specification
 
 @DataJpaTest
-class CancelTournamentPerformanceTest extends Specification {
+class EnrollInOpenTournamentPerformanceTest extends Specification {
 
     @Autowired
     TournamentService tournamentService
@@ -29,46 +28,39 @@ class CancelTournamentPerformanceTest extends Specification {
     @Autowired
     UserRepository userRepository
 
-    @Shared
-    Integer maxTests
+    def user1
 
-    @Shared
-    User user
-
-    def setup()
-    {
-        maxTests = 1
-        user = new User("name", "username", 1, User.Role.STUDENT)
-        userRepository.save(user)
-
-        for (int i = 0; i < maxTests; i++)
-        {
-            def tournament = new Tournament()
-            tournament.setCreator(user)
-
-            tournamentRepository.save(tournament)
-            user.addCreatedTournament(tournament)
-            userRepository.save(user)
-            user = userRepository.findByKey(1)
-        }
+    def setup() {
+        user1 = new User("Manel1", "Man12", 1, User.Role.STUDENT)
+        userRepository.save(user1)
     }
 
-    def "performance testing to create 10000 tournaments"()
-    {
+    def "performance testing to enroll in 10000 tournaments"(){
+        given: "a user"
+        def user2 = new User("Manel12", "Man123", 2, User.Role.STUDENT)
+        userRepository.save(user2)
+        def tournament
+
+        and: "10000 tournaments"
+        1.upto(1, {
+            tournament = new Tournament()
+            tournament.setCreator(user1)
+            tournamentRepository.save(tournament)
+        })
+        List<Tournament> tournamentList = tournamentRepository.findAll()
 
         when:
-        1.upto(maxTests, {
-            def userID = user.getId()
-            def tournamentId = user.getCreatedTournaments().getAt(0).getId()
-            tournamentService.cancelTournament(userID, tournamentId)
+        1.upto(1, {
+            tournamentService.enrollInTournament(user2.getId(),tournamentList.pop().getId())
         })
 
         then:
         true
     }
 
+
     @TestConfiguration
-    static class TournamentServiceImplTestContextConfiguration {
+    static class TournamentServiceCreatTestContextConfiguration {
 
         @Bean
         QuestionService QuestionService() {

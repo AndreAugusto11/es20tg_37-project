@@ -74,13 +74,16 @@ public class Tournament {
 		setCourseExecution(courseExecution);
 		setTitle(tournamentDto.getTitle());
 		setCreator(creator);
+		setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
 		setCreationDate(DateHandler.toLocalDateTime(tournamentDto.getCreationDate()));
 		setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
 		setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
 		setResultsDate(DateHandler.toLocalDateTime(tournamentDto.getResultsDate()));
 		setStatus(Tournament.Status.valueOf(tournamentDto.getStatus()));
 		setTopicConjunctions(topicConjunctions);
-		setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
+
+		if (numberOfQuestions > getQuestions().size())
+			throw new TutorException(NOT_ENOUGH_QUESTIONS);
 	}
 
 	public Integer getId() { return this.id; }
@@ -125,8 +128,6 @@ public class Tournament {
 	public void setNumberOfQuestions(int numberOfQuestions) {
 		if (numberOfQuestions <= 0)
 			throw new TutorException(INVALID_NUMBER_OF_QUESTIONS);
-		if (numberOfQuestions > getQuestions().size())
-			throw new TutorException(NOT_ENOUGH_QUESTIONS);
 		this.numberOfQuestions = numberOfQuestions;
 	}
 
@@ -199,7 +200,7 @@ public class Tournament {
 		if (status == Status.ONGOING && conclusionDate != null && DateHandler.now().isAfter(conclusionDate))
 			setStatus(Status.CONCLUDED);
 		else if (status == Status.ENROLLING && availableDate != null && DateHandler.now().isAfter(availableDate))
-			setStatus(enrolledUsers.size() > MINIMUM_ENROLLMENTS ? Status.ONGOING : Status.CONCLUDED);
+			setStatus(enrolledUsers.size() >= MINIMUM_ENROLLMENTS ? Status.ONGOING : Status.CONCLUDED);
 	}
 
 	public Set<TopicConjunction> getTopicConjunctions() { return topicConjunctions; }

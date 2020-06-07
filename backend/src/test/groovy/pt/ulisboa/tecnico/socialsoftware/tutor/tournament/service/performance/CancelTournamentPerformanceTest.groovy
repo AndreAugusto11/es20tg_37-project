@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.performance
+package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service.performance
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -9,15 +9,16 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import spock.lang.Shared
 import spock.lang.Specification
 
 @DataJpaTest
-class ListTournamentsPerformanceTest extends Specification {
+class CancelTournamentPerformanceTest extends Specification {
 
     @Autowired
     TournamentService tournamentService
@@ -28,20 +29,40 @@ class ListTournamentsPerformanceTest extends Specification {
     @Autowired
     UserRepository userRepository
 
-    def "performance testing to list 1000 tournaments"(){
-        given: "a user"
-        def user = new User("Manel1", "Man12", 1, User.Role.STUDENT)
-        userRepository.save(user)
-        def tournament
+    @Shared
+    Integer maxTests
 
-        and: "1000 tournaments"
-        1.upto(1, {
-            tournament = new Tournament()
+    @Shared
+    User user
+
+    def setup()
+    {
+        maxTests = 1
+        user = new User("name", "username", 1, User.Role.STUDENT)
+        userRepository.save(user)
+
+        for (int i = 0; i < maxTests; i++)
+        {
+            def tournament = new Tournament()
             tournament.setCreator(user)
+
             tournamentRepository.save(tournament)
-        })
+            user.addCreatedTournament(tournament)
+            userRepository.save(user)
+            user = userRepository.findByKey(1)
+        }
+    }
+
+    def "performance testing to create 10000 tournaments"()
+    {
+
         when:
-        1.upto(1, {tournamentService.getTournaments()})
+        1.upto(maxTests, {
+            def userID = user.getId()
+            def tournamentId = user.getCreatedTournaments().getAt(0).getId()
+            tournamentService.cancelTournament(userID, tournamentId)
+        })
+
         then:
         true
     }

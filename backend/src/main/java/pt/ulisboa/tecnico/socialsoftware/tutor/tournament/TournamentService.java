@@ -57,12 +57,12 @@ public class TournamentService {
 				.orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
 		return tournamentRepository.findByCourseExecutionId(executionId).stream()
-				.sorted(Comparator.comparing(Tournament::getAvailableDate, Comparator.nullsFirst(Comparator.reverseOrder())))
-				.sorted(Comparator.comparing(Tournament::getStatus))
 				.peek(tournament -> {
 					if (tournament.getStatus() != Tournament.Status.CANCELLED)
 						tournament.updateStatus();
 				})
+				.sorted(Comparator.comparing(Tournament::getAvailableDate, Comparator.nullsFirst(Comparator.naturalOrder())))
+				.sorted(Comparator.comparing(Tournament::getStatus))
 				.map(TournamentDto::new)
 				.collect(Collectors.toList());
 	}

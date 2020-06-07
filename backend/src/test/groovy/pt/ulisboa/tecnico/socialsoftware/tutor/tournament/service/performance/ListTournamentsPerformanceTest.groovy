@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service.performance
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -16,11 +16,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
 @DataJpaTest
-class ListTournamentsTest extends Specification {
+class ListTournamentsPerformanceTest extends Specification {
 
     @Autowired
     TournamentService tournamentService
@@ -31,52 +28,26 @@ class ListTournamentsTest extends Specification {
     @Autowired
     UserRepository userRepository
 
-    def user
-    def formatter
-
-    def setup() {
-        user = new User("Manel1", "Man12", 1, User.Role.STUDENT)
+    def "performance testing to list 1000 tournaments"(){
+        given: "a user"
+        def user = new User("Manel1", "Man12", 1, User.Role.STUDENT)
         userRepository.save(user)
+        def tournament
 
-        formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
-    }
-
-    def "Lists tournaments when there are 2 tournaments"() {
-        given:
-        def tournament1 = new Tournament()
-        tournament1.setCreator(user)
-        tournament1.setStatus(Tournament.Status.ENROLLING)
-        def startTime1 = LocalDateTime.now().plusDays(1)
-        //startTime1.format(formatter)
-        tournament1.setStartTime(startTime1)
-        tournamentRepository.save(tournament1)
-        def tournament2 = new Tournament()
-        tournament2.setCreator(user)
-        tournament2.setStatus(Tournament.Status.ENROLLING)
-        def startTime2 = LocalDateTime.now().plusDays(1)
-        //startTime2.format(formatter)
-        tournament1.setStartTime(startTime2)
-        tournamentRepository.save(tournament2)
-
+        and: "1000 tournaments"
+        1.upto(1, {
+            tournament = new Tournament()
+            tournament.setCreator(user)
+            tournamentRepository.save(tournament)
+        })
         when:
-        def result = tournamentService.getTournaments()
-
-        then: "inserted data is correct"
-        result.size() == 2
-        and: "is sorted correctly"
-        result.get(0).getId() == tournament1.getId()
-        result.get(1).getId() == tournament2.getId()
-    }
-
-    def "Lists tournaments when there are no tournaments"() {
-        when:
-        def result = tournamentService.getTournaments()
+        1.upto(1, {tournamentService.getTournaments()})
         then:
-        result.size() == 0
+        true
     }
 
     @TestConfiguration
-    static class TournamentServiceListTestContextConfiguration {
+    static class TournamentServiceImplTestContextConfiguration {
 
         @Bean
         QuestionService QuestionService() {

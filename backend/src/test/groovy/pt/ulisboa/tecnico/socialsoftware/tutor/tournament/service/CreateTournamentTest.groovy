@@ -54,7 +54,6 @@ class CreateTournamentTest extends Specification {
 	public static final String CONCLUSION_DATE = "2020-01-25T17:40:11Z"
 	public static final String RESULTS_DATE = "2020-01-25T17:50:11Z"
 
-
 	@Autowired
 	TournamentService tournamentService
 

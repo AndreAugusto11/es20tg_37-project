@@ -13,12 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
@@ -39,8 +33,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.US
 @DataJpaTest
 class EnrollInTournamentTest extends Specification {
 
-    public static final String QUESTION1_TITLE = "Question 1 Title"
-    public static final String QUESTION2_TITLE = "Question 2 Title"
     public static final String COURSE_NAME = "Software Architecture"
     public static final String COURSE_ACRONYM = "SA1"
     public static final String ACADEMIC_TERM = "First Semester"
@@ -52,11 +44,7 @@ class EnrollInTournamentTest extends Specification {
     public static final String ENROLLER_USERNAME = "Enroller Username"
     public static final String USER_NAME = "User Name"
     public static final String USER_USERNAME = "User Username"
-    public static final String TOPIC1_NAME = "Topic 1 Name"
-    public static final String TOPIC2_NAME = "Topic 2 Name"
-    public static final String TOPIC3_NAME = "Topic 3 Name"
     public static final String TOURNAMENT_TITLE = "Tournament Title"
-    public static final int NUMBER_OF_QUESTIONS = 2
     public static final String AVAILABLE_DATE = "2020-01-25T16:30:11Z"
     public static final String CONCLUSION_DATE = "2020-01-25T17:40:11Z"
 
@@ -75,26 +63,10 @@ class EnrollInTournamentTest extends Specification {
     @Autowired
     UserRepository userRepository
 
-    @Autowired
-    TopicRepository topicRepository
-
-    @Autowired
-    TopicConjunctionRepository topicConjunctionRepository
-
-    @Autowired
-    QuestionRepository questionRepository
-
     def course = new Course()
     def courseExecution = new CourseExecution()
     def creator = new User()
     def enroller = new User()
-    def topic1 = new Topic()
-    def topic2 = new Topic()
-    def topic3 = new Topic()
-    def question1 = new Question()
-    def question2 = new Question()
-    def topicConjunction1 = new TopicConjunction()
-    def topicConjunction2 = new TopicConjunction()
     def tournament = new Tournament()
 
     def setup() {
@@ -122,54 +94,12 @@ class EnrollInTournamentTest extends Specification {
         enroller.addCourseExecutions(courseExecution)
         userRepository.save(enroller)
 
-        topic1.setName(TOPIC1_NAME)
-        topic1.setCourse(course)
-        topicRepository.save(topic1)
-
-        topic2.setName(TOPIC2_NAME)
-        topic2.setCourse(course)
-        topicRepository.save(topic2)
-
-        topic3.setName(TOPIC3_NAME)
-        topic3.setCourse(course)
-        topicRepository.save(topic3)
-
-        question1.setKey(1)
-        question1.setTitle(QUESTION1_TITLE)
-        question1.setType(Question.Type.NORMAL)
-        question1.setStatus(Question.Status.AVAILABLE)
-        question1.addTopic(topic1)
-        question1.addTopic(topic2)
-        question1.addTopic(topic3)
-        questionRepository.save(question1)
-
-        question2.setKey(2)
-        question2.setTitle(QUESTION2_TITLE)
-        question2.setType(Question.Type.NORMAL)
-        question2.setStatus(Question.Status.AVAILABLE)
-        question2.addTopic(topic1)
-        question2.addTopic(topic3)
-        questionRepository.save(question2)
-
-        topicConjunction1.addTopic(topic1)
-        topicConjunction1.addTopic(topic2)
-        topicConjunction1.addTopic(topic3)
-
-        topicConjunction2.addTopic(topic1)
-        topicConjunction2.addTopic(topic3)
-
-        def topicConjunctions = new HashSet()
-        topicConjunctions.add(topicConjunction1)
-        topicConjunctions.add(topicConjunction2)
-
         tournament.setTitle(TOURNAMENT_TITLE)
         tournament.setCourseExecution(courseExecution)
         tournament.setCreator(creator)
         tournament.setAvailableDate(DateHandler.toLocalDateTime(AVAILABLE_DATE))
         tournament.setConclusionDate(DateHandler.toLocalDateTime(CONCLUSION_DATE))
         tournament.setStatus(Tournament.Status.ENROLLING)
-        tournament.setTopicConjunctions(topicConjunctions)
-        tournament.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
         tournamentRepository.save(tournament)
     }
 
