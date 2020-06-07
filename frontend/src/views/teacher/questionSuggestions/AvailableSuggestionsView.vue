@@ -27,13 +27,13 @@
         </v-chip>
       </template>
 
-      <template v-slot:item.action="{ item }">
+      <template v-if="this.$store.getters.isTeacher" v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
               class="mr-2"
               v-on="on"
-              @click="showSuggestionDialog(item)"
+              @click="showSuggestion(item)"
               data-cy="showButton"
               >visibility</v-icon
             >
@@ -79,6 +79,38 @@
           >
         </template>
       </template>
+
+
+      <template v-else-if="this.$store.getters.isAdmin" v-slot:item.action="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="showSuggestion(item)"
+              data-cy="showButton"
+              >visibility</v-icon
+            >
+          </template>
+          <span>Show Suggestion</span>
+        </v-tooltip>
+
+        <v-tooltip bottom v-if="item.status === 'REJECTED' || item.status === 'ACCEPTED'">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="remove(item.id)"
+              data-cy="removeButton"
+              color="red"
+            >mdi-trash-can</v-icon>
+          </template>
+          <span>Remove Suggestion</span>
+        </v-tooltip>
+          <template v-else>
+            <v-icon disabled class="mr-2">mdi-trash-can</v-icon>
+          </template>
+      </template>
     </v-data-table>
 
     <justification-dialog
@@ -121,20 +153,39 @@ export default class SuggestionsTView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      [this.suggestions] = await Promise.all([
-        RemoteServices.getAllQuestionSuggestions()
-      ]);
+      if (this.$store.getters.isTeacher)
+        [this.suggestions] = await Promise.all([
+          RemoteServices.getAllQuestionSuggestions()
+        ]);
+      
+      if (this.$store.getters.isAdmin)
+        [this.suggestions] = await Promise.all([
+          RemoteServices.getAllQuestionSuggestionsAdmin()
+        ]);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
   }
 
+  async remove(suggestionId: number) {
+    try {
+      if (confirm('Are you sure you want to remove this suggestion?')) {
+        await RemoteServices.removeQuestionSuggestion(suggestionId);
+        this.suggestions = this.suggestions.filter(
+          suggestion => suggestion.id !== suggestionId
+        );
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
   async rejectQuestionSuggestion(suggestionId: number, justification: Justification) {
     try {
       let suggestion = this.suggestions.find(suggestion => suggestion.id === suggestionId);
       if (suggestion && suggestion.justificationDto) {
-        suggestion.status = 'REJECT';
+        suggestion.status = 'REJECTED';
         suggestion.justificationDto.content = justification.content;
         suggestion.justificationDto.image = justification.image;
       }
@@ -151,12 +202,17 @@ export default class SuggestionsTView extends Vue {
     else return 'red';
   }
 
-  async showSuggestionDialog(questionSuggestion: QuestionSuggestion) {
+  async showSuggestion(questionSuggestion: QuestionSuggestion) {
     this.currentSuggestion = questionSuggestion;
     this.rejectionDialog = false;
 
-    await this.$router.push({ name: 'suggestionTeacher', params: { questionSuggestion: JSON.stringify(questionSuggestion) } });
-  }
+    if (this.$store.getters.isTeacher)
+      await this.$router.push({ name: 'suggestionTeacher', params: { questionSuggestion: JSON.stringify(questionSuggestion) } });
+
+    else if (this.$store.getters.isAdmin)
+      await this.$router.push({ name: 'suggestionAdmin', params: { questionSuggestion: JSON.stringify(questionSuggestion) } });
+
+}
 
   ShowJustificationDialog(suggestion: QuestionSuggestion) {
     this.currentSuggestion = suggestion;

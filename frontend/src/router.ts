@@ -34,7 +34,6 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import ListClarificationRequestsView from '@/views/discussion/ListClarificationRequestsView.vue';
 import QuestionClarificationRequestsView from '@/views/student/discussion/QuestionClarificationRequestsView.vue';
 import ClarificationRequestView from '@/views/discussion/ClarificationRequestView.vue';
-import AdminQuestionSuggestionsView from '@/views/admin/questionSuggestion/AdminQuestionSuggestionView.vue';
 
 Vue.use(Router);
 
@@ -325,7 +324,7 @@ let router = new Router({
         {
           path: 'suggestions',
           name: 'suggestionsAdmin',
-          component: AdminQuestionSuggestionsView,
+          component: AvailableSuggestionsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Manage Question Suggestions',
             requiredAuth: 'Admin'
