@@ -54,6 +54,11 @@ public class TournamentService {
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
 	public List<TournamentDto> findTournaments(int executionId) {
 
+		System.out.println("\n" +
+				"TournamentService : findTournaments\n" +
+				" - executionId: " + executionId + "\n"
+		);
+
 		courseExecutionRepository.findById(executionId)
 				.orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
@@ -74,6 +79,13 @@ public class TournamentService {
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
 	public TournamentDto createTournament(int userId, int executionId, TournamentDto tournamentDto) {
 
+		System.out.println("\n" +
+				"TournamentService : createTournament\n" +
+				" - userId: " + userId + "\n" +
+				" - executionId: " + executionId + "\n" +
+				" - tournamentDto: " + tournamentDto + "\n"
+		);
+
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
@@ -81,7 +93,7 @@ public class TournamentService {
 				.orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
 		if (tournamentDto == null)
-			throw new TutorException(INVALID_NULL_ARGUMENTS_TOURNAMENTDTO);
+			throw new TutorException(INVALID_NULL_ARGUMENTS_TOURNAMENT_DTO);
 
 		Set<TopicConjunction> topicConjunctions = tournamentDto.getTopicConjunctions().stream()
 				.map(topicConjunctionDto -> {

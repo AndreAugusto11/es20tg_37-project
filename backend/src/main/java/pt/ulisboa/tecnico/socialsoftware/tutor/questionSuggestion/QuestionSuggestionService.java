@@ -60,11 +60,11 @@ public class QuestionSuggestionService {
         }
 
         if (userId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_USER_ID);
         }
 
         if (courseId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSE_ID);
         }
 
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
@@ -90,7 +90,7 @@ public class QuestionSuggestionService {
     public QuestionDto acceptQuestionSuggestion(Integer questionSuggestionId) {
 
         if (questionSuggestionId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTION_ID);
         }
 
         QuestionSuggestion suggestion = checkForQuestionSuggestion(questionSuggestionId);
@@ -115,9 +115,9 @@ public class QuestionSuggestionService {
     public void rejectQuestionSuggestion(Integer userId, Integer questionSuggestionId, JustificationDto justificationDto) {
 
         if (questionSuggestionId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTION_ID);
         } else if (userId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_USER_ID);
         } else if (justificationDto == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_JUSTIFICATION);
         } else if (justificationDto.getContent() == null || justificationDto.getContent().equals("   ")) {
@@ -159,9 +159,9 @@ public class QuestionSuggestionService {
     public List<QuestionSuggestionDto> getQuestionSuggestions(Integer userId, Integer courseId) {
 
         if (userId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_USER_ID);
         } else if (courseId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSE_ID);
         }
 
         return questionSuggestionRepository.findQuestionSuggestions(userId).stream()
@@ -178,7 +178,7 @@ public class QuestionSuggestionService {
     public List<QuestionSuggestionDto> getAllQuestionSuggestions(Integer courseId) {
 
         if (courseId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSE_ID);
         }
 
         return questionSuggestionRepository.findAll().stream()
@@ -204,7 +204,7 @@ public class QuestionSuggestionService {
     updateRejectedQuestionSuggestion(Integer questionSuggestionId, QuestionSuggestionDto questionSuggestionDto) {
 
         if (questionSuggestionId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTION_ID);
         } else if (questionSuggestionDto == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTION);
         }

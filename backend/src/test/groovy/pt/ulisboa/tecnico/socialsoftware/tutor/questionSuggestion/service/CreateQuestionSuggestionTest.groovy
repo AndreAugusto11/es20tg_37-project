@@ -21,9 +21,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSugges
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
 import spock.lang.Specification
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_COURSEID
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_COURSE_ID
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_SUGGESTION
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_USERID
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_USER_ID
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_IS_TEACHER
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_IN_COURSE
@@ -318,7 +318,7 @@ class CreateQuestionSuggestionTest extends Specification {
 
         then:
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_USERID
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_USER_ID
     }
 
 
@@ -346,7 +346,7 @@ class CreateQuestionSuggestionTest extends Specification {
 
         then:
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_COURSEID
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_COURSE_ID
     }
 
     def "given a course that a student isn't enrolled"() {

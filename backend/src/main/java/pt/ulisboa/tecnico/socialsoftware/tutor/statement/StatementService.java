@@ -380,7 +380,8 @@ public class StatementService {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 
-        QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(quizId, user.getId()).orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizId));
+        QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(quizId, user.getId())
+                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizId));
 
         if (quizAnswer.isCompleted()) {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);

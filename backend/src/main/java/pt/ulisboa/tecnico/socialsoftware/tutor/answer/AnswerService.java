@@ -61,7 +61,7 @@ public class AnswerService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuizAnswerDto createQuizAnswer(Integer userId, Integer quizId) {
+    public QuizAnswerDto createQuizAnswer(int userId, int quizId) {
 
         System.out.println("\n" +
                 "AnswerService : createQuizAnswer\n" +
@@ -83,13 +83,16 @@ public class AnswerService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<CorrectAnswerDto> concludeQuiz(User user, Integer quizId) {
+    public List<CorrectAnswerDto> concludeQuiz(User user, int quizId) {
 
         System.out.println("\n" +
                 "AnswerService : concludeQuiz\n" +
                 " - user: " + user + "\n" +
                 " - quizId: " + quizId + "\n"
         );
+
+        if (user == null)
+            throw new TutorException(INVALID_NULL_ARGUMENTS_USER);
 
         QuizAnswer quizAnswer = user.getQuizAnswers().stream().filter(qa -> qa.getQuiz().getId().equals(quizId)).findFirst().orElseThrow(() ->
                 new TutorException(QUIZ_NOT_FOUND, quizId));
@@ -121,7 +124,7 @@ public class AnswerService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void submitAnswer(User user, Integer quizId, StatementAnswerDto answer) {
+    public void submitAnswer(User user, int quizId, StatementAnswerDto answer) {
 
         System.out.println("\n" +
                 "AnswerService : submitAnswer\n" +
@@ -130,10 +133,16 @@ public class AnswerService {
                 " - answer: " + answer + "\n"
         );
 
+        if (user == null)
+            throw new TutorException(INVALID_NULL_ARGUMENTS_USER);
+
         QuizAnswer quizAnswer = user.getQuizAnswers().stream()
                 .filter(qa -> qa.getQuiz().getId().equals(quizId))
                 .findFirst()
                 .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        if (answer == null)
+            throw new TutorException(INVALID_NULL_ARGUMENTS_ANSWER_DTO);
 
         QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream()
                 .filter(qa -> qa.getSequence().equals(answer.getSequence()))

@@ -221,7 +221,7 @@ class UpdateQuestionTest extends Specification {
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.INVALID_NULL_ARGUMENTS_QUESTIONID
+        exception.getErrorMessage() == ErrorMessage.INVALID_NULL_ARGUMENTS_QUESTION_ID
     }
 
     def "Update a question given no question dto"() {

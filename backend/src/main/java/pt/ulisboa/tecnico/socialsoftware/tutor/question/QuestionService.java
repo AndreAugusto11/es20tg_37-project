@@ -170,7 +170,7 @@ public class QuestionService {
         );
 
         if (questionId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_QUESTIONID);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_QUESTION_ID);
         }
 
         if (questionDto == null) {

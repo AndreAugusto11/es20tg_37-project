@@ -194,7 +194,7 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
 
         then: "an exception is thrown"
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_SUGGESTIONID
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_SUGGESTION_ID
     }
 
     def "update question suggestion given no suggestion dto"() {

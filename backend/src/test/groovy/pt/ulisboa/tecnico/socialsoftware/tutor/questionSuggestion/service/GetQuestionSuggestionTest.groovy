@@ -20,8 +20,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_COURSEID
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_USERID
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_COURSE_ID
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_USER_ID
 
 @DataJpaTest
 class GetQuestionSuggestionTest extends Specification {
@@ -129,7 +129,7 @@ class GetQuestionSuggestionTest extends Specification {
 
         then: "an exception is thrown"
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_USERID
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_USER_ID
     }
 
     def "retrieve question suggestion with no given course"() {
@@ -142,7 +142,7 @@ class GetQuestionSuggestionTest extends Specification {
 
         then: "an exception is thrown"
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_COURSEID
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_COURSE_ID
     }
 
     @TestConfiguration
