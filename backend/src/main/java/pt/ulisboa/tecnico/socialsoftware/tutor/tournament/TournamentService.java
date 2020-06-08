@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentResultsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
@@ -67,9 +68,35 @@ public class TournamentService {
 					if (tournament.getStatus() != Tournament.Status.CANCELLED)
 						tournament.updateStatus();
 				})
-				.sorted(Comparator.comparing(Tournament::getAvailableDate, Comparator.nullsFirst(Comparator.naturalOrder())))
-				.sorted(Comparator.comparing(Tournament::getStatus))
+				.sorted(Comparator.comparing(Tournament::getStatus)
+						.thenComparing(Tournament::getAvailableDate, Comparator.nullsFirst(Comparator.naturalOrder())))
 				.map(TournamentDto::new)
+				.collect(Collectors.toList());
+	}
+
+	@Retryable(
+			value = { SQLException.class },
+			backoff = @Backoff(delay = 5000))
+	@Transactional(isolation = Isolation.REPEATABLE_READ)
+	public List<TournamentResultsDto> getTournamentResults(int executionId, int tournamentId) {
+
+		System.out.println("\n" +
+				"TournamentService : getTournamentResults\n" +
+				" - executionId: " + executionId + "\n" +
+				" - tournamentId: " + tournamentId + "\n"
+		);
+
+		Tournament tournament = tournamentRepository.findById(tournamentId)
+				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+
+		if (executionId != tournament.getCourseExecution().getId())
+			throw new TutorException(COURSE_EXECUTION_TOURNAMENT_MISMATCH, executionId, tournamentId);
+
+		return tournament.getQuiz().getQuizAnswers().stream()
+				.filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
+				.map(TournamentResultsDto::new)
+				.sorted(Comparator.comparingInt(TournamentResultsDto::getNumberOfCorrectAnswers).reversed()
+						.thenComparingLong(TournamentResultsDto::getTimeTaken))
 				.collect(Collectors.toList());
 	}
 
