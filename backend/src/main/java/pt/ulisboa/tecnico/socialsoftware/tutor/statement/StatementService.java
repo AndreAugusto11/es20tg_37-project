@@ -26,6 +26,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentResultsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -296,6 +297,35 @@ public class StatementService {
         return user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .filter(quizAnswer -> quizAnswer.getQuiz().getId() == quizId)
+                .map(SolvedQuizDto::new)
+                .collect(Collectors.toList()).get(0);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public SolvedQuizDto getTournamentSolvedQuiz(int userId, int executionId, int tournamentId) {
+
+        System.out.println("\n" +
+                "StatementService : getTournamentSolvedQuiz\n" +
+                " - userId: " + userId + "\n" +
+                " - executionId: " + executionId + "\n" +
+                " - tournamentId: " + tournamentId + "\n"
+        );
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+
+        if (executionId != tournament.getCourseExecution().getId())
+            throw new TutorException(COURSE_EXECUTION_TOURNAMENT_MISMATCH, executionId, tournamentId);
+
+        return user.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getId().equals(tournament.getQuiz().getId()))
                 .map(SolvedQuizDto::new)
                 .collect(Collectors.toList()).get(0);
     }
