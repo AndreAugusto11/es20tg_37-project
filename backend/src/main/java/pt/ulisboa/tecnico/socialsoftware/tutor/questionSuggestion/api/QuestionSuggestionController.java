@@ -61,15 +61,14 @@ public class QuestionSuggestionController {
 
     @PutMapping("/questionSuggestions/{questionSuggestionId}/rejecting")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionSuggestionId, 'QUESTION_SUGGESTION.ACCESS')")
-    public ResponseEntity rejectQuestionSuggestion(Principal principal, @PathVariable int questionSuggestionId, @Valid @RequestBody JustificationDto justificationDto) {
+    public QuestionSuggestionDto rejectQuestionSuggestion(Principal principal, @PathVariable int questionSuggestionId, @Valid @RequestBody JustificationDto justificationDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestionId, justificationDto);
-        return ResponseEntity.ok().build();
+        return questionSuggestionService.rejectQuestionSuggestion(user.getId(), questionSuggestionId, justificationDto);
     }
 
     @GetMapping("/courses/{courseId}/questionSuggestions")

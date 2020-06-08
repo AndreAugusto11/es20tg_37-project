@@ -112,7 +112,7 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void rejectQuestionSuggestion(int userId, int questionSuggestionId, JustificationDto justificationDto) {
+    public QuestionSuggestionDto rejectQuestionSuggestion(int userId, int questionSuggestionId, JustificationDto justificationDto) {
 
         if (justificationDto == null) {
             throw new TutorException(JUSTIFICATION_MISSING);
@@ -143,6 +143,7 @@ public class QuestionSuggestionService {
         }
 
         suggestion.setStatus(QuestionSuggestion.Status.REJECTED);
+        return new QuestionSuggestionDto(suggestion);
     }
 
     private QuestionSuggestion checkForQuestionSuggestion(int questionSuggestionId) {

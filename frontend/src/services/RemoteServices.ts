@@ -959,8 +959,8 @@ export default class RemoteServices {
   static async rejectQuestionSuggestion(
     suggestionId: number,
     justification: Justification
-  ): Promise<void> {    
-    httpClient
+  ): Promise<QuestionSuggestion> {    
+    return httpClient
       .put(`/questionSuggestions/${suggestionId}/rejecting`, justification)
       .then(response => {
         return new QuestionSuggestion(response.data);

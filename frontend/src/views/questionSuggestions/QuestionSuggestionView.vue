@@ -148,7 +148,7 @@
       </v-card-text>
 
       <v-btn
-        v-if="questionSuggestion.status === 'PENDING' && !this.editing"
+        v-if="questionSuggestion.status === 'PENDING' && !this.editing && this.$store.getters.isTeacher"
         absolute
         fab
         top
@@ -161,7 +161,7 @@
       </v-btn>
 
       <v-btn
-        v-if="questionSuggestion.status === 'PENDING' && !this.editing"
+        v-if="questionSuggestion.status === 'PENDING' && !this.editing && this.$store.getters.isTeacher"
         absolute
         fab
         top
@@ -291,7 +291,7 @@ export default class QuestionSuggestionView extends Vue {
     } else {
       try {
         if (this.questionSuggestion.id) {
-          await RemoteServices.rejectQuestionSuggestion(
+          let suggestion = await RemoteServices.rejectQuestionSuggestion(
             this.questionSuggestion.id,
             this.justification
           );
