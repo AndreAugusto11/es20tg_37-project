@@ -19,6 +19,7 @@ import Justification from '@/models/management/Justification';
 import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
 import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 import User from '@/models/user/User';
+import Image from '@/models/management/Image';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 50000;
@@ -727,6 +728,26 @@ export default class RemoteServices {
       });
   }
 
+  static async uploadClarificationRequestImage(
+    clarificationRequestId: number,
+    file: File
+  ): Promise<string> {
+    let formData = new FormData();
+    formData.append("file", file);
+    return httpClient
+    .put(`/clarificationRequests/${clarificationRequestId}/uploadImage`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    .then(response => {
+      return response.data as string;
+    })
+    .catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
+  }
+
   static async getClarificationRequests(): Promise<ClarificationRequest[]> {
     return httpClient
       .get(
@@ -787,6 +808,26 @@ export default class RemoteServices {
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
+  }
+
+  static async uploadClarificationRequestAnswerImage(
+    clarificationRequestAnswerId: number,
+    file: File
+  ): Promise<string> {
+    let formData = new FormData();
+    formData.append("file", file);
+    return httpClient
+    .put(`/clarificationRequestAnswers/${clarificationRequestAnswerId}/uploadImage`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    .then(response => {
+      return response.data as string;
+    })
+    .catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
   }
 
   static async makeClarificationRequestPublic(

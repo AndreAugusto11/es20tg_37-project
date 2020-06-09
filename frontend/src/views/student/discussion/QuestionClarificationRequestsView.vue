@@ -16,7 +16,7 @@
               no-gutters
       >
           <v-col class="post-text">
-              <span class="post-text" align="left" v-html="convertMarkDown(this.question.content, null)" />
+              <span class="post-text" align="left" v-html="convertMarkDown(this.question.content, this.question.image)" />
           </v-col>
       </v-row>
       <v-list align="left">

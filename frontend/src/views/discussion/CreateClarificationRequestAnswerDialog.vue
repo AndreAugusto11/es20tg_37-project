@@ -11,21 +11,33 @@
         <span class="headline">New Reply</span>
       </v-card-title>
 
-      <v-card-text class="text-left" v-if="createClarificationRequestAnswer">
-        <v-container grid-list-md fluid>
-          <v-layout column wrap>
-            <v-flex xs24 sm12 md8>
-              <v-textarea
-                outline
-                rows="5"
-                v-model="createClarificationRequestAnswer.content"
-                label="Content"
-                data-cy="Content"
-              ></v-textarea>
-            </v-flex>
-          </v-layout>
-        </v-container>
-      </v-card-text>
+            <v-card-text class="text-left" v-if="createClarificationRequestAnswer">
+                <v-container grid-list-md fluid>
+                    <v-layout column wrap>
+                        <v-flex xs24 sm12 md8>
+                            <v-textarea
+                                    outline
+                                    rows="5"
+                                    v-model="createClarificationRequestAnswer.content"
+                                    label="Content"
+                                    data-cy="Content"
+                            ></v-textarea>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+                <template>
+                  <v-file-input
+                  class="pr-3"
+                  label="File input"
+                  show-size
+                  outlined
+                  counter
+                  dense
+                  @change="constructImage($event)"
+                  accept="image/*"
+                  />
+                </template>
+            </v-card-text>
 
       <v-card-actions>
         <v-spacer />
@@ -41,10 +53,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
-import RemoteServices from '@/services/RemoteServices';
-import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
-import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
+  import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+  import RemoteServices from '@/services/RemoteServices';
+  import Image from '@/models/management/Image';
+  import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
+  import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 
 @Component
 export default class CreateClarificationRequestAnswerDialog extends Vue {
@@ -52,7 +65,8 @@ export default class CreateClarificationRequestAnswerDialog extends Vue {
   @Prop({ type: ClarificationRequest, required: true })
   readonly clarificationRequest!: ClarificationRequest;
 
-  createClarificationRequestAnswer!: ClarificationRequestAnswer;
+    createClarificationRequestAnswer!: ClarificationRequestAnswer;
+    file: File | null = null;
 
   created() {
     this.createClarificationRequestAnswer = new ClarificationRequestAnswer(
@@ -72,21 +86,38 @@ export default class CreateClarificationRequestAnswerDialog extends Vue {
       return;
     }
 
-    if (this.createClarificationRequestAnswer && this.clarificationRequest.id) {
-      try {
-        this.createClarificationRequestAnswer.name = this.$store.getters.getUser.name;
-        this.createClarificationRequestAnswer.username = this.$store.getters.getUser.username;
-        this.createClarificationRequestAnswer.type = this.$store.getters
-          .isTeacher
-          ? 'TEACHER_ANSWER'
-          : 'STUDENT_ANSWER';
-        const result = await RemoteServices.createClarificationRequestAnswer(
-          this.clarificationRequest.id,
-          this.createClarificationRequestAnswer
+    async constructImage(event: File) {
+        this.file = event;
+    }
+
+    async saveClarificationRequestAnswer() {
+      if (
+        this.createClarificationRequestAnswer &&
+        (!this.createClarificationRequestAnswer.content)
+      ) {
+        await this.$store.dispatch(
+          'error',
+          'Clarification request answer must have content'
         );
         this.$emit('new-clarification-request-answer', result);
       } catch (error) {
         await this.$store.dispatch('error', error);
+      }
+
+      if (this.createClarificationRequestAnswer && this.clarificationRequest.id) {
+        try {
+          this.createClarificationRequestAnswer.name = this.$store.getters.getUser.name;
+          this.createClarificationRequestAnswer.username = this.$store.getters.getUser.username;
+          this.createClarificationRequestAnswer.type = this.$store.getters.isTeacher ? 'TEACHER_ANSWER' : 'STUDENT_ANSWER';
+          const result = await RemoteServices.createClarificationRequestAnswer(this.clarificationRequest.id, this.createClarificationRequestAnswer);
+          if (result.id != null && this.file) {
+            result.image = new Image();
+            result.image.url = await RemoteServices.uploadClarificationRequestAnswerImage(result.id, this.file);
+          }
+          this.$emit('new-clarification-request-answer', result);
+        } catch (error) {
+          await this.$store.dispatch('error', error);
+        }
       }
     }
   }

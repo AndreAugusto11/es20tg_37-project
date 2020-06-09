@@ -3,9 +3,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.ClarificationRequestAnswerDto;
@@ -13,10 +15,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto.Clarificat
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.FILE_NOT_DEFINED;
 
 @RestController
 public class QuestionDiscussionController {
@@ -25,6 +34,9 @@ public class QuestionDiscussionController {
     @Autowired
     QuestionDiscussionService questionDiscussionService;
 
+    @Value("${figures.dir}")
+    private String figuresDir;
+
     @PostMapping("/questionAnswers/{questionAnswerId}/clarificationRequests")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionAnswerId, 'QUESTION_ANSWER.ACCESS')")
     public ClarificationRequestDto createClarificationRequest(@PathVariable Integer questionAnswerId,
@@ -32,14 +44,29 @@ public class QuestionDiscussionController {
         return questionDiscussionService.createClarificationRequest(questionAnswerId, clarificationRequest);
     }
 
+    @PutMapping("/clarificationRequests/{clarificationRequestId}/uploadImage")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#clarificationRequestId, 'CLARIFICATION_REQUEST.ACCESS')")
+    public String uploadClarificationRequestImage(@PathVariable Integer clarificationRequestId,
+                                                                   @RequestParam("file") MultipartFile file) throws IOException {
+        if (file == null)
+            throw new TutorException(FILE_NOT_DEFINED);
+
+        int lastIndex = Objects.requireNonNull(file.getContentType()).lastIndexOf('/');
+        String type = file.getContentType().substring(lastIndex + 1);
+
+        String url = questionDiscussionService.uploadClarificationRequestImage(clarificationRequestId, type);
+
+        Files.copy(file.getInputStream(), this.getTargetLocation(url), StandardCopyOption.REPLACE_EXISTING);
+        return url;
+    }
+
     @GetMapping("/executions/{executionId}/clarificationRequests")
     @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<ClarificationRequestDto> getClarificationRequests(Principal principal, @PathVariable Integer executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        if (user == null) {
+        if (user == null)
             throw new TutorException(AUTHENTICATION_ERROR);
-        }
 
         return questionDiscussionService.getClarificationRequests(user.getUsername(), executionId);
     }
@@ -65,10 +92,27 @@ public class QuestionDiscussionController {
         return questionDiscussionService.createClarificationRequestAnswer(clarificationRequestId, clarificationRequestAnswerDto);
     }
 
+    @PutMapping("/clarificationRequestAnswers/{clarificationRequestAnswerId}/uploadImage")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#clarificationRequestAnswerId, 'CLARIFICATION_REQUEST_ANSWER.ACCESS')")
+    public String uploadClarificationRequestAnswerImage(@PathVariable Integer clarificationRequestAnswerId,
+                                                        @RequestParam("file") MultipartFile file) throws IOException {
+        if (file == null)
+            throw new TutorException(FILE_NOT_DEFINED);
+
+        int lastIndex = Objects.requireNonNull(file.getContentType()).lastIndexOf('/');
+        String type = file.getContentType().substring(lastIndex + 1);
+
+        String url = questionDiscussionService.uploadClarificationRequestAnswerImage(clarificationRequestAnswerId, type);
+
+        Files.copy(file.getInputStream(), this.getTargetLocation(url), StandardCopyOption.REPLACE_EXISTING);
+        return url;
+    }
+
     @GetMapping("/executions/{executionId}/clarificationRequests/{clarificationRequestId}/clarificationRequestAnswers")
     @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<ClarificationRequestAnswerDto> getClarificationRequestAnswers(@PathVariable Integer executionId,
                                                                           @PathVariable Integer clarificationRequestId) {
+
         return questionDiscussionService.getClarificationRequestAnswers(clarificationRequestId);
     }
 
@@ -91,5 +135,10 @@ public class QuestionDiscussionController {
     public List<ClarificationRequestDto> getQuestionClarificationRequests(@PathVariable Integer executionId,
                                                                     @PathVariable Integer questionId) {
         return questionDiscussionService.getQuestionClarificationRequests(executionId, questionId);
+    }
+
+    private Path getTargetLocation(String url) {
+        String fileLocation = figuresDir + url;
+        return Paths.get(fileLocation);
     }
 }

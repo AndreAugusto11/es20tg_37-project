@@ -164,7 +164,7 @@ public class QuestionService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void uploadImage(Integer questionId, String type) {
+    public String uploadImage(Integer questionId, String type) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
         Image image = question.getImage();
@@ -187,6 +187,8 @@ public class QuestionService {
                 "q" +
                 question.getKey() +
                 "." + type);
+
+        return question.getImage().getUrl();
     }
 
     @Retryable(
