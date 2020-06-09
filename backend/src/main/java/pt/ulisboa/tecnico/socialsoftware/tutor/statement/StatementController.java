@@ -71,6 +71,18 @@ public class StatementController {
         return statementService.getSolvedQuiz(user.getId(), executionId, quizId);
     }
 
+    @GetMapping("/executions/{executionId}/tournaments/{tournamentId}/quiz/solved")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS') and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS')")
+    public SolvedQuizDto getTournamentSolvedQuiz(Principal principal, @PathVariable int executionId, @PathVariable int tournamentId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null) {
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        return statementService.getTournamentSolvedQuiz(user.getId(), executionId, tournamentId);
+    }
+
     @GetMapping("/quizzes/{quizId}/byqrcode")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public StatementQuizDto getQuizByQRCode(Principal principal, @PathVariable int quizId) {
