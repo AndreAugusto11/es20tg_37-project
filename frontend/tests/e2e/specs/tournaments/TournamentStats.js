@@ -1,11 +1,9 @@
 describe('Show stats', () => {
   beforeEach(() => {
-    cy.exec('psql -d tutordb -c "Delete from tournaments_users;"')
-    cy.exec('psql -d tutordb -c "Delete from users_tournaments;"')
-    cy.exec('psql -d tutordb -c "Delete from users_created_tournaments;"')
-    cy.exec('psql -d tutordb -c "Delete from tournaments_topics;"')
-    cy.exec('psql -d tutordb -c "Delete from users_enrolled_tournaments;"')
-    cy.exec('psql -d tutordb -c "Delete from tournaments;"');
+    cy.exec('psql -d tutordb -c "update quizzes set tournament_id = null;"')
+    cy.exec('psql -d tutordb -c "update topic_conjunctions set tournament_id = null;"')
+    cy.exec('psql -d tutordb -c "delete from tournaments_enrolled_users;"')
+    cy.exec('psql -d tutordb -c "delete from tournaments;"')
     cy.exec(
       'psql -d tutordb -c "UPDATE users SET private_tournaments_stats = false;"'
     );
@@ -27,7 +25,7 @@ describe('Show stats', () => {
   });
   it('Enrolls in a Tournament and sees the stats', () => {
     cy.exec(
-      'psql -d tutordb -c "insert into tournaments(end_date,number_of_questions,start_date,status,user_id) values (\'2025-06-05 00:21:00\',1,\'2025-06-05 00:21:00\',\'CREATED\',678);"'
+      'psql -d tutordb -c "insert into tournaments(title,available_date,conclusion_date,number_of_questions,status,user_id,course_execution_id) values (\'TITLE\',\'2025-06-05 00:21:00\', \'2025-06-06 00:21:00\',1,\'ENROLLING\',678,11);"'
     );
     cy.enrollTournament('Student 678')
     cy.contains('Stats').click();
