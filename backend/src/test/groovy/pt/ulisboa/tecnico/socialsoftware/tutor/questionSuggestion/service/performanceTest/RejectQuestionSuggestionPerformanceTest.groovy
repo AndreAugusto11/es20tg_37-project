@@ -83,6 +83,7 @@ class RejectQuestionSuggestionPerformanceTest extends Specification {
             justificationDto[i].setImage(imageDto)
 
             questionSuggestions[i] = new QuestionSuggestion()
+            questionSuggestions[i].setUser(user)
             questionSuggestions[i].setQuestion(question)
             questionSuggestions[i].setStatus(QuestionSuggestion.Status.PENDING)
             questionSuggestionRepository.save(questionSuggestions[i])

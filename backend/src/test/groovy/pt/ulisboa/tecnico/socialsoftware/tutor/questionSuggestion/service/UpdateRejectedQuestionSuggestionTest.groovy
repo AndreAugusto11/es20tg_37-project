@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justifi
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.QuestionSuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.QuestionSuggestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Specification
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
@@ -44,14 +45,19 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
     @Autowired
     QuestionSuggestionRepository questionSuggestionRepository
 
-    def course = new Course()
+    @Autowired
+    QuestionSuggestionRepository userRepository
 
+    def course = new Course()
+    def user = new User("name", "username", 323, User.Role.STUDENT)
     def rejOption = new Option()
     def rejQuestion = new Question()
     def justification = new Justification()
     def rejQuestionSuggestion = new QuestionSuggestion()
 
     def setup() {
+        userRepository.save(user)
+
         course.setName(COURSE_NAME)
         course.setType(Course.Type.TECNICO)
         courseRepository.save(course)
@@ -69,7 +75,9 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
 
         justification.setKey(1)
         justification.setContent(JUSTIFICATION_CONTENT)
+        justification.setUser(user)
 
+        rejQuestionSuggestion.setUser(user)
         rejQuestionSuggestion.setQuestion(rejQuestion)
         rejQuestionSuggestion.setStatus(QuestionSuggestion.Status.REJECTED)
         rejQuestionSuggestion.setJustification(justification)

@@ -68,10 +68,13 @@ class RejectQuestionSuggestionTest extends Specification {
     UserRepository userRepository
 
     def course = new Course()
+    def user = new User("name", "username", 323, User.Role.STUDENT)
     def question = new Question()
     def questionSuggestion = new QuestionSuggestion()
 
     def setup() {
+        userRepository.save(user)
+
         course.setName(COURSE_NAME)
         course.setType(Course.Type.TECNICO)
         courseRepository.save(course)
@@ -89,6 +92,7 @@ class RejectQuestionSuggestionTest extends Specification {
         question.setStatus(Question.Status.DISABLED)
         question.setCourse(course)
 
+        questionSuggestion.setUser(user)
         questionSuggestion.setQuestion(question)
         questionSuggestion.setStatus(QuestionSuggestion.Status.PENDING)
         questionSuggestionRepository.save(questionSuggestion)

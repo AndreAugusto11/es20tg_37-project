@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.QuestionSuggestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSuggestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
@@ -54,9 +55,12 @@ class AcceptQuestionSuggestionTest extends Specification {
     UserRepository userRepository
 
     def course = new Course()
+    def user = new User("name", "username", 323, User.Role.STUDENT)
     def question = new Question()
 
     def setup() {
+        userRepository.save(user)
+
         course.setName(COURSE_NAME)
         course.setType(Course.Type.TECNICO)
         courseRepository.save(course)
@@ -77,6 +81,7 @@ class AcceptQuestionSuggestionTest extends Specification {
     def "A pending question suggestion is accepted"() {
         given: "a question suggestion"
         def questionSuggestion = new QuestionSuggestion()
+        questionSuggestion.setUser(user)
         questionSuggestion.setQuestion(question)
         questionSuggestion.setStatus(QuestionSuggestion.Status.PENDING)
         questionSuggestionRepository.save(questionSuggestion)
