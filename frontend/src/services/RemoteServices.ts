@@ -19,6 +19,7 @@ import Justification from '@/models/management/Justification';
 import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
 import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 import User from '@/models/user/User';
+import { TournamentResult } from '@/models/tournaments/TournamentResult';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 50000;
@@ -133,12 +134,33 @@ export default class RemoteServices {
       });
   }
 
+  static async getTournamentResults(tournamentId: number): Promise<TournamentResult[]> {
+    return httpClient
+      .get(`/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/${tournamentId}/results`)
+      .then(response => {
+        return response.data.map((tournamentResult: any) => {
+          return new TournamentResult(tournamentResult);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static createTournament(tournament: Tournament): Promise<Tournament> {
     return httpClient
       .post(`/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments`, tournament)
       .then(response => {
         return new Tournament(response.data);
       })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static cancelTournament(tournamentId: number) {
+    return httpClient
+      .post(`/tournaments/${tournamentId}/cancel`)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -155,9 +177,12 @@ export default class RemoteServices {
       });
   }
 
-  static cancelTournament(tournamentId: number) {
+  static async getTournamentSolvedQuiz(tournamentId: number): Promise<SolvedQuiz> {
     return httpClient
-      .post(`/tournaments/${tournamentId}/cancel`)
+      .get(`/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/${tournamentId}/quiz/solved`)
+      .then(response => {
+        return new SolvedQuiz(response.data);
+      })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });

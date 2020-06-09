@@ -86,7 +86,7 @@
               <v-icon
                 x-large
                 class="mr-2"
-                color="primary"
+                color="blue"
                 dark
                 v-on="on"
                 @click="enrollTournament(item)"
@@ -118,7 +118,7 @@
               <v-icon
                 x-large
                 class="mr-2"
-                color="primary"
+                color="blue"
                 dark
                 v-on="on"
                 @click="answerQuiz(item)"
@@ -172,6 +172,40 @@
               </v-icon>
             </template>
             <span>Cancel Tournament</span>
+          </v-tooltip>
+
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                x-large
+                class="mr-2"
+                color="blue"
+                dark
+                v-on="on"
+                @click="openTournamentResults(item)"
+                data-cy="openTournamentResults"
+              >
+                mdi-clipboard-text
+              </v-icon>
+            </template>
+            <span>See Tournament Results</span>
+          </v-tooltip>
+
+          <v-tooltip v-if="canOpenQuiz(item)" bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                x-large
+                class="mr-2"
+                color="blue"
+                dark
+                v-on="on"
+                @click="openTournamentQuiz(item.id)"
+                data-cy="openTournamentQuiz"
+              >
+                mdi-file-document-outline
+              </v-icon>
+            </template>
+            <span>See Quiz Results</span>
           </v-tooltip>
         </template>
 
@@ -337,6 +371,7 @@ export default class ListTournamentsView extends Vue {
 
   async answerQuiz(tournamentToAnswer: Tournament) {
     try {
+      this.statementManager.reset();
       if (tournamentToAnswer.id) {
         await this.statementManager.setTournamentQuiz(tournamentToAnswer.id);
         await this.$router.push({ name: 'solve-quiz' });
@@ -374,6 +409,33 @@ export default class ListTournamentsView extends Vue {
         this.$store.getters.getUser.name
       ) && tournament.status === 'ONGOING'
     );
+  }
+
+  canOpenQuiz(tournament: Tournament): boolean {
+    return (
+      tournament.enrolledStudentsNames.includes(
+        this.$store.getters.getUser.name
+      ) && tournament.status === 'ONGOING'
+    );
+  }
+
+  async openTournamentQuiz(tournamentId: number) {
+    try {
+      let quiz = await RemoteServices.getTournamentSolvedQuiz(tournamentId);
+      this.statementManager.reset();
+      this.statementManager.correctAnswers = quiz.correctAnswers;
+      this.statementManager.statementQuiz = quiz.statementQuiz;
+      await this.$router.push({ name: 'quiz-results' });
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
+  async openTournamentResults(value: Tournament) {
+    await this.$router.push({
+      name: 'tournament-results',
+      params: { tournament: JSON.stringify(value) }
+    });
   }
 }
 </script>

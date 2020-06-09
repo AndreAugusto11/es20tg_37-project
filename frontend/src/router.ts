@@ -31,6 +31,7 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import ListClarificationRequestsView from '@/views/discussion/ListClarificationRequestsView.vue';
 import QuestionClarificationRequestsView from '@/views/student/discussion/QuestionClarificationRequestsView.vue';
 import ClarificationRequestView from '@/views/discussion/ClarificationRequestView.vue';
+import TournamentResultsView from '@/views/student/tournaments/TournamentResultsView.vue';
 
 Vue.use(Router);
 
@@ -263,6 +264,16 @@ let router = new Router({
           component: ListTournamentsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Tournaments',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'tournamentResults',
+          name: 'tournament-results',
+          component: TournamentResultsView,
+          props: true,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Tournament Results',
             requiredAuth: 'Student'
           }
         }
