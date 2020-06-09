@@ -147,6 +147,7 @@
                 class="spacer ml-5"
                 no-gutters
         >
+            <v-col class="post-text">
                 <span class="post-text" v-html="convertMarkDown(this.clarificationRequest.questionAnswerDto.question.content, this.clarificationRequest.questionAnswerDto.question.image)" />
             </v-col>
         </v-row>
@@ -172,9 +173,8 @@
                         <span>Incorrect option</span>
                     </v-tooltip>
                 </v-list-item-icon>
-            <v-col class="post-text">
 
-        <v-list-item-content>
+        <v-list-item-content class="pt-5">
           <span v-html="convertMarkDown(item.content, null)" />
         </v-list-item-content>
       </v-list-item>
@@ -297,16 +297,6 @@ export default class ClarificationRequestComponent extends Vue {
         else {
           return date_diff.getSeconds() + ' Seconds ago';
         }
-      }
-    } else if (date_diff.getMinutes() > 0) {
-      if (date_diff.getMinutes() > 1) {
-        return date_diff.getMinutes() + ' Minutes ago';
-      } else {
-        return date_diff.getMinutes() + ' Minute ago';
-      }
-    } else {
-      return date_diff.getSeconds() + ' Seconds ago';
-    }
   }
 }
 </script>

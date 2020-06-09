@@ -117,9 +117,8 @@ public class QuestionSuggestionController {
         int lastIndex = Objects.requireNonNull(file.getContentType()).lastIndexOf('/');
         String type = file.getContentType().substring(lastIndex + 1);
 
-        questionSuggestionService.uploadImageToQuestionSuggestion(questionSuggestionId, type);
+        url = questionSuggestionService.uploadImageToQuestionSuggestion(questionSuggestionId, type);
 
-        url = questionSuggestionService.findQuestionSuggestionById(questionSuggestionId).getImage().getUrl();
         Files.copy(file.getInputStream(), getTargetLocation(url), StandardCopyOption.REPLACE_EXISTING);
 
         return url;

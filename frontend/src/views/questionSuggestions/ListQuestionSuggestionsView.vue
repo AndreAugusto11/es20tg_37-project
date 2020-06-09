@@ -308,6 +308,7 @@ export default class ListQuestionSuggestionsView extends Vue {
         suggestion.status = 'REJECTED';
         suggestion.justificationDto.content = justification.content;
         suggestion.justificationDto.image = justification.image;
+        suggestion.justificationDto.name = this.$store.getters.getUser.name;
       }
       
       this.onCloseJustificationDialog();

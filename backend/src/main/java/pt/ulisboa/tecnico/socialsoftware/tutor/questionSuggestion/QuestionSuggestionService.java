@@ -249,14 +249,14 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void uploadImageToQuestionSuggestion(int questionSuggestionId, String type) {
+    public String uploadImageToQuestionSuggestion(int questionSuggestionId, String type) {
         QuestionSuggestion questionSuggestion = questionSuggestionRepository.findById(questionSuggestionId)
                 .orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
 
         if (questionSuggestion.getQuestion() == null)
             throw new TutorException(EMPTY_QUESTION_SUGGESTION, questionSuggestionId);
 
-        questionService.uploadImage(questionSuggestion.getQuestion().getId(), type);
+        return questionService.uploadImage(questionSuggestion.getQuestion().getId(), type);
     }
 
     @Retryable(

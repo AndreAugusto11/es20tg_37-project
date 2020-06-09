@@ -74,18 +74,6 @@ export default class CreateClarificationRequestAnswerDialog extends Vue {
     );
   }
 
-  async saveClarificationRequestAnswer() {
-    if (
-      this.createClarificationRequestAnswer &&
-      !this.createClarificationRequestAnswer.content
-    ) {
-      await this.$store.dispatch(
-        'error',
-        'Clarification request answer must have content'
-      );
-      return;
-    }
-
     async constructImage(event: File) {
         this.file = event;
     }
@@ -99,9 +87,7 @@ export default class CreateClarificationRequestAnswerDialog extends Vue {
           'error',
           'Clarification request answer must have content'
         );
-        this.$emit('new-clarification-request-answer', result);
-      } catch (error) {
-        await this.$store.dispatch('error', error);
+        return;
       }
 
       if (this.createClarificationRequestAnswer && this.clarificationRequest.id) {
@@ -120,7 +106,6 @@ export default class CreateClarificationRequestAnswerDialog extends Vue {
         }
       }
     }
-  }
 
   changeAvailability() {
     this.clarificationRequest.public = this.clarificationRequest.public

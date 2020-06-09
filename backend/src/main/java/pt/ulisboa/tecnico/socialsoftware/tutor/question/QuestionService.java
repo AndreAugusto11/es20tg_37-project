@@ -179,6 +179,8 @@ public class QuestionService {
         } else {
             setImageUrl(question, type);
         }
+
+        return question.getImage().getUrl();
     }
 
     private void setImageUrl(Question question, String type) {
@@ -187,8 +189,6 @@ public class QuestionService {
                 "q" +
                 question.getKey() +
                 "." + type);
-
-        return question.getImage().getUrl();
     }
 
     @Retryable(
