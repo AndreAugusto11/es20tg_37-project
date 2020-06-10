@@ -1,6 +1,6 @@
 <template>
   <div>
-    <create-tournament-dialog
+    <create-tournament-view
       v-if="currentTournament"
       v-model="createTournamentDialog"
       v-on:new-tournament="onCreateTournament"
@@ -174,7 +174,7 @@
             <span>Cancel Tournament</span>
           </v-tooltip>
 
-          <v-tooltip bottom>
+          <v-tooltip v-if="canOpenQuiz(item)" bottom>
             <template v-slot:activator="{ on }">
               <v-icon
                 x-large
@@ -223,14 +223,15 @@
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { Tournament } from '@/models/tournaments/Tournament';
-import CreateTournamentDialog from '@/views/student/tournaments/CreateTournamentDialog.vue';
+import CreateTournamentDialog from '@/views/student/tournaments/CreateTournamentView.vue';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import StatementManager from '@/models/statement/StatementManager';
+import CreateTournamentView from '@/views/student/tournaments/CreateTournamentView.vue';
 
 @Component({
   components: {
-    'create-tournament-dialog': CreateTournamentDialog
+    'create-tournament-view': CreateTournamentView
   }
 })
 export default class ListTournamentsView extends Vue {
@@ -415,7 +416,7 @@ export default class ListTournamentsView extends Vue {
     return (
       tournament.enrolledStudentsNames.includes(
         this.$store.getters.getUser.name
-      ) && tournament.status === 'ONGOING'
+      ) && tournament.status !== 'ENROLLING'
     );
   }
 

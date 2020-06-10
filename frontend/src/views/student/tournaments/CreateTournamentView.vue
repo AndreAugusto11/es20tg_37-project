@@ -87,7 +87,7 @@ import Assessment from '@/models/management/Assessment';
 Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 @Component
-export default class CreateTournamentDialog extends Vue {
+export default class CreateTournamentView extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Tournament, required: true }) readonly tournament!: Tournament;
 

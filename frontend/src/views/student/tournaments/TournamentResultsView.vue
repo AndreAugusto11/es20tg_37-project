@@ -1,5 +1,9 @@
 <template>
-  <v-card class="table" max-width="80%" style="margin-right: auto; margin-left: auto;">
+  <v-card
+    class="table"
+    max-width="80%"
+    style="margin-right: auto; margin-left: auto;"
+  >
     <v-card v-if="tournament" dark color="primary">
       <v-card-title class="text-left text-capitalize justify-left py-6">
         <h1 class="font-weight-bold display-2">🏆 {{ tournament.title }}</h1>
@@ -17,10 +21,9 @@
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
       max-width="500px"
-      class="test"
+      class="large-table"
     >
       <template v-slot:top>
-
         <v-card-title>
           <v-text-field
             v-model="search"
@@ -42,7 +45,10 @@
 
       <template v-slot:item="{ item }">
         <tr>
-          <td style="text-align: left">{{ tournamentResults.indexOf(item) + 1 }}. {{ item.enrolledStudentUsername }}</td>
+          <td>{{ tournamentResults.indexOf(item) + 1 }}</td>
+          <td style="text-align: left">
+            {{ item.enrolledStudentUsername }}
+          </td>
           <td>{{ item.numberOfCorrectAnswers }}</td>
           <td>{{ item.timeTaken }}</td>
         </tr>
@@ -75,6 +81,12 @@ export default class TournamentResultsView extends Vue {
   tournamentResults: TournamentResult[] = [];
   search: string = '';
   headers: object = [
+    {
+      text: '',
+      value: 'place',
+      align: 'center',
+      width: '1%'
+    },
     {
       text: 'Student',
       value: 'student',
@@ -132,24 +144,49 @@ export default class TournamentResultsView extends Vue {
   }
 
   getNumberColor(tournamentResult: TournamentResult) {
-    let place = ((this.tournamentResults.indexOf(tournamentResult) + 1) / this.tournamentResults.length) * 100;
+    let place =
+      ((this.tournamentResults.indexOf(tournamentResult) + 1) /
+        this.tournamentResults.length) *
+      100;
 
     if (place < 25) return 'red';
     else if (place < 50) return 'orange';
     else if (place < 75) return 'lime';
     else return 'green';
   }
+
+  place(tournamentResult: TournamentResult) {
+    return this.tournamentResults.indexOf(tournamentResult) + 1;
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-  .test {
-    tr {
-      height: 100px;
+.gold {
+  background: rgb(233, 211, 98);
+  background: linear-gradient(
+    62deg,
+    rgba(233, 211, 98, 1) 0%,
+    rgba(51, 51, 51, 0.1) 100%
+  );
+}
 
-      td {
-        font-size: 1.1rem;
-      }
+.large-table {
+  tr {
+    height: 100px;
+
+    td {
+      font-size: 1.1rem;
     }
   }
+}
+
+.silver {
+  background: rgb(169, 169, 169);
+  background: linear-gradient(
+    62deg,
+    rgba(169, 169, 169, 1) 0%,
+    rgba(51, 51, 51, 0.1) 100%
+  );
+}
 </style>
