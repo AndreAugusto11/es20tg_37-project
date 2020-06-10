@@ -11,40 +11,55 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSuggestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.JustificationRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.QuestionSuggestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
-class GetQuestionSuggestionTest extends Specification {
+class RemoveQuestionSuggestionTest extends Specification {
 
     public static final String COURSE_NAME = "Software Architecture"
     public static final String STUDENT_NAME = "Student Name"
     public static final String STUDENT_USERNAME = "Student Username"
+    public static final String TEACHER_NAME = "Teacher Name"
+    public static final String TEACHER_USERNAME = "Teacher Username"
     public static final String QUESTION_TITLE = "Question Title"
     public static final String QUESTION_CONTENT = "Question Content"
     public static final String OPTION_CONTENT = "Option Content"
+    public static final String JUSTIFICATION_CONTENT = "Justification Content"
 
     @Autowired
     QuestionSuggestionService questionSuggestionService
 
     @Autowired
-    UserRepository userRepository
+    CourseExecutionRepository courseExecutionRepository
 
     @Autowired
     CourseRepository courseRepository
 
     @Autowired
-    CourseExecutionRepository courseExecutionRepository
+    QuestionSuggestionRepository questionSuggestionRepository
 
     @Autowired
-    QuestionSuggestionRepository questionSuggestionRepository
+    JustificationRepository justificationRepository
+
+    @Autowired
+    QuestionRepository questionRepository
+
+    @Autowired
+    OptionRepository optionRepository
+
+    @Autowired
+    UserRepository userRepository
 
     def course = new Course()
     def student = new User()
@@ -56,11 +71,9 @@ class GetQuestionSuggestionTest extends Specification {
         courseRepository.save(course)
 
         student = new User()
-        student.setKey(1)
         student.setName(STUDENT_NAME)
         student.setUsername(STUDENT_USERNAME)
         student.setRole(User.Role.STUDENT)
-        userRepository.save(student)
 
         def option = new Option()
         option.setContent(OPTION_CONTENT)
@@ -75,32 +88,52 @@ class GetQuestionSuggestionTest extends Specification {
         question.setCourse(course)
     }
 
-    def "A question suggestion is retrieved"() {
+    def "An accepted question suggestion is removed"() {
         given: "A question suggestion"
         def questionSuggestion = new QuestionSuggestion()
         questionSuggestion.setUser(student)
         questionSuggestion.setQuestion(question)
-        questionSuggestion.setStatus(QuestionSuggestion.Status.PENDING)
+        questionSuggestion.setStatus(QuestionSuggestion.Status.ACCEPTED)
         questionSuggestionRepository.save(questionSuggestion)
 
-        when:
-        def result = questionSuggestionService.getQuestionSuggestions(student.getId(), course.getId())
+        when: "The suggestion is removed"
+        questionSuggestionService.removeQuestionSuggestion(questionSuggestion.getId())
 
-        then:
-        result.size() == 1
-        def resQuestionSuggestion = result.get(0)
-        resQuestionSuggestion != null
-        resQuestionSuggestion.getId() != null
-        resQuestionSuggestion.getStatus() == QuestionSuggestion.Status.PENDING.name()
-        resQuestionSuggestion.getQuestionDto() != null
-        resQuestionSuggestion.getQuestionDto().getId() != null
-        resQuestionSuggestion.getTitle() == QUESTION_TITLE
-        resQuestionSuggestion.getContent() == QUESTION_CONTENT
-        resQuestionSuggestion.getQuestionDto().getType() == Question.Type.SUGGESTION.name()
-        resQuestionSuggestion.getQuestionDto().getStatus() == Question.Status.DISABLED.name()
+        then: "The suggestion is deleted"
+        questionSuggestionRepository.count() == 0
+        questionRepository.findByKey(1).empty
     }
 
-    def "Cannot retrieve a question suggestion with invalid user id"() {
+    def "A rejected question suggestion is removed"() {
+        given: "A question suggestion"
+        def questionSuggestion = new QuestionSuggestion()
+        questionSuggestion.setUser(student)
+        questionSuggestion.setQuestion(question)
+        questionSuggestion.setStatus(QuestionSuggestion.Status.REJECTED)
+
+        and: "A user teacher"
+        def teacher = new User()
+        teacher.setName(TEACHER_NAME)
+        teacher.setUsername(TEACHER_USERNAME)
+        teacher.setRole(User.Role.TEACHER)
+
+        and: "A justification"
+        def justification = new Justification()
+        justification.setKey(2)
+        justification.setUser(teacher)
+        justification.setContent(JUSTIFICATION_CONTENT)
+        questionSuggestionRepository.save(questionSuggestion)
+
+        when: "The suggestion is removed"
+        questionSuggestionService.removeQuestionSuggestion(questionSuggestion.getId())
+
+        then: "The suggestion is deleted"
+        questionSuggestionRepository.count() == 0
+        questionRepository.findByKey(1).empty
+        justificationRepository.findByKey(2).empty
+    }
+
+    def "A pending question suggestion cannot be removed"() {
         given: "A question suggestion"
         def questionSuggestion = new QuestionSuggestion()
         questionSuggestion.setUser(student)
@@ -108,28 +141,21 @@ class GetQuestionSuggestionTest extends Specification {
         questionSuggestion.setStatus(QuestionSuggestion.Status.PENDING)
         questionSuggestionRepository.save(questionSuggestion)
 
-        when:
-        questionSuggestionService.getQuestionSuggestions(0, course.getId())
+        when: "The suggestion is removed"
+        questionSuggestionService.removeQuestionSuggestion(questionSuggestion.getId())
 
         then: "An exception is thrown"
         TutorException exception = thrown()
-        exception.getErrorMessage() == USER_NOT_FOUND
+        exception.getErrorMessage() == CANNOT_DELETE_QUESTION_SUGGESTION
     }
 
-    def "Cannot retrieve a question suggestion with invalid course id"() {
-        given: "A question suggestion"
-        def questionSuggestion = new QuestionSuggestion()
-        questionSuggestion.setUser(student)
-        questionSuggestion.setQuestion(question)
-        questionSuggestion.setStatus(QuestionSuggestion.Status.PENDING)
-        questionSuggestionRepository.save(questionSuggestion)
-
-        when:
-        questionSuggestionService.getQuestionSuggestions(student.getId(), 0)
+    def "A question suggestion given an invalid id cannot be removed"() {
+        when: "An invalid suggestion id is given"
+        questionSuggestionService.removeQuestionSuggestion(0)
 
         then: "An exception is thrown"
         TutorException exception = thrown()
-        exception.getErrorMessage() == COURSE_NOT_FOUND
+        exception.getErrorMessage() == QUESTION_SUGGESTION_NOT_FOUND
     }
 
     @TestConfiguration

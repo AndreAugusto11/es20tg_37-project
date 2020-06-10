@@ -30,7 +30,7 @@
             <v-flex xs24 sm12 md12>
               <v-textarea
                 outline
-                rows="10"
+                rows="1"
                 v-model="editQuestionSuggestion.questionDto.content"
                 label="Content"
                 data-cy="Content"
@@ -53,7 +53,7 @@
               />
               <v-textarea
                 outline
-                rows="10"
+                rows="1"
                 v-model="
                   editQuestionSuggestion.questionDto.options[index - 1].content
                 "
@@ -63,6 +63,17 @@
             </v-flex>
           </v-layout>
         </v-container>
+        <template>
+          <v-file-input
+          label="File input"
+          outlined
+          count
+          show-size
+          dens
+          @change="saveImage($event)"
+          data-cy="imageInput"
+        ></v-file-input>
+        </template>
       </v-card-text>
 
       <v-card-actions>
@@ -87,6 +98,7 @@
 <script lang="ts">
 import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import QuestionSuggestion from '@/models/management/QuestionSuggestion';
+import Image from '@/models/management/Image';
 import RemoteServices from '@/services/RemoteServices';
 
 @Component
@@ -96,11 +108,16 @@ export default class EditQuestionSuggestionDialog extends Vue {
   readonly questionSuggestion!: QuestionSuggestion;
 
   editQuestionSuggestion!: QuestionSuggestion;
+  file!: File
 
   created() {
     this.editQuestionSuggestion = new QuestionSuggestion(
       this.questionSuggestion
     );
+  }
+
+  async saveImage(event: File) {
+    this.file = event;
   }
 
   async saveQuestionSuggestion() {
@@ -124,6 +141,12 @@ export default class EditQuestionSuggestionDialog extends Vue {
             : await RemoteServices.createQuestionSuggestion(
                 this.editQuestionSuggestion
               );
+
+        if (result.id != null && this.file) {
+          result.questionDto.image = new Image();
+          result.questionDto.image.url = await RemoteServices.uploadImageToQuestionSuggestion(result.id, this.file);
+        }
+
         this.$emit('save-questionSuggestion', result);
       } catch (error) {
         await this.$store.dispatch('error', error);
