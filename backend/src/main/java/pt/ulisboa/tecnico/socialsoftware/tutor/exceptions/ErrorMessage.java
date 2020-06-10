@@ -71,6 +71,7 @@ public enum ErrorMessage {
     QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),
     USER_NOT_FOUND("User not found with id %d"),
 
+    CANNOT_DELETE_QUESTION_SUGGESTION("The question suggestion cannot be deleted in a Pending state"),
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
     USERNAME_NOT_FOUND("Username %d not found"),
 
@@ -125,9 +126,6 @@ public enum ErrorMessage {
     USER_IS_TEACHER("This operation is invalid to users of the type teacher"),
     USER_IS_STUDENT("This operation is invalid to users of the type student"),
     INVALID_NULL_ARGUMENTS_SUGGESTION("The question suggestion dto given is null"),
-    INVALID_NULL_ARGUMENTS_SUGGESTIONID("The question suggestion id given is null"),
-    INVALID_NULL_ARGUMENTS_USERID("The user id given is null"),
-    INVALID_NULL_ARGUMENTS_COURSEID("The course id given is null"),
     INVALID_NULL_ARGUMENTS_JUSTIFICATION("The justification dto given is null"),
     INVALID_NULL_ARGUMENTS_QUESTION("The question dto given is null"),
     INVALID_NULL_ARGUMENTS_QUESTIONID("The question id given is null"),
@@ -136,8 +134,10 @@ public enum ErrorMessage {
     QUESTION_SUGGESTION_ALREADY_ACCEPTED("This suggested question was already accepted"),
     QUESTION_SUGGESTION_ALREADY_REJECTED("This suggested question was already rejected"),
     QUESTION_SUGGESTION_NOT_FOUND("Question suggestion not found with id %d"),
-    QUESTION_SUGGESTION_NOT_REJECTED("Question suggestion with id %d cannot be updated if not rejected"),
-    JUSTIFICATION_MISSING_DATA("Missing information for justification");
+    QUESTION_SUGGESTION_NOT_REJECTED("Cannot change suggestion that is not rejected"),
+    JUSTIFICATION_MISSING_DATA("Missing information for justification"),
+    JUSTIFICATION_MISSING("No justification given"),
+    EMPTY_QUESTION_SUGGESTION("Suggestion has no question");
 
     public final String label;
 

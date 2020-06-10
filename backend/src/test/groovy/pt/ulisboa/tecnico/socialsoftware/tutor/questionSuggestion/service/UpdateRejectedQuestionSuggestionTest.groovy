@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
@@ -16,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justifi
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.dto.QuestionSuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.QuestionSuggestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Specification
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
@@ -43,14 +45,19 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
     @Autowired
     QuestionSuggestionRepository questionSuggestionRepository
 
-    def course = new Course()
+    @Autowired
+    QuestionSuggestionRepository userRepository
 
+    def course = new Course()
+    def user = new User("name", "username", 323, User.Role.STUDENT)
     def rejOption = new Option()
     def rejQuestion = new Question()
     def justification = new Justification()
     def rejQuestionSuggestion = new QuestionSuggestion()
 
     def setup() {
+        userRepository.save(user)
+
         course.setName(COURSE_NAME)
         course.setType(Course.Type.TECNICO)
         courseRepository.save(course)
@@ -68,7 +75,9 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
 
         justification.setKey(1)
         justification.setContent(JUSTIFICATION_CONTENT)
+        justification.setUser(user)
 
+        rejQuestionSuggestion.setUser(user)
         rejQuestionSuggestion.setQuestion(rejQuestion)
         rejQuestionSuggestion.setStatus(QuestionSuggestion.Status.REJECTED)
         rejQuestionSuggestion.setJustification(justification)
@@ -166,7 +175,7 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
         exception.getErrorMessage() == QUESTION_SUGGESTION_NOT_REJECTED
     }
 
-    def "update question suggestion given no suggestion id"() {
+    def "update question suggestion given inbalid suggestion id"() {
         given: "an optionDto"
         def options = new ArrayList()
         def optionDto = new OptionDto()
@@ -190,11 +199,11 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
         questionSuggestionDto.setStatus(QuestionSuggestion.Status.PENDING.name())
 
         when:
-        questionSuggestionService.updateRejectedQuestionSuggestion(null, questionSuggestionDto)
+        questionSuggestionService.updateRejectedQuestionSuggestion(0, questionSuggestionDto)
 
         then: "an exception is thrown"
         TutorException exception = thrown()
-        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_SUGGESTIONID
+        exception.getErrorMessage() == QUESTION_SUGGESTION_NOT_FOUND
     }
 
     def "update question suggestion given no suggestion dto"() {
@@ -214,6 +223,11 @@ class UpdateRejectedQuestionSuggestionTest extends Specification {
         @Bean
         QuestionSuggestionService questionSuggestionService() {
             return new QuestionSuggestionService()
+        }
+
+        @Bean
+        QuestionService questionService() {
+            return new QuestionService()
         }
     }
 }

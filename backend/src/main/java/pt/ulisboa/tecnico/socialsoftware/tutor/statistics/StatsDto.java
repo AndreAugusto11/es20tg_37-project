@@ -16,7 +16,7 @@ public class StatsDto implements Serializable {
     private Integer totalClarificationRequests = 0;
     private Integer totalPublicClarificationRequests = 0;
     private Integer totalNumberSuggestions = 0;
-    private Integer totalNumberSuggestionsAvailable = 0;
+    private Integer totalNumberSuggestionsAccepted = 0;
     private Boolean privateClarificationStats = false;
     private Boolean privateSuggestion = false;
     private Boolean privateTournamentsStats = false;
@@ -45,12 +45,12 @@ public class StatsDto implements Serializable {
         this.totalNumberSuggestions = totalNumberSuggestions;
     }
 
-    public Integer getTotalNumberSuggestionsAvailable() {
-        return totalNumberSuggestionsAvailable;
+    public Integer getTotalNumberSuggestionsAccepted() {
+        return totalNumberSuggestionsAccepted;
     }
 
-    public void setTotalNumberSuggestionsAvailable(Integer totalNumberSuggestionsAvailable) {
-        this.totalNumberSuggestionsAvailable = totalNumberSuggestionsAvailable;
+    public void setTotalNumberSuggestionsAccepted(Integer totalNumberSuggestionsAccepted) {
+        this.totalNumberSuggestionsAccepted = totalNumberSuggestionsAccepted;
     }
 
     public Integer getTotalQuizzes() {

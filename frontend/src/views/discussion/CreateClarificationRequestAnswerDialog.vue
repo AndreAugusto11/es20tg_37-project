@@ -1,17 +1,15 @@
 <template>
-    <v-dialog
-            :value="dialog"
-            @input="$emit('close-dialog')"
-            @keydown.esc="$emit('close-dialog')"
-            max-width="50%"
-            max-height="80%"
-    >
-        <v-card>
-            <v-card-title>
-                <span class="headline">
-                  New Reply
-                </span>
-            </v-card-title>
+  <v-dialog
+    :value="dialog"
+    @input="$emit('close-dialog')"
+    @keydown.esc="$emit('close-dialog')"
+    max-width="50%"
+    max-height="80%"
+  >
+    <v-card>
+      <v-card-title>
+        <span class="headline">New Reply</span>
+      </v-card-title>
 
             <v-card-text class="text-left" v-if="createClarificationRequestAnswer">
                 <v-container grid-list-md fluid>
@@ -41,21 +39,17 @@
                 </template>
             </v-card-text>
 
-            <v-card-actions>
-                <v-spacer />
-                <v-btn
-                        color="blue darken-1"
-                        @click="$emit('close-dialog')"
-                        data-cy="cancelButton"
-                >
-                    Cancel
-                </v-btn>
-                <v-btn color="blue darken-1" @click="saveClarificationRequestAnswer" data-cy="saveButton">
-                    Send
-                </v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn color="blue darken-1" @click="$emit('close-dialog')" data-cy="cancelButton">Cancel</v-btn>
+        <v-btn
+          color="blue darken-1"
+          @click="saveClarificationRequestAnswer"
+          data-cy="saveButton"
+        >Send</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script lang="ts">
@@ -65,17 +59,20 @@
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
   import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 
-  @Component
-  export default class CreateClarificationRequestAnswerDialog extends Vue {
-    @Model('dialog', Boolean) dialog!: boolean;
-    @Prop({ type: ClarificationRequest, required: true }) readonly clarificationRequest!: ClarificationRequest;
+@Component
+export default class CreateClarificationRequestAnswerDialog extends Vue {
+  @Model('dialog', Boolean) dialog!: boolean;
+  @Prop({ type: ClarificationRequest, required: true })
+  readonly clarificationRequest!: ClarificationRequest;
 
     createClarificationRequestAnswer!: ClarificationRequestAnswer;
     file: File | null = null;
 
-    created() {
-      this.createClarificationRequestAnswer = new ClarificationRequestAnswer(this.createClarificationRequestAnswer);
-    }
+  created() {
+    this.createClarificationRequestAnswer = new ClarificationRequestAnswer(
+      this.createClarificationRequestAnswer
+    );
+  }
 
     async constructImage(event: File) {
         this.file = event;
@@ -110,9 +107,10 @@
       }
     }
 
-    changeAvailability() {
-        this.clarificationRequest.public = this.clarificationRequest.public ? false : true;
-    }
+  changeAvailability() {
+    this.clarificationRequest.public = this.clarificationRequest.public
+      ? false
+      : true;
   }
-
+}
 </script>

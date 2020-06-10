@@ -11,6 +11,7 @@ public class JustificationDto implements Serializable {
     private Integer key;
     private ImageDto imageDto;
     private String content;
+    private String name;
 
     public JustificationDto() {
     }
@@ -19,6 +20,7 @@ public class JustificationDto implements Serializable {
         this.id = justification.getId();
         this.key = justification.getKey();
         this.content = justification.getContent();
+        this.name = justification.getUser().getName();
 
         if (justification.getImage() != null)
             this.imageDto = new ImageDto(justification.getImage());
@@ -39,4 +41,12 @@ public class JustificationDto implements Serializable {
     public String getContent() { return content; }
 
     public void setContent(String content) { this.content = content; }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

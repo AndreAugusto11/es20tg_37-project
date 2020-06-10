@@ -7,12 +7,14 @@ import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSuggestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.repository.QuestionSuggestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
@@ -43,9 +45,12 @@ class AcceptQuestionSuggestionPerformanceTest extends Specification {
     UserRepository userRepository
 
     def course = new Course()
+    def user = new User("name", "username", 323, User.Role.STUDENT)
     def question = new Question()
 
     def setup() {
+        userRepository.save(user)
+
         course.setName(COURSE_NAME)
         course.setType(Course.Type.TECNICO)
         courseRepository.save(course)
@@ -69,6 +74,7 @@ class AcceptQuestionSuggestionPerformanceTest extends Specification {
         def questionSuggestions = new ArrayList<QuestionSuggestion>()
         for (def i = 0; i < 1; i++ ) {
             questionSuggestions[i] = new QuestionSuggestion()
+            questionSuggestions[i].setUser(user)
             questionSuggestions[i].setQuestion(question)
             questionSuggestions[i].setStatus(QuestionSuggestion.Status.PENDING)
             questionSuggestionRepository.save(questionSuggestions[i])
@@ -88,6 +94,11 @@ class AcceptQuestionSuggestionPerformanceTest extends Specification {
         @Bean
         QuestionSuggestionService questionSuggestionService() {
             return new QuestionSuggestionService()
+        }
+
+        @Bean
+        QuestionService questionService() {
+            return new QuestionService()
         }
     }
 }

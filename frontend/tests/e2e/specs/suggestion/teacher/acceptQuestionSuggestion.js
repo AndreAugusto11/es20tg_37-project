@@ -11,8 +11,6 @@ describe('Accept a suggestion', () => {
     cy.exec('psql -d tutordb -c "' +
       'DELETE FROM questions WHERE title = \'TestAccept\';"');
     cy.exec('psql -d tutordb -c "' +
-      'DELETE FROM users_question_suggestion;"');
-    cy.exec('psql -d tutordb -c "' +
       'DELETE FROM question_suggestions;"');
   });
 
@@ -33,19 +31,5 @@ describe('Accept a suggestion', () => {
     cy.demoStudentLogin();
     cy.contains('Suggestions').click();
     cy.showQuestionSuggestion('TestAccept');
-  });
-
-  it('login, creates a suggestion and accepts it through show menu', () => {
-    cy.createQuestionSuggestion('TestAccept','Question','a', 'b', 'c', 'd', 'No');
-    cy.contains('Logout').click();
-    cy.wait(5000);
-    cy.demoTeacherLogin();
-    cy.contains('Management').click();
-    cy.contains('Suggestions').click();
-    cy.acceptQuestionSuggestionShow('TestAccept');
-    cy.contains('Logout').click();
-    cy.demoStudentLogin();
-    cy.contains('Suggestions').click();
-    cy.showQuestionSuggestion('TestAccept')
   });
 });

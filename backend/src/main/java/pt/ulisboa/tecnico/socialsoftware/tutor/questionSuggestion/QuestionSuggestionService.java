@@ -9,8 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.QuestionSuggestion;
@@ -35,16 +38,22 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class QuestionSuggestionService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    QuestionSuggestionRepository questionSuggestionRepository;
+    private QuestionSuggestionRepository questionSuggestionRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
 
     @Autowired
-    CourseRepository courseRepository;
+    private CourseRepository courseRepository;
+
+    @Autowired
+    private ImageRepository imageRepository;
+
+    @Autowired
+    private QuestionService questionService;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -53,22 +62,17 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionSuggestionDto createQuestionSuggestion(Integer userId, Integer courseId, QuestionSuggestionDto questionSuggestionDto){
+    public QuestionSuggestionDto createQuestionSuggestion(int userId, int courseId, QuestionSuggestionDto questionSuggestionDto){
 
         if (questionSuggestionDto == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTION);
         }
 
-        if (userId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        if (courseId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
-        }
-
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
         if (user.getRole() != User.Role.STUDENT) {
             throw new TutorException(USER_IS_TEACHER, userId);
@@ -87,11 +91,7 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionDto acceptQuestionSuggestion(Integer questionSuggestionId) {
-
-        if (questionSuggestionId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
-        }
+    public QuestionDto acceptQuestionSuggestion(int questionSuggestionId) {
 
         QuestionSuggestion suggestion = checkForQuestionSuggestion(questionSuggestionId);
         QuestionSuggestionDto questionSuggestionDto = new QuestionSuggestionDto(suggestion);
@@ -112,14 +112,10 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void rejectQuestionSuggestion(Integer userId, Integer questionSuggestionId, JustificationDto justificationDto) {
+    public QuestionSuggestionDto rejectQuestionSuggestion(int userId, int questionSuggestionId, JustificationDto justificationDto) {
 
-        if (questionSuggestionId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
-        } else if (userId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
-        } else if (justificationDto == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_JUSTIFICATION);
+        if (justificationDto == null) {
+            throw new TutorException(JUSTIFICATION_MISSING);
         } else if (justificationDto.getContent() == null || justificationDto.getContent().equals("   ")) {
             throw new TutorException(JUSTIFICATION_MISSING_DATA);
         }
@@ -132,13 +128,25 @@ public class QuestionSuggestionService {
             throw new TutorException(USER_IS_STUDENT, userId);
         }
 
-        Justification justification = new Justification(user, suggestion, justificationDto);
-        suggestion.setStatus(QuestionSuggestion.Status.REJECTED);
+        Justification justification;
+        if (suggestion.getJustification() == null) {
+            justification = new Justification(user, suggestion, justificationDto);
+            this.entityManager.persist(justification);
+        } else {
+            justification = suggestion.getJustification();
+            justification.setContent(justificationDto.getContent());
 
-        this.entityManager.persist(justification);
+            if (justification.getImage() != null) {
+                justification.getImage().setJustification(null);
+                justification.setImage(null);
+            }
+        }
+
+        suggestion.setStatus(QuestionSuggestion.Status.REJECTED);
+        return new QuestionSuggestionDto(suggestion);
     }
 
-    private QuestionSuggestion checkForQuestionSuggestion(Integer questionSuggestionId) {
+    private QuestionSuggestion checkForQuestionSuggestion(int questionSuggestionId) {
         QuestionSuggestion suggestion = questionSuggestionRepository.
                 findById(questionSuggestionId).
                 orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
@@ -156,13 +164,13 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuestionSuggestionDto> getQuestionSuggestions(Integer userId, Integer courseId) {
+    public List<QuestionSuggestionDto> getQuestionSuggestions(int userId, int courseId) {
 
-        if (userId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_USERID);
-        } else if (courseId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
-        }
+        userRepository.findById(userId)
+                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        courseRepository.findById(courseId)
+                .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
         return questionSuggestionRepository.findQuestionSuggestions(userId).stream()
                 .filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId))
@@ -175,11 +183,10 @@ public class QuestionSuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuestionSuggestionDto> getAllQuestionSuggestions(Integer courseId) {
+    public List<QuestionSuggestionDto> getAllQuestionSuggestions(int courseId) {
 
-        if (courseId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_COURSEID);
-        }
+        courseRepository.findById(courseId)
+                .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
         return questionSuggestionRepository.findAll().stream()
                 .filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId))
@@ -188,8 +195,28 @@ public class QuestionSuggestionService {
                 .collect(Collectors.toList());
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public CourseDto findQuestionSuggestionCourse(Integer questionSuggestionId) {
+    public List<QuestionSuggestionDto> getAllQuestionSuggestions() {
+        return questionSuggestionRepository.findAll().stream()
+                .map(QuestionSuggestionDto::new)
+                .sorted(Comparator.comparing(QuestionSuggestionDto::getCreationDate).reversed())
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public QuestionSuggestionDto findQuestionSuggestionById(int questionSuggestionId) {
+        return questionSuggestionRepository.findById(questionSuggestionId).map(QuestionSuggestionDto::new)
+                .orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseDto findQuestionSuggestionCourse(int questionSuggestionId) {
         return questionSuggestionRepository.findById(questionSuggestionId)
                 .map(QuestionSuggestion::getCourse)
                 .map(CourseDto::new)
@@ -201,11 +228,9 @@ public class QuestionSuggestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionSuggestionDto
-    updateRejectedQuestionSuggestion(Integer questionSuggestionId, QuestionSuggestionDto questionSuggestionDto) {
+    updateRejectedQuestionSuggestion(int questionSuggestionId, QuestionSuggestionDto questionSuggestionDto) {
 
-        if (questionSuggestionId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTIONID);
-        } else if (questionSuggestionDto == null) {
+        if (questionSuggestionDto == null) {
             throw new TutorException(INVALID_NULL_ARGUMENTS_SUGGESTION);
         }
 
@@ -218,5 +243,71 @@ public class QuestionSuggestionService {
 
         questionSuggestion.update(questionSuggestionDto);
         return new QuestionSuggestionDto(questionSuggestion);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public String uploadImageToQuestionSuggestion(int questionSuggestionId, String type) {
+        QuestionSuggestion questionSuggestion = questionSuggestionRepository.findById(questionSuggestionId)
+                .orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
+
+        if (questionSuggestion.getQuestion() == null)
+            throw new TutorException(EMPTY_QUESTION_SUGGESTION, questionSuggestionId);
+
+        return questionService.uploadImage(questionSuggestion.getQuestion().getId(), type);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void uploadJustificationImage(int questionSuggestionId, String type) {
+        QuestionSuggestion questionSuggestion = questionSuggestionRepository.findById(questionSuggestionId)
+                .orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
+
+        if (questionSuggestion.getQuestion() == null)
+            throw new TutorException(EMPTY_QUESTION_SUGGESTION, questionSuggestionId);
+
+        if (questionSuggestion.getStatus() != QuestionSuggestion.Status.REJECTED)
+            throw new TutorException(QUESTION_SUGGESTION_NOT_REJECTED);
+
+        if (questionSuggestion.getJustification() == null)
+            throw new TutorException(JUSTIFICATION_MISSING);
+
+        Justification justification = questionSuggestion.getJustification();
+        Image image = justification.getImage();
+
+        if (image == null) {
+            image = new Image();
+
+            justification.setImage(image);
+            setImageUrl(justification, questionSuggestion.getQuestion().getCourse(), type);
+
+            imageRepository.save(image);
+        } else {
+            setImageUrl(justification, questionSuggestion.getQuestion().getCourse(), type);
+        }
+    }
+
+    private void setImageUrl(Justification justification, Course course, String type) {
+        justification.getImage().setUrl(course.getName().replaceAll("\\s", "") +
+                course.getType() +
+                "j" +
+                justification.getKey() +
+                "." + type);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void removeQuestionSuggestion(int questionSuggestionId) {
+        QuestionSuggestion questionSuggestion = questionSuggestionRepository.findById(questionSuggestionId).
+                orElseThrow(() -> new TutorException(QUESTION_SUGGESTION_NOT_FOUND, questionSuggestionId));
+
+        questionSuggestion.remove();
+        questionSuggestionRepository.delete(questionSuggestion);
     }
 }

@@ -11,8 +11,6 @@ describe('Create a suggestion', () => {
     cy.exec('psql -d tutordb -c "' +
       'DELETE FROM questions WHERE title = \'TestCreate\';"');
     cy.exec('psql -d tutordb -c "' +
-      'DELETE FROM users_question_suggestion;"');
-    cy.exec('psql -d tutordb -c "' +
       'DELETE FROM question_suggestions;"');
   });
 

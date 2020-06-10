@@ -925,6 +925,52 @@ export default class RemoteServices {
       });
   }
 
+  static async uploadImageToQuestionSuggestion(
+    questionSuggestionId: number,
+    file: File
+  ): Promise<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return httpClient
+      .put(
+        `/questionSuggestions/${questionSuggestionId}/image`,
+        formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      )
+      .then(response => {
+        return response.data as string;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async uploadImageToJustification(
+    questionSuggestionId: number,
+    file: File
+  ): Promise<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return httpClient
+      .put(
+        `/questionSuggestions/${questionSuggestionId}/rejecting/image`,
+        formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      )
+      .then(response => {
+        return response.data as string;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async updateRejectedQuestionSuggestion(
     questionSuggestion: QuestionSuggestion
   ): Promise<QuestionSuggestion> {
@@ -954,7 +1000,7 @@ export default class RemoteServices {
   static async rejectQuestionSuggestion(
     suggestionId: number,
     justification: Justification
-  ): Promise<QuestionSuggestion> {
+  ): Promise<QuestionSuggestion> {    
     return httpClient
       .put(`/questionSuggestions/${suggestionId}/rejecting`, justification)
       .then(response => {
@@ -963,6 +1009,12 @@ export default class RemoteServices {
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
+  }
+
+  static async removeQuestionSuggestion(questionSuggestionId: number) {
+    return httpClient.delete(`/questionSuggestions/${questionSuggestionId}`).catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
   }
 
   static async getQuestionSuggestions(): Promise<QuestionSuggestion[]> {
@@ -984,6 +1036,21 @@ export default class RemoteServices {
     return httpClient
       .get(
         `/courses/${Store.getters.getCurrentCourse.courseId}/allQuestionSuggestions`
+      )
+      .then(response => {
+        return response.data.map((questionSuggestion: any) => {
+          return new QuestionSuggestion(questionSuggestion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getAllQuestionSuggestionsAdmin(): Promise<QuestionSuggestion[]> {
+    return httpClient
+      .get(
+        '/questionSuggestions'
       )
       .then(response => {
         return response.data.map((questionSuggestion: any) => {
