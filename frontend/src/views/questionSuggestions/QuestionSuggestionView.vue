@@ -155,6 +155,7 @@
         right
         color="green"
         class="buttonAccept"
+        data-cy="acceptQuestion"
         @click="acceptSuggestion"
       >
         <v-icon class="pl-1" color="white">mdi-check</v-icon>
@@ -167,6 +168,7 @@
         top
         right
         color="red"
+        data-cy="rejectQuestion"
         @click="this.startEditing"
       >
         <v-icon class="pl-1" color="white">mdi-close</v-icon>

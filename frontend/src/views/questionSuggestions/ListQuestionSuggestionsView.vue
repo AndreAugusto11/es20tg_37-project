@@ -110,7 +110,7 @@
           <span>Remove Suggestion</span>
         </v-tooltip>
           <template v-else>
-            <v-icon disabled class="mr-2">mdi-trash-can</v-icon>
+            <v-icon disabled data-cy="disabledRemoveButton" class="mr-2">mdi-trash-can</v-icon>
           </template>
       </template>
 
