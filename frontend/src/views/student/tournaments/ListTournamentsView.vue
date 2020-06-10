@@ -185,7 +185,7 @@
                 @click="openTournamentResults(item)"
                 data-cy="openTournamentResults"
               >
-                mdi-clipboard-text
+                mdi-trophy
               </v-icon>
             </template>
             <span>See Tournament Results</span>
@@ -273,17 +273,23 @@ export default class ListTournamentsView extends Vue {
       text: 'Topics',
       value: 'topics',
       align: 'center',
-      width: '30%'
+      width: '20%'
     },
     {
-      text: 'Start Date',
+      text: 'Available Date',
       value: 'availableDate',
       align: 'center',
       width: '10%'
     },
     {
-      text: 'End Date',
+      text: 'Conclusion Date',
       value: 'conclusionDate',
+      align: 'center',
+      width: '10%'
+    },
+    {
+      text: 'Results Date',
+      value: 'resultsDate',
       align: 'center',
       width: '10%'
     },
@@ -296,7 +302,7 @@ export default class ListTournamentsView extends Vue {
     {
       text: 'Actions',
       value: 'action',
-      align: 'center',
+      align: 'right',
       sortable: false,
       width: '15%'
     }
