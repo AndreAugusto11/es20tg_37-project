@@ -4,9 +4,9 @@
       :headers="headers"
       :items="students"
       :search="search"
-      disable-pagination
-      :hide-default-footer="true"
       :mobile-breakpoint="0"
+      :items-per-page="15"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
     >
       <template v-slot:top>
         <v-card-title>

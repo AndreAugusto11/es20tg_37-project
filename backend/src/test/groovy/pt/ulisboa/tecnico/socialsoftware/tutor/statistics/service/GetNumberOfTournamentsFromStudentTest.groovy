@@ -67,7 +67,7 @@ class GetNumberOfTournamentsFromStudentTest extends Specification {
         user.addCreatedTournament(tournament1)
         user.addCreatedTournament(tournament2)
         when:
-        def result = statsService.getStats(user.getId(), courseExecution.getId())
+        def result = statsService.getAllStats(user.getId(), courseExecution.getId())
 
         then: "the result should be the number of tournaments that the student created"
         result.getTotalNumberCreatedTournaments() == 2;
@@ -84,7 +84,7 @@ class GetNumberOfTournamentsFromStudentTest extends Specification {
         tournamentRepository.save(tournament1)
         user.addTournament(tournament1)
         when: "nothing"
-        def result = statsService.getStats(user.getId(), courseExecution.getId())
+        def result = statsService.getAllStats(user.getId(), courseExecution.getId())
 
         then: "the result should be the number of suggestion accepted that the student made"
         result.getTotalNumberEnrolledTournaments() == 1;

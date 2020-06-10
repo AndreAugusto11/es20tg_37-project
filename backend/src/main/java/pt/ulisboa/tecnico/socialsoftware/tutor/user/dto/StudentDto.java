@@ -19,7 +19,6 @@ public class StudentDto implements Serializable {
     private int percentageOfCorrectTeacherAnswers = 0;
     private int percentageOfCorrectInClassAnswers = 0;
     private int percentageOfCorrectStudentAnswers = 0;
-    private boolean privateSuggestion;
     private String creationDate;
     private String lastAccess;
 

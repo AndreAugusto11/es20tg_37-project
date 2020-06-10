@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statistics;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -24,6 +23,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.collectingAndThen;
@@ -50,22 +50,11 @@ public class StatsService {
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public StatsDto getStats(int userId, int executionId) {
+    public StatsDto getAllStats(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).
-                orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
-
-        Integer courseId = courseExecution.getCourse().getId();
+        Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
 
         StatsDto statsDto = new StatsDto();
-
-        int totalNumberEnrolledTournaments = (int) user.getTournaments().stream()
-                .filter(t ->t.canResultsBePublic(executionId))
-                .count();
-
-        int totalNumberCreatedTournaments = (int) user.getCreatedTournaments().stream()
-                .filter(t ->t.canResultsBePublic(executionId))
-                .count();
 
         int totalQuizzes = (int) user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
@@ -106,9 +95,26 @@ public class StatsService {
                 .filter(Option::getCorrect)
                 .count();
 
-        Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
-
         int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());
+
+        int totalNumberCreatedTournaments = (int) user.getCreatedTournaments().stream()
+                .filter(t ->t.canResultsBePublic(executionId))
+                .count();
+
+        int totalNumberEnrolledTournaments = (int) user.getTournaments().stream()
+                .filter(t ->t.canResultsBePublic(executionId))
+                .count();
+
+        int totalNumberSuggestions = (int) questionSuggestionRepository.findAll().stream().
+                filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
+                filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(course.getId())).
+                count();
+
+        int totalNumberSuggestionsAccepted = (int) questionSuggestionRepository.findAll().stream().
+                filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
+                filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(course.getId())).
+                filter(questionSuggestion -> questionSuggestion.getStatus().equals(QuestionSuggestion.Status.ACCEPTED)).
+                count();
 
         int totalClarificationRequests = (int) user.getClarificationRequests().stream()
                 .filter(clarificationRequest -> clarificationRequest.getQuestionAnswer().getQuizAnswer().getQuiz()
@@ -121,17 +127,6 @@ public class StatsService {
                         clarificationRequest.getPublicClarificationRequest() != null)
                 .count();
 
-        int totalNumberSuggestions = (int) questionSuggestionRepository.findAll().stream().
-                filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
-                filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId)).
-                count();
-
-        int totalNumberSuggestionsAvailable = (int) questionSuggestionRepository.findAll().stream().
-                filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
-                filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId)).
-                filter(questionSuggestion -> questionSuggestion.getStatus().equals(QuestionSuggestion.Status.ACCEPTED)).
-                count();
-
         statsDto.setTotalQuizzes(totalQuizzes);
         statsDto.setTotalAnswers(totalAnswers);
         statsDto.setTotalUniqueQuestions(uniqueQuestions);
@@ -139,19 +134,93 @@ public class StatsService {
         statsDto.setTotalNumberCreatedTournaments(totalNumberCreatedTournaments);
         statsDto.setTotalNumberEnrolledTournaments(totalNumberEnrolledTournaments);
         statsDto.setTotalNumberSuggestions(totalNumberSuggestions);
-        statsDto.setTotalNumberSuggestionsAvailable(totalNumberSuggestionsAvailable);
+        statsDto.setTotalNumberSuggestionsAccepted(totalNumberSuggestionsAccepted);
+        statsDto.setTotalClarificationRequests(totalClarificationRequests);
+        statsDto.setTotalPublicClarificationRequests(totalPublicClarificationRequests);
+
+        if (user.isPrivateClarificationStats() == null)
+            user.setPrivateClarificationStats(false);
+
+        if (user.isPrivateSuggestionStats() == null)
+            user.setPrivateClarificationStats(false);
+
+        if (user.isPrivateTournamentsStats() == null)
+            user.setPrivateTournamentsStats(false);
+
+        statsDto.setPrivateClarificationStats(user.isPrivateClarificationStats());
+        statsDto.setPrivateSuggestionStats(user.isPrivateSuggestionStats());
+        statsDto.setPrivateTournamentsStats(user.isPrivateTournamentsStats());
+
         if (totalAnswers != 0) {
             statsDto.setCorrectAnswers(((float) correctAnswers) * 100 / totalAnswers);
             statsDto.setImprovedCorrectAnswers(((float) uniqueCorrectAnswers) * 100 / uniqueQuestions);
         }
+
+        return statsDto;
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public StatsDto getSimplifiedStats(int userId, int executionId) {
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
+
+        StatsDto statsDto = new StatsDto();
+        statsDto.setName(user.getName());
+
+        int totalNumberCreatedTournaments = (int) user.getCreatedTournaments().stream()
+                .filter(t ->t.canResultsBePublic(executionId))
+                .count();
+
+        int totalNumberEnrolledTournaments = (int) user.getTournaments().stream()
+                .filter(t ->t.canResultsBePublic(executionId))
+                .count();
+
+        int totalNumberSuggestions = (int) questionSuggestionRepository.findAll().stream().
+                filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
+                filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(course.getId())).
+                count();
+
+        int totalNumberSuggestionsAccepted = (int) questionSuggestionRepository.findAll().stream().
+                filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
+                filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(course.getId())).
+                filter(questionSuggestion -> questionSuggestion.getStatus().equals(QuestionSuggestion.Status.ACCEPTED)).
+                count();
+
+        int totalClarificationRequests = (int) user.getClarificationRequests().stream()
+                .filter(clarificationRequest -> clarificationRequest.getQuestionAnswer().getQuizAnswer().getQuiz()
+                        .getCourseExecution().getId().equals(executionId))
+                .count();
+
+        int totalPublicClarificationRequests = (int) user.getClarificationRequests().stream()
+                .filter(clarificationRequest -> clarificationRequest.getQuestionAnswer().getQuizAnswer().getQuiz()
+                        .getCourseExecution().getId().equals(executionId) &&
+                        clarificationRequest.getPublicClarificationRequest() != null)
+                .count();
+
+        statsDto.setTotalNumberCreatedTournaments(totalNumberCreatedTournaments);
+        statsDto.setTotalNumberEnrolledTournaments(totalNumberEnrolledTournaments);
+        statsDto.setTotalNumberSuggestions(totalNumberSuggestions);
+        statsDto.setTotalNumberSuggestionsAccepted(totalNumberSuggestionsAccepted);
         statsDto.setTotalClarificationRequests(totalClarificationRequests);
         statsDto.setTotalPublicClarificationRequests(totalPublicClarificationRequests);
 
-        if (user.isPrivateClarificationStats() == null) {
+        if (user.isPrivateClarificationStats() == null)
             user.setPrivateClarificationStats(false);
-        }
+
+        if (user.isPrivateSuggestionStats() == null)
+            user.setPrivateSuggestionStats(false);
+
+        if (user.isPrivateTournamentsStats() == null)
+            user.setPrivateTournamentsStats(false);
 
         statsDto.setPrivateClarificationStats(user.isPrivateClarificationStats());
+        statsDto.setPrivateSuggestionStats(user.isPrivateSuggestionStats());
+        statsDto.setPrivateTournamentsStats(user.isPrivateTournamentsStats());
+
         return statsDto;
     }
 
@@ -161,6 +230,10 @@ public class StatsService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void changeClarificationStatsPrivacy(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        if(user.isPrivateClarificationStats() == null){
+            user.setPrivateClarificationStats(false);
+        }
 
         user.setPrivateClarificationStats(!user.isPrivateClarificationStats());
     }
@@ -172,11 +245,11 @@ public class StatsService {
     public void changeSuggestionPrivacy(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        if(user.isPrivateSuggestion() == null){
-            user.setPrivateSuggestion(false);
+        if(user.isPrivateSuggestionStats() == null){
+            user.setPrivateSuggestionStats(false);
         }
 
-        user.setPrivateSuggestion(!user.isPrivateSuggestion());
+        user.setPrivateSuggestionStats(!user.isPrivateSuggestionStats());
     }
 
     @Retryable(
@@ -193,5 +266,18 @@ public class StatsService {
         user.setPrivateTournamentsStats(!user.isPrivateTournamentsStats());
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<StatsDto> getSimplifiedStudentsStats(int executionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
+        return courseExecution.getUsers().stream()
+                .filter(user -> user.getRole() == User.Role.STUDENT)
+                .map(user -> getSimplifiedStats(user.getId(), executionId))
+                .sorted(Comparator.comparing(StatsDto::getName))
+                .collect(Collectors.toList());
+    }
 }
