@@ -141,7 +141,7 @@ class GetNumberOfQuestionSuggestionFromStudent extends Specification {
         def result = statsService.getStats(user.getId(), courseExecution.getId())
 
         then: "the result should be the number of suggestion accepted that the student made"
-        result.getTotalNumberSuggestionsAvailable() == 1;
+        result.getTotalNumberSuggestionsAccepted() == 1;
     }
 
     @TestConfiguration

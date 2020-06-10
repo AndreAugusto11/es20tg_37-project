@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statistics;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -121,16 +120,14 @@ public class StatsService {
                         clarificationRequest.getPublicClarificationRequest() != null)
                 .count();
 
-        int totalNumberSuggestions = (int) questionSuggestionRepository.findAll().stream().
-                filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
-                filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId)).
-                count();
+        int totalNumberSuggestions = (int) user.getQuestionsSuggestion().stream()
+                .filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId))
+                .count();
 
-        int totalNumberSuggestionsAvailable = (int) questionSuggestionRepository.findAll().stream().
-                filter(questionSuggestion -> questionSuggestion.getUser().getId().equals(userId)).
-                filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId)).
-                filter(questionSuggestion -> questionSuggestion.getStatus().equals(QuestionSuggestion.Status.ACCEPTED)).
-                count();
+        int totalNumberSuggestionsAccepted = (int) user.getQuestionsSuggestion().stream()
+                .filter(questionSuggestion -> questionSuggestion.getCourse().getId().equals(courseId))
+                .filter(questionSuggestion -> questionSuggestion.getStatus().equals(QuestionSuggestion.Status.ACCEPTED))
+                .count();
 
         statsDto.setTotalQuizzes(totalQuizzes);
         statsDto.setTotalAnswers(totalAnswers);
@@ -139,7 +136,7 @@ public class StatsService {
         statsDto.setTotalNumberCreatedTournaments(totalNumberCreatedTournaments);
         statsDto.setTotalNumberEnrolledTournaments(totalNumberEnrolledTournaments);
         statsDto.setTotalNumberSuggestions(totalNumberSuggestions);
-        statsDto.setTotalNumberSuggestionsAvailable(totalNumberSuggestionsAvailable);
+        statsDto.setTotalNumberSuggestionsAccepted(totalNumberSuggestionsAccepted);
         if (totalAnswers != 0) {
             statsDto.setCorrectAnswers(((float) correctAnswers) * 100 / totalAnswers);
             statsDto.setImprovedCorrectAnswers(((float) uniqueCorrectAnswers) * 100 / uniqueQuestions);
