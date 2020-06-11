@@ -59,6 +59,15 @@ class ChangeSuggestionPrivacy extends Specification {
         user_student.isPrivateSuggestionStats() == true;
     }
 
+    def "check if the privacy value is correctly set"() {
+        when:
+        statsService.changeSuggestionPrivacy(user_student.getId())
+
+        then: "clarification stats are private"
+        user_student.isPrivateSuggestionStats() == true;
+    }
+
+
     @TestConfiguration
     static class StatisticsServiceImplTestContextConfiguration {
         @Bean

@@ -16,7 +16,7 @@
           <StudentsView></StudentsView>  
         </v-tab-item>
         <v-tab-item>
-          <ListStudentStatsView :stats = this.stats></ListStudentStatsView>
+          <ListStudentStatsView :stats="stats" />
         </v-tab-item>
       </v-tabs-items>
     </v-card>
