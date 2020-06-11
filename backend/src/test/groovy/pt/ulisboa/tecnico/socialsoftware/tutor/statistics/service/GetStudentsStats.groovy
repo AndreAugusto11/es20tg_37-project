@@ -29,7 +29,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto
 import spock.lang.Specification
 
 @DataJpaTest
-class getStudentsStats extends Specification {
+class GetStudentsStats extends Specification {
     public static final String USERNAME_STUDENT = "username_student"
     public static final String USERNAME_TEACHER = "username_teacher"
     public static final String COURSE_NAME = "Software Architecture"
@@ -193,19 +193,10 @@ class getStudentsStats extends Specification {
 
         then: "the result should be the number of suggestion that the student made"
         result.size() == 2;
-        if (result.get(0).getName() == user.getName()) {
-            result.get(1).getName() == user2.getName()
-        } else {
-            result.get(0).getName() == user2.getName()
-            result.get(1).getName() == user.getName()
-        }
-
-        if (result.get(0).getTotalNumberSuggestions() == 2) {
-            result.get(1).getTotalNumberSuggestions() == 1
-        } else {
-            result.get(0).getTotalNumberSuggestions() == 1
-            result.get(1).getTotalNumberSuggestions() == 2
-        }
+        result.get(0).getName() == user.getName() || result.get(0).getName() == user2.getName()
+        result.get(1).getName() == user.getName() || result.get(1).getName() == user2.getName()
+        result.get(0).getTotalNumberSuggestions() == 2 || result.get(0).getTotalNumberSuggestions() == 1
+        result.get(1).getTotalNumberSuggestions() == 2 || result.get(1).getTotalNumberSuggestions() == 1
     }
 
     @TestConfiguration
