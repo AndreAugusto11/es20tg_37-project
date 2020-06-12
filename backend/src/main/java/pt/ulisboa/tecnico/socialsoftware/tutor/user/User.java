@@ -52,7 +52,7 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectTeacherAnswers;
     private Integer numberOfCorrectInClassAnswers;
     private Integer numberOfCorrectStudentAnswers;
-    private Boolean privateSuggestion;
+    private Boolean privateSuggestionStats;
     private Boolean privateClarificationStats;
     private Boolean privateTournamentsStats;
 
@@ -104,7 +104,7 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfCorrectTeacherAnswers = 0;
         this.numberOfCorrectInClassAnswers = 0;
         this.numberOfCorrectStudentAnswers = 0;
-        this.privateSuggestion = false;
+        this.privateSuggestionStats = false;
         this.privateClarificationStats = false;
         this.privateTournamentsStats = false;
 
@@ -512,7 +512,7 @@ public class User implements UserDetails, DomainEntity {
         this.questionSuggestion.add(questionSuggestion);
     }
 
-    public Integer getNumberOfSuggestions(){
+    public Integer getNumberOfSuggestions() {
         return this.questionSuggestion.size();
     }
 
@@ -524,8 +524,7 @@ public class User implements UserDetails, DomainEntity {
         justifications.add(justification);
     }
 
-    public void addCreatedTournament(Tournament tournament)
-    {
+    public void addCreatedTournament(Tournament tournament) {
         tournaments.add(tournament);
         createdTournaments.add(tournament);
     }
@@ -545,17 +544,19 @@ public class User implements UserDetails, DomainEntity {
         this.privateClarificationStats = privateClarificationStats;
     }
 
-
-    public Boolean isPrivateSuggestion() {
-        return privateSuggestion;
+    public Boolean isPrivateSuggestionStats() {
+        return privateSuggestionStats;
     }
 
-    public void setPrivateSuggestion(Boolean privateSuggestion) {
-        this.privateSuggestion = privateSuggestion;
+    public void setPrivateSuggestionStats(Boolean privateSuggestionStats) {
+        this.privateSuggestionStats = privateSuggestionStats;
     }
 
-    public Boolean isPrivateTournamentsStats() { return privateTournamentsStats; }
+    public Boolean isPrivateTournamentsStats() {
+        return privateTournamentsStats;
+    }
 
-    public void setPrivateTournamentsStats(Boolean privateTournamentsStats) { this.privateTournamentsStats = privateTournamentsStats; }
-
+    public void setPrivateTournamentsStats(Boolean privateTournamentsStats) {
+        this.privateTournamentsStats = privateTournamentsStats;
+    }
 }

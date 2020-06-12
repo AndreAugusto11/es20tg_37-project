@@ -150,7 +150,7 @@ class GetNumberOfClarificationRequestsFromStudent extends Specification {
         clarificationRequestRepository.save(clarificationRequest2)
 
         when:
-        def statsDto = statsService.getStats(user_student.getId(), courseExecution.getId())
+        def statsDto = statsService.getAllStats(user_student.getId(), courseExecution.getId())
 
         then: "statsDto should count two clarification requests"
         statsDto.getTotalClarificationRequests() == 2;
@@ -173,7 +173,7 @@ class GetNumberOfClarificationRequestsFromStudent extends Specification {
         publicClarificationRequestRepository.save(publicClarificationRequest2)
 
         when:
-        def statsDto = statsService.getStats(user_student.getId(), courseExecution.getId())
+        def statsDto = statsService.getAllStats(user_student.getId(), courseExecution.getId())
 
         then: "statsDto should count two public clarification requests"
         statsDto.getTotalPublicClarificationRequests() == 2;

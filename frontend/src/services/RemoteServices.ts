@@ -98,6 +98,21 @@ export default class RemoteServices {
       });
   }
 
+  static async getSimplifiedStudentsStats(): Promise<StudentStats[]> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/teacher/stats`
+      )
+      .then(response => {
+        return response.data.map((stat: any) => {
+          return new StudentStats(stat);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async changeClarificationStatsPrivacy(): Promise<void> {
     httpClient
       .put(

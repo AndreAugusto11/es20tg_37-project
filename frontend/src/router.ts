@@ -7,10 +7,10 @@ import CourseSelectionView from '@/views/CourseSelectionView.vue';
 
 import HomeView from '@/views/HomeView.vue';
 import ManagementView from '@/views/teacher/ManagementView.vue';
+import TeacherStatsView from '@/views/teacher/TeacherStatsView.vue';
 import QuestionsView from '@/views/teacher/questions/QuestionsView.vue';
 import TopicsView from '@/views/teacher/TopicsView.vue';
 import QuizzesView from '@/views/teacher/quizzes/QuizzesView.vue';
-import StudentsView from '@/views/teacher/students/StudentsView.vue';
 import StudentView from '@/views/student/StudentView.vue';
 import TournamentsView from '@/views/student/tournaments/TournamentsView.vue';
 import EnrolledTournamentsView from '@/views/student/tournaments/EnrolledTournamentsView.vue';
@@ -124,15 +124,6 @@ let router = new Router({
           }
         },
         {
-          path: 'students',
-          name: 'students-management',
-          component: StudentsView,
-          meta: {
-            title: process.env.VUE_APP_NAME + ' - Students',
-            requiredAuth: 'Teacher'
-          }
-        },
-        {
           path: 'discussion',
           name: 'clarificationRequests-management',
           component: ListClarificationRequestsView,
@@ -148,6 +139,16 @@ let router = new Router({
           props: true,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Discussion Question',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'stats',
+          name: 'teacherStats',
+          component: TeacherStatsView,
+          props: true,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Students Stats',
             requiredAuth: 'Teacher'
           }
         },

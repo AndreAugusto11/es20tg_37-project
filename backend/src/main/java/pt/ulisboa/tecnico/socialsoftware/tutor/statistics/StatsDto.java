@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statistics;
 import java.io.Serializable;
 
 public class StatsDto implements Serializable {
+    private String name;
     private Integer totalQuizzes = 0;
     private Integer totalAnswers = 0;
     private Integer totalUniqueQuestions = 0;
@@ -18,7 +19,7 @@ public class StatsDto implements Serializable {
     private Integer totalNumberSuggestions = 0;
     private Integer totalNumberSuggestionsAccepted = 0;
     private Boolean privateClarificationStats = false;
-    private Boolean privateSuggestion = false;
+    private Boolean privateSuggestionStats = false;
     private Boolean privateTournamentsStats = false;
 
     public Integer getTotalNumberCreatedTournaments() {
@@ -51,6 +52,14 @@ public class StatsDto implements Serializable {
 
     public void setTotalNumberSuggestionsAccepted(Integer totalNumberSuggestionsAccepted) {
         this.totalNumberSuggestionsAccepted = totalNumberSuggestionsAccepted;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Integer getTotalQuizzes() {
@@ -141,12 +150,12 @@ public class StatsDto implements Serializable {
         this.privateClarificationStats = privateClarificationStats;
     }
 
-    public Boolean isPrivateSuggestion() {
-        return privateSuggestion;
+    public Boolean isPrivateSuggestionStats() {
+        return privateSuggestionStats;
     }
 
-    public void setPrivateSuggestion(Boolean privateSuggestion) {
-        this.privateSuggestion = privateSuggestion;
+    public void setPrivateSuggestionStats(Boolean privateSuggestionStats) {
+        this.privateSuggestionStats = privateSuggestionStats;
     }
 
     public Boolean isPrivateTournamentsStats() { return privateTournamentsStats; }
