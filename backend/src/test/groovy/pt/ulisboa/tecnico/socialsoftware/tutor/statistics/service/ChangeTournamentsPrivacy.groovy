@@ -63,7 +63,7 @@ class ChangeTournamentsPrivacy extends Specification{
         when:
         statsService.changeTournamentsStatsPrivacy(user_student.getId())
 
-        then: "clarification stats are private"
+        then: "tournaments stats are private"
         user_student.isPrivateTournamentsStats == true;
     }
 

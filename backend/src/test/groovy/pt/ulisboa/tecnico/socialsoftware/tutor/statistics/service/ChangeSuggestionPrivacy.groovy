@@ -63,7 +63,7 @@ class ChangeSuggestionPrivacy extends Specification {
         when:
         statsService.changeSuggestionPrivacy(user_student.getId())
 
-        then: "clarification stats are private"
+        then: "suggestions stats are private"
         user_student.isPrivateSuggestionStats() == true;
     }
 
