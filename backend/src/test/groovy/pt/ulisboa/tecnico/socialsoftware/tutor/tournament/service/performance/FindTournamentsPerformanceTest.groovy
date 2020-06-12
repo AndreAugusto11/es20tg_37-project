@@ -14,21 +14,23 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 @DataJpaTest
-class CancelTournamentPerformanceTest extends Specification {
+class FindTournamentsPerformanceTest extends Specification {
 
     public static final String COURSE_NAME = "Software Architecture"
     public static final String COURSE_ACRONYM = "SA1"
     public static final String ACADEMIC_TERM = "First Semester"
     public static final String CREATOR_NAME = "Creator Name"
     public static final String CREATOR_USERNAME = "Creator Username"
+    public static final String ENROLLER_NAME = "Enroller Name"
+    public static final String ENROLLER_USERNAME = "Enroller Username"
     public static final String TOURNAMENT_TITLE = "Tournament Title"
     public static final String AVAILABLE_DATE = "2020-01-25T16:30:11Z"
     public static final String CONCLUSION_DATE = "2020-01-25T17:40:11Z"
@@ -51,9 +53,9 @@ class CancelTournamentPerformanceTest extends Specification {
     def course = new Course()
     def courseExecution = new CourseExecution()
     def creator = new User()
+    def enroller = new User()
 
-    def setup()
-    {
+    def setup() {
         course.setName(COURSE_NAME)
         course.setType(Course.Type.TECNICO)
         courseRepository.save(course)
@@ -71,6 +73,13 @@ class CancelTournamentPerformanceTest extends Specification {
         creator.addCourseExecutions(courseExecution)
         userRepository.save(creator)
 
+        enroller.setName(ENROLLER_NAME)
+        enroller.setUsername(ENROLLER_USERNAME)
+        enroller.setKey(2)
+        enroller.setRole(User.Role.STUDENT)
+        enroller.addCourseExecutions(courseExecution)
+        userRepository.save(enroller)
+
         for (int i = 0; i < 1; i++)
         {
             def tournament = new Tournament()
@@ -79,17 +88,15 @@ class CancelTournamentPerformanceTest extends Specification {
             tournament.setCreator(creator)
             tournament.setAvailableDate(DateHandler.toLocalDateTime(AVAILABLE_DATE))
             tournament.setConclusionDate(DateHandler.toLocalDateTime(CONCLUSION_DATE))
-            tournament.setStatus(Tournament.Status.ENROLLING)
+            tournament.setStatus(Tournament.Status.ONGOING)
             tournamentRepository.save(tournament)
         }
     }
 
-    def "performance testing to create 10000 tournaments"()
-    {
+    def "performance testing to list 1000 tournaments"(){
         when:
         1.upto(1, {
-            def tournamentId = creator.getCreatedTournaments()[0].getId()
-            tournamentService.cancelTournament(creator.getId(), tournamentId)
+            tournamentService.findTournaments(courseExecution.getId())
         })
 
         then:

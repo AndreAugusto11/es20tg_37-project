@@ -92,6 +92,9 @@ public class TournamentService {
 		if (executionId != tournament.getCourseExecution().getId())
 			throw new TutorException(COURSE_EXECUTION_TOURNAMENT_MISMATCH, executionId, tournamentId);
 
+		if (tournament.getQuiz() == null)
+			throw new TutorException(TOURNAMENT_NULL_QUIZ, tournamentId);
+
 		return tournament.getQuiz().getQuizAnswers().stream()
 				.filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
 				.map(TournamentResultsDto::new)
