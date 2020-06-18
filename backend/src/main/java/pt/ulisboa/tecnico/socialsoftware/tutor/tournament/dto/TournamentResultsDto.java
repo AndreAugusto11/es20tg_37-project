@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 
 import java.io.Serializable;
@@ -12,8 +13,10 @@ public class TournamentResultsDto implements Serializable {
 
     public TournamentResultsDto(QuizAnswer quizAnswer) {
         this.enrolledStudentUsername = quizAnswer.getUser().getUsername();
-        this.numberOfCorrectAnswers = 1;
-        this.timeTaken = ChronoUnit.SECONDS.between(quizAnswer.getAnswerDate(), quizAnswer.getCreationDate());
+        this.numberOfCorrectAnswers = (int) quizAnswer.getQuestionAnswers().stream()
+                .filter(QuestionAnswer::isCorrect)
+                .count();
+        this.timeTaken = ChronoUnit.SECONDS.between(quizAnswer.getCreationDate(), quizAnswer.getAnswerDate());
     }
 
     public String getEnrolledStudentUsername() {

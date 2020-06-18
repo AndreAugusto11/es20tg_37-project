@@ -12,7 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentResultsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -91,6 +90,9 @@ public class TournamentService {
 
 		if (executionId != tournament.getCourseExecution().getId())
 			throw new TutorException(COURSE_EXECUTION_TOURNAMENT_MISMATCH, executionId, tournamentId);
+
+		if (tournament.getResultsDate().isAfter(DateHandler.now()))
+			throw new TutorException(TOURNAMENT_RESULTS_UNAVAILABLE);
 
 		if (tournament.getQuiz() == null)
 			throw new TutorException(TOURNAMENT_NULL_QUIZ, tournamentId);
@@ -176,15 +178,6 @@ public class TournamentService {
 
 		tournament.addEnrolledUser(user);
 		return new TournamentDto(tournament);
-
-		//TODO Check use of this code in jmeter
-		/*
-		Predicate<User> u1 = s -> s.getId().equals(userId);
-
-		//DEMO STUDENT has id 676 needed for load test
-		if(userId != 676 && tournament.getUsers().stream().anyMatch(u1))
-			throw new TutorException(TOURNAMENT_STUDENT_ALREADY_ENROLLED, userId);
-		*/
 	}
 
 	@Retryable(

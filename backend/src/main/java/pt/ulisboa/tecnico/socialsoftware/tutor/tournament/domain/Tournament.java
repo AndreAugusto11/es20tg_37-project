@@ -150,7 +150,7 @@ public class Tournament {
 
 	// TODO Does it make sense for availableDate to be now? Maybe change 'DateHandler.now()' to 10 minutes in the future
 	public void setAvailableDate(LocalDateTime availableDate) {
-		if (availableDate == null) { // || availableDate.isBefore(DateHandler.now())) {
+		if (availableDate == null) {
 			throw new TutorException(INVALID_AVAILABLE_DATE_FOR_TOURNAMENT);
 		}
 
@@ -170,7 +170,7 @@ public class Tournament {
 			throw new TutorException(INVALID_CONCLUSION_DATE_FOR_TOURNAMENT);
 		}
 
-		if (conclusionDate == null) { // || conclusionDate.isBefore(DateHandler.now())) {
+		if (conclusionDate == null) {
 			throw new TutorException(INVALID_CONCLUSION_DATE_FOR_TOURNAMENT);
 		}
 
@@ -185,7 +185,7 @@ public class Tournament {
 
 	public void setResultsDate(LocalDateTime resultsDate) {
 		if (resultsDate != null) {
-			if (resultsDate.isBefore(availableDate)) { // || resultsDate.isBefore(DateHandler.now())) {
+			if (resultsDate.isBefore(availableDate)) {
 				throw new TutorException(INVALID_RESULTS_DATE_FOR_TOURNAMENT);
 			}
 

@@ -38,9 +38,10 @@ public enum ErrorMessage {
     INVALID_RESULTS_DATE_FOR_TOURNAMENT("Invalid results date for tournament"),
     TOURNAMENT_NOT_FOUND("Tournament not found with id %d"),
     TOURNAMENT_NOT_ENROLLING("Tournament can only be cancelled during enrollment"),
+    TOURNAMENT_NOT_ONGOING("Tournament as not open yet"),
+    TOURNAMENT_RESULTS_UNAVAILABLE("Tournament results are still unavailable"),
     STUDENT_ALREADY_ENROLLED_IN_TOURNAMENT("Student is already enrolled in tournament"),
     STUDENT_NOT_ENROLLED_IN_TOURNAMENT("User is not enrolled in tournament"),
-    TOURNAMENT_NOT_ONGOING("Tournament as not open yet"),
     TOURNAMENT_NON_CREATOR("Tournament %d was not created by User with id %d"),
     TOURNAMENT_ALREADY_COMPLETED("Tournament already completed"),
 
