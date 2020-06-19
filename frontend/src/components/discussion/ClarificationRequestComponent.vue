@@ -74,24 +74,6 @@
           </template>
           <span>This discussion is public</span>
         </v-tooltip>
-
-                <v-tooltip v-if="this.clarificationRequest.public" bottom>
-                    <template v-slot:activator="{ on }">
-                        <v-btn class="mx-2" fab color="red" @click="changePrivatePublic()" data-cy="ButtonToPrivate">
-                            <v-icon class="mr-2" color="white" v-on="on">mdi-eye-off</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Click to make private</span>
-                </v-tooltip>
-
-                <v-tooltip v-else bottom>
-                    <template v-slot:activator="{ on }">
-                        <v-btn class="mx-2" fab color="green" @click="changePrivatePublic()" data-cy="ButtonToPublic">
-                            <v-icon class="mr-2" color="white" v-on="on">mdi-eye</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Click to make public</span>
-                </v-tooltip>
             </v-col>
 
 
