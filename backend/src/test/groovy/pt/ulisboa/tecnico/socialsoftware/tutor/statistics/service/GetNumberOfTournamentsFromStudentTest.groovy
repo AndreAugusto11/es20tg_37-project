@@ -19,10 +19,14 @@ import spock.lang.Specification
 class GetNumberOfTournamentsFromStudentTest extends Specification {
 
     public static final String COURSE_NAME = "Software Architecture"
-    public static final String ACRONYM = "AS1"
-    public static final String ACADEMIC_TERM = "1 SEM"
-    public static final String OPTION_CONTENT = "optionId content"
-    public static final String URL = "URL"
+    public static final String COURSE_ACRONYM = "SA1"
+    public static final String ACADEMIC_TERM = "First Semester"
+    public static final String CREATOR_NAME = "Creator Name"
+    public static final String CREATOR_USERNAME = "Creator Username"
+    public static final String ENROLLER_NAME = "Enroller Name"
+    public static final String ENROLLER_USERNAME = "Enroller Username"
+
+    public static final String TOURNAMENT_TITLE = "Tournament Title"
 
     @Autowired
     StatsService statsService
@@ -40,57 +44,70 @@ class GetNumberOfTournamentsFromStudentTest extends Specification {
     TournamentRepository tournamentRepository
 
 
-    def course
-    def courseExecution
-    def user
+    def course = new Course()
+    def courseExecution = new CourseExecution()
+    def creator = new User()
+    def tournament1 = new Tournament()
+    def tournament2 = new Tournament()
 
     def setup() {
-        course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        course.setName(COURSE_NAME)
+        course.setType(Course.Type.TECNICO)
         courseRepository.save(course)
 
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecution.setCourse(course)
+        courseExecution.setType(Course.Type.TECNICO)
+        courseExecution.setAcronym(COURSE_ACRONYM)
+        courseExecution.setAcademicTerm(ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
 
-        user = new User("name1", "username1", 1, User.Role.STUDENT)
-        user.getCourseExecutions().add(courseExecution)
-        user.setEnrolledCoursesAcronyms(ACRONYM)
-        courseExecution.getUsers().add(user)
-        userRepository.save(user)
+        creator.setName(CREATOR_NAME)
+        creator.setUsername(CREATOR_USERNAME)
+        creator.setKey(1)
+        creator.setRole(User.Role.STUDENT)
+        creator.addCourseExecutions(courseExecution)
+        userRepository.save(creator)
+
+        tournament1.setTitle(TOURNAMENT_TITLE)
+        tournament1.setCourseExecution(courseExecution)
+        tournament1.setCreator(creator)
+        tournament1.setStatus(Tournament.Status.ENROLLING)
+        tournamentRepository.save(tournament1)
+
+        tournament2.setTitle(TOURNAMENT_TITLE)
+        tournament2.setCourseExecution(courseExecution)
+        tournament2.setCreator(creator)
+        tournament2.setStatus(Tournament.Status.ENROLLING)
+        tournamentRepository.save(tournament2)
     }
 
-    def "Get the number of tournaments created by student"() {
-        given:"Student created 2 tournaments"
-        def tournament1 = new Tournament()
-        tournament1.setCreator(user)
-        def tournament2 = new Tournament()
-        tournament2.setCreator(user)
-        tournamentRepository.save(tournament1)
-        tournamentRepository.save(tournament2)
-        user.addCreatedTournament(tournament1)
-        user.addCreatedTournament(tournament2)
+    def "Get the number of tournaments created by a student"() {
         when:
-        def result = statsService.getStats(user.getId(), courseExecution.getId())
+        def result = statsService.getStats(creator.getId(), courseExecution.getId())
 
         then: "the result should be the number of tournaments that the student created"
-        result.getTotalNumberCreatedTournaments() == 2;
+        result != null
+        result.getTotalNumberCreatedTournaments() == 2
     }
 
     def "Get the number of enrolled tournaments from student"() {
-        given: "Student enrolled in 1 tournament"
-        def user2 = new User("name12", "username12", 2, User.Role.STUDENT)
-        user2.getCourseExecutions().add(courseExecution)
-        user2.setEnrolledCoursesAcronyms(ACRONYM)
-        courseExecution.getUsers().add(user2)
-        userRepository.save(user2)
-        def tournament1 = new Tournament()
-        tournament1.setCreator(user2)
-        tournamentRepository.save(tournament1)
-        user.addEnrolledTournament(tournament1)
-        when: "nothing"
-        def result = statsService.getStats(user.getId(), courseExecution.getId())
+        given: "A student that enrolled in two tournaments"
+        def enroller = new User()
+        enroller.setName(ENROLLER_NAME)
+        enroller.setUsername(ENROLLER_USERNAME)
+        enroller.setKey(2)
+        enroller.setRole(User.Role.STUDENT)
+        enroller.addCourseExecutions(courseExecution)
+        userRepository.save(enroller)
 
-        then: "the result should be the number of suggestion accepted that the student made"
-        result.getTotalNumberEnrolledTournaments() == 1;
+        tournament1.addEnrolledUser(enroller)
+        tournament2.addEnrolledUser(enroller)
+
+        when:
+        def result = statsService.getStats(enroller.getId(), courseExecution.getId())
+
+        then: "the result should be the number of tournaments that the student enrolled in"
+        result.getTotalNumberEnrolledTournaments() == 2
     }
 
     @TestConfiguration

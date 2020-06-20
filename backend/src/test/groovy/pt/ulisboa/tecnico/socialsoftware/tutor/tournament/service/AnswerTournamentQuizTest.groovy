@@ -8,11 +8,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
@@ -37,21 +37,35 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NULL_ARGUMENTS_ANSWER_DTO
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.OPTION_NOT_FOUND
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_ANSWER_NOT_FOUND
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_OPTION_MISMATCH
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_FOUND
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_YET_AVAILABLE
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NO_LONGER_AVAILABLE
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_USER_MISMATCH
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND
+
 @DataJpaTest
 class AnswerTournamentQuizTest extends Specification {
+
     public static final String COURSE_NAME = "Software Architecture"
-    public static final String ACRONYM = "AS1"
-    public static final String ACADEMIC_TERM = "1 SEM"
-    public static final Integer TIME_TAKEN = 1234
-    public static final String QUIZ_TITLE = 'quiz title'
-    public static final String QUESTION_TITLE = 'question title'
-    public static final String QUESTION_CONTENT = 'question content'
-    public static final String OPTION_CONTENT = "optionId content"
-    public static final Integer SEQUENCE = 0
-    public static final String URL = 'URL'
+    public static final String COURSE_ACRONYM = "SA1"
+    public static final String ACADEMIC_TERM = "First Semester"
+    public static final String CREATOR_NAME = "Creator Name"
+    public static final String CREATOR_USERNAME = "Creator Username"
+    public static final String ENROLLER_NAME = "Enroller Name"
+    public static final String ENROLLER_USERNAME = "Enroller Username"
+    public static final String QUESTION_TITLE = "Question Title"
+    public static final String QUESTION_CONTENT = "Question Content"
+    public static final String OPTION_CONTENT = "Option Content"
+    public static final String TOURNAMENT_TITLE = "Tournament Title"
+    public static final LocalDateTime TOURNAMENT_AVAILABLE_DATE = DateHandler.now().minusDays(1)
+    public static final LocalDateTime TOURNAMENT_QUIZ_ANSWER_CREATION_DATE = DateHandler.now()
 
     @Autowired
-    TournamentService tournamentService
+    StatementService statementService
 
     @Autowired
     TournamentRepository tournamentRepository
@@ -83,161 +97,261 @@ class AnswerTournamentQuizTest extends Specification {
     @Autowired
     QuestionAnswerRepository questionAnswerRepository
 
-    def user
-    def tournament
-    def course
-    def courseExecution
-    def question
-    def quizQuestion
-    def option
-    def quizAnswer
-    def quiz
+    def course = new Course()
+    def courseExecution = new CourseExecution()
+    def creator = new User()
+    def quiz = new Quiz()
+    def quizAnswer = new QuizAnswer()
+    def questionAnswer = new QuestionAnswer()
+    def question = new Question()
+    def option = new Option()
+    def tournament = new Tournament()
 
     def setup() {
-        user = new User("Manel1", "Man12", 1, User.Role.STUDENT)
-
-        course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        course.setName(COURSE_NAME)
+        course.setType(Course.Type.TECNICO)
         courseRepository.save(course)
 
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        courseExecution.getUsers().add(user)
+        courseExecution.setCourse(course)
+        courseExecution.setType(Course.Type.TECNICO)
+        courseExecution.setAcronym(COURSE_ACRONYM)
+        courseExecution.setAcademicTerm(ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
 
-        user.getCourseExecutions().add(courseExecution)
-        userRepository.save(user)
+        creator.setName(CREATOR_NAME)
+        creator.setUsername(CREATOR_USERNAME)
+        creator.setKey(1)
+        creator.setRole(User.Role.STUDENT)
+        creator.addCourseExecutions(courseExecution)
+        userRepository.save(creator)
 
-        question = new Question()
-        question.setCourse(course)
-        course.addQuestion(question)
         question.setKey(1)
-        question.setTitle(QUESTION_TITLE)
+        question.setCourse(course)
         question.setContent(QUESTION_CONTENT)
-        question.setStatus(Question.Status.AVAILABLE)
+        question.setTitle(QUESTION_TITLE)
         questionRepository.save(question)
 
-        option = new Option()
-        option.setSequence(SEQUENCE)
         option.setContent(OPTION_CONTENT)
         option.setCorrect(true)
+        option.setSequence(0)
         option.setQuestion(question)
-        question.addOption(option)
         optionRepository.save(option)
 
-        quiz = new Quiz()
         quiz.setKey(1)
-        quiz.setTitle(QUIZ_TITLE)
+        quiz.setTitle(TOURNAMENT_TITLE)
         quiz.setType(Quiz.QuizType.GENERATED.name())
         quiz.setCourseExecution(courseExecution)
-        quiz.setOneWay(false)
-        courseExecution.addQuiz(quiz)
-        quizRepository.save(quiz)
+        quiz.setAvailableDate(TOURNAMENT_AVAILABLE_DATE)
 
-        quizQuestion = new QuizQuestion(quiz, question, SEQUENCE)
-        quiz.addQuizQuestion(quizQuestion)
-        quizQuestionRepository.save(quizQuestion)
+        def quizQuestion = new QuizQuestion()
+        quizQuestion.setSequence(1)
+        quizQuestion.setQuiz(quiz)
+        quizQuestion.setQuestion(question)
 
-        quizAnswer = new QuizAnswer(user, quiz)
-        quizAnswerRepository.save(quizAnswer)
+        quizAnswer.setQuiz(quiz)
+        quizAnswer.setCreationDate(TOURNAMENT_QUIZ_ANSWER_CREATION_DATE)
+        quizAnswer.setCompleted(false)
 
-        tournament = new Tournament()
-        tournament.setCreator(user)
+        questionAnswer.setSequence(0)
+        questionAnswer.setQuizQuestion(quizQuestion)
+
+        tournament.setTitle(TOURNAMENT_TITLE)
+        tournament.setCourseExecution(courseExecution)
+        tournament.setCreator(creator)
+        tournament.setAvailableDate(TOURNAMENT_AVAILABLE_DATE)
+        tournament.setStatus(Tournament.Status.CONCLUDED)
         tournament.setQuiz(quiz)
-        tournament.setStartTime(LocalDateTime.now())
-        tournament.setEndTime(LocalDateTime.now().plusDays(1))
-        tournament.setStatus(Tournament.Status.ONGOING)
         tournamentRepository.save(tournament)
     }
 
-    def "Answer Quiz of Open/Closed Tournament"(){
-        given:"questionAnswer"
-        def questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
-        def statementAnswer = new StatementAnswerDto(questionAnswer)
+    def "A student submits an answer to a tournament quiz"() {
+        given: "A student answer"
+        quizAnswer.setUser(creator)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        def answer = new StatementAnswerDto(questionAnswer)
+        answer.setOptionId(option.getId())
+        answer.setTimeTaken(1000)
 
-        and:"Open/Closed Tournament"
-        tournament.setStatus(Tournament.Status.ENROLLING)
+        when: "The submission is made"
+        statementService.submitAnswer(creator.getId(), tournament.getQuiz().getId(), answer)
 
-        when:
-        tournamentService.submitAnswer(user.getId(),tournament.getId(),statementAnswer)
+        then: "The answer is registered"
+        questionAnswer.getOption().getId() == option.getId()
+        questionAnswer.getTimeTaken() == 1000
+        quizAnswer.getAnswerDate() != null
+    }
 
-        then:
+    def "Cannot answer to a tournament quiz given an invalid user id"() {
+        given: "A student answer"
+        quizAnswer.setUser(creator)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        def answer = new StatementAnswerDto(questionAnswer)
+
+        when: "The submission is made"
+        statementService.submitAnswer(0, tournament.getQuiz().getId(), answer)
+
+        then: "an exception is thrown"
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NOT_ONGOING
-
+        exception.getErrorMessage() == USER_NOT_FOUND
     }
 
-    def "Answer Quiz of Tournament with no generated quiz" () {
-        given:"questionAnswer"
-        def questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
-        def statementAnswer = new StatementAnswerDto(questionAnswer)
+    def "Cannot answer to a tournament quiz given an invalid quiz id"() {
+        given: "A student answer"
+        quizAnswer.setUser(creator)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        def answer = new StatementAnswerDto(questionAnswer)
 
-        and:"tournament quiz null"
-        tournament.setQuiz(null)
+        when: "The submission is made"
+        statementService.submitAnswer(creator.getId(), 0, answer)
 
-        when:
-        tournamentService.submitAnswer(user.getId(),tournament.getId(),statementAnswer)
-
-        then:
+        then: "an exception is thrown"
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_QUIZ
+        exception.getErrorMessage() == QUIZ_NOT_FOUND
     }
 
-    def "Answer Quiz of Tournament by Unenrolled student" () {
-        given:"questionAnswer"
-        def questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
-        def statementAnswer = new StatementAnswerDto(questionAnswer)
+    def "Cannot answer to a tournament quiz if the user does not have a quiz answer associated with that quiz"() {
+        given: "A student answer"
+        questionAnswer.setQuizAnswer(quizAnswer)
+        def answer = new StatementAnswerDto(questionAnswer)
 
-        and:"non enrolled student"
-        def user1 = new User("Manel12", "Man123", 2, User.Role.STUDENT)
-        courseExecution.getEnrolledUsers().add(user)
+        when: "The submission is made"
+        statementService.submitAnswer(creator.getId(), tournament.getQuiz().getId(), answer)
 
-        user1.getCourseExecutions().add(courseExecution)
-        userRepository.save(user1)
-
-        when:
-        tournamentService.submitAnswer(user1.getId(),tournament.getId(),statementAnswer)
-
-        then:
+        then: "an exception is thrown"
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.STUDENT_NOT_ENROLLED_IN_TOURNAMENT
+        exception.getErrorMessage() == QUIZ_NOT_FOUND
     }
 
-    //TODO fazer teste quando geração de quizes tiver funcional
-    /*
-    def "Start Quiz of an Ongoing Tournament"() {
-        when:
-        def res = tournamentService.startQuiz(user.getId(),tournament.getId())
+    def "Cannot answer to a tournament quiz given no answer dto"() {
+        given: "An empty student answer"
+        quizAnswer.setUser(creator)
+        questionAnswer.setQuizAnswer(quizAnswer)
 
-        then:
-        res
-    }*/
+        when: "The submission is made"
+        statementService.submitAnswer(creator.getId(), tournament.getQuiz().getId(), null)
 
-    def "Submit Answer to an Ongoing Tournament Quiz"() {
-        given:"questionAnswer"
-        def questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
-
-        and:"StatementAnswerDto"
-        def statementAnswer = new StatementAnswerDto(questionAnswer)
-
-        when:
-        tournamentService.submitAnswer(user.getId(),tournament.getId(),statementAnswer)
-
-        then:
-        def quizAns = user.getQuizAnswers().stream()
-                .filter({ qa -> qa.getQuiz().getId().equals(quiz.getId())})
-                .findFirst().get()
-        def quesAnsw = quizAns.getQuestionAnswers().stream()
-                .filter({ qa -> qa.getSequence().equals(statementAnswer.getSequence()) })
-                .findFirst().get()
-
-        quesAnsw.getTimeTaken() == questionAnswer.getTimeTaken()
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_ANSWER_DTO
     }
 
-    def "Conclude tournament quiz with one correct answer"() {
-        when:
-        def results = tournamentService.concludeQuiz(user.getId(),tournament.getId())
+    def "Cannot answer to a tournament quiz given an answer whose sequence does not match any quiz question"() {
+        given: "A student answer"
+        quizAnswer.setUser(creator)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        def answer = new StatementAnswerDto(questionAnswer)
+        answer.setSequence(2)
 
-        then:
-        results.size() == 1
+        when: "The submission is made"
+        statementService.submitAnswer(creator.getId(), tournament.getQuiz().getId(), answer)
+
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == QUESTION_ANSWER_NOT_FOUND
+    }
+
+    def "Cannot answer to a tournament quiz given a quiz answer that does not have any question answers"() {
+        given: "A student answer"
+        quizAnswer.setUser(creator)
+        def answer = new StatementAnswerDto(questionAnswer)
+
+        when: "The submission is made"
+        statementService.submitAnswer(creator.getId(), tournament.getQuiz().getId(), answer)
+
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == QUESTION_ANSWER_NOT_FOUND
+    }
+
+    def "Cannot answer to a tournament quiz given an answer that does not correspond to the student answering"() {
+        given: "A different user"
+        def enroller = new User()
+        enroller.setName(ENROLLER_NAME)
+        enroller.setUsername(ENROLLER_USERNAME)
+        enroller.setKey(2)
+        enroller.setRole(User.Role.STUDENT)
+        enroller.addCourseExecutions(courseExecution)
+        userRepository.save(enroller)
+
+        and: "An empty student answer"
+        creator.addQuizAnswer(quizAnswer)
+        quizAnswer.setUser(enroller)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        def answer = new StatementAnswerDto(questionAnswer)
+
+        when: "The submission is made"
+        statementService.submitAnswer(creator.getId(), tournament.getQuiz().getId(), answer)
+
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == QUIZ_USER_MISMATCH
+    }
+
+    def "Cannot answer to a tournament quiz if the time for submissions has expired"() {
+        given: "A student answer"
+        quiz.setConclusionDate(DateHandler.now().minusHours(1))
+        quizAnswer.setUser(creator)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        def answer = new StatementAnswerDto(questionAnswer)
+
+        when: "The submission is made"
+        statementService.submitAnswer(creator.getId(), tournament.getQuiz().getId(), answer)
+
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == QUIZ_NO_LONGER_AVAILABLE
+    }
+
+    def "Cannot answer to a tournament quiz if the time for submissions has not yet open"() {
+        given: "A student answer"
+        quiz.setAvailableDate(DateHandler.now().plusHours(1))
+        quizAnswer.setUser(creator)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        def answer = new StatementAnswerDto(questionAnswer)
+
+        when: "The submission is made"
+        statementService.submitAnswer(creator.getId(), tournament.getQuiz().getId(), answer)
+
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == QUIZ_NOT_YET_AVAILABLE
+    }
+
+    def "Cannot answer to a tournament quiz if the quiz answer option does not exist"() {
+        given: "A student answer"
+        quizAnswer.setUser(creator)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        def answer = new StatementAnswerDto(questionAnswer)
+        answer.setOptionId(0)
+
+        when: "The submission is made"
+        statementService.submitAnswer(creator.getId(), tournament.getQuiz().getId(), answer)
+
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == OPTION_NOT_FOUND
+    }
+
+    def "Cannot answer to a tournament quiz if the quiz answer option does not correspond to the question answered"() {
+        given: "A different option"
+        def option = new Option()
+        option.setContent(OPTION_CONTENT)
+        option.setCorrect(false)
+        option.setSequence(0)
+        optionRepository.save(option)
+
+        and: "A student answer"
+        quizAnswer.setUser(creator)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        def answer = new StatementAnswerDto(questionAnswer)
+        answer.setOptionId(option.getId())
+
+        when: "The submission is made"
+        statementService.submitAnswer(creator.getId(), tournament.getQuiz().getId(), answer)
+
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == QUESTION_OPTION_MISMATCH
     }
 
     @TestConfiguration

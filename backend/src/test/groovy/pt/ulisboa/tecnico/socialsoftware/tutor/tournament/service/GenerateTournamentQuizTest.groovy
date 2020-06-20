@@ -204,7 +204,6 @@ class GenerateTournamentQuizTest extends Specification {
         tournament.setResultsDate(DateHandler.now().plusDays(2))
         tournament.setStatus(Tournament.Status.ONGOING)
         tournament.setTopicConjunctions(topicConjunctions)
-        tournament.addEnrolledUser(creator)
         tournamentRepository.save(tournament)
     }
 

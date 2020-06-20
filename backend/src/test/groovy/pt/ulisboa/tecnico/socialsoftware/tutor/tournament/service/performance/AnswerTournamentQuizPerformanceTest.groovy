@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
@@ -37,19 +38,24 @@ import java.time.LocalDateTime
 
 @DataJpaTest
 class AnswerTournamentQuizPerformanceTest extends Specification {
+
     public static final String COURSE_NAME = "Software Architecture"
-    public static final String ACRONYM = "AS1"
-    public static final String ACADEMIC_TERM = "1 SEM"
-    public static final Integer TIME_TAKEN = 1234
-    public static final String QUIZ_TITLE = 'quiz title'
-    public static final String QUESTION_TITLE = 'question title'
-    public static final String QUESTION_CONTENT = 'question content'
-    public static final String OPTION_CONTENT = "optionId content"
-    public static final Integer SEQUENCE = 0
-    public static final String URL = 'URL'
+    public static final String COURSE_ACRONYM = "SA1"
+    public static final String ACADEMIC_TERM = "First Semester"
+    public static final String CREATOR_NAME = "Creator Name"
+    public static final String CREATOR_USERNAME = "Creator Username"
+    public static final String ENROLLER_NAME = "Enroller Name"
+    public static final String ENROLLER_USERNAME = "Enroller Username"
+    public static final String QUESTION_TITLE = "Question Title"
+    public static final String QUESTION_CONTENT = "Question Content"
+    public static final String OPTION_CONTENT = "Option Content"
+    public static final String TOURNAMENT_TITLE = "Tournament Title"
+    public static final LocalDateTime TOURNAMENT_AVAILABLE_DATE = DateHandler.now().minusDays(1)
+    public static final LocalDateTime TOURNAMENT_QUIZ_ANSWER_CREATION_DATE = DateHandler.now()
+
 
     @Autowired
-    TournamentService tournamentService
+    StatementService statementService
 
     @Autowired
     TournamentRepository tournamentRepository
@@ -81,84 +87,86 @@ class AnswerTournamentQuizPerformanceTest extends Specification {
     @Autowired
     QuestionAnswerRepository questionAnswerRepository
 
-    def user
-    def tournament
-    def course
-    def courseExecution
-    def question
-    def quizQuestion
-    def option
-    def quizAnswer
-    def quiz
+    def course = new Course()
+    def courseExecution = new CourseExecution()
+    def creator = new User()
+    def quiz = new Quiz()
+    def quizAnswer = new QuizAnswer()
+    def questionAnswer = new QuestionAnswer()
+    def question = new Question()
+    def option = new Option()
 
     def setup() {
-        user = new User("Manel1", "Man12", 1, User.Role.STUDENT)
-
-        course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        course.setName(COURSE_NAME)
+        course.setType(Course.Type.TECNICO)
         courseRepository.save(course)
 
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        courseExecution.getUsers().add(user)
+        courseExecution.setCourse(course)
+        courseExecution.setType(Course.Type.TECNICO)
+        courseExecution.setAcronym(COURSE_ACRONYM)
+        courseExecution.setAcademicTerm(ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
 
-        user.getCourseExecutions().add(courseExecution)
-        userRepository.save(user)
+        creator.setName(CREATOR_NAME)
+        creator.setUsername(CREATOR_USERNAME)
+        creator.setKey(1)
+        creator.setRole(User.Role.STUDENT)
+        creator.addCourseExecutions(courseExecution)
+        userRepository.save(creator)
 
-        question = new Question()
-        question.setCourse(course)
-        course.addQuestion(question)
         question.setKey(1)
-        question.setTitle(QUESTION_TITLE)
+        question.setCourse(course)
         question.setContent(QUESTION_CONTENT)
-        question.setStatus(Question.Status.AVAILABLE)
+        question.setTitle(QUESTION_TITLE)
         questionRepository.save(question)
 
-        option = new Option()
-        option.setSequence(SEQUENCE)
         option.setContent(OPTION_CONTENT)
         option.setCorrect(true)
+        option.setSequence(0)
         option.setQuestion(question)
-        question.addOption(option)
         optionRepository.save(option)
 
-        quiz = new Quiz()
         quiz.setKey(1)
-        quiz.setTitle(QUIZ_TITLE)
+        quiz.setTitle(TOURNAMENT_TITLE)
         quiz.setType(Quiz.QuizType.GENERATED.name())
         quiz.setCourseExecution(courseExecution)
-        quiz.setOneWay(false)
-        courseExecution.addQuiz(quiz)
-        quizRepository.save(quiz)
+        quiz.setAvailableDate(TOURNAMENT_AVAILABLE_DATE)
 
-        quizQuestion = new QuizQuestion(quiz, question, SEQUENCE)
-        quiz.addQuizQuestion(quizQuestion)
-        quizQuestionRepository.save(quizQuestion)
+        def quizQuestion = new QuizQuestion()
+        quizQuestion.setSequence(1)
+        quizQuestion.setQuiz(quiz)
+        quizQuestion.setQuestion(question)
 
-        quizAnswer = new QuizAnswer(user, quiz)
-        quizAnswerRepository.save(quizAnswer)
+        quizAnswer.setQuiz(quiz)
+        quizAnswer.setUser(creator)
+        quizAnswer.setCreationDate(TOURNAMENT_QUIZ_ANSWER_CREATION_DATE)
+        quizAnswer.setCompleted(false)
+
+        questionAnswer.setSequence(0)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        questionAnswer.setQuizQuestion(quizQuestion)
     }
 
     def "performance testing to answer quiz in 10000 tournaments"(){
         given: "10000 tournaments"
         1.upto(1, {
-            tournament = new Tournament()
-            tournament.setCreator(user)
-
-            tournament.setQuiz(quiz)
-            tournament.setStartTime(LocalDateTime.now())
-            tournament.setEndTime(LocalDateTime.now().plusDays(1))
+            def tournament = new Tournament()
+            tournament.setTitle(TOURNAMENT_TITLE)
+            tournament.setCourseExecution(courseExecution)
+            tournament.setCreator(creator)
+            tournament.setAvailableDate(TOURNAMENT_AVAILABLE_DATE)
             tournament.setStatus(Tournament.Status.ONGOING)
+            tournament.setQuiz(quiz)
             tournamentRepository.save(tournament)
         })
         List<Tournament> tournamentList = tournamentRepository.findAll()
 
-        and: "One answer"
-        def questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
-        def statementAnswer = new StatementAnswerDto(questionAnswer)
+        and: "An answer"
+         def answer = new StatementAnswerDto(questionAnswer)
 
         when:
         1.upto(1, {
-            tournamentService.submitAnswer(user.getId(), tournamentList.pop().getId(), statementAnswer)
+            statementService.submitAnswer(creator.getId(), tournamentList.pop().getId(), answer)
         })
 
         then:

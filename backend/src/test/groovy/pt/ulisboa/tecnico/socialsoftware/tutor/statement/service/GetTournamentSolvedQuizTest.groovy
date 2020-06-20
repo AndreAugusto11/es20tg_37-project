@@ -120,7 +120,6 @@ class GetTournamentSolvedQuizTest extends Specification {
         tournament.setAvailableDate(TOURNAMENT_AVAILABLE_DATE)
         tournament.setResultsDate(TOURNAMENT_RESULTS_DATE)
         tournament.setStatus(Tournament.Status.CONCLUDED)
-        tournament.addEnrolledUser(creator)
         tournament.addEnrolledUser(enroller)
         tournamentRepository.save(tournament)
     }

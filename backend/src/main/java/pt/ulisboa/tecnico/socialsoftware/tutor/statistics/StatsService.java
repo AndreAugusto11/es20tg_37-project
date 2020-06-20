@@ -50,7 +50,10 @@ public class StatsService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatsDto getStats(int userId, int executionId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).
                 orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
@@ -59,11 +62,11 @@ public class StatsService {
         StatsDto statsDto = new StatsDto();
 
         int totalNumberEnrolledTournaments = (int) user.getEnrolledTournaments().stream()
-                .filter(t ->t.canResultsBePublic(executionId))
+                .filter(t -> t.canResultsBePublic(executionId))
                 .count();
 
         int totalNumberCreatedTournaments = (int) user.getCreatedTournaments().stream()
-                .filter(t ->t.canResultsBePublic(executionId))
+                .filter(t -> t.canResultsBePublic(executionId))
                 .count();
 
         int totalQuizzes = (int) user.getQuizAnswers().stream()
@@ -105,7 +108,8 @@ public class StatsService {
                 .filter(Option::getCorrect)
                 .count();
 
-        Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
+        Course course = courseExecutionRepository.findById(executionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
 
         int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());
 
@@ -139,6 +143,7 @@ public class StatsService {
         statsDto.setTotalNumberEnrolledTournaments(totalNumberEnrolledTournaments);
         statsDto.setTotalNumberSuggestions(totalNumberSuggestions);
         statsDto.setTotalNumberSuggestionsAvailable(totalNumberSuggestionsAvailable);
+
         if (totalAnswers != 0) {
             statsDto.setCorrectAnswers(((float) correctAnswers) * 100 / totalAnswers);
             statsDto.setImprovedCorrectAnswers(((float) uniqueCorrectAnswers) * 100 / uniqueQuestions);
@@ -183,14 +188,12 @@ public class StatsService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void changeTournamentsStatsPrivacy(int userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        if(user.isPrivateTournamentsStats() == null){
+        if (user.isPrivateTournamentsStats() == null)
             user.setPrivateTournamentsStats(false);
-        }
 
         user.setPrivateTournamentsStats(!user.isPrivateTournamentsStats());
     }
-
-
 }

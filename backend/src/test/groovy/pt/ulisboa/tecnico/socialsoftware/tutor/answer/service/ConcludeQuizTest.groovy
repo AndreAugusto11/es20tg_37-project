@@ -213,7 +213,7 @@ class ConcludeQuizTest extends Specification {
         given: 'another user'
         def otherUser = new User('name', "username2", 2, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
-        courseExecution.getEnrolledUsers().add(user)
+        courseExecution.getUsers().add(user)
         userRepository.save(otherUser)
 
         when:
