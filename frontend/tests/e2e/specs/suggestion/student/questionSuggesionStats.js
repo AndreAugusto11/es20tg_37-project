@@ -14,7 +14,6 @@ describe('Show stats', () => {
       'psql -d tutordb -c ' +
         '"DELETE FROM questions WHERE title = \'TestStats\';"'
     );
-    cy.exec('psql -d tutordb -c ' + '"DELETE FROM users_question_suggestion;"');
     cy.exec('psql -d tutordb -c ' + '"DELETE FROM question_Suggestions;"');
   });
 

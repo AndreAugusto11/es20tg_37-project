@@ -25,7 +25,7 @@
       </div>
     </div>
     <v-card-text style="height: 50px; position: relative">
-      <v-tooltip v-if="stats.privateSuggestion" bottom>
+      <v-tooltip v-if="stats.privateSuggestionStats" bottom>
         <template v-slot:activator="{ on }">
           <v-btn
             absolute
@@ -81,7 +81,7 @@ export default class SuggestionsStatsView extends Vue {
     await this.$store.dispatch('loading');
     try {
       await RemoteServices.changeSuggestionStatsPrivacy();
-      this.stats.privateSuggestion = !this.stats.privateSuggestion;
+      this.stats.privateSuggestionStats = !this.stats.privateSuggestionStats;
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

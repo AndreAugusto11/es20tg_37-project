@@ -14,13 +14,13 @@
           <v-tab>
             Quizzes
           </v-tab>
-          <v-tab>
+          <v-tab data-cy="clarificationsTab">
             Clarifications
           </v-tab>
-          <v-tab data-cy="sugge">
+          <v-tab data-cy="suggestionsTab">
             Suggestions
           </v-tab>
-          <v-tab data-cy="torn">
+          <v-tab data-cy="tournamentsTab">
             Tournaments
           </v-tab>
         </v-tabs>

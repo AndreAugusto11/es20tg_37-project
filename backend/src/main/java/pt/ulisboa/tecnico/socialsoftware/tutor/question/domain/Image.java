@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.domain.Justification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 
@@ -34,6 +35,11 @@ public class Image implements DomainEntity {
     @OneToOne
     @JoinColumn(name="clarification_request_id")
     private ClarificationRequest clarificationRequest;
+
+    @OneToOne
+    @JoinColumn(name="clarification_request_answer_id")
+    private ClarificationRequestAnswer clarificationRequestAnswer;
+
 
     public Image() {}
 
@@ -86,6 +92,14 @@ public class Image implements DomainEntity {
 
     public void setQuestion(Question question) {
         this.question = question;
+    }
+
+    public ClarificationRequestAnswer getClarificationRequestAnswer() {
+        return clarificationRequestAnswer;
+    }
+
+    public void setClarificationRequestAnswer(ClarificationRequestAnswer clarificationRequestAnswer) {
+        this.clarificationRequestAnswer = clarificationRequestAnswer;
     }
 
     @Override

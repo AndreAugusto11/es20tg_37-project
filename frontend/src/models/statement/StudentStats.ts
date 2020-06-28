@@ -1,4 +1,5 @@
 export default class StudentStats {
+  name!: string;
   totalQuizzes!: number;
   totalAnswers!: number;
   totalUniqueQuestions!: number;
@@ -8,17 +9,18 @@ export default class StudentStats {
   totalClarificationRequests!: number;
   totalPublicClarificationRequests!: number;
   totalNumberSuggestions!: number;
-  totalNumberSuggestionsAvailable!: number;
+  totalNumberSuggestionsAccepted!: number;
   totalNumberCreatedTournaments!: number;
   totalNumberEnrolledTournaments!: number;
   privateClarificationStats!: boolean;
-  privateSuggestion!: boolean;
+  privateSuggestionStats!: boolean;
   privateTournamentsStats!: boolean;
   uniqueCorrectAnswers!: number;
   uniqueWrongAnswers!: number;
 
   constructor(jsonObj?: StudentStats) {
     if (jsonObj) {
+      this.name = jsonObj.name;
       this.totalQuizzes = jsonObj.totalQuizzes;
       this.totalAnswers = jsonObj.totalAnswers;
       this.totalUniqueQuestions = jsonObj.totalUniqueQuestions;
@@ -31,11 +33,11 @@ export default class StudentStats {
       this.totalPublicClarificationRequests =
         jsonObj.totalPublicClarificationRequests;
       this.totalNumberSuggestions = jsonObj.totalNumberSuggestions;
-      this.totalNumberSuggestionsAvailable = jsonObj.totalNumberSuggestionsAvailable;
+      this.totalNumberSuggestionsAccepted = jsonObj.totalNumberSuggestionsAccepted;
       this.totalNumberCreatedTournaments= jsonObj.totalNumberCreatedTournaments;
       this.totalNumberEnrolledTournaments = jsonObj.totalNumberEnrolledTournaments;
       this.privateClarificationStats = jsonObj.privateClarificationStats;
-      this.privateSuggestion = jsonObj.privateSuggestion;
+      this.privateSuggestionStats = jsonObj.privateSuggestionStats;
       this.privateTournamentsStats = jsonObj.privateTournamentsStats;
     }
   }

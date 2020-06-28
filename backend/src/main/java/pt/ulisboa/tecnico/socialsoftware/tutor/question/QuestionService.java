@@ -220,14 +220,7 @@ public class QuestionService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void uploadImage(Integer questionId, String type) {
-
-        System.out.println("\n" +
-                "QuestionService : uploadImage\n" +
-                " - questionId: " + questionId + "\n" +
-                " - type: " + type + "\n"
-        );
-
+    public String uploadImage(Integer questionId, String type) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
         Image image = question.getImage();
@@ -236,12 +229,20 @@ public class QuestionService {
             image = new Image();
 
             question.setImage(image);
+            setImageUrl(question, type);
 
             imageRepository.save(image);
+        } else {
+            setImageUrl(question, type);
         }
 
+        return question.getImage().getUrl();
+    }
+
+    private void setImageUrl(Question question, String type) {
         question.getImage().setUrl(question.getCourse().getName().replaceAll("\\s", "") +
                 question.getCourse().getType() +
+                "q" +
                 question.getKey() +
                 "." + type);
     }

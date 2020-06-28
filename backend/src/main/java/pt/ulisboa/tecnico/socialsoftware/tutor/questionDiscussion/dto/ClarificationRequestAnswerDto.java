@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer;
 
 public class ClarificationRequestAnswerDto {
@@ -10,6 +11,7 @@ public class ClarificationRequestAnswerDto {
     private String name;
     private String username;
     private String creationDate;
+    private ImageDto image;
 
     public ClarificationRequestAnswerDto() { }
 
@@ -20,6 +22,9 @@ public class ClarificationRequestAnswerDto {
         this.name = clarificationRequestAnswer.getUser().getName();
         this.username = clarificationRequestAnswer.getUser().getUsername();
         this.creationDate = DateHandler.toISOString(clarificationRequestAnswer.getCreationDate());
+
+        if (clarificationRequestAnswer.getImage() != null)
+            this.image = new ImageDto(clarificationRequestAnswer.getImage());
     }
 
     public Integer getId() {
@@ -68,5 +73,13 @@ public class ClarificationRequestAnswerDto {
 
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public ImageDto getImage() {
+        return image;
+    }
+
+    public void setImage(ImageDto image) {
+        this.image = image;
     }
 }

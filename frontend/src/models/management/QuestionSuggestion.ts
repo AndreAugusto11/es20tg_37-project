@@ -7,6 +7,7 @@ export default class QuestionSuggestion {
   status: string = 'PENDING';
   creationDate!: string | null;
   justificationDto: Justification | null = null;
+  name: string | null = null;
 
   constructor(jsonObj?: QuestionSuggestion) {
     if (jsonObj) {
@@ -15,6 +16,7 @@ export default class QuestionSuggestion {
       this.status = jsonObj.status;
       this.creationDate = jsonObj.creationDate;
       this.justificationDto = jsonObj.justificationDto;
+      this.name = jsonObj.name;
     }
   }
 }

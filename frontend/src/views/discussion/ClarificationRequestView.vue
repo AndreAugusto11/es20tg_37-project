@@ -70,7 +70,7 @@
       this.createClarificationRequestAnswerDialog = true;
     }
 
-    onCreateClarificationRequestAnswer() {
+    onCreateClarificationRequestAnswer(clarificationRequestAnswer: ClarificationRequestAnswer) {
       this.createClarificationRequestAnswerDialog = false;
       this.currentClarificationRequestAnswer = null;
       if (this.$store.getters.isTeacher)

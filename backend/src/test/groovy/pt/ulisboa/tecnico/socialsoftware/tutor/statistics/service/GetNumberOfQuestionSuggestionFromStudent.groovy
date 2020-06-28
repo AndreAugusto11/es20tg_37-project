@@ -129,7 +129,7 @@ class GetNumberOfQuestionSuggestionFromStudent extends Specification {
     def "Get the number of question suggestion from a student"() {
 
         when:
-        def result = statsService.getStats(user.getId(), courseExecution.getId())
+        def result = statsService.getAllStats(user.getId(), courseExecution.getId())
 
         then: "the result should be the number of suggestion that the student made"
         result.getTotalNumberSuggestions() == 2;
@@ -138,10 +138,10 @@ class GetNumberOfQuestionSuggestionFromStudent extends Specification {
     def "Get the number of question suggestion accepted from a student"() {
 
         when:
-        def result = statsService.getStats(user.getId(), courseExecution.getId())
+        def result = statsService.getAllStats(user.getId(), courseExecution.getId())
 
         then: "the result should be the number of suggestion accepted that the student made"
-        result.getTotalNumberSuggestionsAvailable() == 1;
+        result.getTotalNumberSuggestionsAccepted() == 1;
     }
 
     @TestConfiguration

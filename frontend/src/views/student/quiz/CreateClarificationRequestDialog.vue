@@ -27,6 +27,18 @@
                         </v-flex>
                     </v-layout>
                 </v-container>
+                <template>
+                  <v-file-input
+                  label="File input"
+                  class="pr-3"
+                  show-size
+                  outlined
+                  counter
+                  dense
+                  @change="constructImage($event)"
+                  accept="image/*"
+                  />
+                </template>
             </v-card-text>
 
             <v-card-actions>
@@ -51,6 +63,8 @@
   import { Component, Model, Prop, Vue } from 'vue-property-decorator';
   import RemoteServices from '@/services/RemoteServices';
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
+  import Image from '@/models/management/Image';
+  import Question from '@/models/management/Question';
   import StatementAnswer from '@/models/statement/StatementAnswer';
 
   @Component
@@ -60,9 +74,14 @@
     @Prop({ type: StatementAnswer, required: true }) readonly answer!: StatementAnswer;
 
     createClarificationRequest!: ClarificationRequest;
+    file: File | null = null;
 
     created() {
       this.createClarificationRequest = new ClarificationRequest(this.clarificationRequest);
+    }
+
+    async constructImage(event: File) {
+        this.file = event;
     }
 
     async saveClarificationRequest() {
@@ -83,6 +102,10 @@
           this.createClarificationRequest.username = this.$store.getters.getUser.username;
           this.createClarificationRequest.questionAnswerDto = this.answer.questionAnswerDto;
           const result = await RemoteServices.createClarificationRequest(this.answer.questionAnswerId, this.createClarificationRequest);
+          if (result.id && this.file) {
+            result.image = new Image();
+            result.image.url = await RemoteServices.uploadClarificationRequestImage(result.id, this.file);
+          }
           this.$emit('new-clarification-request', result);
         } catch (error) {
           await this.$store.dispatch('error', error);

@@ -114,9 +114,7 @@ public class QuestionController {
         int lastIndex = Objects.requireNonNull(file.getContentType()).lastIndexOf('/');
         String type = file.getContentType().substring(lastIndex + 1);
 
-        questionService.uploadImage(questionId, type);
-
-        url = questionService.findQuestionById(questionId).getImage().getUrl();
+        url = questionService.uploadImage(questionId, type);
         Files.copy(file.getInputStream(), getTargetLocation(url), StandardCopyOption.REPLACE_EXISTING);
 
         return url;

@@ -81,7 +81,7 @@ public class ClarificationRequestDto implements Serializable {
     }
 
     public void setPublic(boolean isPublic) {
-        isPublic = isPublic;
+        this.isPublic = isPublic;
     }
 
     public String getCreationDate() {

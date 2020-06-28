@@ -386,7 +386,6 @@ INSERT INTO options VALUES(4, &apos;OPTION4_CONTENT&apos;, false, 1, 3);
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="query">DELETE FROM options o WHERE question_id IN ( SELECT id FROM questions q WHERE q.type = &apos;SUGGESTION&apos; );
 DELETE FROM questions q WHERE q.type = &apos;SUGGESTION&apos;;
-DELETE FROM users_question_suggestion;
 DELETE FROM question_Suggestions;
 
 DELETE FROM options o WHERE question_id IN ( SELECT id FROM questions q WHERE q.title = &apos;JMETER&apos; );

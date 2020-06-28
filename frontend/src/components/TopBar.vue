@@ -42,6 +42,15 @@
                 <v-list-item-title>Manage Courses</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+
+            <v-list-item to="/admin/suggestions" data-cy="manageSuggestionsMenuButton">
+              <v-list-item-action>
+                <v-icon>mdi-message-plus</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Manage Suggestions</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
 
@@ -93,20 +102,20 @@
                 <v-list-item-title>Assessments</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/management/students">
-              <v-list-item-action>
-                <v-icon>school</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Students</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
             <v-list-item to="/management/discussion">
               <v-list-item-action>
                 <v-icon>fas fa-comments</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Discussion</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/management/stats">
+              <v-list-item-action>
+                <v-icon>fas fa-chart-bar</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Course Stats</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item to="/management/impexp">
@@ -260,6 +269,15 @@
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Manage Courses</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/admin/suggestions">
+            <v-list-item-action>
+              <v-icon>mdi-message-plus</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Question Suggestions</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>

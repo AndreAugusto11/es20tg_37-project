@@ -50,14 +50,23 @@ class ChangeSuggestionPrivacy extends Specification {
 
     def "Student changes clarification stats' privacy"() {
         given: "public clarification stats"
-        user_student.setPrivateSuggestion(false)
+        user_student.setPrivateSuggestionStats(false)
 
         when:
         statsService.changeSuggestionPrivacy(user_student.getId())
 
         then: "clarification stats are private"
-        user_student.isPrivateSuggestion() == true;
+        user_student.isPrivateSuggestionStats() == true;
     }
+
+    def "check if the privacy value is correctly set"() {
+        when:
+        statsService.changeSuggestionPrivacy(user_student.getId())
+
+        then: "suggestions  stats are private"
+        user_student.isPrivateSuggestionStats() == true;
+    }
+
 
     @TestConfiguration
     static class StatisticsServiceImplTestContextConfiguration {

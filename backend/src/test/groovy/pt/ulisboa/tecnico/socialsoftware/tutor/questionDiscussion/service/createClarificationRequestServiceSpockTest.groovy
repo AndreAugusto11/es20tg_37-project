@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.QuestionDiscussionService
@@ -208,50 +207,6 @@ class createClarificationRequestServiceSpockTest extends Specification {
         questionAnswer.getClarificationRequest().contains(result)
         question.getClarificationRequest().contains(result)
         user.getClarificationRequests().contains(result)
-    }
-
-    def "create clarification request to answered question with image"() {
-        given: "a question answer answered"
-        questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, TIME_TAKEN, option, SEQUENCE)
-        quizAnswer.addQuestionAnswer(questionAnswer)
-        questionAnswerRepository.save(questionAnswer)
-
-        and: "a clarification request dto"
-        def clarificationRequestDto = new ClarificationRequestDto()
-        clarificationRequestDto.setContent(CLARIFICATION_CONTENT)
-        clarificationRequestDto.setName(user.getName())
-        clarificationRequestDto.setUsername(user.getUsername())
-        def questionAnswerDto = new QuestionAnswerDto(questionAnswer)
-        clarificationRequestDto.setQuestionAnswerDto(questionAnswerDto)
-
-        and: "an image"
-        def image = new ImageDto()
-        image.setUrl(URL)
-        image.setWidth(20)
-        clarificationRequestDto.setImage(image)
-
-        when:
-        questionDiscussionService.createClarificationRequest(questionAnswer.getId(), clarificationRequestDto)
-
-        then: "the correct clarification request is inside the repository"
-        clarificationRequestRepository.findAll().size() == 1
-        def result = clarificationRequestRepository.findAll().get(0)
-        result != null
-        and: "has the correct values"
-        result.getId() != null
-        result.getContent() == CLARIFICATION_CONTENT
-        result.getStatus() == ClarificationRequest.Status.OPEN
-        result.getQuestionAnswer() == questionAnswer
-        result.getQuestion() == questionAnswer.getQuizQuestion().getQuestion()
-        result.getUser() == questionAnswer.getQuizAnswer().getUser()
-        result.getImage().getId() != null
-        result.getImage().getUrl() == URL
-        result.getImage().getWidth() == 20
-        and: "is associated correctly"
-        questionAnswer.getClarificationRequest().contains(result)
-        question.getClarificationRequest().contains(result)
-        user.getClarificationRequests().contains(result)
-
     }
 
     def "create clarification request to answered question, but user didn't answer question"() {

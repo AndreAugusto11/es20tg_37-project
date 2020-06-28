@@ -38,8 +38,7 @@ public class Justification {
         this.key = justificationDto.getKey();
         this.content = justificationDto.getContent();
 
-        this.user = user;
-        user.addJustification(this);
+        setUser(user);
 
         questionSuggestion.setJustification(this);
 
@@ -54,9 +53,16 @@ public class Justification {
 
     public void setId(Integer id) { this.id = id; }
 
-    public Integer getKey() { return key; }
+    public Integer getKey() {
+        if (this.key == null)
+            setKey(this.questionSuggestion.getKey());
 
-    public void setKey(Integer key) { this.key = key; }
+        return key;
+    }
+
+    public void setKey(Integer key) {
+        this.key = key;
+    }
 
     public String getContent() { return content; }
 
@@ -70,9 +76,24 @@ public class Justification {
 
     public User getUser() { return user; }
 
-    public void setUser(User user) { this.user = user; }
+    public void setUser(User user) {
+        this.user = user;
+        this.user.addJustification(this);
+    }
 
-    public Image getImage() { return image; }
+    public Image getImage() {
+        return image;
+    }
 
-    public void setImage(Image image) { this.image = image; }
+    public void setImage(Image image) {
+        this.image = image;
+
+        if (image != null)
+            image.setJustification(this);
+    }
+
+    public void remove() {
+        user.getJustifications().remove(this);
+        user = null;
+    }
 }

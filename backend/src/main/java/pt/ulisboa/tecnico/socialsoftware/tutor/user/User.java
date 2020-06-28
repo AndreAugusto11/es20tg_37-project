@@ -52,7 +52,7 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectTeacherAnswers;
     private Integer numberOfCorrectInClassAnswers;
     private Integer numberOfCorrectStudentAnswers;
-    private Boolean privateSuggestion;
+    private Boolean privateSuggestionStats;
     private Boolean privateClarificationStats;
     private Boolean privateTournamentsStats;
 
@@ -80,7 +80,7 @@ public class User implements UserDetails, DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "creator", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<Tournament> createdTournaments = new HashSet<>();
   
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval=true)
     private Set<QuestionSuggestion> questionSuggestion = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch=FetchType.LAZY, orphanRemoval=true)
@@ -104,7 +104,7 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfCorrectTeacherAnswers = 0;
         this.numberOfCorrectInClassAnswers = 0;
         this.numberOfCorrectStudentAnswers = 0;
-        this.privateSuggestion = false;
+        this.privateSuggestionStats = false;
         this.privateClarificationStats = false;
         this.privateTournamentsStats = false;
 
@@ -186,9 +186,12 @@ public class User implements UserDetails, DomainEntity {
         this.courseExecutions = courseExecutions;
     }
 
-    public void addCourseExecutions(CourseExecution courseExecutions) {
-        this.courseExecutions.add(courseExecutions);
-        courseExecutions.addUser(this);
+    public Set<Justification> getJustifications() {
+        return justifications;
+    }
+
+    public void setJustifications(Set<Justification> justifications) {
+        this.justifications = justifications;
     }
 
     public Integer getNumberOfTeacherQuizzes() {
@@ -501,7 +504,7 @@ public class User implements UserDetails, DomainEntity {
         this.questionSuggestion.add(questionSuggestion);
     }
 
-    public Integer getNumberOfSuggestions(){
+    public Integer getNumberOfSuggestions() {
         return this.questionSuggestion.size();
     }
 
@@ -511,6 +514,11 @@ public class User implements UserDetails, DomainEntity {
 
     public void addJustification(Justification justification) {
         justifications.add(justification);
+    }
+
+    public void addCreatedTournament(Tournament tournament) {
+        tournaments.add(tournament);
+        createdTournaments.add(tournament);
     }
 
     public Set<Tournament> getCreatedTournaments()
@@ -536,16 +544,19 @@ public class User implements UserDetails, DomainEntity {
         this.privateClarificationStats = privateClarificationStats;
     }
 
-    public Boolean isPrivateSuggestion() {
-        return privateSuggestion;
+    public Boolean isPrivateSuggestionStats() {
+        return privateSuggestionStats;
     }
 
-    public void setPrivateSuggestion(Boolean privateSuggestion) {
-        this.privateSuggestion = privateSuggestion;
+    public void setPrivateSuggestionStats(Boolean privateSuggestionStats) {
+        this.privateSuggestionStats = privateSuggestionStats;
     }
 
-    public Boolean isPrivateTournamentsStats() { return privateTournamentsStats; }
+    public Boolean isPrivateTournamentsStats() {
+        return privateTournamentsStats;
+    }
 
-    public void setPrivateTournamentsStats(Boolean privateTournamentsStats) { this.privateTournamentsStats = privateTournamentsStats; }
-
+    public void setPrivateTournamentsStats(Boolean privateTournamentsStats) {
+        this.privateTournamentsStats = privateTournamentsStats;
+    }
 }

@@ -1,11 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -17,6 +21,8 @@ public class ClarificationRequestAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    private Integer key;
 
     @Enumerated(EnumType.STRING)
     private Type type;
@@ -34,6 +40,9 @@ public class ClarificationRequestAnswer {
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "clarificationRequestAnswer")
+    private Image image;
 
     public ClarificationRequestAnswer() { }
 
@@ -96,6 +105,41 @@ public class ClarificationRequestAnswer {
             this.creationDate = DateHandler.now();
         } else {
             this.creationDate = creationDate;
+        }
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    public void setKey(Integer key) {
+        this.key = key;
+    }
+
+    public Integer getKey() {
+        if (this.key == null)
+            this.generateKeys();
+
+        return key;
+    }
+
+    private void generateKeys() {
+        int max = this.getClarificationRequest().getClarificationRequestAnswer().stream()
+                .filter(clarificationRequestAnswer -> clarificationRequestAnswer.key != null)
+                .map(ClarificationRequestAnswer::getKey)
+                .max(Comparator.comparing(Integer::valueOf))
+                .orElse(0);
+
+        List<ClarificationRequestAnswer> nullKeyClarifications = this.getClarificationRequest().getClarificationRequestAnswer().stream()
+                .filter(clarificationRequestAnswer -> clarificationRequestAnswer.key == null).collect(Collectors.toList());
+
+        for (ClarificationRequestAnswer clarificationRequestAnswer: nullKeyClarifications) {
+            max = max + 1;
+            clarificationRequestAnswer.setKey(max);
         }
     }
 }

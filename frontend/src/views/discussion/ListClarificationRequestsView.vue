@@ -83,8 +83,8 @@
     search: string = '';
 
     headers: object = [
-        { text: 'Clarification', value: 'content', align: 'left', width: '30%' },
-        { text: 'Student Name', value: 'name', align: 'center', width: '20%' },
+        { text: 'Clarification', value: 'content', align: 'justify', width: '40%' },
+        { text: 'Student Name', value: 'name', align: 'center', width: '10%' },
         { text: 'Creation Date', value: 'creationDate', align: 'center', width: '10%' },
         { text: 'Replies', value: 'number', align: 'center', width: '10%' },
         { text: 'Status', value: 'status', align: 'center', width: '10%' },

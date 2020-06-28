@@ -83,7 +83,7 @@ class GetNumberOfTournamentsFromStudentTest extends Specification {
 
     def "Get the number of tournaments created by a student"() {
         when:
-        def result = statsService.getStats(creator.getId(), courseExecution.getId())
+        def result = statsService.getAllStats(user.getId(), courseExecution.getId())
 
         then: "the result should be the number of tournaments that the student created"
         result != null
@@ -91,14 +91,17 @@ class GetNumberOfTournamentsFromStudentTest extends Specification {
     }
 
     def "Get the number of enrolled tournaments from student"() {
-        given: "A student that enrolled in two tournaments"
-        def enroller = new User()
-        enroller.setName(ENROLLER_NAME)
-        enroller.setUsername(ENROLLER_USERNAME)
-        enroller.setKey(2)
-        enroller.setRole(User.Role.STUDENT)
-        enroller.addCourseExecutions(courseExecution)
-        userRepository.save(enroller)
+        given: "Student enrolled in 1 tournament"
+        def user2 = new User("name12", "username12", 2, User.Role.STUDENT)
+        user2.getCourseExecutions().add(courseExecution)
+        user2.setEnrolledCoursesAcronyms(ACRONYM)
+        courseExecution.getUsers().add(user2)
+        userRepository.save(user2)
+        def tournament1 = new Tournament(user2)
+        tournamentRepository.save(tournament1)
+        user.addTournament(tournament1)
+        when: "nothing"
+        def result = statsService.getAllStats(user.getId(), courseExecution.getId())
 
         tournament1.addEnrolledUser(enroller)
         tournament2.addEnrolledUser(enroller)

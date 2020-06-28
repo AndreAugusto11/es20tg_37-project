@@ -59,6 +59,7 @@ public enum ErrorMessage {
     COURSE_TYPE_NOT_DEFINED("The course type is not defined"),
     CLARIFICATION_REQUEST_NOT_DEFINED("Clarification request is not defined"),
     CLARIFICATION_REQUEST_ANSWER_TYPE_NOT_DEFINED("Clarification request answer type is not defined"),
+    CLARIFICATION_REQUEST_ANSWER_NOT_FOUND("Clarification request answer not found with id %d"),
     COURSE_EXECUTION_ACRONYM_IS_EMPTY("The course execution acronym is empty"),
     COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY("The course execution academic term is empty"),
 
@@ -67,6 +68,7 @@ public enum ErrorMessage {
     QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),
     USER_NOT_FOUND("User not found with id %d"),
 
+    CANNOT_DELETE_QUESTION_SUGGESTION("The question suggestion cannot be deleted in a Pending state"),
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
     USERNAME_NOT_FOUND("Username %d not found"),
 
@@ -92,6 +94,8 @@ public enum ErrorMessage {
     QUIZ_NOT_YET_AVAILABLE("This quiz is not yet available"),
     CLARIFICATION_REQUEST_NO_LONGER_AVAILABLE("This clarification request is no longer available"),
     CLARIFICATION_REQUEST_ALREADY_CLOSED("This clarification request is already closed"),
+    CLARIFICATION_REQUEST_ALREADY_HAS_IMAGE("This clarification request already has an image"),
+    CLARIFICATION_REQUEST_ANSWER_ALREADY_HAS_IMAGE("This clarification request already has an image"),
 
     NO_CORRECT_OPTION("Question does not have a correct option"),
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
@@ -116,6 +120,7 @@ public enum ErrorMessage {
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file"),
+    FILE_NOT_DEFINED("The file is not defined"),
 
     USER_IS_TEACHER("This operation is invalid to users of the type teacher"),
     USER_IS_STUDENT("This operation is invalid to users of the type student"),
@@ -134,8 +139,10 @@ public enum ErrorMessage {
     QUESTION_SUGGESTION_ALREADY_ACCEPTED("This suggested question was already accepted"),
     QUESTION_SUGGESTION_ALREADY_REJECTED("This suggested question was already rejected"),
     QUESTION_SUGGESTION_NOT_FOUND("Question suggestion not found with id %d"),
-    QUESTION_SUGGESTION_NOT_REJECTED("Question suggestion with id %d cannot be updated if not rejected"),
-    JUSTIFICATION_MISSING_DATA("Missing information for justification");
+    QUESTION_SUGGESTION_NOT_REJECTED("Cannot change suggestion that is not rejected"),
+    JUSTIFICATION_MISSING_DATA("Missing information for justification"),
+    JUSTIFICATION_MISSING("No justification given"),
+    EMPTY_QUESTION_SUGGESTION("Suggestion has no question");
 
     public final String label;
 

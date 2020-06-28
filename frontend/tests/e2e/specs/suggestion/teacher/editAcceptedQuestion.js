@@ -11,8 +11,6 @@ describe('Edit a question', () => {
     cy.exec('psql -d tutordb -c "' +
       'DELETE FROM questions WHERE title = \'TestEdit\';"');
     cy.exec('psql -d tutordb -c "' +
-      'DELETE FROM users_question_suggestion;"');
-    cy.exec('psql -d tutordb -c "' +
       'DELETE FROM question_suggestions;"');
     cy.exec('psql -d tutordb -c "' +
       'DELETE FROM options WHERE question_id IN (SELECT id FROM questions WHERE title = \'TestEditNew\');"');

@@ -1,17 +1,15 @@
 <template>
-    <v-dialog
-            :value="dialog"
-            @input="$emit('close-dialog')"
-            @keydown.esc="$emit('close-dialog')"
-            max-width="50%"
-            max-height="80%"
-    >
-        <v-card>
-            <v-card-title>
-                <span class="headline">
-                  New Reply
-                </span>
-            </v-card-title>
+  <v-dialog
+    :value="dialog"
+    @input="$emit('close-dialog')"
+    @keydown.esc="$emit('close-dialog')"
+    max-width="50%"
+    max-height="80%"
+  >
+    <v-card>
+      <v-card-title>
+        <span class="headline">New Reply</span>
+      </v-card-title>
 
             <v-card-text class="text-left" v-if="createClarificationRequestAnswer">
                 <v-container grid-list-md fluid>
@@ -27,6 +25,18 @@
                         </v-flex>
                     </v-layout>
                 </v-container>
+                <template>
+                  <v-file-input
+                  class="pr-3"
+                  label="File input"
+                  show-size
+                  outlined
+                  counter
+                  dense
+                  @change="constructImage($event)"
+                  accept="image/*"
+                  />
+                </template>
             </v-card-text>
 
             <v-card-actions>
@@ -50,18 +60,27 @@
 <script lang="ts">
   import { Component, Model, Prop, Vue } from 'vue-property-decorator';
   import RemoteServices from '@/services/RemoteServices';
+  import Image from '@/models/management/Image';
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
   import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 
-  @Component
-  export default class CreateClarificationRequestAnswerDialog extends Vue {
-    @Model('dialog', Boolean) dialog!: boolean;
-    @Prop({ type: ClarificationRequest, required: true }) readonly clarificationRequest!: ClarificationRequest;
+@Component
+export default class CreateClarificationRequestAnswerDialog extends Vue {
+  @Model('dialog', Boolean) dialog!: boolean;
+  @Prop({ type: ClarificationRequest, required: true })
+  readonly clarificationRequest!: ClarificationRequest;
 
-      createClarificationRequestAnswer!: ClarificationRequestAnswer;
+    createClarificationRequestAnswer!: ClarificationRequestAnswer;
+    file: File | null = null;
 
-    created() {
-      this.createClarificationRequestAnswer = new ClarificationRequestAnswer(this.createClarificationRequestAnswer);
+  created() {
+    this.createClarificationRequestAnswer = new ClarificationRequestAnswer(
+      this.createClarificationRequestAnswer
+    );
+  }
+
+    async constructImage(event: File) {
+        this.file = event;
     }
 
     async saveClarificationRequestAnswer() {
@@ -82,6 +101,10 @@
           this.createClarificationRequestAnswer.username = this.$store.getters.getUser.username;
           this.createClarificationRequestAnswer.type = this.$store.getters.isTeacher ? 'TEACHER_ANSWER' : 'STUDENT_ANSWER';
           const result = await RemoteServices.createClarificationRequestAnswer(this.clarificationRequest.id, this.createClarificationRequestAnswer);
+          if (result.id != null && this.file) {
+            result.image = new Image();
+            result.image.url = await RemoteServices.uploadClarificationRequestAnswerImage(result.id, this.file);
+          }
           this.$emit('new-clarification-request-answer', result);
         } catch (error) {
           await this.$store.dispatch('error', error);
@@ -89,9 +112,10 @@
       }
     }
 
-    changeAvailability() {
-        this.clarificationRequest.public = this.clarificationRequest.public ? false : true;
-    }
+  changeAvailability() {
+    this.clarificationRequest.public = this.clarificationRequest.public
+      ? false
+      : true;
   }
-
+}
 </script>

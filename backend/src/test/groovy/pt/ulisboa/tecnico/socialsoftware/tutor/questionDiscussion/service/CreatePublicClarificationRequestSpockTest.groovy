@@ -30,8 +30,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import spock.lang.Shared;
 import spock.lang.Specification;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CLARIFICATION_REQUEST_IS_ALREADY_PUBLIC;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class CreatePublicClarificationRequestSpockTest extends Specification {

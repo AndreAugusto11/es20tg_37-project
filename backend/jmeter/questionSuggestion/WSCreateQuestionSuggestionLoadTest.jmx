@@ -388,7 +388,6 @@
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="query">DELETE FROM options o WHERE question_id IN ( SELECT id FROM questions q WHERE q.type = &apos;SUGGESTION&apos; );
 DELETE FROM questions q WHERE q.type = &apos;SUGGESTION&apos;;
-DELETE FROM users_question_suggestion;
 DELETE FROM question_Suggestions;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
