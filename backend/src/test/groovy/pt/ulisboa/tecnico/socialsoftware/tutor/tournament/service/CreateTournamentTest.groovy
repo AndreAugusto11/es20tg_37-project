@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
@@ -546,36 +546,7 @@ class CreateTournamentTest extends Specification {
 	}
 
     @TestConfiguration
-    static class TournamentServiceCreatTestContextConfiguration {
+	static class LocalBeanConfiguration extends BeanConfiguration {
 
-		@Bean
-		AnswerService AnswerService() {
-			return new AnswerService()
-		}
-
-		@Bean
-		AnswersXmlImport AnswersXmlImport() {
-			return new AnswersXmlImport()
-		}
-
-		@Bean
-		QuestionService QuestionService() {
-			return new QuestionService()
-		}
-
-		@Bean
-		QuizService QuizService() {
-			return new QuizService()
-		}
-
-		@Bean
-		StatementService statementService() {
-			return new StatementService()
-		}
-
-        @Bean
-        TournamentService tournamentService() {
-            return new TournamentService()
-        }
-    }
+	}
 }

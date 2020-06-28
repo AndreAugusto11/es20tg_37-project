@@ -8,7 +8,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
@@ -45,6 +45,9 @@ public class AssessmentService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private CourseService courseService;
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseDto findAssessmentCourseExecution(int assessmentId) {
@@ -208,7 +211,7 @@ public class AssessmentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void resetDemoAssessments() {
-        this.assessmentRepository.findByExecutionCourseId(Demo.COURSE_EXECUTION_ID).stream().filter(assessment -> assessment.getId() > 10).forEach(assessment -> assessmentRepository.delete(assessment));
+        this.assessmentRepository.findByExecutionCourseId(courseService.getDemoCourse().getCourseExecutionId()).stream().filter(assessment -> assessment.getId() > 10).forEach(assessment -> assessmentRepository.delete(assessment));
     }
 
 }

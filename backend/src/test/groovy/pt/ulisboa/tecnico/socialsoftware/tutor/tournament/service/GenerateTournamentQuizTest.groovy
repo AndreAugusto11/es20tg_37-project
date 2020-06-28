@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
@@ -355,36 +356,7 @@ class GenerateTournamentQuizTest extends Specification {
     }
 
     @TestConfiguration
-    static class TournamentServiceCreatTestContextConfiguration {
+    static class LocalBeanConfiguration extends BeanConfiguration {
 
-        @Bean
-        QuestionService QuestionService() {
-            return new QuestionService()
-        }
-
-        @Bean
-        AnswersXmlImport AnswersXmlImport() {
-            return new AnswersXmlImport()
-        }
-
-        @Bean
-        QuizService QuizService() {
-            return new QuizService()
-        }
-
-        @Bean
-        AnswerService AnswerService() {
-            return new AnswerService()
-        }
-
-        @Bean
-        StatementService statementService() {
-            return new StatementService()
-        }
-
-        @Bean
-        TournamentService tournamentService() {
-            return new TournamentService()
-        }
     }
 }

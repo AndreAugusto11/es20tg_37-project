@@ -24,7 +24,8 @@ import Image from '@/models/management/Image';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 50000;
-httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
+httpClient.defaults.baseURL =
+  process.env.VUE_APP_ROOT_API || 'http://localhost:8080';
 httpClient.defaults.headers.post['Content-Type'] = 'application/json';
 httpClient.interceptors.request.use(
   config => {
