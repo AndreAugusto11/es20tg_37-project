@@ -35,6 +35,8 @@ import TournamentResultsView from '@/views/student/tournaments/TournamentResults
 
 Vue.use(Router);
 
+const APP_NAME = process.env.VUE_APP_NAME || '';
+
 let router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
@@ -43,14 +45,14 @@ let router = new Router({
       path: '/',
       name: 'home',
       component: HomeView,
-      meta: { title: process.env.VUE_APP_NAME, requiredAuth: 'None' }
+      meta: { title: APP_NAME, requiredAuth: 'None' }
     },
     {
       path: '/login',
       name: 'login',
       component: LoginView,
       meta: {
-        title: process.env.VUE_APP_NAME + ' - Login',
+        title: APP_NAME + ' - Login',
         requiredAuth: 'None'
       }
     },
@@ -59,7 +61,7 @@ let router = new Router({
       name: 'courses',
       component: CourseSelectionView,
       meta: {
-        title: process.env.VUE_APP_NAME + ' - Course Selection',
+        title: APP_NAME + ' - Course Selection',
         requiredAuth: 'None'
       }
     },
@@ -73,7 +75,7 @@ let router = new Router({
           name: 'questions-management',
           component: QuestionsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Questions',
+            title: APP_NAME + ' - Questions',
             requiredAuth: 'Teacher'
           }
         },
@@ -82,7 +84,7 @@ let router = new Router({
           name: 'student-suggestions-management',
           component: ListQuestionSuggestionsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Questions',
+            title: APP_NAME + ' - Questions',
             requiredAuth: 'Teacher'
           }
         },
@@ -91,7 +93,7 @@ let router = new Router({
           name: 'suggestionTeacher',
           component: QuestionSuggestionView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - View Question Suggestion',
+            title: APP_NAME + ' - View Question Suggestion',
             requiredAuth: 'Teacher'
           }
         },
@@ -100,7 +102,7 @@ let router = new Router({
           name: 'topics-management',
           component: TopicsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Topics',
+            title: APP_NAME + ' - Topics',
             requiredAuth: 'Teacher'
           }
         },
@@ -109,7 +111,7 @@ let router = new Router({
           name: 'quizzes-management',
           component: QuizzesView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Quizzes',
+            title: APP_NAME + ' - Quizzes',
             requiredAuth: 'Teacher'
           }
         },
@@ -118,7 +120,7 @@ let router = new Router({
           name: 'assessments-management',
           component: AssessmentsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Assessment Topics',
+            title: APP_NAME + ' - Assessment Topics',
             requiredAuth: 'Teacher'
           }
         },
@@ -127,7 +129,7 @@ let router = new Router({
           name: 'clarificationRequests-management',
           component: ListClarificationRequestsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Clarification Requests',
+            title: APP_NAME + ' - Clarification Requests',
             requiredAuth: 'Teacher'
           }
         },
@@ -137,7 +139,7 @@ let router = new Router({
           component: ClarificationRequestView,
           props: true,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Discussion Question',
+            title: APP_NAME + ' - Discussion Question',
             requiredAuth: 'Teacher'
           }
         },
@@ -147,7 +149,7 @@ let router = new Router({
           component: TeacherStatsView,
           props: true,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Students Stats',
+            title: APP_NAME + ' - Students Stats',
             requiredAuth: 'Teacher'
           }
         },
@@ -156,7 +158,7 @@ let router = new Router({
           name: 'impexp-management',
           component: ImpExpView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - ImpExp',
+            title: APP_NAME + ' - ImpExp',
             requiredAuth: 'Teacher'
           }
         }
@@ -172,7 +174,7 @@ let router = new Router({
           name: 'create-suggestions',
           component: ListQuestionSuggestionsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Questions',
+            title: APP_NAME + ' - Questions',
             requiredAuth: 'Student'
           }
         },
@@ -181,7 +183,7 @@ let router = new Router({
           name: 'suggestionStudent',
           component: QuestionSuggestionView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - View Question Suggestion',
+            title: APP_NAME + ' - View Question Suggestion',
             requiredAuth: 'Student'
           }
         },
@@ -190,7 +192,7 @@ let router = new Router({
           name: 'available-quizzes',
           component: AvailableQuizzesView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Available Quizzes',
+            title: APP_NAME + ' - Available Quizzes',
             requiredAuth: 'Student'
           }
         },
@@ -199,7 +201,7 @@ let router = new Router({
           name: 'create-quizzes',
           component: CreateQuizzesView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Create Quizzes',
+            title: APP_NAME + ' - Create Quizzes',
             requiredAuth: 'Student'
           }
         },
@@ -208,7 +210,7 @@ let router = new Router({
           name: 'solved-quizzes',
           component: SolvedQuizzesView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Solved Quizzes',
+            title: APP_NAME + ' - Solved Quizzes',
             requiredAuth: 'Student'
           }
         },
@@ -217,7 +219,7 @@ let router = new Router({
           name: 'solve-quiz',
           component: QuizView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Quiz',
+            title: APP_NAME + ' - Quiz',
             requiredAuth: 'Student'
           }
         },
@@ -226,7 +228,7 @@ let router = new Router({
           name: 'quiz-results',
           component: ResultsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Results',
+            title: APP_NAME + ' - Results',
             requiredAuth: 'Student'
           }
         },
@@ -235,7 +237,7 @@ let router = new Router({
           name: 'stats',
           component: StatsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Stats',
+            title: APP_NAME + ' - Stats',
             requiredAuth: 'Student'
           }
         },
@@ -244,7 +246,7 @@ let router = new Router({
           name: 'discussion',
           component: ListClarificationRequestsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Discussion',
+            title: APP_NAME + ' - Discussion',
             requiredAuth: 'Student'
           }
         },
@@ -254,7 +256,7 @@ let router = new Router({
           component: ClarificationRequestView,
           props: true,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Clarification',
+            title: APP_NAME + ' - Clarification',
             requiredAuth: 'Student'
           }
         },
@@ -264,7 +266,7 @@ let router = new Router({
           component: QuestionClarificationRequestsView,
           props: true,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Question Clarifications',
+            title: APP_NAME + ' - Question Clarifications',
             requiredAuth: 'Student'
           }
         },
@@ -273,7 +275,7 @@ let router = new Router({
           name: 'scan',
           component: ScanView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Scan',
+            title: APP_NAME + ' - Scan',
             requiredAuth: 'Student'
           }
         },
@@ -282,7 +284,7 @@ let router = new Router({
           name: 'tournaments',
           component: ListTournamentsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Tournaments',
+            title: APP_NAME + ' - Tournaments',
             requiredAuth: 'Student'
           }
         },
@@ -292,7 +294,7 @@ let router = new Router({
           component: TournamentResultsView,
           props: true,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Tournament Results',
+            title: APP_NAME + ' - Tournament Results',
             requiredAuth: 'Student'
           }
         }
@@ -308,7 +310,7 @@ let router = new Router({
           name: 'courseAdmin',
           component: CoursesView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Manage Courses',
+            title: APP_NAME + ' - Manage Courses',
             requiredAuth: 'Admin'
           }
         },
@@ -317,7 +319,7 @@ let router = new Router({
           name: 'suggestionsAdmin',
           component: ListQuestionSuggestionsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Manage Question Suggestions',
+            title: APP_NAME + ' - Manage Question Suggestions',
             requiredAuth: 'Admin'
           },
           children: [
@@ -329,7 +331,7 @@ let router = new Router({
           name: 'suggestionAdmin',
           component: QuestionSuggestionView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - View Question Suggestion',
+            title: APP_NAME + ' - View Question Suggestion',
             requiredAuth: 'Admin'
           }
         }
