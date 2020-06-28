@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionDiscussion.domain.ClarificationRequestAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -33,12 +34,15 @@ public class UserService {
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
 
+    @Autowired
+    private CourseService courseService;
+
     public User findByUsername(String username) {
-        return this.userRepository.findByUsername(username);
+        return this.userRepository.findByUsernameOptional(username).orElse(null);
     }
 
     public User findByKey(Integer key) {
-        return this.userRepository.findByKey(key);
+        return this.userRepository.findByKeyOptional(key).orElse(null);
     }
 
     public Integer getMaxUserNumber() {
@@ -135,26 +139,29 @@ public class UserService {
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public User getDemoTeacher() {
-        User user = this.userRepository.findByUsername(Demo.TEACHER_USERNAME);
-        if (user == null)
-            return createUser("Demo Teacher", Demo.TEACHER_USERNAME, User.Role.TEACHER);
-        return user;
+        return this.userRepository.findByUsernameOptional(Demo.TEACHER_USERNAME).orElseGet(() -> {
+            User user = createUser("Demo Teacher", Demo.TEACHER_USERNAME, User.Role.TEACHER);
+            user.addCourse(courseService.getDemoCourseExecution());
+            return user;
+        });
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public User getDemoStudent() {
-        User user = this.userRepository.findByUsername(Demo.STUDENT_USERNAME);
-        if (user == null)
-            return createUser("Demo Student", Demo.STUDENT_USERNAME, User.Role.STUDENT);
-        return user;
+        return this.userRepository.findByUsernameOptional(Demo.STUDENT_USERNAME).orElseGet(() -> {
+            User user = createUser("Demo Student", Demo.STUDENT_USERNAME, User.Role.STUDENT);
+            user.addCourse(courseService.getDemoCourseExecution());
+            return user;
+        });
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public User getDemoAdmin() {
-        User user =  this.userRepository.findByUsername(Demo.ADMIN_USERNAME);
-        if (user == null)
-            return createUser("Demo Admin", Demo.ADMIN_USERNAME, User.Role.DEMO_ADMIN);
-        return user;
+        return this.userRepository.findByUsernameOptional(Demo.ADMIN_USERNAME).orElseGet(() -> {
+            User user = createUser("Demo Admin", Demo.ADMIN_USERNAME, User.Role.DEMO_ADMIN);
+            user.addCourse(courseService.getDemoCourseExecution());
+            return user;
+        });
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
