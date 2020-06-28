@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Specification
@@ -55,11 +56,7 @@ class GetCourseExecutionsTest extends Specification {
     }
 
     @TestConfiguration
-    static class ServiceImplTestContextConfiguration {
+    static class LocalBeanConfiguration extends BeanConfiguration {
 
-        @Bean
-        CourseService courseService() {
-            return new CourseService()
-        }
     }
 }

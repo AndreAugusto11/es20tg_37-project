@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
@@ -153,37 +154,7 @@ class CancelTournamentTest extends Specification {
     }
 
     @TestConfiguration
-    static class TournamentServiceCancelTestContextConfiguration {
+    static class LocalBeanConfiguration extends BeanConfiguration {
 
-        @Bean
-        QuestionService QuestionService() {
-            return new QuestionService()
-        }
-
-        @Bean
-        AnswersXmlImport AnswersXmlImport() {
-            return new AnswersXmlImport()
-        }
-
-        @Bean
-        QuizService QuizService() {
-            return new QuizService()
-        }
-
-        @Bean
-        AnswerService AnswerService() {
-            return new AnswerService()
-        }
-
-        @Bean
-        StatementService statementService() {
-            return new StatementService()
-        }
-
-        @Bean
-        TournamentService tournamentService() {
-            return new TournamentService()
-        }
     }
-
 }

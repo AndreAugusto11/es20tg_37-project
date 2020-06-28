@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
@@ -133,16 +134,7 @@ class GetQuestionSuggestionTest extends Specification {
     }
 
     @TestConfiguration
-    static class QuestionSuggestionServiceImplTestContextConfiguration {
+    static class LocalBeanConfiguration extends BeanConfiguration {
 
-        @Bean
-        QuestionSuggestionService questionSuggestionService() {
-            return new QuestionSuggestionService()
-        }
-
-        @Bean
-        QuestionService questionService() {
-            return new QuestionService()
-        }
     }
 }
