@@ -52,7 +52,8 @@ jobs:
         working-directory: frontend
         start: npm start
         wait-on: http://localhost:8081
-        spec: tests/e2e/specs/statistics/*
+        spec: tests/e2e/specs/admin/*
+        spec: tests/e2e/specs/discussion/createClarificationRequest.js
       env:
         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
