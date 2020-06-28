@@ -227,20 +227,20 @@ class GetAnswerClarificationRequestsSpockTest extends Specification {
         ClarificationRequestDto clarificationRequestDto2 = new ClarificationRequestDto(clarificationRequest2);
         ClarificationRequestDto clarificationRequestDto3 = new ClarificationRequestDto(clarificationRequest3);
 
-        list.get(0).getId() == clarificationRequestDto1.getId()
-        list.get(0).getContent() == clarificationRequestDto1.getContent()
-        list.get(0).getName() == clarificationRequestDto1.getName()
-        list.get(0).getStatus() == clarificationRequestDto1.getStatus()
+        list.get(0).getId() == clarificationRequestDto1.getId() || list.get(0).getId() == clarificationRequestDto2.getId() || list.get(0).getId() == clarificationRequestDto3.getId()
+        list.get(0).getContent() == clarificationRequestDto1.getContent() || list.get(0).getContent() == clarificationRequestDto2.getContent() || list.get(0).getContent() == clarificationRequestDto3.getContent()
+        list.get(0).getName() == clarificationRequestDto1.getName() || list.get(0).getName() == clarificationRequestDto2.getName() || list.get(0).getName() == clarificationRequestDto3.getName()
+        list.get(0).getStatus() == clarificationRequestDto1.getStatus() || list.get(0).getStatus() == clarificationRequestDto2.getStatus() || list.get(0).getStatus() == clarificationRequestDto3.getStatus()
 
-        list.get(1).getId() == clarificationRequestDto2.getId()
-        list.get(1).getContent() == clarificationRequestDto2.getContent()
-        list.get(1).getName() == clarificationRequestDto2.getName()
-        list.get(1).getStatus() == clarificationRequestDto2.getStatus()
+        list.get(1).getId() == clarificationRequestDto1.getId() || list.get(1).getId() == clarificationRequestDto2.getId() || list.get(1).getId() == clarificationRequestDto3.getId()
+        list.get(1).getContent() == clarificationRequestDto1.getContent() || list.get(1).getContent() == clarificationRequestDto2.getContent() || list.get(1).getContent() == clarificationRequestDto3.getContent()
+        list.get(1).getName() == clarificationRequestDto1.getName() || list.get(1).getName() == clarificationRequestDto2.getName() || list.get(1).getName() == clarificationRequestDto3.getName()
+        list.get(1).getStatus() == clarificationRequestDto1.getStatus() || list.get(1).getStatus() == clarificationRequestDto2.getStatus() || list.get(1).getStatus() == clarificationRequestDto3.getStatus()
 
-        list.get(2).getId() == clarificationRequestDto3.getId()
-        list.get(2).getContent() == clarificationRequestDto3.getContent()
-        list.get(2).getName() == clarificationRequestDto3.getName()
-        list.get(2).getStatus() == clarificationRequestDto3.getStatus()
+        list.get(2).getId() == clarificationRequestDto1.getId() || list.get(2).getId() == clarificationRequestDto2.getId() || list.get(2).getId() == clarificationRequestDto3.getId()
+        list.get(2).getContent() == clarificationRequestDto1.getContent() || list.get(2).getContent() == clarificationRequestDto2.getContent() || list.get(2).getContent() == clarificationRequestDto3.getContent()
+        list.get(2).getName() == clarificationRequestDto1.getName() || list.get(2).getName() == clarificationRequestDto2.getName() || list.get(2).getName() == clarificationRequestDto3.getName()
+        list.get(2).getStatus() == clarificationRequestDto1.getStatus() || list.get(2).getStatus() == clarificationRequestDto2.getStatus() || list.get(2).getStatus() == clarificationRequestDto3.getStatus()
     }
 
     def "get public clarification request associated to a question when there are more clarification requests associated with the question"() {
@@ -362,15 +362,15 @@ class GetAnswerClarificationRequestsSpockTest extends Specification {
         ClarificationRequestDto clarificationRequestDto1 = new ClarificationRequestDto(clarificationRequest1);
         ClarificationRequestDto clarificationRequestDto2 = new ClarificationRequestDto(clarificationRequest2);
 
-        list.get(0).getId() == clarificationRequestDto1.getId()
-        list.get(0).getContent() == clarificationRequestDto1.getContent()
-        list.get(0).getName() == clarificationRequestDto1.getName()
-        list.get(0).getStatus() == clarificationRequestDto1.getStatus()
+        list.get(0).getId() == clarificationRequestDto1.getId() || list.get(0).getId() == clarificationRequestDto2.getId()
+        list.get(0).getContent() == clarificationRequestDto1.getContent() || list.get(0).getContent() == clarificationRequestDto2.getContent()
+        list.get(0).getName() == clarificationRequestDto1.getName() || list.get(0).getName() == clarificationRequestDto2.getName()
+        list.get(0).getStatus() == clarificationRequestDto1.getStatus() || list.get(0).getStatus() == clarificationRequestDto2.getStatus()
 
-        list.get(1).getId() == clarificationRequestDto2.getId()
-        list.get(1).getContent() == clarificationRequestDto2.getContent()
-        list.get(1).getName() == clarificationRequestDto2.getName()
-        list.get(1).getStatus() == clarificationRequestDto2.getStatus()
+        list.get(1).getId() == clarificationRequestDto1.getId() || list.get(1).getId() == clarificationRequestDto2.getId()
+        list.get(1).getContent() == clarificationRequestDto1.getContent() || list.get(1).getContent() == clarificationRequestDto2.getContent()
+        list.get(1).getName() == clarificationRequestDto1.getName() || list.get(1).getName() == clarificationRequestDto2.getName()
+        list.get(1).getStatus() == clarificationRequestDto1.getStatus() || list.get(1).getStatus() == clarificationRequestDto2.getStatus()
     }
 
     def "get public clarification requests associated to another course execution of another course"() {

@@ -186,6 +186,11 @@ public class User implements UserDetails, DomainEntity {
         this.courseExecutions = courseExecutions;
     }
 
+    public void addCourseExecutions(CourseExecution courseExecutions) {
+        this.courseExecutions.add(courseExecutions);
+        courseExecutions.addUser(this);
+    }
+
     public Set<Justification> getJustifications() {
         return justifications;
     }
@@ -514,11 +519,6 @@ public class User implements UserDetails, DomainEntity {
 
     public void addJustification(Justification justification) {
         justifications.add(justification);
-    }
-
-    public void addCreatedTournament(Tournament tournament) {
-        tournaments.add(tournament);
-        createdTournaments.add(tournament);
     }
 
     public Set<Tournament> getCreatedTournaments()

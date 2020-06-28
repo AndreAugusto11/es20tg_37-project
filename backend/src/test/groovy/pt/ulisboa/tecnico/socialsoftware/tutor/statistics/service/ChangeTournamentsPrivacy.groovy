@@ -72,10 +72,10 @@ class ChangeTournamentsPrivacy extends Specification{
 
     def "check if the privacy value is correctly set"() {
         when:
-        statsService.changeTournamentsStatsPrivacy(user_student.getId())
+        statsService.changeTournamentsStatsPrivacy(user.getId())
 
         then: "tournaments stats are private"
-        user_student.isPrivateTournamentsStats() == true;
+        user.isPrivateTournamentsStats() == true;
     }
 
     @TestConfiguration

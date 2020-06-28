@@ -101,7 +101,7 @@ public class StatsService {
                 .filter(t ->t.canResultsBePublic(executionId))
                 .count();
 
-        int totalNumberEnrolledTournaments = (int) user.getTournaments().stream()
+        int totalNumberEnrolledTournaments = (int) user.getEnrolledTournaments().stream()
                 .filter(t ->t.canResultsBePublic(executionId))
                 .count();
 
@@ -173,7 +173,7 @@ public class StatsService {
                 .filter(t ->t.canResultsBePublic(executionId))
                 .count();
 
-        int totalNumberEnrolledTournaments = (int) user.getTournaments().stream()
+        int totalNumberEnrolledTournaments = (int) user.getEnrolledTournaments().stream()
                 .filter(t ->t.canResultsBePublic(executionId))
                 .count();
 
