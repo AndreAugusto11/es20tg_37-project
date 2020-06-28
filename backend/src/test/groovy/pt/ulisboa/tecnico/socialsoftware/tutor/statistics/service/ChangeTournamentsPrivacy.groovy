@@ -15,11 +15,14 @@ import spock.lang.Specification
 
 @DataJpaTest
 class ChangeTournamentsPrivacy extends Specification{
-    public static final String USERNAME_STUDENT = "username_student"
+
     public static final String COURSE_NAME = "Software Architecture"
-    public static final String CLARIFICATION_CONTENT = "Test"
-    public static final String ACRONYM = "AS1"
-    public static final String ACADEMIC_TERM = "1 SEM"
+    public static final String COURSE_ACRONYM = "SA1"
+    public static final String ACADEMIC_TERM = "First Semester"
+    public static final String CREATOR_NAME = "Creator Name"
+    public static final String CREATOR_USERNAME = "Creator Username"
+    public static final String ENROLLER_NAME = "Enroller Name"
+    public static final String ENROLLER_USERNAME = "Enroller Username"
 
     @Autowired
     StatsService statsService
@@ -33,38 +36,46 @@ class ChangeTournamentsPrivacy extends Specification{
     @Autowired
     CourseExecutionRepository courseExecutionRepository
 
-    def user_student
+    def course = new Course()
+    def courseExecution = new CourseExecution()
+    def user = new User()
 
     def setup() {
-        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        course.setName(COURSE_NAME)
+        course.setType(Course.Type.TECNICO)
         courseRepository.save(course)
 
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecution.setCourse(course)
+        courseExecution.setType(Course.Type.TECNICO)
+        courseExecution.setAcronym(COURSE_ACRONYM)
+        courseExecution.setAcademicTerm(ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
 
-        user_student = new User("name", USERNAME_STUDENT, 1, User.Role.STUDENT)
-        user_student.getCourseExecutions().add(courseExecution)
-        courseExecution.getUsers().add(user_student)
-        userRepository.save(user_student)
+        user.setName(CREATOR_NAME)
+        user.setUsername(CREATOR_USERNAME)
+        user.setKey(1)
+        user.setRole(User.Role.STUDENT)
+        user.addCourseExecutions(courseExecution)
+        userRepository.save(user)
     }
 
-    def "Student changes clarification stats' privacy"() {
-        given: "public clarification stats"
-        user_student.setPrivateTournamentsStats(false)
+    def "Student changes tournament stats privacy"() {
+        given: "public tournament stats"
+        user.setPrivateTournamentsStats(false)
 
         when:
-        statsService.changeTournamentsStatsPrivacy(user_student.getId())
+        statsService.changeTournamentsStatsPrivacy(user.getId())
 
-        then: "clarification stats are private"
-        user_student.isPrivateTournamentsStats() == true;
+        then: "tournament stats are private"
+        user.isPrivateTournamentsStats()
     }
 
     def "check if the privacy value is correctly set"() {
         when:
-        statsService.changeTournamentsStatsPrivacy(user_student.getId())
+        statsService.changeTournamentsStatsPrivacy(user.getId())
 
         then: "tournaments stats are private"
-        user_student.isPrivateTournamentsStats() == true;
+        user.isPrivateTournamentsStats() == true;
     }
 
     @TestConfiguration

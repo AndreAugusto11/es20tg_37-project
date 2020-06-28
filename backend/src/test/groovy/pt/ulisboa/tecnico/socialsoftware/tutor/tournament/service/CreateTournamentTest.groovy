@@ -1,273 +1,556 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service
 
-import org.springframework.context.annotation.Bean
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class CreateTournamentTest extends Specification {
 
-    public static final String TOPIC_ONE = "topicOne"
-    public static final String TOPIC_TWO = "topicTwo"
-    public static final String TOPIC_THREE = "topicThree"
-	public static final Integer	number_of_questions = 5
+	public static final String QUESTION_TITLE = "Question Title"
+	public static final String EXTRA_QUESTION1_TITLE = "Extra 1 Question Title"
+	public static final String EXTRA_QUESTION2_TITLE = "Extra 2 Question Title"
+	public static final String COURSE_NAME = "Software Architecture"
+	public static final String COURSE_ACRONYM = "SA1"
+	public static final String ACADEMIC_TERM = "First Semester"
+	public static final String CREATOR_NAME = "Creator Name"
+	public static final String CREATOR_USERNAME = "Creator Username"
+	public static final String TOPIC1_NAME = "Topic 1 Name"
+	public static final String TOPIC2_NAME = "Topic 2 Name"
+	public static final String TOPIC3_NAME = "Topic 3 Name"
+	public static final String TOPIC_NAME = "Topic Name"
+	public static final String TOURNAMENT_TITLE = "Tournament Title"
+	public static final int NUMBER_OF_QUESTIONS = 1
+	public static final String AVAILABLE_DATE = "2020-01-25T16:30:11Z"
+	public static final String CONCLUSION_DATE = "2020-01-25T17:40:11Z"
+	public static final String RESULTS_DATE = "2020-01-25T17:50:11Z"
 
 	@Autowired
 	TournamentService tournamentService
 
 	@Autowired
+	CourseRepository courseRepository
+
+	@Autowired
+	CourseExecutionRepository courseExecutionRepository
+
+	@Autowired
 	TournamentRepository tournamentRepository
+
+	@Autowired
+	UserRepository userRepository
 
 	@Autowired
 	TopicRepository topicRepository
 
 	@Autowired
-	CourseRepository courseRepository
+	TopicConjunctionRepository topicConjunctionRepository
 
 	@Autowired
-	UserRepository userRepository
+	QuestionRepository questionRepository
 
-	@Shared
-	def student
-	@Shared
-	def topic
-	@Shared
-	def topics
-	@Shared
-	def startTime
-	@Shared
-	def endTime
-	@Shared
-	def formatter
+	def course = new Course()
+	def courseExecution = new CourseExecution()
+	def creator = new User()
+	def topic1 = new Topic()
+	def topic2 = new Topic()
+	def topic3 = new Topic()
+	def question = new Question()
+	def topicConjunction = new TopicConjunction()
 
-	def setup()
-	{
-		student = new User('student', "istStu", 1, User.Role.STUDENT)
-		userRepository.save(student)
-		student = userRepository.findByKey(1)
-
-		topic = new HashSet<Topic>()
-		def tpc = new Topic()
-        tpc.setName(TOPIC_ONE)
-		topic.add(tpc)
-        def topicTwo = new Topic()
-        topicTwo.setName(TOPIC_TWO)
-		def topicThree = new Topic()
-        topicThree.setName(TOPIC_THREE)
-
-		def course = new Course("LEIC", Course.Type.TECNICO)
+	def setup() {
+		course.setName(COURSE_NAME)
+		course.setType(Course.Type.TECNICO)
 		courseRepository.save(course)
-		course = courseRepository.findByNameType("LEIC", "TECNICO").get()
-		tpc.setCourse(course)
-		topicTwo.setCourse(course)
-		topicThree.setCourse(course)
 
-		topics = new HashSet<Topic>()
-		topics.add(tpc)
-		topics.add(topicTwo)
-		topics.add(topicThree)
+		courseExecution.setCourse(course)
+		courseExecution.setType(Course.Type.TECNICO)
+		courseExecution.setAcronym(COURSE_ACRONYM)
+		courseExecution.setAcademicTerm(ACADEMIC_TERM)
+		courseExecutionRepository.save(courseExecution)
 
-		topicRepository.save(tpc);
-		topicRepository.save(topicTwo);
-		topicRepository.save(topicThree);
+		creator.setName(CREATOR_NAME)
+		creator.setUsername(CREATOR_USERNAME)
+		creator.setKey(1)
+		creator.setRole(User.Role.STUDENT)
+		creator.addCourseExecutions(courseExecution)
+		userRepository.save(creator)
 
-		formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
-		startTime = LocalDateTime.now().plusDays(1)
-		startTime.format(formatter)
-        endTime = LocalDateTime.now().plusDays(2)
-		endTime.format(formatter)
+		topic1.setName(TOPIC1_NAME)
+		topic1.setCourse(course)
+		topicRepository.save(topic1)
 
+		topic2.setName(TOPIC2_NAME)
+		topic2.setCourse(course)
+		topicRepository.save(topic2)
+
+		topic3.setName(TOPIC3_NAME)
+		topic3.setCourse(course)
+		topicRepository.save(topic3)
+
+		question.setKey(1)
+		question.setTitle(QUESTION_TITLE)
+		question.setType(Question.Type.NORMAL)
+		question.setStatus(Question.Status.AVAILABLE)
+		question.addTopic(topic1)
+		question.addTopic(topic2)
+		question.addTopic(topic3)
+		questionRepository.save(question)
+
+		topicConjunction.addTopic(topic1)
+		topicConjunction.addTopic(topic2)
+		topicConjunction.addTopic(topic3)
 	}
 
-	def "create a tournament with a student, topic, number of questions and timestamps"()
-	{
-		// create tournament with a student, topic, number of questions and timestamps
-		when:
-		def result = tournamentService.createTournament(student, topic, number_of_questions, startTime, endTime)
+	def "A student creates a tournament with a title, one topic conjunction, number of questions, and dates"() {
+		given: "a topic conjunction dto list with one element"
+		def topicConjunctions = new HashSet()
+		topicConjunctions.add(new TopicConjunctionDto(topicConjunction))
 
-		then: "the returned data is correct"
-		result.getcreatorID() == student.getId()
-		result.getnumQuests() == number_of_questions
-		result.getstartTime() == startTime
-		result.getendTime() == endTime
-		def retTopic = result.gettopics()
-		def iter = retTopic.iterator()
-		def i=0
-		while(iter.hasNext())
-		{
-			iter.next() == topic[i++].getId()
-		}
+		and: "a tournament dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setTitle(TOURNAMENT_TITLE)
+		tournamentDto.setCreatorId(creator.getId())
+		tournamentDto.setCreatorName(creator.getName())
+		tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+		tournamentDto.setAvailableDate(AVAILABLE_DATE)
+		tournamentDto.setConclusionDate(CONCLUSION_DATE)
+		tournamentDto.setResultsDate(RESULTS_DATE)
+		tournamentDto.setStatus(Tournament.Status.ENROLLING)
+		tournamentDto.setTopicConjunctions(topicConjunctions)
+
+		when:
+		tournamentService.createTournament(creator.getId(), courseExecution.getId(), tournamentDto)
+
+		then: "a tournament is created successfully"
+		tournamentRepository.count() == 1L
+		def result = tournamentRepository.findAll().get(0)
+		result.getId() != null
+		result.getCourseExecution() == courseExecution
+		courseExecution.getTournaments() != null
+		courseExecution.getTournaments().size() == 1
+		result.getTitle() == TOURNAMENT_TITLE
+		result.getCreator() != null
+		result.getCreator().getId() == getCreator().getId()
+		result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
+		result.getCreationDate() != null
+		result.getAvailableDate() == DateHandler.toLocalDateTime(AVAILABLE_DATE)
+		result.getConclusionDate() == DateHandler.toLocalDateTime(CONCLUSION_DATE)
+		result.getResultsDate() == DateHandler.toLocalDateTime(RESULTS_DATE)
+		result.getStatus() == Tournament.Status.ENROLLING
+		result.getEnrolledUsers() != null
+		result.getEnrolledUsers().size() == 1
+		creator.getEnrolledTournaments() != null
+		creator.getEnrolledTournaments().size() == 1
+		def resultEnrolled = result.getEnrolledUsers().find()
+		resultEnrolled.getId() == creator.getId()
+
+		and: "the topic conjunction is set successfully"
+		topicConjunctionRepository.count() == 1L
+		def resultTopicConjunctions = result.getTopicConjunctions()
+		resultTopicConjunctions != null
+		resultTopicConjunctions.size() == 1
+		def resultTopicConjunction = resultTopicConjunctions.find()
+		resultTopicConjunction != null
+		resultTopicConjunction.getTournament() == result
+		resultTopicConjunction.getTopics() != null
+		resultTopicConjunction.getTopics().size() == 3
+		resultTopicConjunction.getTopics().contains(topic1)
+		resultTopicConjunction.getTopics().contains(topic2)
+		resultTopicConjunction.getTopics().contains(topic3)
+
+		and: "the tournament question pool has one question"
+		result.getQuestions() != null
+		result.getQuestions().size() == 1
+		def resultQuestion = result.getQuestions().find()
+		resultQuestion != null
+		resultQuestion.getKey() == 1
+		resultQuestion.getTopics() != null
+		resultQuestion.getTopics().size() == 3
 	}
 
-	def "create a tournament with a student, 3 topics, number of questions and timestamps"()
-	{
-		// create tournament with a student, 3 topics, number of questions and timestamps
-		when:
-		def result = tournamentService.createTournament(student, topics, number_of_questions, startTime, endTime)
+	def "A student creates a tournament with three topic conjunctions"() {
+		given: "an extra question to be selected"
+		def extraQuestion1 = new Question()
+		extraQuestion1.setKey(2)
+		extraQuestion1.setTitle(EXTRA_QUESTION1_TITLE)
+		extraQuestion1.setType(Question.Type.NORMAL)
+		extraQuestion1.setStatus(Question.Status.AVAILABLE)
+		extraQuestion1.addTopic(topic1)
+		extraQuestion1.addTopic(topic3)
+		questionRepository.save(extraQuestion1)
 
-		then: "the tournament was created correctly"
-		result.getcreatorID() == student.getId()
-		result.getnumQuests() == number_of_questions
-		result.getstartTime() == startTime
-		result.getendTime() == endTime
-		def retTopic = result.gettopics()
-		def iter = retTopic.iterator()
-		def i=0
-		while(iter.hasNext())
-		{
-			iter.next() == topics[i++].getId()
-		}
+		and: "an extra question to not be selected"
+		def extraQuestion2 = new Question()
+		extraQuestion2.setKey(3)
+		extraQuestion2.setTitle(EXTRA_QUESTION2_TITLE)
+		extraQuestion2.setType(Question.Type.NORMAL)
+		extraQuestion2.setStatus(Question.Status.AVAILABLE)
+		extraQuestion2.addTopic(topic2)
+		questionRepository.save(extraQuestion2)
+
+		and: "two extra topic conjunctions, where one selects 0 questions"
+		def extraTopicConjunction1 = new TopicConjunction()
+		extraTopicConjunction1.addTopic(topic1)
+		extraTopicConjunction1.addTopic(topic3)
+
+		def extraTopicConjunction2 = new TopicConjunction()
+		extraTopicConjunction2.addTopic(topic2)
+		extraTopicConjunction2.addTopic(topic3)
+
+		and: "a topic conjunction dto list with three elements"
+		def topicConjunctions = new HashSet()
+		topicConjunctions.add(new TopicConjunctionDto(topicConjunction))
+		topicConjunctions.add(new TopicConjunctionDto(extraTopicConjunction1))
+		topicConjunctions.add(new TopicConjunctionDto(extraTopicConjunction2))
+
+		and: "a tournament dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setTitle(TOURNAMENT_TITLE)
+		tournamentDto.setCreatorId(creator.getId())
+		tournamentDto.setCreatorName(creator.getName())
+		tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+		tournamentDto.setAvailableDate(AVAILABLE_DATE)
+		tournamentDto.setConclusionDate(CONCLUSION_DATE)
+		tournamentDto.setResultsDate(RESULTS_DATE)
+		tournamentDto.setStatus(Tournament.Status.ENROLLING)
+		tournamentDto.setTopicConjunctions(topicConjunctions)
+
+		when:
+		tournamentService.createTournament(creator.getId(), courseExecution.getId(), tournamentDto)
+
+		then: "a tournament is created successfully"
+		tournamentRepository.count() == 1L
+		def result = tournamentRepository.findAll().get(0)
+		result.getId() != null
+		result.getCourseExecution() == courseExecution
+		courseExecution.getTournaments() != null
+		courseExecution.getTournaments().size() == 1
+		result.getTitle() == TOURNAMENT_TITLE
+		result.getCreator() != null
+		result.getCreator().getId() == getCreator().getId()
+		result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
+		result.getCreationDate() != null
+		result.getAvailableDate() == DateHandler.toLocalDateTime(AVAILABLE_DATE)
+		result.getConclusionDate() == DateHandler.toLocalDateTime(CONCLUSION_DATE)
+		result.getResultsDate() == DateHandler.toLocalDateTime(RESULTS_DATE)
+		result.getStatus() == Tournament.Status.ENROLLING
+		result.getEnrolledUsers() != null
+		result.getEnrolledUsers().size() == 1
+		creator.getEnrolledTournaments() != null
+		creator.getEnrolledTournaments().size() == 1
+		def resultEnrolled = result.getEnrolledUsers().find()
+		resultEnrolled.getId() == creator.getId()
+
+		and: "the topic conjunction is set successfully"
+		topicConjunctionRepository.count() == 3L
+		def resultTopicConjunctions = result.getTopicConjunctions()
+		resultTopicConjunctions != null
+		resultTopicConjunctions.size() == 3
+		resultTopicConjunctions.forEach({ tc -> tc.getTournament() == result })
+
+		and: "the tournament question pool has two questions"
+		result.getQuestions() != null
+		result.getQuestions().size() == 2
 	}
 
-	def "save a created tournament"()
-	{
-		// the tournament should be saved within the database
-		given: "a tournament"
-		def tournament = new Tournament(student)
+	def "A created tournament status is set to enrolling when given no status"() {
+		given: "a topic conjunction dto list with one element"
+		def topicConjunctions = new HashSet()
+		topicConjunctions.add(new TopicConjunctionDto(topicConjunction))
+
+		and: "a tournament dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setTitle(TOURNAMENT_TITLE)
+		tournamentDto.setCreatorId(creator.getId())
+		tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+		tournamentDto.setAvailableDate(AVAILABLE_DATE)
+		tournamentDto.setConclusionDate(CONCLUSION_DATE)
+		tournamentDto.setResultsDate(RESULTS_DATE)
+		tournamentDto.setTopicConjunctions(topicConjunctions)
 
 		when:
-		tournamentRepository.save(tournament)
-		def res = tournamentService.findTournamentById(tournament.getid())
+		tournamentService.createTournament(creator.getId(), courseExecution.getId(), tournamentDto)
 
-		then:
-		res.getid() == tournament.getid()
+		then: "a tournament is created successfully"
+		tournamentRepository.count() == 1L
+		def result = tournamentRepository.findAll().get(0)
+		result.getId() != null
+		result.getStatus() == Tournament.Status.ENROLLING
 	}
 
-	def "user is empty"()
-	{
-		// an exception should be thrown
-		when:
-		tournamentService.createTournament(null, topic, number_of_questions, startTime, endTime)
+	def "A created tournament results date when not specified is equal to the given conclusion date"() {
+		given: "a topic conjunction dto list with one element"
+		def topicConjunctions = new HashSet()
+		topicConjunctions.add(new TopicConjunctionDto(topicConjunction))
 
-		then:
+		and: "a tournament dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setTitle(TOURNAMENT_TITLE)
+		tournamentDto.setCreatorId(creator.getId())
+		tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+		tournamentDto.setAvailableDate(AVAILABLE_DATE)
+		tournamentDto.setConclusionDate(CONCLUSION_DATE)
+		tournamentDto.setStatus(Tournament.Status.ENROLLING)
+		tournamentDto.setTopicConjunctions(topicConjunctions)
+
+		when:
+		tournamentService.createTournament(creator.getId(), courseExecution.getId(), tournamentDto)
+
+		then: "a tournament is created successfully"
+		tournamentRepository.count() == 1L
+		def result = tournamentRepository.findAll().get(0)
+		result.getId() != null
+		result.getResultsDate() == DateHandler.toLocalDateTime(CONCLUSION_DATE)
+	}
+
+	def "Cannot create a tournament with an invalid user id"() {
+		given: "a topic conjunction dto list with one element"
+		def topicConjunctions = new HashSet()
+		topicConjunctions.add(new TopicConjunctionDto(topicConjunction))
+
+		and: "a tournament dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setTitle(TOURNAMENT_TITLE)
+		tournamentDto.setCreatorId(creator.getId())
+		tournamentDto.setCreatorName(creator.getName())
+		tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+		tournamentDto.setAvailableDate(AVAILABLE_DATE)
+		tournamentDto.setConclusionDate(CONCLUSION_DATE)
+		tournamentDto.setResultsDate(RESULTS_DATE)
+		tournamentDto.setStatus(Tournament.Status.ENROLLING)
+		tournamentDto.setTopicConjunctions(topicConjunctions)
+
+		when:
+		tournamentService.createTournament(0, courseExecution.getId(), tournamentDto)
+
+		then: "an exception is thrown"
 		def exception = thrown(TutorException)
-		exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_USER
+		exception.getErrorMessage() == USER_NOT_FOUND
 	}
 
-	def "topic is empty"()
-	{
-		// an exception should be thrown
-		when:
-		tournamentService.createTournament(student, null, number_of_questions, startTime, endTime)
+	def "Cannot create a tournament with an invalid course execution id"() {
+		given: "a topic conjunction dto list with one element"
+		def topicConjunctions = new HashSet()
+		topicConjunctions.add(new TopicConjunctionDto(topicConjunction))
 
-		then:
+		and: "a tournament dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setTitle(TOURNAMENT_TITLE)
+		tournamentDto.setCreatorId(creator.getId())
+		tournamentDto.setCreatorName(creator.getName())
+		tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+		tournamentDto.setAvailableDate(AVAILABLE_DATE)
+		tournamentDto.setConclusionDate(CONCLUSION_DATE)
+		tournamentDto.setResultsDate(RESULTS_DATE)
+		tournamentDto.setStatus(Tournament.Status.ENROLLING)
+		tournamentDto.setTopicConjunctions(topicConjunctions)
+
+		when:
+		tournamentService.createTournament(creator.getId(), 0, tournamentDto)
+
+		then: "an exception is thrown"
 		def exception = thrown(TutorException)
-		exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NULL_TOPIC
+		exception.getErrorMessage() == COURSE_EXECUTION_NOT_FOUND
 	}
 
-	def "null static arguments" ()
-	{
-		// an exception should be thrown
+	def "Cannot create a tournament without a tournament dto"() {
 		when:
-		tournamentService.createTournament(student, topic, num, startT, endT)
+		tournamentService.createTournament(creator.getId(), courseExecution.getId(), null)
 
-		then:
+		then: "an exception is thrown"
+		def exception = thrown(TutorException)
+		exception.getErrorMessage() == INVALID_NULL_ARGUMENTS_TOURNAMENT_DTO
+	}
+
+	def "Cannot create a tournament given a topic conjunction with invalid topic ids"() {
+		given: "an invalid topic"
+		def invalidTopic = new Topic()
+		invalidTopic.setCourse(course)
+		invalidTopic.setName(TOPIC_NAME)
+		topicRepository.save(invalidTopic)
+
+		and: "a topic conjunction with the invalid topic"
+		def invalidTopicConjunction = new TopicConjunction()
+		invalidTopicConjunction.addTopic(topic1)
+		invalidTopicConjunction.addTopic(invalidTopic)
+		topicConjunctionRepository.save(invalidTopicConjunction)
+
+		topicRepository.delete(invalidTopic)
+
+		and: "an invalid topic conjunction dto list"
+		def topicConjunctions = new HashSet()
+		topicConjunctions.add(new TopicConjunctionDto(invalidTopicConjunction))
+
+		and: "a tournament dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setTitle(TOURNAMENT_TITLE)
+		tournamentDto.setCreatorId(creator.getId())
+		tournamentDto.setCreatorName(creator.getName())
+		tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+		tournamentDto.setAvailableDate(AVAILABLE_DATE)
+		tournamentDto.setConclusionDate(CONCLUSION_DATE)
+		tournamentDto.setResultsDate(RESULTS_DATE)
+		tournamentDto.setStatus(Tournament.Status.ENROLLING)
+		tournamentDto.setTopicConjunctions(topicConjunctions)
+
+		when:
+		tournamentService.createTournament(creator.getId(), courseExecution.getId(), tournamentDto)
+
+		then: "an exception is thrown"
+		def exception = thrown(TutorException)
+		exception.getErrorMessage() == TOPIC_NOT_FOUND
+	}
+
+	def "Cannot create a tournament given an empty topic conjunction"() {
+		given: "an empty topic conjunction dto list"
+		def topicConjunctions = new HashSet()
+
+		and: "a tournament dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setTitle(TOURNAMENT_TITLE)
+		tournamentDto.setCreatorId(creator.getId())
+		tournamentDto.setCreatorName(creator.getName())
+		tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+		tournamentDto.setAvailableDate(AVAILABLE_DATE)
+		tournamentDto.setConclusionDate(CONCLUSION_DATE)
+		tournamentDto.setResultsDate(RESULTS_DATE)
+		tournamentDto.setStatus(Tournament.Status.ENROLLING)
+		tournamentDto.setTopicConjunctions(topicConjunctions)
+
+		when:
+		tournamentService.createTournament(creator.getId(), courseExecution.getId(), tournamentDto)
+
+		then: "an exception is thrown"
+		def exception = thrown(TutorException)
+		exception.getErrorMessage() == TOURNAMENT_HAS_NO_TOPICS
+	}
+
+	def "Cannot create a tournament without a title"() {
+		given: "a topic conjunction dto list with one element"
+		def topicConjunctions = new HashSet()
+		topicConjunctions.add(new TopicConjunctionDto(topicConjunction))
+
+		and: "a tournament dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setCreatorId(creator.getId())
+		tournamentDto.setCreatorName(creator.getName())
+		tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+		tournamentDto.setAvailableDate(AVAILABLE_DATE)
+		tournamentDto.setConclusionDate(CONCLUSION_DATE)
+		tournamentDto.setResultsDate(RESULTS_DATE)
+		tournamentDto.setStatus(Tournament.Status.ENROLLING)
+		tournamentDto.setTopicConjunctions(topicConjunctions)
+
+		when:
+		tournamentService.createTournament(creator.getId(), courseExecution.getId(), tournamentDto)
+
+		then: "an exception is thrown"
+		def exception = thrown(TutorException)
+		exception.getErrorMessage() == INVALID_TITLE_FOR_TOURNAMENT
+	}
+
+	@Unroll
+	def "Cannot create a tournament given a number of questions #test"() {
+		given: "a topic conjunction dto list with one element"
+		def topicConjunctions = new HashSet()
+		topicConjunctions.add(new TopicConjunctionDto(topicConjunction))
+
+		and: "a tournament dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setTitle(TOURNAMENT_TITLE)
+		tournamentDto.setCreatorId(creator.getId())
+		tournamentDto.setCreatorName(creator.getName())
+		tournamentDto.setNumberOfQuestions(num_questions)
+		tournamentDto.setAvailableDate(AVAILABLE_DATE)
+		tournamentDto.setConclusionDate(CONCLUSION_DATE)
+		tournamentDto.setResultsDate(RESULTS_DATE)
+		tournamentDto.setStatus(Tournament.Status.ENROLLING)
+		tournamentDto.setTopicConjunctions(topicConjunctions)
+
+		when:
+		tournamentService.createTournament(creator.getId(), courseExecution.getId(), tournamentDto)
+
+		then: "an exception is thrown"
 		def exception = thrown(TutorException)
 		exception.getErrorMessage() == errorMessage
 
 		where:
-		num 				|	startT					| endT		|| errorMessage
-		null				| 	startTime				| endTime	|| ErrorMessage.TOURNAMENT_NULL_NUM_QUESTS
-		number_of_questions	| 	null					| endTime	|| ErrorMessage.TOURNAMENT_NULL_STARTTIME
-		number_of_questions	| 	startTime				| null		|| ErrorMessage.TOURNAMENT_NULL_ENDTIME
+		test                                          | num_questions || errorMessage
+		"inferior to zero"                            | -1			  || INVALID_NUMBER_OF_QUESTIONS
+		"equal to zero"                               | 0			  || INVALID_NUMBER_OF_QUESTIONS
+		"superior to the pool of available questions" | 2 	          || NOT_ENOUGH_QUESTIONS
 	}
 
-	def "non-saved student user is invalid"()
-	{
-		// an exception should be thrown
-		given: "a non-saved"
-		def user = new User('user', "user", 3, User.Role.STUDENT)
+	@Unroll
+	def "Cannot create a tournament given #test"() {
+		given: "a topic conjunction dto list with one element"
+		def topicConjunctions = new HashSet()
+		topicConjunctions.add(new TopicConjunctionDto(topicConjunction))
+
+		and: "a tournament dto"
+		def tournamentDto = new TournamentDto()
+		tournamentDto.setTitle(TOURNAMENT_TITLE)
+		tournamentDto.setCreatorId(creator.getId())
+		tournamentDto.setCreatorName(creator.getName())
+		tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+		tournamentDto.setAvailableDate(available_date)
+		tournamentDto.setConclusionDate(conclusion_date)
+		tournamentDto.setResultsDate(results_date)
+		tournamentDto.setStatus(Tournament.Status.ENROLLING)
+		tournamentDto.setTopicConjunctions(topicConjunctions)
 
 		when:
-		tournamentService.createTournament(user, topic, number_of_questions, startTime, endTime)
+		tournamentService.createTournament(creator.getId(), courseExecution.getId(), tournamentDto)
 
-		then:
+		then: "an exception is thrown"
 		def exception = thrown(TutorException)
-		exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NON_VALID_USER
+		exception.getErrorMessage() == errorMessage
+
+		where:
+		test                                      | available_date  | conclusion_date | results_date    || errorMessage
+		"an invalid available date"               | null            | CONCLUSION_DATE | RESULTS_DATE    || INVALID_AVAILABLE_DATE_FOR_TOURNAMENT
+		"an invalid conclusion date"              | AVAILABLE_DATE  | null            | RESULTS_DATE    || INVALID_CONCLUSION_DATE_FOR_TOURNAMENT
+		"a conclusion date before available date" | CONCLUSION_DATE | AVAILABLE_DATE  | RESULTS_DATE    || INVALID_CONCLUSION_DATE_FOR_TOURNAMENT
+		"a results date before available date"    | CONCLUSION_DATE | RESULTS_DATE    | AVAILABLE_DATE  || INVALID_RESULTS_DATE_FOR_TOURNAMENT
+		"a results date before conclusion date"   | AVAILABLE_DATE  | RESULTS_DATE    | CONCLUSION_DATE || INVALID_RESULTS_DATE_FOR_TOURNAMENT
 	}
 
-	def "number_of_questions is invalid"()
-	{
-		// an exception should be thrown
-		given: "a non-positive number"
-		def num = 0
-
-		when:
-		tournamentService.createTournament(student, topic, num, startTime, endTime)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_NUM_QUESTS
-	}
-
-	def "startTime is invalid"()
-	{
-		// an exception should be thrown
-		given: "an a startTime before the current timeStamp"
-		def format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
-		def start = LocalDateTime.now().plusDays(-1)
-		start.format(format)
-
-		when:
-		tournamentService.createTournament(student, topic, number_of_questions, start, endTime)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_STARTTIME
-	}
-
-	def "startTime is equal to endTime"()
-	{
-		// an exception should be thrown
-
-		when:
-		tournamentService.createTournament(student, topic, number_of_questions, startTime, startTime)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_TIMEFRAME
-	}
-
-	def "startTime is after endTime"()
-	{
-		// an exception should be thrown
-		when:
-		tournamentService.createTournament(student, topic, number_of_questions, endTime, startTime)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_INVALID_TIMEFRAME
-	}
-
-	@TestConfiguration
+    @TestConfiguration
     static class TournamentServiceCreatTestContextConfiguration {
 
 		@Bean
-		QuestionService QuestionService() {
-			return new QuestionService()
+		AnswerService AnswerService() {
+			return new AnswerService()
 		}
 
 		@Bean
@@ -276,13 +559,13 @@ class CreateTournamentTest extends Specification {
 		}
 
 		@Bean
-		QuizService QuizService() {
-			return new QuizService()
+		QuestionService QuestionService() {
+			return new QuestionService()
 		}
 
 		@Bean
-		AnswerService AnswerService() {
-			return new AnswerService()
+		QuizService QuizService() {
+			return new QuizService()
 		}
 
 		@Bean
@@ -290,9 +573,9 @@ class CreateTournamentTest extends Specification {
 			return new StatementService()
 		}
 
-		@Bean
-		TournamentService tournamentService() {
-			return new TournamentService()
-		}
+        @Bean
+        TournamentService tournamentService() {
+            return new TournamentService()
+        }
     }
 }

@@ -1,38 +1,46 @@
+import { ISOtoString } from '@/services/ConvertDateService';
+import TopicConjunction from '@/models/management/TopicConjunction';
+
 export class Tournament {
   id: number | null = null;
-  creatorID: number | null = null;
-  numQuests: number | null = null;
-  quizID: number | null = null;
-  topics: number[] | null = null;
-  topicsName: string[] | null = null;
+  title: string | null = null;
+  creatorId: number | null = null;
+  creatorName: string | null = null;
+  numberOfQuestions!: number;
+  numberOfAvailableQuestions: number | null = null;
+  creationDate: string | null = null;
+  availableDate!: string;
+  conclusionDate!: string;
+  resultsDate: string | null = null;
+  status: string | null = null;
+  topicConjunctions: TopicConjunction[] = [];
   enrolledStudentsIds!: number[];
-  startTime!: number[];
-  endTime!: number[];
-  startTimeString!: string;
-  endTimeString!: string;
-  status!: string;
+  enrolledStudentsNames!: string[];
 
   constructor(jsonObj?: Tournament) {
-    if(jsonObj) {
+    if (jsonObj) {
       this.id = jsonObj.id;
-      this.creatorID = jsonObj.creatorID;
-      this.numQuests = jsonObj.numQuests;
-      this.quizID = jsonObj.quizID;
-      this.enrolledStudentsIds = jsonObj.enrolledStudentsIds;
-      this.topics = jsonObj.topics;
-      this.topicsName = jsonObj.topicsName;
-      this.startTime = jsonObj.startTime;
-      this.endTime = jsonObj.endTime;
-      this.getDateFormatted(jsonObj);
+      this.title = jsonObj.title;
+      this.creatorId = jsonObj.creatorId;
+      this.creatorName = jsonObj.creatorName;
+      this.numberOfQuestions = jsonObj.numberOfQuestions;
+      this.numberOfAvailableQuestions = jsonObj.numberOfAvailableQuestions;
+      if (jsonObj.creationDate)
+        this.creationDate = ISOtoString(jsonObj.creationDate);
+      if (jsonObj.availableDate)
+        this.availableDate = ISOtoString(jsonObj.availableDate);
+      if (jsonObj.conclusionDate)
+        this.conclusionDate = ISOtoString(jsonObj.conclusionDate);
+      if (jsonObj.resultsDate)
+        this.resultsDate = ISOtoString(jsonObj.resultsDate);
       this.status = jsonObj.status;
+      this.topicConjunctions = jsonObj.topicConjunctions.map(
+        (topicConjunctionsDto: TopicConjunction) => {
+          return new TopicConjunction(topicConjunctionsDto);
+        }
+      );
+      this.enrolledStudentsIds = jsonObj.enrolledStudentsIds;
+      this.enrolledStudentsNames = jsonObj.enrolledStudentsNames;
     }
   }
-
-  getDateFormatted(t: Tournament):void{
-    let start = String(t.startTime).split(',');
-    let end = String(t.endTime).split(',');
-    this.startTimeString = start[0] + '-' + start[1] + '-' + start[2] + ' ' + start[3]+ ':'+start[4];
-    this.endTimeString = end[0] + '-' + end[1] + '-' + end[2] + ' ' + end[3]+ ':'+end[4];
-  }
-
 }

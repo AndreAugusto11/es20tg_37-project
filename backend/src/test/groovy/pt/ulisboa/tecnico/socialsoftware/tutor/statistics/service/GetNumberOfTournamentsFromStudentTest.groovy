@@ -4,16 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statistics.StatsService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
+
+import java.time.LocalDateTime
 
 @DataJpaTest
 class GetNumberOfTournamentsFromStudentTest extends Specification {
@@ -23,6 +27,11 @@ class GetNumberOfTournamentsFromStudentTest extends Specification {
     public static final String ACADEMIC_TERM = "1 SEM"
     public static final String OPTION_CONTENT = "optionId content"
     public static final String URL = "URL"
+    public static final String TOURNAMENT_TITLE = "Tournament Title"
+    public static final LocalDateTime TOURNAMENT_AVAILABLE_DATE = DateHandler.now().minusDays(1)
+    public static final LocalDateTime TOURNAMENT_RESULTS_DATE = DateHandler.now()
+    public static final LocalDateTime TOURNAMENT_QUIZ_ANSWER_CREATION_DATE = DateHandler.now().minusMinutes(10)
+    public static final LocalDateTime TOURNAMENT_QUIZ_ANSWER_DATE = TOURNAMENT_QUIZ_ANSWER_CREATION_DATE.plusMinutes(5)
 
     @Autowired
     StatsService statsService
@@ -60,10 +69,21 @@ class GetNumberOfTournamentsFromStudentTest extends Specification {
 
     def "Get the number of tournaments created by student"() {
         given:"Student created 2 tournaments"
-        def tournament1 = new Tournament(user)
-        def tournament2 = new Tournament(user)
+        def tournament1 = new Tournament()
+        tournament1.setTitle(TOURNAMENT_TITLE)
+        tournament1.setCourseExecution(courseExecution)
+        tournament1.setCreator(user)
+        tournament1.setAvailableDate(TOURNAMENT_AVAILABLE_DATE)
+        tournament1.setResultsDate(TOURNAMENT_RESULTS_DATE)
+        tournament1.setStatus(Tournament.Status.CONCLUDED)
         tournamentRepository.save(tournament1)
-        tournamentRepository.save(tournament2)
+        def tournament2 = new Tournament()
+        tournament2.setTitle(TOURNAMENT_TITLE)
+        tournament2.setCourseExecution(courseExecution)
+        tournament2.setCreator(user)
+        tournament2.setAvailableDate(TOURNAMENT_AVAILABLE_DATE)
+        tournament2.setResultsDate(TOURNAMENT_RESULTS_DATE)
+        tournament2.setStatus(Tournament.Status.CONCLUDED)
         user.addCreatedTournament(tournament1)
         user.addCreatedTournament(tournament2)
         when:
@@ -80,9 +100,15 @@ class GetNumberOfTournamentsFromStudentTest extends Specification {
         user2.setEnrolledCoursesAcronyms(ACRONYM)
         courseExecution.getUsers().add(user2)
         userRepository.save(user2)
-        def tournament1 = new Tournament(user2)
+        def tournament1 = new Tournament()
+        tournament1.setTitle(TOURNAMENT_TITLE)
+        tournament1.setCourseExecution(courseExecution)
+        tournament1.setCreator(user2)
+        tournament1.setAvailableDate(TOURNAMENT_AVAILABLE_DATE)
+        tournament1.setResultsDate(TOURNAMENT_RESULTS_DATE)
+        tournament1.setStatus(Tournament.Status.ENROLLING)
         tournamentRepository.save(tournament1)
-        user.addTournament(tournament1)
+        user.addEnrolledTournament(tournament1)
         when: "nothing"
         def result = statsService.getAllStats(user.getId(), courseExecution.getId())
 

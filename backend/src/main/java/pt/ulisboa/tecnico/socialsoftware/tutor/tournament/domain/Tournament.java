@@ -1,194 +1,263 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 
 import java.util.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "tournaments")
 public class Tournament {
+
+	private static final int MINIMUM_ENROLLMENTS = 2;
+
 	public enum Status {
-		OPEN, ONGOING, CLOSED, CANCELLED
+		ONGOING, ENROLLING, CONCLUDED, CANCELLED
 	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@ManyToMany
-	private Set<User> users = new HashSet<>();
+	@ManyToOne
+	@JoinColumn(name = "course_execution_id")
+	private CourseExecution courseExecution;
+
+	@Column(nullable = false)
+	private String title;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User creator;
 
-	@OneToOne
-	private Quiz quiz;
+	@Column(name = "number_of_questions", columnDefinition = "integer default 0")
+	private int numberOfQuestions;
 
-	@ManyToMany(cascade = CascadeType.ALL)
-	private Set<Topic> topics = new HashSet<>();
+	@Column(name = "creation_date")
+	private LocalDateTime creationDate;
 
-	@Column(name = "number_of_questions", columnDefinition = "integer default 1")
-	private int numQuests = 1;
+	@Column(name = "available_date")
+	private LocalDateTime availableDate;
 
-	@Column(name = "start_date")
-	private LocalDateTime startTime;
+	@Column(name = "conclusion_date")
+	private LocalDateTime conclusionDate;
 
-	@Column(name = "end_date")
-	private LocalDateTime endTime;
+	@Column(name = "results_date")
+	private LocalDateTime resultsDate;
 
 	@Enumerated(EnumType.STRING)
-	private Status status = Status.OPEN;
+	private Status status = Status.ENROLLING;
 
-	public Tournament(){}
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "tournament", fetch=FetchType.EAGER, orphanRemoval=true)
+	private Set<TopicConjunction> topicConjunctions = new HashSet<>();
 
-	public Tournament(User creator)
-	{
+	@ManyToMany
+	private Set<User> enrolledUsers = new HashSet<>();
 
-		if(creator == null) throw new TutorException(ErrorMessage.TOURNAMENT_NON_VALID_USER, creator.getId());
+	@OneToOne(cascade = CascadeType.ALL)
+	private Quiz quiz;
 
-		users.add(creator);
-		this.creator = creator;
-	}
+	public Tournament() {}
 
-	public Tournament(User student, Set<Topic> topics, int number_of_questions, LocalDateTime startTimeArg, LocalDateTime endTimeArg)
-	{
-		creator = student;
-		users.add(creator);
-		topics.addAll(topics);
-		numQuests = number_of_questions;
-		startTime = startTimeArg;
-		endTime = endTimeArg;
-		this.checkConsistent();
-		if (startTime.isAfter(LocalDateTime.now()))
-		{
-			status = Status.OPEN;
-		}
-	}
+	public Tournament(CourseExecution courseExecution, User creator, Set<TopicConjunction> topicConjunctions, TournamentDto tournamentDto) {
+		setCourseExecution(courseExecution);
+		setTitle(tournamentDto.getTitle());
+		setCreator(creator);
+		setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
+		setCreationDate(DateHandler.toLocalDateTime(tournamentDto.getCreationDate()));
+		setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
+		setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
+		setResultsDate(DateHandler.toLocalDateTime(tournamentDto.getResultsDate()));
 
-	public Integer getid()
-	{
-		return id;
-	}
-
-	public User getcreator()
-	{
-		return creator;
-	}
-
-	public Quiz getquiz() {return quiz;}
-
-	public Set<User> getusers()
-	{
-		return this.users;
-	}
-
-	public Set<Topic> gettopics()
-	{
-		return topics;
-	}
-
-	public int getnumQuests()
-	{
-		return numQuests;
-	}
-
-	public LocalDateTime getstartTime()
-	{
-		return startTime;
-	}
-
-	public LocalDateTime getendTime()
-	{
-		return endTime;
-	}
-
-	public Status getstatus()
-	{
-		return status;
-	}
-
-	public void setcreator(User user)
-	{
-		if(user == null) throw new TutorException(TOURNAMENT_NULL_USER);
-
-		if (user.getRole() == User.Role.STUDENT)
-		{
-			creator = user;
-		}
+		if (tournamentDto.getStatus() == null)
+			setStatus(Status.ENROLLING);
 		else
-		{
-			throw( new TutorException(ErrorMessage.TOURNAMENT_NON_VALID_USER, user.getId()));
+			setStatus(Tournament.Status.valueOf(tournamentDto.getStatus()));
+
+		setTopicConjunctions(topicConjunctions);
+
+		if (numberOfQuestions > getQuestions().size())
+			throw new TutorException(NOT_ENOUGH_QUESTIONS);
+	}
+
+	public Integer getId() { return this.id; }
+
+	public CourseExecution getCourseExecution() {
+		return courseExecution;
+	}
+
+	public void setCourseExecution(CourseExecution courseExecution) {
+		this.courseExecution = courseExecution;
+		courseExecution.addTournament(this);
+	}
+
+	public String getTitle() { return title; }
+
+	public void setTitle(String title) {
+		if (title == null || title.isBlank())
+			throw new TutorException(INVALID_TITLE_FOR_TOURNAMENT);
+
+		this.title = title;
+	}
+
+	public User getCreator() {
+		return this.creator;
+	}
+
+	public void setCreator(User creator) {
+		if (creator == null)
+			throw new TutorException(TOURNAMENT_NULL_USER);
+
+		this.creator = creator;
+		creator.addCreatedTournament(this);
+
+		this.enrolledUsers.add(creator);
+		creator.addEnrolledTournament(this);
+	}
+
+	public int getNumberOfQuestions() {
+		return numberOfQuestions;
+	}
+
+	public void setNumberOfQuestions(int numberOfQuestions) {
+		if (numberOfQuestions <= 0)
+			throw new TutorException(INVALID_NUMBER_OF_QUESTIONS);
+		this.numberOfQuestions = numberOfQuestions;
+	}
+
+	public LocalDateTime getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(LocalDateTime creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public LocalDateTime getAvailableDate() {
+		return availableDate;
+	}
+
+	// TODO Does it make sense for availableDate to be now? Maybe change 'DateHandler.now()' to 10 minutes in the future
+	public void setAvailableDate(LocalDateTime availableDate) {
+		if (availableDate == null) {
+			throw new TutorException(INVALID_AVAILABLE_DATE_FOR_TOURNAMENT);
 		}
-	}
 
-	public void addUser(User user)
-	{
-		users.add(user);
-	}
-
-	public void setnumQuests(Integer num)
-	{
-		if(num == null) throw new TutorException(TOURNAMENT_NULL_NUM_QUESTS);
-		if (num <= 0)
-		{
-			throw(new TutorException(ErrorMessage.TOURNAMENT_INVALID_NUM_QUESTS, num));
+		if (this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
+			throw new TutorException(INVALID_AVAILABLE_DATE_FOR_TOURNAMENT);
 		}
-		numQuests = num;
+
+		this.availableDate = availableDate;
 	}
 
-	public void settopics(Set<Topic> topic)
-	{
-		topics.addAll(topic);
+	public LocalDateTime getConclusionDate() {
+		return conclusionDate;
 	}
 
-	public void setstartTime(LocalDateTime time)
-	{
-		if (time == null)
-		{
-			throw new TutorException(TOURNAMENT_NULL_STARTTIME);
+	public void setConclusionDate(LocalDateTime conclusionDate) {
+		if (conclusionDate != null && conclusionDate.isBefore(availableDate)) {
+			throw new TutorException(INVALID_CONCLUSION_DATE_FOR_TOURNAMENT);
 		}
-		startTime = time;
+
+		if (conclusionDate == null) {
+			throw new TutorException(INVALID_CONCLUSION_DATE_FOR_TOURNAMENT);
+		}
+
+		this.conclusionDate = conclusionDate;
 	}
 
-	public void setendTime(LocalDateTime time)
-	{
-		if (time == null)
-		{
-			throw new TutorException(TOURNAMENT_NULL_ENDTIME);
-		}
-		endTime = time;
+	public LocalDateTime getResultsDate() {
+		if (resultsDate == null)
+			return conclusionDate;
+		return resultsDate;
 	}
 
-	public void checkConsistent() {
-		if (creator.getRole() != User.Role.STUDENT)
-		{
-			throw new TutorException(TOURNAMENT_NON_VALID_USER, creator.getKey());
+	public void setResultsDate(LocalDateTime resultsDate) {
+		if (resultsDate != null) {
+			if (resultsDate.isBefore(availableDate)) {
+				throw new TutorException(INVALID_RESULTS_DATE_FOR_TOURNAMENT);
+			}
+
+			if (conclusionDate != null && resultsDate.isBefore(conclusionDate)) {
+				throw new TutorException(INVALID_RESULTS_DATE_FOR_TOURNAMENT);
+			}
 		}
-		else if (startTime.isBefore(LocalDateTime.now()))
-		{
-			throw new TutorException(TOURNAMENT_INVALID_STARTTIME);
-		}
-		else if (startTime.isAfter(endTime) || startTime.isEqual(endTime))
-		{
-			throw new TutorException(TOURNAMENT_INVALID_TIMEFRAME);
-		}
+
+		this.resultsDate = resultsDate;
 	}
 
-	public void setstatus(Status stat)
-	{
-		status = stat;
+	public Status getStatus() { return this.status; }
+
+	public void setStatus(Status status) {
+		if (status == null)
+			this.status = Status.ENROLLING;
+		else
+			this.status = status;
 	}
 
-	public void setquiz(Quiz quiz) {this.quiz = quiz;}
+	public void updateStatus() {
+		if (status == Status.ONGOING && conclusionDate != null && DateHandler.now().isAfter(conclusionDate))
+			setStatus(Status.CONCLUDED);
+		else if (status == Status.ENROLLING && availableDate != null && DateHandler.now().isAfter(availableDate))
+			setStatus(enrolledUsers.size() >= MINIMUM_ENROLLMENTS ? Status.ONGOING : Status.CONCLUDED);
+	}
+
+	public Set<TopicConjunction> getTopicConjunctions() { return topicConjunctions; }
+
+	public void setTopicConjunctions(Set<TopicConjunction> topicConjunctions) {
+		this.topicConjunctions = topicConjunctions;
+		topicConjunctions.forEach(topicConjunction -> topicConjunction.setTournament(this));
+	}
+
+	public void addTopicConjunction(TopicConjunction topicConjunction) {
+		this.topicConjunctions.add(topicConjunction);
+	}
+
+	public Set<User> getEnrolledUsers() {
+		return this.enrolledUsers;
+	}
+
+	public void setEnrolledUsers(Set<User> enrolledUsers) {
+		this.enrolledUsers = enrolledUsers;
+		enrolledUsers.forEach(user -> user.addEnrolledTournament(this));
+	}
+
+	public void addEnrolledUser(User user) {
+		this.enrolledUsers.add(user);
+		user.addEnrolledTournament(this);
+	}
+
+	public Set<Question> getQuestions() {
+		return this.topicConjunctions.stream()
+				.flatMap(topicConjunction -> topicConjunction.getQuestions().stream())
+				.collect(Collectors.toSet());
+	}
+
+	public Quiz getQuiz() { return this.quiz; }
+
+	public void setQuiz(Quiz quiz) {
+		this.quiz = quiz;
+		this.quiz.setTournament(this);
+	}
+
+	public void remove() {
+		new ArrayList<>(getTopicConjunctions()).forEach(TopicConjunction::remove);
+		getTopicConjunctions().clear();
+
+		this.courseExecution.removeTournament(this);
+		this.courseExecution = null;
+	}
 
 	public boolean canResultsBePublic(int executionId) {
 		return true;

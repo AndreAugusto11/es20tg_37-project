@@ -74,10 +74,10 @@ public class User implements UserDetails, DomainEntity {
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Tournament> tournaments = new HashSet<>();
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "enrolledUsers", fetch = FetchType.LAZY)
+    private Set<Tournament> enrolledTournaments = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "creator", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<Tournament> createdTournaments = new HashSet<>();
   
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval=true)
@@ -180,12 +180,15 @@ public class User implements UserDetails, DomainEntity {
         return quizAnswers;
     }
 
-    public Set<CourseExecution> getCourseExecutions() {
-        return courseExecutions;
-    }
+    public Set<CourseExecution> getCourseExecutions() { return courseExecutions; }
 
     public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
         this.courseExecutions = courseExecutions;
+    }
+
+    public void addCourseExecutions(CourseExecution courseExecutions) {
+        this.courseExecutions.add(courseExecutions);
+        courseExecutions.addUser(this);
     }
 
     public Set<Justification> getJustifications() {
@@ -413,12 +416,6 @@ public class User implements UserDetails, DomainEntity {
         this.courseExecutions.add(course);
     }
 
-    public void addTournament(Tournament tournament) {this.tournaments.add(tournament);}
-
-    public Set<Tournament> getTournaments() { return this.tournaments; }
-
-    public void removeTournament (Tournament tournament) { this.tournaments.remove(tournament); }
-
     public Set<ClarificationRequest> getClarificationRequests() { return clarificationRequests; }
 
     public void addClarificationRequest(ClarificationRequest clarificationRequest) {
@@ -524,17 +521,20 @@ public class User implements UserDetails, DomainEntity {
         justifications.add(justification);
     }
 
-    public void addCreatedTournament(Tournament tournament) {
-        tournaments.add(tournament);
-        createdTournaments.add(tournament);
-    }
-
     public Set<Tournament> getCreatedTournaments()
     {
         return createdTournaments;
     }
 
+    public void addCreatedTournament(Tournament tournament) { createdTournaments.add(tournament); }
+
     public void removeCreatedTournament(Tournament tournament) { createdTournaments.remove(tournament); }
+
+    public Set<Tournament> getEnrolledTournaments() { return this.enrolledTournaments; }
+
+    public void addEnrolledTournament(Tournament tournament) { this.enrolledTournaments.add(tournament); }
+
+    public void removeEnrolledTournament(Tournament tournament) { this.enrolledTournaments.remove(tournament); }
 
     public Boolean isPrivateClarificationStats() {
         return privateClarificationStats;

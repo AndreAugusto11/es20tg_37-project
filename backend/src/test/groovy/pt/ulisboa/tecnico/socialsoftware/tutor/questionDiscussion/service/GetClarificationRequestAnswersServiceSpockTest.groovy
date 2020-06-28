@@ -167,20 +167,18 @@ class GetClarificationRequestAnswersServiceSpockTest extends Specification {
 
         then: "the returned data has the correct size"
         result.size() == 2
-        and: "there is the teacher's answer"
         def clarificationRequestAnswerDto = result.get(0)
         clarificationRequestAnswerDto.getId() != null
         clarificationRequestAnswerDto.getContent() == CLARIFICATION_ANSWER_CONTENT
-        clarificationRequestAnswerDto.getType() == ClarificationRequestAnswer.Type.TEACHER_ANSWER
-        clarificationRequestAnswerDto.getName() == user_teacher.getName()
-        clarificationRequestAnswerDto.getUsername() == user_teacher.getUsername()
-        and: "there is the student's answer"
+        clarificationRequestAnswerDto.getType() == ClarificationRequestAnswer.Type.TEACHER_ANSWER || clarificationRequestAnswerDto.getType() == ClarificationRequestAnswer.Type.STUDENT_ANSWER
+        clarificationRequestAnswerDto.getName() == user_teacher.getName() || clarificationRequestAnswerDto.getName() == user_student.getName()
+        clarificationRequestAnswerDto.getUsername() == user_teacher.getUsername() || clarificationRequestAnswerDto.getUsername() == user_student.getUsername()
         def clarificationRequestAnswerDtoStudent = result.get(1)
         clarificationRequestAnswerDtoStudent.getId() != null
         clarificationRequestAnswerDtoStudent.getContent() == CLARIFICATION_ANSWER_CONTENT
-        clarificationRequestAnswerDtoStudent.getType() == ClarificationRequestAnswer.Type.STUDENT_ANSWER
-        clarificationRequestAnswerDtoStudent.getName() == user_student.getName()
-        clarificationRequestAnswerDtoStudent.getUsername() == user_student.getUsername()
+        clarificationRequestAnswerDtoStudent.getType() == ClarificationRequestAnswer.Type.STUDENT_ANSWER || clarificationRequestAnswerDtoStudent.getType() == ClarificationRequestAnswer.Type.TEACHER_ANSWER
+        clarificationRequestAnswerDtoStudent.getName() == user_student.getName() || clarificationRequestAnswerDtoStudent.getName() == user_teacher.getName()
+        clarificationRequestAnswerDtoStudent.getUsername() == user_student.getUsername() || clarificationRequestAnswerDtoStudent.getUsername() == user_teacher.getUsername()
     }
 
     def "invalid argument: clarification_request_id=null"() {

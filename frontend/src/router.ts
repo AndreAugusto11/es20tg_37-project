@@ -12,9 +12,7 @@ import QuestionsView from '@/views/teacher/questions/QuestionsView.vue';
 import TopicsView from '@/views/teacher/TopicsView.vue';
 import QuizzesView from '@/views/teacher/quizzes/QuizzesView.vue';
 import StudentView from '@/views/student/StudentView.vue';
-import TournamentsView from '@/views/student/tournaments/TournamentsView.vue';
-import EnrolledTournamentsView from '@/views/student/tournaments/EnrolledTournamentsView.vue';
-import CreateTournamentsView from '@/views/student/tournaments/CreateTournamentsView.vue';
+import ListTournamentsView from '@/views/student/tournaments/ListTournamentsView.vue';
 import ListQuestionSuggestionsView from './views/questionSuggestions/ListQuestionSuggestionsView.vue';
 import QuestionSuggestionView from './views/questionSuggestions/QuestionSuggestionView.vue'
 import AvailableQuizzesView from '@/views/student/AvailableQuizzesView.vue';
@@ -33,6 +31,7 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import ListClarificationRequestsView from '@/views/discussion/ListClarificationRequestsView.vue';
 import QuestionClarificationRequestsView from '@/views/student/discussion/QuestionClarificationRequestsView.vue';
 import ClarificationRequestView from '@/views/discussion/ClarificationRequestView.vue';
+import TournamentResultsView from '@/views/student/tournaments/TournamentResultsView.vue';
 
 Vue.use(Router);
 
@@ -281,27 +280,19 @@ let router = new Router({
         {
           path: 'tournaments',
           name: 'tournaments',
-          component: TournamentsView,
+          component: ListTournamentsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Tournaments',
             requiredAuth: 'Student'
           }
         },
         {
-          path: 'enrolled',
-          name: 'enrolled',
-          component: EnrolledTournamentsView,
+          path: 'tournamentResults',
+          name: 'tournament-results',
+          component: TournamentResultsView,
+          props: true,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Enrolled Tournaments',
-            requiredAuth: 'Student'
-          }
-        },
-        {
-          path: 'createTournament',
-          name: 'createTournament',
-          component: CreateTournamentsView,
-          meta: {
-            title: process.env.VUE_APP_NAME + ' - Create Tournaments',
+            title: process.env.VUE_APP_NAME + ' - Tournament Results',
             requiredAuth: 'Student'
           }
         }

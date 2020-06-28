@@ -1,16 +1,17 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.performance
+package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service.performance
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
@@ -18,17 +19,28 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import spock.lang.Shared
 import spock.lang.Specification
-
-import java.time.LocalDateTime
-
 
 @DataJpaTest
 class CancelTournamentPerformanceTest extends Specification {
 
+    public static final String COURSE_NAME = "Software Architecture"
+    public static final String COURSE_ACRONYM = "SA1"
+    public static final String ACADEMIC_TERM = "First Semester"
+    public static final String CREATOR_NAME = "Creator Name"
+    public static final String CREATOR_USERNAME = "Creator Username"
+    public static final String TOURNAMENT_TITLE = "Tournament Title"
+    public static final String AVAILABLE_DATE = "2020-01-25T16:30:11Z"
+    public static final String CONCLUSION_DATE = "2020-01-25T17:40:11Z"
+
     @Autowired
     TournamentService tournamentService
+
+    @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
 
     @Autowired
     TournamentRepository tournamentRepository
@@ -36,36 +48,48 @@ class CancelTournamentPerformanceTest extends Specification {
     @Autowired
     UserRepository userRepository
 
-    @Shared
-    Integer maxTests
-
-    @Shared
-    User user
+    def course = new Course()
+    def courseExecution = new CourseExecution()
+    def creator = new User()
 
     def setup()
     {
-        maxTests = 1
-        user = new User("name", "username", 1, User.Role.STUDENT)
-        userRepository.save(user)
+        course.setName(COURSE_NAME)
+        course.setType(Course.Type.TECNICO)
+        courseRepository.save(course)
 
-        for (int i = 0; i < maxTests; i++)
+        courseExecution.setCourse(course)
+        courseExecution.setType(Course.Type.TECNICO)
+        courseExecution.setAcronym(COURSE_ACRONYM)
+        courseExecution.setAcademicTerm(ACADEMIC_TERM)
+        courseExecutionRepository.save(courseExecution)
+
+        creator.setName(CREATOR_NAME)
+        creator.setUsername(CREATOR_USERNAME)
+        creator.setKey(1)
+        creator.setRole(User.Role.STUDENT)
+        creator.addCourseExecutions(courseExecution)
+        userRepository.save(creator)
+
+        for (int i = 0; i < 1; i++)
         {
-            def tournament = new Tournament(user)
+            def tournament = new Tournament()
+            tournament.setTitle(TOURNAMENT_TITLE)
+            tournament.setCourseExecution(courseExecution)
+            tournament.setCreator(creator)
+            tournament.setAvailableDate(DateHandler.toLocalDateTime(AVAILABLE_DATE))
+            tournament.setConclusionDate(DateHandler.toLocalDateTime(CONCLUSION_DATE))
+            tournament.setStatus(Tournament.Status.ENROLLING)
             tournamentRepository.save(tournament)
-            user.addCreatedTournament(tournament)
-            userRepository.save(user)
-            user = userRepository.findByKey(1)
         }
     }
 
     def "performance testing to create 10000 tournaments"()
     {
-
         when:
-        1.upto(maxTests, {
-            def userID = user.getId()
-            def tournamentId = user.getCreatedTournaments().getAt(0).getid()
-            tournamentService.cancelTournament(userID, tournamentId)
+        1.upto(1, {
+            def tournamentId = creator.getCreatedTournaments()[0].getId()
+            tournamentService.cancelTournament(creator.getId(), tournamentId)
         })
 
         then:

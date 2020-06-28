@@ -44,13 +44,14 @@
             <v-card-actions>
                 <v-spacer />
                 <v-btn
+                        dark
                         color="blue darken-1"
                         @click="$emit('close-dialog')"
                         data-cy="cancelButton"
                 >
                     Cancel
                 </v-btn>
-                <v-btn color="blue darken-1" @click="saveClarificationRequest" data-cy="saveButton">
+                <v-btn dark color="blue darken-1" @click="saveClarificationRequest" data-cy="saveButton">
                     Send
                 </v-btn>
             </v-card-actions>

@@ -48,6 +48,12 @@ public class AssessmentService {
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseDto findAssessmentCourseExecution(int assessmentId) {
+
+        System.out.println("\n" +
+                "AssessmentService : findAssessmentCourseExecution\n" +
+                " - assessmentId: " + assessmentId + "\n"
+        );
+
         return assessmentRepository.findById(assessmentId)
                 .map(Assessment::getCourseExecution)
                 .map(CourseDto::new)
@@ -59,6 +65,12 @@ public class AssessmentService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<AssessmentDto> findAssessments(int courseExecutionId) {
+
+        System.out.println("\n" +
+                "AssessmentService : findAssessments\n" +
+                " - courseExecutionId: " + courseExecutionId + "\n"
+        );
+
         return assessmentRepository.findByExecutionCourseId(courseExecutionId).stream()
                 .map(AssessmentDto::new)
                 .collect(Collectors.toList());
@@ -69,6 +81,12 @@ public class AssessmentService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<AssessmentDto> findAvailableAssessments(int courseExecutionId) {
+
+        System.out.println("\n" +
+                "AssessmentService : findAvailableAssessments\n" +
+                " - courseExecutionId: " + courseExecutionId + "\n"
+        );
+
         return assessmentRepository.findByExecutionCourseId(courseExecutionId).stream()
                 .filter(assessment -> assessment.getStatus() == Assessment.Status.AVAILABLE)
                 .map(AssessmentDto::new)
@@ -82,6 +100,13 @@ public class AssessmentService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AssessmentDto createAssessment(int executionId, AssessmentDto assessmentDto) {
+
+        System.out.println("\n" +
+                "AssessmentService : createAssessment\n" +
+                " - executionId: " + executionId + "\n" +
+                " - assessmentDto: " + assessmentDto + "\n"
+        );
+
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
         List<TopicConjunction> topicConjunctions = assessmentDto.getTopicConjunctions().stream()
@@ -104,6 +129,13 @@ public class AssessmentService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AssessmentDto updateAssessment(Integer assessmentId, AssessmentDto assessmentDto) {
+
+        System.out.println("\n" +
+                "AssessmentService : updateAssessment\n" +
+                " - assessmentId: " + assessmentId + "\n" +
+                " - assessmentDto: " + assessmentDto + "\n"
+        );
+
         Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
 
         assessment.setTitle(assessmentDto.getTitle());
@@ -144,6 +176,12 @@ public class AssessmentService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeAssessment(Integer assessmentId) {
+
+        System.out.println("\n" +
+                "AssessmentService : removeAssessment\n" +
+                " - assessmentId: " + assessmentId + "\n"
+        );
+
         Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
         assessment.remove();
         assessmentRepository.delete(assessment);
@@ -154,6 +192,13 @@ public class AssessmentService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void assessmentSetStatus(Integer assessmentId, Assessment.Status status) {
+
+        System.out.println("\n" +
+                "AssessmentService : assessmentSetStatus\n" +
+                " - assessmentId: " + assessmentId + "\n" +
+                " - status: " + status + "\n"
+        );
+
         Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
         assessment.setStatus(status);
     }

@@ -19,7 +19,7 @@ public class QuizQuestion implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 

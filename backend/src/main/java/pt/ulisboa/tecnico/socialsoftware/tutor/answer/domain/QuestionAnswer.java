@@ -26,11 +26,11 @@ public class QuestionAnswer implements DomainEntity {
     @Column(name = "time_taken")
     private Integer timeTaken;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "quiz_question_id")
     private QuizQuestion quizQuestion;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "quiz_answer_id")
     private QuizAnswer quizAnswer;
 

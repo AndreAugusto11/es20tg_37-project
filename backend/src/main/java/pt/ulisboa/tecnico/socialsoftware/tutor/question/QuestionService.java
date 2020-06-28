@@ -67,12 +67,24 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto findQuestionById(Integer questionId) {
+
+        System.out.println("\n" +
+                "QuestionService : findQuestionById\n" +
+                " - questionId: " + questionId + "\n"
+        );
+
         return questionRepository.findById(questionId).map(QuestionDto::new)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseDto findQuestionCourse(Integer questionId) {
+
+        System.out.println("\n" +
+                "QuestionService : findQuestionCourse\n" +
+                " - questionId: " + questionId + "\n"
+        );
+
         return questionRepository.findById(questionId)
                 .map(Question::getCourse)
                 .map(CourseDto::new)
@@ -84,6 +96,12 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto findQuestionByKey(Integer key) {
+
+        System.out.println("\n" +
+                "QuestionService : findQuestionByKey\n" +
+                " - key: " + key + "\n"
+        );
+
         return questionRepository.findByKey(key).map(QuestionDto::new)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, key));
     }
@@ -93,6 +111,12 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionDto> findQuestions(int courseId) {
+
+        System.out.println("\n" +
+                "QuestionService : findQuestions\n" +
+                " - courseId: " + courseId + "\n"
+        );
+
         return questionRepository.findQuestions(courseId).stream().map(QuestionDto::new)
                 .filter(questionDto -> questionDto.getType().equals(Question.Type.NORMAL.name()))
                 .collect(Collectors.toList());
@@ -103,6 +127,12 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionDto> findAvailableQuestions(int courseId) {
+
+        System.out.println("\n" +
+                "QuestionService : findAvailableQuestions\n" +
+                " - courseId: " + courseId + "\n"
+        );
+
         return questionRepository.findAvailableQuestions(courseId).stream().map(QuestionDto::new)
                 .filter(questionDto -> questionDto.getType().equals(Question.Type.NORMAL.name()))
                 .collect(Collectors.toList());
@@ -113,6 +143,13 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto createQuestion(int courseId, QuestionDto questionDto) {
+
+        System.out.println("\n" +
+                "QuestionService : createQuestion\n" +
+                " - courseId: " + courseId + "\n" +
+                " - questionDto: " + questionDto + "\n"
+        );
+
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         Question question = new Question(course, questionDto);
         questionRepository.save(question);
@@ -126,8 +163,14 @@ public class QuestionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto updateQuestion(Integer questionId, QuestionDto questionDto) {
 
+        System.out.println("\n" +
+                "QuestionService : updateQuestion\n" +
+                " - questionId: " + questionId + "\n" +
+                " - questionDto: " + questionDto + "\n"
+        );
+
         if (questionId == null) {
-            throw new TutorException(INVALID_NULL_ARGUMENTS_QUESTIONID);
+            throw new TutorException(INVALID_NULL_ARGUMENTS_QUESTION_ID);
         }
 
         if (questionDto == null) {
@@ -145,6 +188,12 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeQuestion(Integer questionId) {
+
+        System.out.println("\n" +
+                "QuestionService : removeQuestion\n" +
+                " - questionId: " + questionId + "\n"
+        );
+
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         question.remove();
         questionRepository.delete(question);
@@ -155,6 +204,13 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void questionSetStatus(Integer questionId, Question.Status status) {
+
+        System.out.println("\n" +
+                "QuestionService : questionSetStatus\n" +
+                " - questionId: " + questionId + "\n" +
+                " - status: " + status + "\n"
+        );
+
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         question.setStatus(status);
     }
@@ -196,6 +252,13 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void updateQuestionTopics(Integer questionId, TopicDto[] topics) {
+
+        System.out.println("\n" +
+                "QuestionService : updateQuestionTopics\n" +
+                " - questionId: " + questionId + "\n" +
+                " - topics: " + topics + "\n"
+        );
+
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
         question.updateTopics(Arrays.stream(topics).map(topicDto -> topicRepository.findTopicByName(question.getCourse().getId(), topicDto.getName())).collect(Collectors.toSet()));
@@ -278,6 +341,12 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteQuizQuestion(QuizQuestion quizQuestion) {
+
+        System.out.println("\n" +
+                "QuestionService : deleteQuizQuestion\n" +
+                " - quizQuestion: " + quizQuestion + "\n"
+        );
+
         Question question = quizQuestion.getQuestion();
         quizQuestion.remove();
         quizQuestionRepository.delete(quizQuestion);
@@ -292,6 +361,12 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteQuestion(Question question) {
+
+        System.out.println("\n" +
+                "QuestionService : deleteQuestion\n" +
+                " - question: " + question + "\n"
+        );
+
         for (Option option : question.getOptions()) {
             option.remove();
             optionRepository.delete(option);

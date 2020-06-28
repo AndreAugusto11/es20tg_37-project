@@ -20,6 +20,11 @@
         >
             <template v-slot:top>
                 <v-card-title>
+                  <span class="headline">
+                    Discussions
+                  </span>
+                </v-card-title>
+                <v-card-title>
                     <v-text-field
                             v-model="search"
                             append-icon="search"
@@ -71,9 +76,6 @@
   import Question from '@/models/management/Question';
   import Image from '@/models/management/Image';
   import { ClarificationRequest } from '@/models/discussion/ClarificationRequest';
-  import StatementQuiz from '@/models/statement/StatementQuiz';
-  import StatementManager from '@/models/statement/StatementManager';
-  import { ClarificationRequestAnswer } from '@/models/discussion/ClarificationRequestAnswer';
 
   @Component
   export default class ListClarificationRequestsView extends Vue {
@@ -115,7 +117,7 @@
 
     getStatusColor(status: string) {
       if (status === 'CLOSED') return 'red';
-      else if (status === 'ANSWERED') return 'yellow';
+      else if (status === 'ANSWERED') return 'orange';
       else return 'green'
     }
 

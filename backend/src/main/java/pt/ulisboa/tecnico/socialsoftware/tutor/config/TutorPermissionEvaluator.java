@@ -11,6 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionSuggestion.QuestionSuggestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
@@ -32,6 +34,9 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
     private AssessmentService assessmentService;
+
+    @Autowired
+    private TournamentService tournamentService;
 
     @Autowired
     private QuizService quizService;
@@ -81,6 +86,8 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     return userHasThisExecution(userId, assessmentService.findAssessmentCourseExecution(id).getCourseExecutionId());
                 case "QUIZ.ACCESS":
                     return userHasThisExecution(userId, quizService.findQuizCourseExecution(id).getCourseExecutionId());
+                case "TOURNAMENT.ACCESS":
+                    return userHasThisExecution(userId, tournamentService.findTournamentCourseExecution(id).getCourseExecutionId());
                 case "QUESTION_SUGGESTION.ACCESS":
                     return userHasAnExecutionOfTheCourse(userId, questionSuggestionService.findQuestionSuggestionCourse(id).getCourseId());
                 default: return false;

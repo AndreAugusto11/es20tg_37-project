@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentResultsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
@@ -19,21 +22,19 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.function.*;
-import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
-public class TournamentService
-{
+public class TournamentService {
 	@Autowired
 	private TournamentRepository tournamentRepository;
+
+	@Autowired
+	private CourseExecutionRepository courseExecutionRepository;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -41,37 +42,113 @@ public class TournamentService
 	@Autowired
 	private TopicRepository topicRepository;
 
-	@Autowired
-	private StatementService statementService;
+	@Transactional(isolation = Isolation.REPEATABLE_READ)
+	public CourseDto findTournamentCourseExecution(int tournamentId) {
 
-	@PersistenceContext
-	EntityManager entityManager;
+		return this.tournamentRepository.findById(tournamentId)
+				.map(Tournament::getCourseExecution)
+				.map(CourseDto::new)
+				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+	}
+
+	@Transactional(isolation = Isolation.REPEATABLE_READ)
+	public List<TournamentDto> findTournaments(int executionId) {
+
+		System.out.println("\n" +
+				"TournamentService : findTournaments\n" +
+				" - executionId: " + executionId + "\n"
+		);
+
+		courseExecutionRepository.findById(executionId)
+				.orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
+		return tournamentRepository.findByCourseExecutionId(executionId).stream()
+				.peek(tournament -> {
+					if (tournament.getStatus() != Tournament.Status.CANCELLED)
+						tournament.updateStatus();
+				})
+				.sorted(Comparator.comparing(Tournament::getStatus)
+						.thenComparing(Tournament::getAvailableDate, Comparator.nullsFirst(Comparator.naturalOrder())))
+				.map(TournamentDto::new)
+				.collect(Collectors.toList());
+	}
 
 	@Retryable(
 			value = { SQLException.class },
 			backoff = @Backoff(delay = 5000))
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
-	public TournamentDto createTournament(User student, Set<Topic> topics, Integer numOfQuestions, LocalDateTime startTime, LocalDateTime endTime)
-	{
-		Tournament tournament = new Tournament();
-		tournament.setcreator(student);
-		if(userRepository.findByKey(student.getKey()) == null) throw new TutorException(TOURNAMENT_NON_VALID_USER);
+	public List<TournamentResultsDto> getTournamentResults(int executionId, int tournamentId) {
 
-		if (topics == null) throw new TutorException(TOURNAMENT_NULL_TOPIC);
-		if(!this.checkTopicsExistence(topics)) throw new TutorException(TOURNAMENT_INVALID_TOPIC);
-		tournament.settopics(topics);
+		System.out.println("\n" +
+				"TournamentService : getTournamentResults\n" +
+				" - executionId: " + executionId + "\n" +
+				" - tournamentId: " + tournamentId + "\n"
+		);
 
-		tournament.setnumQuests(numOfQuestions);
-		tournament.setstartTime(startTime);
-		tournament.setendTime(endTime);
+		Tournament tournament = tournamentRepository.findById(tournamentId)
+				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
 
-		tournament.checkConsistent();
-		tournament.setstatus(Tournament.Status.OPEN);
+		if (executionId != tournament.getCourseExecution().getId())
+			throw new TutorException(COURSE_EXECUTION_TOURNAMENT_MISMATCH, executionId, tournamentId);
 
-		student.addCreatedTournament(tournament);
-		tournament.addUser(student);
+		if (tournament.getResultsDate().isAfter(DateHandler.now()))
+			throw new TutorException(TOURNAMENT_RESULTS_UNAVAILABLE);
 
-		this.entityManager.persist(tournament);
+		if (tournament.getQuiz() == null)
+			throw new TutorException(TOURNAMENT_NULL_QUIZ, tournamentId);
+
+		return tournament.getQuiz().getQuizAnswers().stream()
+				.filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
+				.map(TournamentResultsDto::new)
+				.sorted(Comparator.comparingInt(TournamentResultsDto::getNumberOfCorrectAnswers).reversed()
+						.thenComparingLong(TournamentResultsDto::getTimeTaken))
+				.collect(Collectors.toList());
+	}
+
+	@Retryable(
+			value = { SQLException.class },
+			backoff = @Backoff(delay = 5000))
+	@Transactional(isolation = Isolation.REPEATABLE_READ)
+	public TournamentDto createTournament(int userId, int executionId, TournamentDto tournamentDto) {
+
+		System.out.println("\n" +
+				"TournamentService : createTournament\n" +
+				" - userId: " + userId + "\n" +
+				" - executionId: " + executionId + "\n" +
+				" - tournamentDto: " + tournamentDto + "\n"
+		);
+
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+		CourseExecution courseExecution = courseExecutionRepository.findById(executionId)
+				.orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
+		if (tournamentDto == null)
+			throw new TutorException(INVALID_NULL_ARGUMENTS_TOURNAMENT_DTO);
+
+		Set<TopicConjunction> topicConjunctions = tournamentDto.getTopicConjunctions().stream()
+				.map(topicConjunctionDto -> {
+					TopicConjunction topicConjunction = new TopicConjunction();
+
+					Set<Topic> newTopics = topicConjunctionDto.getTopics().stream()
+							.map(topicDto -> topicRepository.findById(topicDto.getId())
+									.orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND)))
+							.collect(Collectors.toSet());
+
+					topicConjunction.updateTopics(newTopics);
+					return topicConjunction;
+				}).collect(Collectors.toSet());
+
+		if (topicConjunctions.isEmpty())
+			throw new TutorException(TOURNAMENT_HAS_NO_TOPICS);
+
+		if (tournamentDto.getCreationDate() == null)
+			tournamentDto.setCreationDate(DateHandler.toISOString(DateHandler.now()));
+
+		Tournament tournament = new Tournament(courseExecution, user, topicConjunctions, tournamentDto);
+
+		tournamentRepository.save(tournament);
 		return new TournamentDto(tournament);
 	}
 
@@ -79,174 +156,48 @@ public class TournamentService
 			value = { SQLException.class },
 			backoff = @Backoff(delay = 5000))
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
-	public TournamentDto createTournament(Integer userId, TournamentDto tournamentDto)
-	{
-		User student = userRepository.findById(userId).get();
-		Set<Integer> tmp = tournamentDto.gettopics();
-		Set<Topic> topics = new HashSet<>();
-		for(Integer id: tmp){
-			topics.add(topicRepository.findById(id).get());
-		}
-		Integer numOfQuestions = tournamentDto.getnumQuests();
-		LocalDateTime start = tournamentDto.getstartTime();
-		LocalDateTime end = tournamentDto.getendTime();
-		return createTournament(student, topics, numOfQuestions, start, end);
-	}
+	public TournamentDto enrollInTournament(int userId, int tournamentId) {
 
-	public TournamentDto findTournamentById(Integer id){
-		return tournamentRepository.findById(id).map(TournamentDto::new)
-				.orElseThrow( () -> new TutorException(TOURNAMENT_NOT_FOUND,id));
-	}
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-	@Retryable(
-			value = { SQLException.class },
-			backoff = @Backoff(delay = 5000))
-	@Transactional(isolation = Isolation.REPEATABLE_READ)
-	public TournamentDto enrollStudentInTournament(Integer userId, Integer tournamentId){
-		if(userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
-
-		if(tournamentId == null) throw new TutorException(TOURNAMENT_NULL_TOURNAMENT);
+		if (user.getRole() != User.Role.STUDENT)
+			throw new TutorException(USER_NOT_STUDENT);
 
 		Tournament tournament = tournamentRepository.findById(tournamentId)
-				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND,tournamentId));
-		User user = userRepository.findById(userId)
-				.orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
+				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
 
-		if(user.getRole() != User.Role.STUDENT) throw new TutorException(TOURNAMENT_NOT_STUDENT);
+		if (!user.getCourseExecutions().contains(tournament.getCourseExecution()))
+			throw new TutorException(USER_NOT_ENROLLED, user.getUsername());
 
-		if(tournament.getstatus() != Tournament.Status.OPEN) throw new TutorException(TOURNAMENT_NOT_OPEN,tournamentId);
+		if (tournament.getStatus() != Tournament.Status.ENROLLING)
+			throw new TutorException(TOURNAMENT_ENROLLMENTS_NO_LONGER_AVAILABLE);
 
-		Predicate<User> u1 = s -> s.getId().equals(userId);
+		if (tournament.getEnrolledUsers().contains(user))
+			throw new TutorException(STUDENT_ALREADY_ENROLLED_IN_TOURNAMENT, userId);
 
-		//DEMO STUDENT has id 676 needed for load test
-		if(userId != 676 && tournament.getusers().stream().anyMatch(u1)) throw new TutorException(TOURNAMENT_STUDENT_ALREADY_ENROLLED,userId);
-
-		tournament.addUser(user);
-		user.addTournament(tournament);
+		tournament.addEnrolledUser(user);
 		return new TournamentDto(tournament);
 	}
 
-	private Tournament tournamentQuizVerification(int userId, Integer tournamentId){
-		if(tournamentId == null) throw new TutorException(TOURNAMENT_NULL_TOURNAMENT);
+	@Retryable(
+			value = { SQLException.class },
+			backoff = @Backoff(delay = 5000))
+	@Transactional(isolation = Isolation.REPEATABLE_READ)
+	public void cancelTournament(int userId, int tournamentId) {
+
+		userRepository.findById(userId)
+				.orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
 		Tournament tournament = tournamentRepository.findById(tournamentId)
-				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND,tournamentId));
+				.orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
 
-		if(tournament.getstatus() != Tournament.Status.ONGOING) throw new TutorException(TOURNAMENT_NOT_ONGOING,tournamentId);
-
-		if(tournament.getquiz() == null) throw new TutorException(TOURNAMENT_NULL_QUIZ,tournamentId);
-
-		tournament.getusers().stream()
-				.filter(u->u.getId().equals(userId)).findFirst()
-				.orElseThrow( () -> new TutorException(TOURNAMENT_STUDENT_NOT_ENROLLED,userId));
-		return tournament;
-	}
-
-	@Retryable(
-			value = { SQLException.class },
-			backoff = @Backoff(delay = 5000))
-	@Transactional(isolation = Isolation.READ_COMMITTED)
-	public boolean startQuiz(int userId, Integer tournamentId) {
-		Tournament tournament = tournamentQuizVerification(userId,tournamentId);
-		statementService.startQuiz(userId, tournament.getquiz().getId());
-		return true;
-	}
-
-	@Retryable(
-			value = { SQLException.class },
-			backoff = @Backoff(delay = 5000))
-	@Transactional(isolation = Isolation.READ_COMMITTED)
-	public void submitAnswer(int userId, Integer tournamentId, StatementAnswerDto answer) {
-		Tournament tournament = tournamentQuizVerification(userId,tournamentId);
-		statementService.submitAnswer(userId, tournament.getquiz().getId(), answer);
-	}
-
-	@Retryable(
-			value = { SQLException.class },
-			backoff = @Backoff(delay = 5000))
-	@Transactional(isolation = Isolation.READ_COMMITTED)
-	public List<CorrectAnswerDto> concludeQuiz(int userId, Integer tournamentId) {
-		Tournament tournament = tournamentQuizVerification(userId,tournamentId);
-		return statementService.concludeQuiz(userId, tournament.getquiz().getId());
-	}
-
-	private boolean checkTopicsExistence(Set<Topic> topics)
-	{
-		Iterator<Topic> iter = topics.iterator();
-		while(iter.hasNext())
-		{
-			Topic t1 = iter.next();
-			Topic topic = topicRepository.findTopicByName(t1.getCourse().getId(), t1.getName());
-			if (topic == null)
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-
-	@Transactional(isolation = Isolation.REPEATABLE_READ)
-	public List<TournamentDto> getTournaments() {
-		return tournamentRepository.findAll().stream()
-				.map(TournamentDto::new)
-				.sorted(Comparator
-						.comparing(TournamentDto::getid))
-				.collect(Collectors.toList());
-	}
-
-	@Transactional(isolation = Isolation.REPEATABLE_READ)
-	public List<TournamentDto> getEnrolledTournaments(Integer userId) {
-		if(userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
-		User user = userRepository.findById(userId)
-				.orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
-		return user.getTournaments().stream()
-				.map(TournamentDto::new)
-				.sorted(Comparator
-						.comparing(TournamentDto::getid))
-				.collect(Collectors.toList());
-	}
-
-	@Transactional(isolation = Isolation.REPEATABLE_READ)
-	public List<TournamentDto> getCreatedTournaments(Integer userId) {
-		if(userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
-		User user = userRepository.findById(userId)
-				.orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
-		return user.getCreatedTournaments().stream()
-				.map(TournamentDto::new)
-				.sorted(Comparator
-						.comparing(TournamentDto::getid))
-				.collect(Collectors.toList());
-	}
-
-	@Retryable(
-			value = { SQLException.class },
-			backoff = @Backoff(delay = 5000))
-	@Transactional(isolation = Isolation.REPEATABLE_READ)
-	public void cancelTournament(Integer userId, Integer tournamentId) {
-
-		if (tournamentId == null) throw new TutorException(TOURNAMENT_NULL_ID);
-		Tournament tournament = tournamentRepository.findById(tournamentId)
-				.orElseThrow( () -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
-
-		if (tournament.getstatus() == Tournament.Status.CANCELLED)
-		{
-			throw new TutorException(TOURNAMENT_ALREADY_CANCELLED, tournamentId);
-		}
-
-		if (userId == null) throw new TutorException(TOURNAMENT_NULL_USER);
-		userRepository.findById(userId).orElseThrow( () -> new TutorException(USER_NOT_FOUND,userId));
-
-		User creator = tournament.getcreator();
-		Integer creatorId = creator.getId();
-
-		if (creatorId.equals(userId))
-		{
-			tournament.setstatus(Tournament.Status.CANCELLED);
-		}
-		else
-		{
+		if (userId != tournament.getCreator().getId())
 			throw new TutorException(TOURNAMENT_NON_CREATOR, tournamentId, userId);
-		}
 
+		if (tournament.getStatus() != Tournament.Status.ENROLLING)
+			throw new TutorException(TOURNAMENT_NOT_ENROLLING, tournamentId);
+
+		tournament.setStatus(Tournament.Status.CANCELLED);
 	}
 }

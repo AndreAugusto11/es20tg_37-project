@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.2.1">
   <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Web Service enrollTournament" enabled="true">
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Web Service cancelTournament" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
@@ -31,7 +31,7 @@
           </elementProp>
           <elementProp name="tournamentId" elementType="Argument">
             <stringProp name="Argument.name">tournamentId</stringProp>
-            <stringProp name="Argument.value">15</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -52,42 +52,35 @@
       </SetupThreadGroup>
       <hashTree>
         <JDBCDataSource guiclass="TestBeanGUI" testclass="JDBCDataSource" testname="JDBC Connection Configuration" enabled="true">
-          <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="poolMax">0</stringProp>
-          <stringProp name="timeout">10000</stringProp>
-          <stringProp name="trimInterval">60000</stringProp>
           <boolProp name="autocommit">true</boolProp>
-          <stringProp name="transactionIsolation">DEFAULT</stringProp>
-          <boolProp name="preinit">false</boolProp>
-          <stringProp name="initQuery"></stringProp>
-          <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="connectionAge">5000</stringProp>
           <stringProp name="checkQuery"></stringProp>
+          <stringProp name="connectionAge">5000</stringProp>
+          <stringProp name="connectionProperties"></stringProp>
+          <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
           <stringProp name="driver">org.postgresql.Driver</stringProp>
-          <stringProp name="username">jgalamba</stringProp>
-          <stringProp name="password">1234</stringProp>
-          <stringProp name="connectionProperties"></stringProp>
+          <stringProp name="initQuery"></stringProp>
+          <boolProp name="keepAlive">true</boolProp>
+          <stringProp name="password">postLeve.</stringProp>
+          <stringProp name="poolMax">0</stringProp>
+          <boolProp name="preinit">false</boolProp>
+          <stringProp name="timeout">10000</stringProp>
+          <stringProp name="transactionIsolation">DEFAULT</stringProp>
+          <stringProp name="trimInterval">60000</stringProp>
+          <stringProp name="username">mleveist</stringProp>
         </JDBCDataSource>
         <hashTree/>
-        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
+        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request to insert a tournament" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="queryType">Callable Statement</stringProp>
-          <stringProp name="query">INSERT INTO tournaments (id,user_id,number_of_questions,start_date,end_date,status)
-VALUES (${tournamentId},676,1,null,null,&apos;OPEN&apos;);
-INSERT INTO users_tournaments (user_id,tournaments_id)
-VALUES (676,${tournamentId});
-INSERT INTO tournaments_users (tournament_id,users_id)
-VALUES (${tournamentId},676);
-INSERT INTO users_created_tournaments (user_id,created_tournaments_id)
-VALUES (676,${tournamentId});</stringProp>
+          <stringProp name="query">INSERT INTO tournaments (id, status, title, course_execution_id, user_id) VALUES (${tournamentId}, &apos;ENROLLING&apos;, &apos;Jmeter Tournament&apos;, 11, 676);</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
-          <stringProp name="variableNames"></stringProp>
-          <stringProp name="resultVariable"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
-          <stringProp name="resultSetMaxRows"></stringProp>
+          <stringProp name="queryType">Callable Statement</stringProp>
           <stringProp name="resultSetHandler">Store as String</stringProp>
+          <stringProp name="resultSetMaxRows"></stringProp>
+          <stringProp name="resultVariable"></stringProp>
+          <stringProp name="variableNames"></stringProp>
         </JDBCSampler>
         <hashTree/>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
@@ -180,10 +173,6 @@ VALUES (676,${tournamentId});</stringProp>
                 <stringProp name="Header.name">Content-Type</stringProp>
                 <stringProp name="Header.value">application/json</stringProp>
               </elementProp>
-              <elementProp name="" elementType="Header">
-                <stringProp name="Header.name">id</stringProp>
-                <stringProp name="Header.value">${tournamentId}</stringProp>
-              </elementProp>
             </collectionProp>
           </HeaderManager>
           <hashTree/>
@@ -222,7 +211,7 @@ VALUES (676,${tournamentId});</stringProp>
             <BeanShellAssertion guiclass="BeanShellAssertionGui" testclass="BeanShellAssertion" testname="BeanShell Assertion" enabled="true">
               <stringProp name="BeanShellAssertion.query">String str = vars.getObject(&quot;result&quot;).get(0).get(&quot;status&quot;);
 
-if(!str.equals(&quot;CANCELLED&quot;))
+if (!str.equals(&quot;CANCELLED&quot;))
 {
 	Failure = true;
 	FailureMessage = &quot;Tournament does not have status set to CANCELLED but &quot; + str;
@@ -324,13 +313,11 @@ if(!str.equals(&quot;CANCELLED&quot;))
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </PostThreadGroup>
       <hashTree>
-        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
+        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Delete created tournament" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="queryType">Callable Statement</stringProp>
-          <stringProp name="query">DELETE FROM users_created_tournaments WHERE created_tournaments_id = ${tournamentId};
-DELETE FROM users_tournaments WHERE tournaments_id = ${tournamentId};
-DELETE FROM tournaments_users WHERE tournament_id = ${tournamentId};
-DELETE FROM tournaments WHERE id = ${tournamentId};</stringProp>
+          <stringProp name="query">DELETE FROM tournaments;
+</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="variableNames"></stringProp>

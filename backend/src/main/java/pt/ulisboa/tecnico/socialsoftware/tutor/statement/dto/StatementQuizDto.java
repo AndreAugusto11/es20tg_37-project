@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 public class StatementQuizDto implements Serializable {
     private Integer id;
     private Integer quizAnswerId;
-    private Integer tournamentID = null;
     private String title;
     private boolean oneWay;
     private String availableDate;
@@ -30,7 +29,6 @@ public class StatementQuizDto implements Serializable {
     public StatementQuizDto(QuizAnswer quizAnswer) {
         this.id = quizAnswer.getQuiz().getId();
         this.quizAnswerId = quizAnswer.getId();
-        if(quizAnswer.getQuiz().gettournament() != null) this.tournamentID = quizAnswer.getQuiz().gettournament().getid();
         this.title = quizAnswer.getQuiz().getTitle();
         this.oneWay = quizAnswer.getQuiz().isOneWay();
         this.availableDate = DateHandler.toISOString(quizAnswer.getQuiz().getAvailableDate());
@@ -65,14 +63,6 @@ public class StatementQuizDto implements Serializable {
 
     public void setQuizAnswerId(Integer quizAnswerId) {
         this.quizAnswerId = quizAnswerId;
-    }
-
-    public Integer gettournamentID() {
-        return tournamentID;
-    }
-
-    public void settournamentID(Integer tournamentID) {
-        this.tournamentID = tournamentID;
     }
 
     public String getTitle() {

@@ -101,7 +101,7 @@ public class StatsService {
                 .filter(t ->t.canResultsBePublic(executionId))
                 .count();
 
-        int totalNumberEnrolledTournaments = (int) user.getTournaments().stream()
+        int totalNumberEnrolledTournaments = (int) user.getEnrolledTournaments().stream()
                 .filter(t ->t.canResultsBePublic(executionId))
                 .count();
 
@@ -173,7 +173,7 @@ public class StatsService {
                 .filter(t ->t.canResultsBePublic(executionId))
                 .count();
 
-        int totalNumberEnrolledTournaments = (int) user.getTournaments().stream()
+        int totalNumberEnrolledTournaments = (int) user.getEnrolledTournaments().stream()
                 .filter(t ->t.canResultsBePublic(executionId))
                 .count();
 
@@ -253,11 +253,11 @@ public class StatsService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void changeTournamentsStatsPrivacy(int userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        if(user.isPrivateTournamentsStats() == null){
+        if (user.isPrivateTournamentsStats() == null)
             user.setPrivateTournamentsStats(false);
-        }
 
         user.setPrivateTournamentsStats(!user.isPrivateTournamentsStats());
     }

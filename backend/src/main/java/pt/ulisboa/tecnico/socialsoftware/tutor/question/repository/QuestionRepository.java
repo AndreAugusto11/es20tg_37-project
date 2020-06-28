@@ -18,6 +18,9 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     @Query(value = "SELECT * FROM questions q WHERE q.course_id = :courseId AND q.status = 'AVAILABLE'", nativeQuery = true)
     List<Question> findAvailableQuestions(int courseId);
 
+    @Query(value = "SELECT DISTINCT ON (id) * FROM questions q JOIN topics_questions tq ON q.id = tq.questions_id WHERE tq.topics_id in :topicsId AND q.status = 'AVAILABLE'", nativeQuery = true)
+    List<Question> findAvailableQuestionsFromTopics(List<Integer> topicsId);
+
     @Query(value = "SELECT count(*) FROM questions q WHERE q.course_id = :courseId AND q.status = 'AVAILABLE'", nativeQuery = true)
     Integer getAvailableQuestionsSize(Integer courseId);
 

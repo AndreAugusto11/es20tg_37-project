@@ -1,24 +1,17 @@
 describe('Tournaments walkthrough', () => {
   beforeEach(() => {
-    cy.exec('psql -d tutordb -c "Delete from tournaments_users;"')
-    cy.exec('psql -d tutordb -c "Delete from users_tournaments;"')
-    cy.exec('psql -d tutordb -c "Delete from users_created_tournaments;"')
-    cy.exec('psql -d tutordb -c "Delete from tournaments_topics;"')
-    cy.exec('psql -d tutordb -c "Delete from tournaments ;"')
+    cy.exec('psql -d tutordb -c "update quizzes set tournament_id = null;"')
+    cy.exec('psql -d tutordb -c "update topic_conjunctions set tournament_id = null;"')
+    cy.exec('psql -d tutordb -c "delete from tournaments_enrolled_users;"')
+    cy.exec('psql -d tutordb -c "delete from tournaments;"')
     cy.demoStudentLogin();
   });
 
   afterEach(() => {
     cy.contains('Logout').click();
-
-    cy.exec('psql -d tutordb -c "DELETE FROM tournaments_users;"');
-    cy.exec('psql -d tutordb -c "DELETE FROM users_tournaments;"');
-    cy.exec('psql -d tutordb -c "DELETE FROM users_created_tournaments;"');
-    cy.exec('psql -d tutordb -c "DELETE FROM tournaments_topics;"');
-    cy.exec('psql -d tutordb -c "DELETE FROM tournaments;"');
   });
 
   it('login and create a tournament', () => {
-    cy.createTournaments('5', 'GitHub', '2025-11-23 10:50', '2025-11-23 10:59');
+    cy.createTournaments('4');
   });
 });

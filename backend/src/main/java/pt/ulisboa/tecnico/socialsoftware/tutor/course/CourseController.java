@@ -61,7 +61,6 @@ public class CourseController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#courseExecutionId, 'DEMO.ACCESS'))")
     public ResponseEntity removeCourseExecution(@PathVariable Integer courseExecutionId) {
         courseService.removeCourseExecution(courseExecutionId);
-
         return ResponseEntity.ok().build();
     }
 }
