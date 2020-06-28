@@ -52,6 +52,7 @@ jobs:
         working-directory: frontend
         start: npm start
         wait-on: http://localhost:8081
+        spec: tests/e2e/specs/statistics/*
       env:
         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
